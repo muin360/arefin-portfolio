@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/Section";
 import { IconArrow } from "@/components/icons";
+import BentoCard from "@/components/BentoCard";
+import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "About — Arefin Muin",
@@ -60,100 +62,133 @@ export default function AboutPage() {
         subtitle="I help businesses replace repetitive manual work with quiet, reliable AI-powered systems that run on their own — and keep running long after the demo."
       />
 
-      <section className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10">
-        <div className="md:col-span-4">
-          <p className="eyebrow mb-5">Profile</p>
-        </div>
-        <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-foreground/85">
-          <p>
-            I&apos;m Arefin Muin. I design and ship the workflows,
-            integrations and LLM-powered agents that operate behind the scenes
-            of modern companies — across <strong>n8n</strong>,{" "}
-            <strong>Zapier</strong>, <strong>Make</strong>,{" "}
-            <strong>LangChain</strong>, <strong>LangFlow</strong> and{" "}
-            <strong>GoHighLevel</strong>, with <strong>Python</strong> and{" "}
-            <strong>TypeScript</strong> when the no-code layer runs out.
-          </p>
-          <p>
-            What gets me out of bed: the moment a client realizes a process
-            that used to take their team six hours a day now runs on its own,
-            with an AI agent making the judgement calls inside it.
-          </p>
-          <p>
-            I&apos;m currently going deeper on LLM engineering — evaluation,
-            observability, retrieval quality, fine-tuning — to ship agents
-            that hold up in production, not just demos.
-          </p>
+      <section className="hero-dark relative overflow-hidden border-b border-white/5">
+        <div className="orb orb-violet" aria-hidden="true" />
+        <div className="orb orb-cyan" aria-hidden="true" />
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10 relative">
+          <div className="md:col-span-4">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
+              Profile
+            </p>
+          </div>
+          <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-white/80">
+            <p>
+              I&apos;m Arefin Muin. I design and ship the workflows,
+              integrations and LLM-powered agents that operate behind the scenes
+              of modern companies — across <strong className="text-white">n8n</strong>,{" "}
+              <strong className="text-white">Zapier</strong>,{" "}
+              <strong className="text-white">Make</strong>,{" "}
+              <strong className="text-white">LangChain</strong>,{" "}
+              <strong className="text-white">LangFlow</strong> and{" "}
+              <strong className="text-white">GoHighLevel</strong>, with{" "}
+              <strong className="text-white">Python</strong> and{" "}
+              <strong className="text-white">TypeScript</strong> when the no-code
+              layer runs out.
+            </p>
+            <p>
+              What gets me out of bed: the moment a client realizes a process
+              that used to take their team six hours a day now runs on its own,
+              with an AI agent making the judgement calls inside it.
+            </p>
+            <p>
+              I&apos;m currently going deeper on LLM engineering — evaluation,
+              observability, retrieval quality, fine-tuning — to ship agents
+              that hold up in production, not just demos.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="border-y border-line bg-paper">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10">
+      <section className="hero-dark border-y border-white/5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
+        <div className="orb orb-pink" aria-hidden="true" />
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10 relative">
           <div className="md:col-span-4">
-            <p className="eyebrow mb-5">Principles</p>
-            <h2 className="display text-3xl md:text-5xl">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
+              Principles
+            </p>
+            <h2 className="display text-3xl md:text-5xl text-white">
               How I work,
               <br />
-              <span className="serif text-[1.04em]">in three lines.</span>
+              <span className="serif text-[1.04em] iridescent">in three lines.</span>
             </h2>
           </div>
-          <div className="md:col-span-8 grid grid-cols-1 gap-6">
+          <div className="md:col-span-8 grid grid-cols-1 gap-5">
             {principles.map((p, i) => (
-              <div
-                key={p.title}
-                className="flex gap-6 pb-6 border-b border-line last:border-0 last:pb-0"
-              >
-                <span className="text-sm tabular-nums text-muted mt-1 w-10">
-                  0{i + 1}
-                </span>
-                <div>
-                  <h3 className="text-xl tracking-tight font-medium">
-                    {p.title}
-                  </h3>
-                  <p className="mt-2 text-muted leading-relaxed">{p.body}</p>
-                </div>
-              </div>
+              <Reveal key={p.title} delay={i * 70}>
+                <BentoCard className="h-full">
+                  <div className="flex gap-6">
+                    <span className="font-mono text-sm tabular-nums text-violet-300 mt-1 w-10">
+                      0{i + 1}
+                    </span>
+                    <div>
+                      <h3 className="text-xl tracking-tight font-medium text-white">
+                        {p.title}
+                      </h3>
+                      <p className="mt-2 text-white/65 leading-relaxed">{p.body}</p>
+                    </div>
+                  </div>
+                </BentoCard>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10">
-        <div className="md:col-span-4">
-          <p className="eyebrow mb-5">Trajectory</p>
-          <h2 className="display text-3xl md:text-5xl">
-            From scripts to{" "}
-            <span className="serif text-[1.04em]">systems.</span>
-          </h2>
-        </div>
-        <div className="md:col-span-8">
-          <ol className="relative border-l border-line pl-8 space-y-8">
-            {milestones.map((m) => (
-              <li key={m.period} className="relative">
-                <span className="absolute -left-[37px] top-1 w-3 h-3 rounded-full bg-foreground" />
-                <p className="text-sm tabular-nums text-muted">{m.period}</p>
-                <p className="mt-2 text-foreground/85 leading-relaxed">
-                  {m.body}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="max-w-6xl mx-auto px-6 sm:px-8 pb-24">
-        <div className="rounded-3xl border border-line bg-paper p-10 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
-          <div>
-            <p className="eyebrow mb-5">Let&apos;s talk</p>
-            <h2 className="display text-3xl md:text-5xl max-w-2xl">
-              Currently taking on{" "}
-              <span className="serif text-[1.04em]">a few projects.</span>
+      <section className="hero-dark relative overflow-hidden border-b border-white/5">
+        <div className="orb orb-violet" aria-hidden="true" />
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10 relative">
+          <div className="md:col-span-4">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
+              Trajectory
+            </p>
+            <h2 className="display text-3xl md:text-5xl text-white">
+              From scripts to{" "}
+              <span className="serif text-[1.04em] iridescent">systems.</span>
             </h2>
           </div>
-          <Link href="/contact" className="btn-primary">
-            Start a project
-            <IconArrow width={16} height={16} />
-          </Link>
+          <div className="md:col-span-8">
+            <ol className="relative border-l border-white/15 pl-8 space-y-8">
+              {milestones.map((m) => (
+                <li key={m.period} className="relative">
+                  <span className="absolute -left-[37px] top-1.5 w-3 h-3 rounded-full bg-gradient-to-br from-violet-400 to-pink-400 shadow-[0_0_14px_rgba(168,130,255,0.6)]" />
+                  <p className="font-mono text-sm tabular-nums text-white/55">{m.period}</p>
+                  <p className="mt-2 text-white/85 leading-relaxed">{m.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section className="hero-dark relative overflow-hidden">
+        <div className="orb orb-pink" aria-hidden="true" />
+        <div className="orb orb-cyan" aria-hidden="true" />
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 py-24 relative">
+          <div className="relative rounded-3xl overflow-hidden p-10 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-6 border border-white/10 bg-white/[0.03] backdrop-blur-md">
+            <div className="absolute inset-0 pointer-events-none opacity-60" aria-hidden="true">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(800px circle at 30% 20%, rgba(139,92,246,0.35), transparent 60%), radial-gradient(700px circle at 80% 80%, rgba(236,72,153,0.30), transparent 60%)",
+                }}
+              />
+            </div>
+            <div className="relative">
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
+                Let&apos;s talk
+              </p>
+              <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
+                Currently taking on{" "}
+                <span className="serif text-[1.04em] iridescent">a few projects.</span>
+              </h2>
+            </div>
+            <Link href="/contact" className="btn-primary shimmer relative z-10 bg-white text-foreground border-white">
+              Start a project
+              <IconArrow width={16} height={16} />
+            </Link>
+          </div>
         </div>
       </section>
     </>

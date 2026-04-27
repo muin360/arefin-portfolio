@@ -66,20 +66,20 @@ export default function ContactForm() {
   };
 
   const inputCls =
-    "mt-2 w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm focus:outline-none focus:border-foreground transition-colors";
+    "mt-2 w-full rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-white/30 px-4 py-3 text-sm focus:outline-none focus:border-violet-400/60 focus:bg-white/[0.06] transition-colors";
 
   return (
     <form
       onSubmit={onSubmit}
       noValidate
       autoComplete="off"
-      className="border border-line bg-surface rounded-2xl p-7 md:p-9 space-y-5"
+      className="space-y-5"
     >
-      <p className="eyebrow">Message form</p>
+      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55">Message form</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <label htmlFor="name" className="text-sm text-muted">
+          <label htmlFor="name" className="text-sm text-white/65">
             Name
           </label>
           <input
@@ -93,7 +93,7 @@ export default function ContactForm() {
           />
         </div>
         <div>
-          <label htmlFor="email" className="text-sm text-muted">
+          <label htmlFor="email" className="text-sm text-white/65">
             Email
           </label>
           <input
@@ -110,7 +110,7 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="subject" className="text-sm text-muted">
+        <label htmlFor="subject" className="text-sm text-white/65">
           Topic
         </label>
         <select
@@ -119,16 +119,16 @@ export default function ContactForm() {
           onChange={(e) =>
             setSubject(e.target.value as (typeof TOPICS)[number])
           }
-          className={inputCls + " bg-surface"}
+          className={inputCls}
         >
           {TOPICS.map((t) => (
-            <option key={t}>{t}</option>
+            <option key={t} className="bg-[#0c0c14] text-white">{t}</option>
           ))}
         </select>
       </div>
 
       <div>
-        <label htmlFor="message" className="text-sm text-muted">
+        <label htmlFor="message" className="text-sm text-white/65">
           The brief
         </label>
         <textarea
@@ -141,7 +141,7 @@ export default function ContactForm() {
           placeholder="What are you trying to automate or build?"
           className={inputCls + " resize-y"}
         />
-        <p className="mt-1.5 text-[11px] text-muted">
+        <p className="mt-1.5 text-[11px] text-white/40 font-mono">
           {message.length}/{MAX_MESSAGE}
         </p>
       </div>
@@ -149,24 +149,24 @@ export default function ContactForm() {
       {error && (
         <p
           role="alert"
-          className="text-sm text-foreground border border-line rounded-xl p-3 bg-paper"
+          className="text-sm text-white border border-pink-400/40 rounded-xl p-3 bg-pink-500/10"
         >
           {error}
         </p>
       )}
 
-      <button type="submit" className="btn-primary w-full justify-center">
+      <button type="submit" className="btn-primary shimmer w-full justify-center">
         Send message
         <IconArrow width={16} height={16} />
       </button>
 
-      <p className="text-xs text-muted text-center">
+      <p className="text-xs text-white/45 text-center">
         This opens your email client with the message pre-filled. Nothing is
         sent through any server, no data is stored.
       </p>
 
       {sent && !error && (
-        <p className="text-sm text-foreground text-center">
+        <p className="text-sm text-white/85 text-center">
           Opening your email app… if nothing happens, write to{" "}
           <ObfuscatedEmail />.
         </p>

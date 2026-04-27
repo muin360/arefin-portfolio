@@ -4,12 +4,53 @@ import { PageHeader } from "@/components/Section";
 import { IconCheck } from "@/components/icons";
 import SkillsConstellation from "@/components/SkillsConstellation";
 import Reveal from "@/components/Reveal";
+import Marquee from "@/components/Marquee";
 
 export const metadata: Metadata = {
   title: "Stack — Arefin Muin",
   description:
     "The platforms, languages and AI tooling Arefin Muin uses to build production automations and agents.",
 };
+
+const skillsRow1 = [
+  "n8n", "Zapier", "Make", "GoHighLevel", "Airtable", "Notion", "Slack",
+  "Twilio", "HubSpot", "Postmark", "Webhooks", "Apify",
+];
+const skillsRow2 = [
+  "OpenAI", "Anthropic Claude", "LangChain", "LangFlow", "Pinecone",
+  "Supabase Vector", "OpenRouter", "Groq", "LlamaIndex", "Haystack", "Cohere",
+];
+const skillsRow3 = [
+  "Python", "TypeScript", "Node.js", "Next.js", "FastAPI", "Postgres",
+  "Redis", "Docker", "Vercel", "Cloudflare", "GitHub Actions", "Playwright",
+];
+
+function SkillPill({
+  label,
+  variant,
+}: {
+  label: string;
+  variant: "violet" | "pink" | "cyan";
+}) {
+  const tint = {
+    violet: "border-violet-400/30 text-violet-100 bg-violet-500/[0.06]",
+    pink: "border-pink-400/30 text-pink-100 bg-pink-500/[0.06]",
+    cyan: "border-cyan-400/30 text-cyan-100 bg-cyan-500/[0.06]",
+  }[variant];
+  const dot = {
+    violet: "bg-violet-300",
+    pink: "bg-pink-300",
+    cyan: "bg-cyan-300",
+  }[variant];
+  return (
+    <span
+      className={`mx-3 inline-flex items-center gap-3 rounded-full border ${tint} px-5 py-2.5 backdrop-blur-md`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full ${dot} shadow-[0_0_8px_currentColor]`} />
+      <span className="font-medium tracking-tight whitespace-nowrap">{label}</span>
+    </span>
+  );
+}
 
 const focusAreas = [
   {
@@ -46,7 +87,31 @@ export default function SkillsPage() {
         subtitle="A focused, opinionated stack — chosen because each piece earns its place in production."
       />
 
-      <section className="max-w-6xl mx-auto px-6 sm:px-8 pt-12 md:pt-16 pb-6">
+      {/* Auto-running marquee strip — like sponsor logos, never stops */}
+      <section className="hero-dark relative overflow-hidden border-y border-white/5">
+        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
+        <div className="aurora opacity-50" aria-hidden="true" />
+
+        <div className="relative py-10 md:py-14 space-y-6">
+          <Marquee duration={40}>
+            {skillsRow1.map((t) => (
+              <SkillPill key={t} label={t} variant="violet" />
+            ))}
+          </Marquee>
+          <Marquee duration={50} reverse>
+            {skillsRow2.map((t) => (
+              <SkillPill key={t} label={t} variant="pink" />
+            ))}
+          </Marquee>
+          <Marquee duration={36}>
+            {skillsRow3.map((t) => (
+              <SkillPill key={t} label={t} variant="cyan" />
+            ))}
+          </Marquee>
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 sm:px-8 pt-16 pb-6">
         <Reveal>
           <p className="eyebrow mb-5">[ A ] Tools, ranked by use</p>
         </Reveal>

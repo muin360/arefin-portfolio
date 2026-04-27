@@ -2,12 +2,19 @@ import Link from "next/link";
 import { services, projects } from "@/data/site";
 import { posts } from "@/data/posts";
 import { IconArrow } from "@/components/icons";
-import AgentNetwork from "@/components/AgentNetwork";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
 import NowWidget from "@/components/NowWidget";
 import CursorSpotlight from "@/components/CursorSpotlight";
-import Counter from "@/components/Counter";
+import ParticleNetwork from "@/components/ParticleNetwork";
+import ScrambleText from "@/components/ScrambleText";
+import LiveAgentDashboard from "@/components/LiveAgentDashboard";
+import MagneticButton from "@/components/MagneticButton";
+import DigitRoll from "@/components/DigitRoll";
+import BentoCard from "@/components/BentoCard";
+import LiveTicker from "@/components/LiveTicker";
+import LiveClock from "@/components/LiveClock";
+import TiltCard from "@/components/TiltCard";
 
 const tools = [
   "n8n",
@@ -56,23 +63,39 @@ const principles = [
 export default function HomePage() {
   return (
     <>
-      {/* HERO */}
-      <section className="relative bg-paper border-b border-line overflow-hidden">
-        <div className="absolute inset-0 bg-grid pointer-events-none" aria-hidden="true" />
-        <div className="noise" aria-hidden="true" />
+      {/* HERO — dark luxe with particles, aurora, agent dashboard */}
+      <section className="hero-dark relative overflow-hidden">
+        {/* Background layers */}
+        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
+        <div className="starfield" aria-hidden="true" />
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <ParticleNetwork density={70} linkDistance={150} />
+        </div>
+        <div className="aurora" aria-hidden="true" />
+        <div className="orb orb-violet" aria-hidden="true" />
+        <div className="orb orb-pink" aria-hidden="true" />
+        <div className="orb orb-cyan" aria-hidden="true" />
         <CursorSpotlight />
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-20 pb-16 md:pt-32 md:pb-20 relative">
-          {/* Top meta strip */}
+        {/* Top live ticker */}
+        <div className="relative"><LiveTicker /></div>
+
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-24 pb-20 md:pt-36 md:pb-28 relative">
+          {/* Top status bar — terminal-style */}
           <div className="flex flex-wrap items-center gap-3 mb-12 md:mb-16 text-xs">
             <span className="chip chip-live">
               <span className="live-dot" /> Available · April 2025
             </span>
-            <span className="mono uppercase tracking-[0.16em] text-muted">
-              [ Portfolio · v 2.0 ]
+            <span className="tag-pill">
+              <ScrambleText text="PORTFOLIO · V 2.0" speed={28} />
             </span>
-            <span className="ml-auto mono uppercase tracking-[0.16em] text-muted hidden md:inline">
-              Remote · GMT+6
+            <span className="tag-pill hidden md:inline-flex">
+              <ScrambleText text="STATUS · SHIPPING" speed={28} delay={150} />
+            </span>
+            <span className="ml-auto tag-pill hidden md:inline-flex items-center gap-2">
+              <LiveClock />
+              <span className="text-white/40">·</span>
+              <span>GMT+6</span>
             </span>
           </div>
 
@@ -91,7 +114,7 @@ export default function HomePage() {
                   <span className="serif">quiet, intelligent</span>
                   <br />
                   systems that{" "}
-                  <span className="text-accent draw-underline">work</span>
+                  <span className="iridescent draw-underline">work</span>
                   <br />
                   while you sleep.
                 </h1>
@@ -107,53 +130,46 @@ export default function HomePage() {
 
               <Reveal delay={220}>
                 <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <Link href="/contact" className="btn-primary">
+                  <MagneticButton href="/contact" className="btn-primary shimmer">
                     Start a project
                     <IconArrow width={16} height={16} />
-                  </Link>
+                  </MagneticButton>
                   <Link href="/projects" className="btn-secondary">
                     View selected work
                   </Link>
                 </div>
               </Reveal>
+
+              {/* System status strip — feels like a terminal heartbeat */}
+              <Reveal delay={280}>
+                <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
+                  <SystemTile label="agents online" value="04" />
+                  <SystemTile label="workflows live" value="27" />
+                  <SystemTile label="events / 24h" value="14.2k" />
+                  <SystemTile label="uptime / 30d" value="99.97%" />
+                </div>
+              </Reveal>
             </div>
 
-            {/* Animated agent network */}
+            {/* Live agent dashboard — the centerpiece */}
             <div className="lg:col-span-5 relative">
               <Reveal delay={300}>
-                <div className="relative rounded-3xl border border-line bg-surface/70 backdrop-blur-sm p-5 md:p-7">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="mono text-[10px] uppercase tracking-[0.18em] text-muted">
-                      Live · agent.flow
-                    </span>
-                    <span className="flex gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-foreground/15" />
-                      <span className="w-2 h-2 rounded-full bg-foreground/15" />
-                      <span className="w-2 h-2 rounded-full bg-foreground/15" />
-                    </span>
-                  </div>
-                  <AgentNetwork />
-                  <div className="mt-2 grid grid-cols-3 gap-2 text-[10px] mono text-muted">
-                    <span>← inputs</span>
-                    <span className="text-center">orchestration</span>
-                    <span className="text-right">action →</span>
-                  </div>
-                </div>
+                <LiveAgentDashboard />
               </Reveal>
             </div>
           </div>
 
-          {/* Marquee of tools */}
+          {/* Marquee of tools — dark variant */}
           <Reveal delay={120} className="mt-16 md:mt-24">
-            <div className="border-y border-line py-5">
+            <div className="border-y border-white/10 py-5">
               <Marquee duration={40}>
                 {tools.map((t) => (
                   <span
                     key={t}
-                    className="flex items-center gap-3 px-6 text-foreground/85"
+                    className="flex items-center gap-3 px-6 text-white/80"
                   >
                     <span className="text-base">{t}</span>
-                    <span className="w-1 h-1 rounded-full bg-foreground/30" />
+                    <span className="w-1 h-1 rounded-full bg-white/30" />
                   </span>
                 ))}
               </Marquee>
@@ -162,8 +178,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CAPABILITIES — asymmetric grid */}
-      <section className="border-b border-line">
+      {/* CAPABILITIES — bento grid (dark luxe) */}
+      <section className="hero-dark border-b border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 section">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14 md:mb-20">
@@ -186,7 +202,7 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-px bg-line border border-line rounded-3xl overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             {services.map(({ Icon, title, description }, i) => {
               // 6 cards in 3 asymmetric rows: 4+2 / 2+4 / 3+3
               const spans = [
@@ -199,35 +215,31 @@ export default function HomePage() {
               ];
               const span = spans[i] || "md:col-span-2";
               return (
-                <Reveal
-                  key={title}
-                  delay={i * 60}
-                  className={`bg-surface ${span}`}
-                >
-                  <div className="p-7 md:p-9 h-full flex flex-col group">
-                    <div className="flex items-start justify-between">
-                      <Icon
-                        width={28}
-                        height={28}
-                        className="text-foreground transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <span className="mono text-xs text-muted">
-                        / {String(i + 1).padStart(2, "0")}
+                <Reveal key={title} delay={i * 60} className={span}>
+                  <BentoCard className="h-full">
+                    <div className="h-full flex flex-col group">
+                      <div className="flex items-start justify-between">
+                        <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 transition-all duration-500 group-hover:scale-110 group-hover:border-white/30">
+                          <Icon width={22} height={22} className="text-white" />
+                        </span>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
+                          / {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <h3 className="mt-7 text-xl md:text-2xl font-medium tracking-tight text-white">
+                        {title}
+                      </h3>
+                      <p className="mt-3 text-sm md:text-[0.95rem] text-white/60 leading-relaxed flex-1">
+                        {description}
+                      </p>
+                      <span className="mt-6 inline-flex items-center gap-2 text-xs text-white/55">
+                        <span className="w-6 h-px bg-white/30 transition-all duration-300 group-hover:w-10 group-hover:bg-white/80" />
+                        <span className="font-mono uppercase tracking-[0.14em]">
+                          Read more
+                        </span>
                       </span>
                     </div>
-                    <h3 className="mt-8 text-xl md:text-2xl font-medium tracking-tight">
-                      {title}
-                    </h3>
-                    <p className="mt-3 text-sm md:text-[0.95rem] text-muted leading-relaxed flex-1">
-                      {description}
-                    </p>
-                    <span className="mt-6 inline-flex items-center gap-2 text-xs text-muted">
-                      <span className="w-6 h-px bg-foreground/40 transition-all duration-300 group-hover:w-10 group-hover:bg-foreground" />
-                      <span className="mono uppercase tracking-[0.14em]">
-                        Read more
-                      </span>
-                    </span>
-                  </div>
+                  </BentoCard>
                 </Reveal>
               );
             })}
@@ -315,9 +327,10 @@ export default function HomePage() {
                   delay={i * 80}
                   className={`group ${span}`}
                 >
+                  <TiltCard className="h-full rounded-3xl">
                   <Link
                     href="/projects"
-                    className="block h-full rounded-3xl border border-line bg-surface p-8 md:p-10 transition-all duration-300 hover:border-foreground/30 hover:-translate-y-1 hover:shadow-[0_20px_60px_-30px_rgba(10,10,20,0.25)]"
+                    className="block h-full rounded-3xl border border-line bg-surface p-8 md:p-10 transition-all duration-300 hover:border-foreground/30 hover:shadow-[0_20px_60px_-30px_rgba(10,10,20,0.25)]"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <Icon
@@ -349,6 +362,7 @@ export default function HomePage() {
                       ))}
                     </div>
                   </Link>
+                  </TiltCard>
                 </Reveal>
               );
             })}
@@ -375,7 +389,7 @@ export default function HomePage() {
               <div className="mt-10 grid grid-cols-3 gap-6">
                 <div>
                   <p className="display text-4xl">
-                    <Counter to={4} suffix="" />
+                    <DigitRoll to={4} />
                   </p>
                   <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
                     Years shipping
@@ -385,7 +399,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <p className="display text-4xl">
-                    <Counter to={10} suffix="+" />
+                    <DigitRoll to={10} suffix="+" />
                   </p>
                   <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
                     Tools &amp; APIs
@@ -395,7 +409,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <p className="display text-4xl">
-                    <Counter to={24} suffix="h" />
+                    <DigitRoll to={24} suffix="h" />
                   </p>
                   <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
                     Reply
@@ -475,5 +489,18 @@ export default function HomePage() {
         </div>
       </section>
     </>
+  );
+}
+
+function SystemTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-md px-3 py-3 flex flex-col gap-1">
+      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/45">
+        {label}
+      </span>
+      <span className="font-mono text-base text-white/95 tabular-nums">
+        {value}
+      </span>
+    </div>
   );
 }

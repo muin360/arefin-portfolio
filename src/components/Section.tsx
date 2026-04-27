@@ -1,5 +1,8 @@
 import { ReactNode } from "react";
 import Reveal from "./Reveal";
+import DarkHero from "./DarkHero";
+import LiveClock from "./LiveClock";
+import LiveTicker from "./LiveTicker";
 
 export function PageHeader({
   eyebrow,
@@ -15,37 +18,41 @@ export function PageHeader({
   index?: string;
 }) {
   return (
-    <section className="relative bg-paper border-b border-line overflow-hidden">
-      <div className="absolute inset-0 bg-grid pointer-events-none" aria-hidden="true" />
-      <div className="noise" aria-hidden="true" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-20 pb-16 md:pt-32 md:pb-24 relative">
-        <div className="flex items-center justify-between mb-10 md:mb-14">
+    <DarkHero density={45}>
+      <LiveTicker />
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-20 pb-20 md:pt-28 md:pb-24 relative">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-10 md:mb-14">
           {eyebrow && (
-            <p className="eyebrow">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/60">
               {index ? `[ ${index} ] ` : ""}
               {eyebrow}
             </p>
           )}
-          {meta && (
-            <span className="mono uppercase tracking-[0.16em] text-muted text-xs hidden md:inline">
-              {meta}
+          <div className="flex items-center gap-3 text-xs">
+            {meta && (
+              <span className="tag-pill hidden md:inline-flex">{meta}</span>
+            )}
+            <span className="tag-pill inline-flex items-center gap-2">
+              <LiveClock />
+              <span className="text-white/40">·</span>
+              <span>GMT+6</span>
             </span>
-          )}
+          </div>
         </div>
         <Reveal>
-          <h1 className="display text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] max-w-5xl">
+          <h1 className="display text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] max-w-5xl text-white">
             {title}
           </h1>
         </Reveal>
         {subtitle && (
           <Reveal delay={120}>
-            <p className="mt-8 text-lg md:text-xl text-muted max-w-2xl leading-relaxed">
+            <p className="mt-8 text-lg md:text-xl text-white/65 max-w-2xl leading-relaxed">
               {subtitle}
             </p>
           </Reveal>
         )}
       </div>
-    </section>
+    </DarkHero>
   );
 }
 
