@@ -61,7 +61,7 @@ export default function ProjectsPage() {
                 <p className="mt-3 chip">{category}</p>
               </div>
               <div className="md:col-span-9">
-                <h2 className="display text-2xl md:text-4xl tracking-tight">
+                <h2 className="display text-2xl md:text-4xl tracking-tight line-draw inline-block pb-1">
                   {title}
                 </h2>
                 <p className="mt-4 text-foreground/85 max-w-2xl leading-relaxed">

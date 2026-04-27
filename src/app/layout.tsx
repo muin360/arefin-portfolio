@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ScrollToTop";
+import CursorRing from "@/components/CursorRing";
+import PageLoader from "@/components/PageLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -107,6 +109,8 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+        <PageLoader />
+        <CursorRing />
         <Navbar />
         <main id="main" className="flex-1">{children}</main>
         <Footer />

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { skills } from "@/data/site";
 import { PageHeader } from "@/components/Section";
 import { IconCheck } from "@/components/icons";
+import SkillsConstellation from "@/components/SkillsConstellation";
+import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Stack — Arefin Muin",
@@ -44,10 +46,22 @@ export default function SkillsPage() {
         subtitle="A focused, opinionated stack — chosen because each piece earns its place in production."
       />
 
-      <section className="max-w-6xl mx-auto px-6 sm:px-8 section">
+      <section className="max-w-6xl mx-auto px-6 sm:px-8 pt-12 md:pt-16 pb-6">
+        <Reveal>
+          <p className="eyebrow mb-5">[ A ] Tools, ranked by use</p>
+        </Reveal>
+        <Reveal delay={100}>
+          <SkillsConstellation />
+        </Reveal>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 sm:px-8 section pt-16">
+        <Reveal>
+          <p className="eyebrow mb-5">[ B ] Stack, by category</p>
+        </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line rounded-2xl overflow-hidden">
-          {skills.map(({ Icon, category, items }) => (
-            <div key={category} className="bg-surface p-8 md:p-10">
+          {skills.map(({ Icon, category, items }, i) => (
+            <Reveal key={category} delay={i * 80} className="bg-surface p-8 md:p-10">
               <div className="flex items-center gap-3">
                 <Icon width={22} height={22} className="text-foreground" />
                 <p className="text-xs uppercase tracking-[0.14em] text-muted">
@@ -65,7 +79,7 @@ export default function SkillsPage() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>

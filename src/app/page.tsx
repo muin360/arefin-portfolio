@@ -7,6 +7,7 @@ import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
 import NowWidget from "@/components/NowWidget";
 import CursorSpotlight from "@/components/CursorSpotlight";
+import Counter from "@/components/Counter";
 
 const tools = [
   "n8n",
@@ -90,7 +91,7 @@ export default function HomePage() {
                   <span className="serif">quiet, intelligent</span>
                   <br />
                   systems that{" "}
-                  <span className="text-accent">work</span>
+                  <span className="text-accent draw-underline">work</span>
                   <br />
                   while you sleep.
                 </h1>
@@ -373,7 +374,9 @@ export default function HomePage() {
               </p>
               <div className="mt-10 grid grid-cols-3 gap-6">
                 <div>
-                  <p className="display text-4xl">04</p>
+                  <p className="display text-4xl">
+                    <Counter to={4} suffix="" />
+                  </p>
                   <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
                     Years shipping
                     <br />
@@ -381,7 +384,9 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div>
-                  <p className="display text-4xl">10+</p>
+                  <p className="display text-4xl">
+                    <Counter to={10} suffix="+" />
+                  </p>
                   <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
                     Tools &amp; APIs
                     <br />
@@ -389,7 +394,9 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div>
-                  <p className="display text-4xl">24h</p>
+                  <p className="display text-4xl">
+                    <Counter to={24} suffix="h" />
+                  </p>
                   <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
                     Reply
                     <br />
