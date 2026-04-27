@@ -439,3 +439,48 @@ html {
   outline-offset: 3px;
   border-radius: 4px;
 }
+
+/* Print-friendly stylesheet — clean, no animations, no decorations */
+@media print {
+  header,
+  footer,
+  nav,
+  .noise,
+  .bg-grid,
+  button[aria-label="Scroll to top"] {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .text-accent,
+  .email-cta {
+    -webkit-text-fill-color: #000 !important;
+    color: #000 !important;
+    background: none !important;
+  }
+}
+
+/* Subtle hover lift for cards (refined) */
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Ensure tap targets ≥ 44px on touch devices for nav and footer links */
+@media (hover: none) and (pointer: coarse) {
+  nav a,
+  footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}

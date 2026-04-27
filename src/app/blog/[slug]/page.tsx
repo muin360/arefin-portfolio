@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { posts, getPostBySlug } from "@/data/posts";
 import { IconArrow } from "@/components/icons";
+import ReadingProgress from "@/components/ReadingProgress";
 
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
@@ -101,10 +102,11 @@ export default async function BlogPostPage({
 
   return (
     <>
+      <ReadingProgress />
       <section className="bg-paper border-b border-line">
         <div className="max-w-3xl mx-auto px-6 sm:px-8 pt-20 pb-14 md:pt-28 md:pb-20">
           <Link
-            href="/blog.html"
+            href="/blog"
             className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground"
           >
             ← All entries
@@ -139,7 +141,7 @@ export default async function BlogPostPage({
               {others.map((p) => (
                 <Link
                   key={p.slug}
-                  href={`/blog/${p.slug}.html`}
+                  href={`/blog/${p.slug}`}
                   className="bg-surface p-8 group flex flex-col"
                 >
                   <span className="chip self-start">{p.category}</span>
@@ -166,7 +168,7 @@ export default async function BlogPostPage({
               <span className="serif text-[1.04em]">disappear?</span>
             </h2>
           </div>
-          <Link href="/contact.html" className="btn-primary">
+          <Link href="/contact" className="btn-primary">
             Start a project
             <IconArrow width={16} height={16} />
           </Link>

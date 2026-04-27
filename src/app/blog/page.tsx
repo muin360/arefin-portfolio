@@ -32,7 +32,7 @@ export default function BlogPage() {
           {sorted.map((post, i) => (
             <Reveal key={post.slug} as="li" delay={i * 80}>
               <Link
-                href={`/blog/${post.slug}.html`}
+                href={`/blog/${post.slug}`}
                 className="grid grid-cols-1 md:grid-cols-12 gap-6 py-12 group hover:bg-paper-deep/30 transition-colors"
               >
                 <div className="md:col-span-3 flex flex-col gap-2">

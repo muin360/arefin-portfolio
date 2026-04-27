@@ -30,4 +30,4 @@ Disallow: /
 User-agent: FacebookBot
 Disallow: /
 
-Sitemap: https://out-azhgzofj.devinapps.com/sitemap.xml
+Sitemap: https://project-fr051.vercel.app/sitemap.xml

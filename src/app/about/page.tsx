@@ -150,7 +150,7 @@ export default function AboutPage() {
               <span className="serif text-[1.04em]">a few projects.</span>
             </h2>
           </div>
-          <Link href="/contact.html" className="btn-primary">
+          <Link href="/contact" className="btn-primary">
             Start a project
             <IconArrow width={16} height={16} />
           </Link>

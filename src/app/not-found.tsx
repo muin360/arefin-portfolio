@@ -30,10 +30,10 @@ export default function NotFound() {
           <Link href="/" className="btn-primary">
             Back to home
           </Link>
-          <Link href="/projects.html" className="btn-secondary">
+          <Link href="/projects" className="btn-secondary">
             Selected work
           </Link>
-          <Link href="/contact.html" className="btn-secondary">
+          <Link href="/contact" className="btn-secondary">
             Contact
           </Link>
         </div>

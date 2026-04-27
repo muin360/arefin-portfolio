@@ -76,11 +76,7 @@ export function SectionHeader({
       </div>
       {link && (
         <a
-          href={
-            link.href === "/" || /\.[a-z]+$/i.test(link.href)
-              ? link.href
-              : `${link.href}.html`
-          }
+          href={link.href}
           className={`text-sm hover-arrow ${
             invert ? "text-white/80" : "text-muted hover:text-foreground"
           }`}

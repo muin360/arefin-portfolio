@@ -123,7 +123,7 @@ Vercel will issue an HTTPS certificate automatically once DNS resolves. The doma
 Some files have the old preview URL hard-coded. After your domain works, edit and re-push:
 
 - `src/app/layout.tsx` — change `const SITE_URL = "..."` near the top to your domain (this fixes the OG image and Twitter card URLs)
-- `public/sitemap.xml` — replace `out-azhgzofj.devinapps.com` with `arefinmuin.com`
+- `public/sitemap.xml` — replace `project-fr051.vercel.app` with `arefinmuin.com`
 - `public/.well-known/security.txt` — same
 - `public/robots.txt` — same
 

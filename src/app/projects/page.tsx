@@ -94,7 +94,7 @@ export default function ProjectsPage() {
                 <span className="serif">these?</span>
               </h2>
             </div>
-            <Link href="/contact.html" className="btn-primary">
+            <Link href="/contact" className="btn-primary">
               Start a project
               <IconArrow width={16} height={16} />
             </Link>

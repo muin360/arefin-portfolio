@@ -146,7 +146,7 @@ export default function ServicesPage() {
             </h2>
           </div>
           <Link
-            href="/contact.html"
+            href="/contact"
             className="btn-primary bg-white text-foreground border-white hover:bg-accent-1 hover:text-white hover:border-accent-1"
           >
             Start a project

@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 
 const links = [
   { href: "/", label: "Home", num: "01" },
-  { href: "/about.html", label: "About", num: "02" },
-  { href: "/services.html", label: "Services", num: "03" },
-  { href: "/skills.html", label: "Stack", num: "04" },
-  { href: "/projects.html", label: "Work", num: "05" },
-  { href: "/blog.html", label: "Journal", num: "06" },
-  { href: "/contact.html", label: "Contact", num: "07" },
+  { href: "/about", label: "About", num: "02" },
+  { href: "/services", label: "Services", num: "03" },
+  { href: "/skills", label: "Stack", num: "04" },
+  { href: "/projects", label: "Work", num: "05" },
+  { href: "/blog", label: "Journal", num: "06" },
+  { href: "/contact", label: "Contact", num: "07" },
 ];
 
 export default function Navbar() {
@@ -87,7 +87,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/contact.html"
+            href="/contact"
             className="btn-primary text-sm ml-4"
           >
             <span className="live-dot" aria-hidden="true" />

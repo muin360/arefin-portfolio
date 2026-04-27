@@ -6,6 +6,7 @@ import AgentNetwork from "@/components/AgentNetwork";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
 import NowWidget from "@/components/NowWidget";
+import CursorSpotlight from "@/components/CursorSpotlight";
 
 const tools = [
   "n8n",
@@ -58,6 +59,7 @@ export default function HomePage() {
       <section className="relative bg-paper border-b border-line overflow-hidden">
         <div className="absolute inset-0 bg-grid pointer-events-none" aria-hidden="true" />
         <div className="noise" aria-hidden="true" />
+        <CursorSpotlight />
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-20 pb-16 md:pt-32 md:pb-20 relative">
           {/* Top meta strip */}
@@ -104,11 +106,11 @@ export default function HomePage() {
 
               <Reveal delay={220}>
                 <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <Link href="/contact.html" className="btn-primary">
+                  <Link href="/contact" className="btn-primary">
                     Start a project
                     <IconArrow width={16} height={16} />
                   </Link>
-                  <Link href="/projects.html" className="btn-secondary">
+                  <Link href="/projects" className="btn-secondary">
                     View selected work
                   </Link>
                 </div>
@@ -174,7 +176,7 @@ export default function HomePage() {
                 </h2>
               </div>
               <Link
-                href="/services.html"
+                href="/services"
                 className="hover-arrow text-sm text-muted hover:text-foreground self-start md:self-end"
               >
                 <span className="link-underline">All capabilities</span>
@@ -286,7 +288,7 @@ export default function HomePage() {
                 </h2>
               </div>
               <Link
-                href="/projects.html"
+                href="/projects"
                 className="hover-arrow text-sm text-muted hover:text-foreground"
               >
                 <span className="link-underline">View all 06</span>
@@ -313,7 +315,7 @@ export default function HomePage() {
                   className={`group ${span}`}
                 >
                   <Link
-                    href="/projects.html"
+                    href="/projects"
                     className="block h-full rounded-3xl border border-line bg-surface p-8 md:p-10 transition-all duration-300 hover:border-foreground/30 hover:-translate-y-1 hover:shadow-[0_20px_60px_-30px_rgba(10,10,20,0.25)]"
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -419,7 +421,7 @@ export default function HomePage() {
                 </h2>
               </div>
               <Link
-                href="/blog.html"
+                href="/blog"
                 className="hover-arrow text-sm text-muted hover:text-foreground"
               >
                 <span className="link-underline">All entries</span>
@@ -431,7 +433,7 @@ export default function HomePage() {
             {posts.slice(0, 3).map((p, i) => (
               <Reveal key={p.slug} delay={i * 80} className="bg-surface">
                 <Link
-                  href={`/blog/${p.slug}.html`}
+                  href={`/blog/${p.slug}`}
                   className="block p-8 md:p-10 group h-full flex flex-col"
                 >
                   <div className="flex items-center justify-between">

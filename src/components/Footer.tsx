@@ -37,32 +37,32 @@ export default function Footer() {
             </p>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link href="/about.html" className="text-white/85 hover:text-white link-underline">
+                <Link href="/about" className="text-white/85 hover:text-white link-underline">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/services.html" className="text-white/85 hover:text-white link-underline">
+                <Link href="/services" className="text-white/85 hover:text-white link-underline">
                   Services
                 </Link>
               </li>
               <li>
-                <Link href="/skills.html" className="text-white/85 hover:text-white link-underline">
+                <Link href="/skills" className="text-white/85 hover:text-white link-underline">
                   Stack
                 </Link>
               </li>
               <li>
-                <Link href="/projects.html" className="text-white/85 hover:text-white link-underline">
+                <Link href="/projects" className="text-white/85 hover:text-white link-underline">
                   Selected work
                 </Link>
               </li>
               <li>
-                <Link href="/blog.html" className="text-white/85 hover:text-white link-underline">
+                <Link href="/blog" className="text-white/85 hover:text-white link-underline">
                   Journal
                 </Link>
               </li>
               <li>
-                <Link href="/privacy.html" className="text-white/85 hover:text-white link-underline">
+                <Link href="/privacy" className="text-white/85 hover:text-white link-underline">
                   Privacy &amp; Security
                 </Link>
               </li>

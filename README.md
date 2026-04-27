@@ -4,7 +4,7 @@ Editorial, hand-coded portfolio for an AI Automation & Agent Engineer. Static-ex
 
 ## Live
 
-https://out-azhgzofj.devinapps.com
+https://project-fr051.vercel.app
 
 ## Run locally
 
