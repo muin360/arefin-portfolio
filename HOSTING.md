@@ -118,16 +118,46 @@ Pick something like `arefinmuin.com`. Cost: ~$8–12/year for `.com`.
 
 Vercel will issue an HTTPS certificate automatically once DNS resolves. The domain badge in the Vercel dashboard turns green when ready.
 
-### 3.3 Update site URLs
+### 3.3 Update site URLs (one env var, no code edits)
 
-Some files have the old preview URL hard-coded. After your domain works, edit and re-push:
+The canonical URL is now read from a single env var, so you only set it in **one** place after switching domains.
 
-- `src/app/layout.tsx` — change `const SITE_URL = "..."` near the top to your domain (this fixes the OG image and Twitter card URLs)
-- `public/sitemap.xml` — replace `project-fr051.vercel.app` with `arefinmuin.com`
-- `public/.well-known/security.txt` — same
-- `public/robots.txt` — same
+1. In Vercel: **Project → Settings → Environment Variables → Add**
+2. Name: `NEXT_PUBLIC_SITE_URL`
+3. Value: `https://arefinmuin.com` (or whatever you bought — no trailing slash)
+4. Apply to: **Production** (and Preview, if you want preview URLs to use it too)
+5. Save, then **Deployments → Redeploy** the latest production deploy so the new env var is baked in.
 
-Commit and push — Vercel re-deploys in ~60 seconds.
+That single env var fixes the canonical tag, OG image URL, Twitter card URL, JSON-LD structured data, `sitemap.xml` and `robots.txt` automatically — they all read from `src/lib/site-url.ts`.
+
+The only file that's still hard-coded is `public/.well-known/security.txt` (RFC 9116 requires a literal canonical URL). Edit that one line manually:
+
+```
+Canonical: https://arefinmuin.com/.well-known/security.txt
+```
+
+### 3.4 Verify with Google Search Console (critical for indexing)
+
+A custom domain alone is not enough — you also have to tell Google the site exists.
+
+1. Go to https://search.google.com/search-console and add a new property → **URL prefix** → enter `https://arefinmuin.com`.
+2. Choose **HTML tag** verification. Google will give you a meta tag like:
+   ```html
+   <meta name="google-site-verification" content="aBcDeFgHiJkLmNoP1234567890" />
+   ```
+   Copy the **content value only** (the `aBcDeFgHiJkLmNoP1234567890` part).
+3. In Vercel: add a second environment variable:
+   - Name: `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`
+   - Value: the content string from step 2
+   - Apply to: **Production**
+   - Redeploy.
+4. Back in Search Console, click **Verify**. It should succeed within a few seconds.
+5. **Sitemaps** → submit `https://arefinmuin.com/sitemap.xml`.
+6. **URL Inspection** → paste your homepage URL → click **Request Indexing**. Repeat for `/about`, `/services`, `/projects`, `/blog`, `/contact`.
+
+Also do the same on **Bing Webmaster Tools** at https://www.bing.com/webmasters — Bing also powers DuckDuckGo and ChatGPT search.
+
+Expect **2–4 weeks** before the site shows up in normal searches even after all of the above. New domains always cold-start slowly. Track progress with `site:arefinmuin.com` in Google.
 
 ---
 

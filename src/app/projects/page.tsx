@@ -8,9 +8,16 @@ import BentoCard from "@/components/BentoCard";
 import TiltCard from "@/components/TiltCard";
 
 export const metadata: Metadata = {
-  title: "Selected work — Tensor Studio",
+  title: "Selected Work",
   description:
-    "Selected automation and AI-agent systems built by Tensor Studio for clients and engagements across the US, EU and APAC.",
+    "Selected automation and AI-agent systems built by Tensor Studio for clients and engagements across the US, EU and APAC — lead qualification, booking bots, content pipelines, knowledge bases and outreach systems.",
+  alternates: { canonical: "/projects" },
+  openGraph: {
+    title: "Selected Work — Tensor Studio",
+    description:
+      "Selected automation and AI-agent systems built by Tensor Studio for clients across the US, EU and APAC.",
+    url: "/projects",
+  },
 };
 
 const outcomes: Record<string, string> = {

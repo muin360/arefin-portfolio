@@ -4,7 +4,8 @@ Editorial, hand-coded portfolio for an AI Automation & Agent Engineer. Static-ex
 
 ## Live
 
-https://project-fr051.vercel.app
+https://tensorstudio.vercel.app
+(point a custom domain at the project — see [HOSTING.md](./HOSTING.md))
 
 ## Run locally
 

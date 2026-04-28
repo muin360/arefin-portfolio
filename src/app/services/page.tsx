@@ -7,9 +7,16 @@ import BentoCard from "@/components/BentoCard";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "Services — Tensor · AI Engineering Studio",
+  title: "Services & Pricing",
   description:
-    "Engagement models, services and pricing. AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits — operated by Arefin Muin.",
+    "AI engineering services from Tensor Studio: AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits. Engagement models, scope and pricing — operated by Arefin Muin.",
+  alternates: { canonical: "/services" },
+  openGraph: {
+    title: "Services & Pricing — Tensor Studio",
+    description:
+      "AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits. Engagement models and pricing.",
+    url: "/services",
+  },
 };
 
 const engagements = [

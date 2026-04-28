@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/Section";
 
 export const metadata: Metadata = {
-  title: "Privacy & Security — Tensor Studio",
+  title: "Privacy & Security",
   description:
     "How this site handles (and doesn't handle) your data, and the security measures protecting it.",
+  alternates: { canonical: "/privacy" },
 };
 
 const items = [

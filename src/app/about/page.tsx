@@ -6,9 +6,16 @@ import BentoCard from "@/components/BentoCard";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "About — Tensor Studio",
+  title: "About",
   description:
-    "Tensor Studio is an independent AI engineering studio. Founded and operated by Arefin Muin from Dhaka, building AI agents and automation systems with n8n, Zapier, Make, LangChain, LangFlow and GoHighLevel.",
+    "Tensor Studio is an independent AI engineering studio founded and operated by Arefin Muin from Dhaka, Bangladesh — building AI agents and automation systems with n8n, Zapier, Make, LangChain, LangFlow and GoHighLevel.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About — Tensor Studio",
+    description:
+      "Tensor Studio is an independent AI engineering studio founded and operated by Arefin Muin from Dhaka, Bangladesh.",
+    url: "/about",
+  },
 };
 
 const principles = [

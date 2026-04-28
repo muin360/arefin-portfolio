@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ScrollToTop";
 import CursorRing from "@/components/CursorRing";
 import PageLoader from "@/components/PageLoader";
+import { SITE_URL, GOOGLE_SITE_VERIFICATION } from "@/lib/site-url";
 
 // Body — Inter is the variable, optically tuned, high-legibility workhorse used
 // across Vercel / Stripe / Linear-tier products.
@@ -41,14 +42,15 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-// Update this to your final domain (e.g. https://tensorstudio.com) after deploying.
-const SITE_URL = "https://tensorstudio.vercel.app";
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Tensor Studio — AI Engineering for Modern Companies",
+  title: {
+    default: "Tensor Studio — AI Engineering for Modern Companies",
+    template: "%s — Tensor Studio",
+  },
   description:
     "Tensor Studio is an independent AI engineering studio. We design and ship AI agents, automation workflows and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript — quietly, reliably.",
+  applicationName: "Tensor Studio",
   keywords: [
     "Tensor Studio",
     "AI Engineering Studio",
@@ -69,18 +71,30 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
     nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  alternates: {
+    canonical: "/",
   },
   referrer: "strict-origin-when-cross-origin",
   formatDetection: { email: false, telephone: false, address: false },
-  authors: [{ name: "Tensor Studio" }, { name: "Arefin Muin" }],
+  authors: [{ name: "Tensor Studio", url: SITE_URL }, { name: "Arefin Muin", url: SITE_URL }],
   creator: "Tensor Studio",
   publisher: "Tensor Studio",
   openGraph: {
     type: "website",
+    url: SITE_URL,
     title: "Tensor Studio — AI Engineering",
     description:
       "An independent AI engineering studio building quiet, intelligent systems that work while you sleep.",
     siteName: "Tensor Studio",
+    locale: "en_US",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensor Studio — AI Engineering" }],
   },
   twitter: {
@@ -91,7 +105,65 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   manifest: "/site.webmanifest",
+  ...(GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
+
+// JSON-LD structured data — helps Google understand the site as a Person +
+// Organization + WebSite, which improves knowledge-panel eligibility and
+// rich-result rendering. Inline because the CSP allows 'unsafe-inline' for
+// scripts; nothing here is dynamic per-request.
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Arefin Muin",
+    url: SITE_URL,
+    jobTitle: "AI Automation & Agent Engineer",
+    description:
+      "Independent AI engineer building agents, automations and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript.",
+    image: `${SITE_URL}/og.png`,
+    email: "mailto:arefinmuin@gmail.com",
+    worksFor: {
+      "@type": "Organization",
+      name: "Tensor Studio",
+      url: SITE_URL,
+    },
+    knowsAbout: [
+      "AI Engineering",
+      "AI Agents",
+      "Workflow Automation",
+      "n8n",
+      "Zapier",
+      "Make",
+      "LangChain",
+      "LangFlow",
+      "GoHighLevel",
+      "Large Language Models",
+      "Python",
+      "TypeScript",
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Tensor Studio",
+    alternateName: "Tensor",
+    url: SITE_URL,
+    logo: `${SITE_URL}/tensor-logo-256.png`,
+    description:
+      "An independent AI engineering studio. We design and ship AI agents, automation workflows and LLM-powered systems for modern companies.",
+    founder: { "@type": "Person", name: "Arefin Muin" },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Tensor Studio",
+    url: SITE_URL,
+    inLanguage: "en",
+  },
+];
 
 export const viewport: Viewport = {
   themeColor: "#0a0a14",
@@ -121,6 +193,10 @@ export default function RootLayout({
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="format-detection" content="telephone=no, email=no, address=no" />
         <meta name="color-scheme" content="light" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <a

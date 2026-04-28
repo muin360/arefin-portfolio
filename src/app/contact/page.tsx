@@ -5,7 +5,8 @@ import { IconMail, IconCheck } from "@/components/icons";
 import BentoCard from "@/components/BentoCard";
 
 export const metadata: Metadata = {
-  title: "Contact — Tensor Studio",
+  title: "Contact",
+  alternates: { canonical: "/contact" },
   description:
     "Get in touch with Tensor Studio to discuss AI automation, agents and LLM engineering projects.",
 };

@@ -16,10 +16,25 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-  if (!post) return { title: "Post not found — Tensor Studio" };
+  if (!post) return { title: "Post not found" };
   return {
-    title: `${post.title} — Tensor Studio`,
+    title: post.title,
     description: post.excerpt,
+    alternates: { canonical: `/blog/${post.slug}` },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      url: `/blog/${post.slug}`,
+      publishedTime: post.date,
+      tags: post.tags,
+      authors: ["Arefin Muin"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+    },
   };
 }
 

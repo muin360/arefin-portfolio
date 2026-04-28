@@ -7,9 +7,16 @@ import Reveal from "@/components/Reveal";
 import Marquee from "@/components/Marquee";
 
 export const metadata: Metadata = {
-  title: "Stack — Tensor Studio",
+  title: "Stack & Tools",
   description:
-    "The platforms, languages and AI tooling Tensor Studio uses to build production automations and agents.",
+    "The platforms, languages and AI tooling Tensor Studio uses to build production automations and agents — n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, OpenAI, Claude, Python, TypeScript and more.",
+  alternates: { canonical: "/skills" },
+  openGraph: {
+    title: "Stack & Tools — Tensor Studio",
+    description:
+      "Platforms, languages and AI tooling used to build production automations and agents.",
+    url: "/skills",
+  },
 };
 
 const skillsRow1 = [
