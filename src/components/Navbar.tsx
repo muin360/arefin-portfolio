@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import BrainMark from "@/components/BrainMark";
 
 const links = [
   { href: "/", label: "Home", num: "01" },
@@ -53,15 +54,10 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           onClick={() => setOpen(false)}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/tensor-logo-256.png"
-            alt="Tensor Studio"
-            width={40}
-            height={40}
-            className="w-10 h-10 rounded-xl bg-foreground p-0.5 object-contain transition-transform duration-500 group-hover:scale-105"
-            loading="eager"
-          />
+          <span className="relative w-10 h-10 rounded-xl bg-foreground grid place-items-center overflow-hidden transition-transform duration-500 group-hover:scale-105">
+            <BrainMark size={26} />
+            <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[var(--accent-1)]/0 via-[var(--accent-2)]/0 to-[var(--accent-3)]/0 group-hover:from-[var(--accent-1)]/15 group-hover:via-[var(--accent-2)]/15 group-hover:to-[var(--accent-3)]/15 transition-all duration-500" />
+          </span>
           <div className="leading-tight">
             <div className="font-mono text-[15px] tracking-[0.26em] uppercase text-foreground">
               Tensor<span className="text-foreground/55"> studio</span>
