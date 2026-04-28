@@ -7,9 +7,9 @@ import Reveal from "@/components/Reveal";
 import Marquee from "@/components/Marquee";
 
 export const metadata: Metadata = {
-  title: "Stack — Arefin Muin",
+  title: "Stack — Tensor Studio",
   description:
-    "The platforms, languages and AI tooling Arefin Muin uses to build production automations and agents.",
+    "The platforms, languages and AI tooling Tensor Studio uses to build production automations and agents.",
 };
 
 const skillsRow1 = [

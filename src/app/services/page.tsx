@@ -333,7 +333,7 @@ export default function ServicesPage() {
                 Get started
               </p>
               <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                Tell me what&apos;s on{" "}
+                Tell us what&apos;s on{" "}
                 <span className="serif text-[1.04em] iridescent">your plate.</span>
               </h2>
             </div>

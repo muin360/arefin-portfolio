@@ -8,9 +8,9 @@ import BentoCard from "@/components/BentoCard";
 import TiltCard from "@/components/TiltCard";
 
 export const metadata: Metadata = {
-  title: "Selected work — Arefin Muin",
+  title: "Selected work — Tensor Studio",
   description:
-    "Selected automation and AI-agent systems built by Arefin Muin for clients and personal projects.",
+    "Selected automation and AI-agent systems built by Tensor Studio for clients and engagements across the US, EU and APAC.",
 };
 
 const outcomes: Record<string, string> = {
@@ -37,7 +37,7 @@ export default function ProjectsPage() {
             so the team doesn&apos;t.
           </>
         }
-        subtitle="A selection of automations and AI agents I've put into production. Case studies are anonymized — I'll share specifics on a call."
+        subtitle="A selection of automations and AI agents Tensor Studio has put into production. Case studies are anonymized — we share specifics on a call."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">

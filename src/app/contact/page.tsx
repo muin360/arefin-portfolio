@@ -5,9 +5,9 @@ import { IconMail, IconCheck } from "@/components/icons";
 import BentoCard from "@/components/BentoCard";
 
 export const metadata: Metadata = {
-  title: "Contact — Arefin Muin",
+  title: "Contact — Tensor Studio",
   description:
-    "Get in touch with Arefin Muin to discuss AI automation, agents and LLM engineering projects.",
+    "Get in touch with Tensor Studio to discuss AI automation, agents and LLM engineering projects.",
 };
 
 export default function ContactPage() {
@@ -19,11 +19,11 @@ export default function ContactPage() {
         meta="Replies within 24h · Mon–Sat"
         title={
           <>
-            Tell me about the workflow you&apos;d like to{" "}
+            Tell us about the workflow you&apos;d like to{" "}
             <span className="serif">automate.</span>
           </>
         }
-        subtitle="A short message is enough to get the conversation started. I'll reply within a day, Monday to Saturday."
+        subtitle="A short message is enough to get the conversation started. Tensor Studio replies within a day, Monday to Saturday."
       />
 
       <section className="hero-dark relative overflow-hidden">
@@ -46,7 +46,7 @@ export default function ContactPage() {
                     arefinmuin@gmail.com
                   </a>
                   <p className="mt-4 text-white/65 leading-relaxed">
-                    The fastest way to reach me. Tell me what you&apos;re trying
+                    The fastest way to reach the studio. Tell us what you&apos;re trying
                     to automate and the tools you currently use.
                   </p>
                 </div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "404 — Off the map · Arefin Muin",
+  title: "404 — Off the map · Tensor Studio",
   description: "That page doesn't exist (or it never did).",
 };
 

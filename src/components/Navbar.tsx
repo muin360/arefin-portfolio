@@ -53,22 +53,21 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           onClick={() => setOpen(false)}
         >
-          <span className="relative w-9 h-9 rounded-xl bg-foreground text-background grid place-items-center overflow-hidden">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 5h16M4 5v14M20 5v14M4 19h16M9 5v14M15 5v14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-              <circle cx="9" cy="9" r="1.1" fill="currentColor" />
-              <circle cx="15" cy="15" r="1.1" fill="currentColor" />
-            </svg>
-            <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-[var(--accent-1)] to-[var(--accent-2)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/tensor-logo-256.png"
+            alt="Tensor Studio"
+            width={40}
+            height={40}
+            className="w-10 h-10 rounded-xl bg-foreground p-0.5 object-contain transition-transform duration-500 group-hover:scale-105"
+            loading="eager"
+          />
           <div className="leading-tight">
-            <div className="text-sm font-medium tracking-[-0.01em] text-foreground inline-flex items-baseline gap-2">
-              <span className="font-mono text-[13px] tracking-[0.22em] uppercase">Tensor</span>
-              <span className="text-muted/60">/</span>
-              <span className="text-foreground/85">Arefin Muin</span>
+            <div className="font-mono text-[15px] tracking-[0.26em] uppercase text-foreground">
+              Tensor<span className="text-foreground/55"> studio</span>
             </div>
-            <div className="mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              AI Engineering Studio · Dhaka
+            <div className="mono text-[10px] uppercase tracking-[0.22em] text-muted">
+              Intelligence that connects future
             </div>
           </div>
         </Link>

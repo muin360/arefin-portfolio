@@ -1,12 +1,13 @@
 {
-  "name": "Arefin Muin — AI Automation & Agent Engineer",
-  "short_name": "Arefin Muin",
-  "description": "Engineering quiet, intelligent systems that work while you sleep.",
+  "name": "Tensor Studio — AI Engineering",
+  "short_name": "Tensor Studio",
+  "description": "An independent AI engineering studio. Intelligence that connects future.",
   "start_url": "/",
   "display": "minimal-ui",
-  "background_color": "#f5f2ea",
+  "background_color": "#06060c",
   "theme_color": "#0a0a14",
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    { "src": "/tensor-logo-256.png", "sizes": "256x256", "type": "image/png", "purpose": "any" },
+    { "src": "/tensor-logo.png", "sizes": "1254x1254", "type": "image/png", "purpose": "any maskable" }
   ]
 }

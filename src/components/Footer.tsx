@@ -125,26 +125,40 @@ export default function Footer() {
 
         {/* Studio identity strip */}
         <div className="mt-14 pt-8 border-t border-white/10">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55">
-                The studio
-              </p>
-              <p className="display text-[12vw] md:text-[5vw] leading-[0.9] tracking-[-0.04em] mt-3">
-                <span className="font-mono uppercase tracking-[0.06em]">Tensor</span>
-              </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+            <div className="flex items-center gap-5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/tensor-logo-256.png"
+                alt="Tensor Studio"
+                width={72}
+                height={72}
+                className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                loading="lazy"
+              />
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-2">
+                  The studio
+                </p>
+                <p className="font-mono text-2xl md:text-3xl tracking-[0.18em] uppercase text-white">
+                  Tensor<span className="text-white/55"> Studio</span>
+                </p>
+                <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-white/45">
+                  Intelligence that connects future
+                </p>
+              </div>
             </div>
             <p className="text-sm text-white/55 leading-relaxed max-w-md">
-              Tensor is an independent AI engineering studio building quiet,
-              intelligent systems for ambitious teams. Founded and operated
-              by Arefin Muin from Dhaka, Bangladesh.
+              Tensor Studio is an independent AI engineering studio building
+              quiet, intelligent systems for ambitious teams. Founded and
+              operated by Arefin Muin from Dhaka, Bangladesh.
             </p>
           </div>
         </div>
 
         <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between text-white/50">
           <p className="mono text-[11px] uppercase tracking-[0.16em]">
-            © {year} Tensor · Founded by Arefin Muin · Hand-coded with Next.js + Tailwind
+            © {year} Tensor Studio · Founded by Arefin Muin · Hand-coded with Next.js + Tailwind
           </p>
           <p className="mono text-[11px] uppercase tracking-[0.16em]">
             v 2.0 · Editorial

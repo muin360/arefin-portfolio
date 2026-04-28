@@ -49,7 +49,7 @@ export default function ContactForm() {
     if (!safeName) return setError("Please add your name.");
     if (!isValidEmail(safeEmail)) return setError("Please add a valid email.");
     if (safeMessage.length < 10)
-      return setError("Tell me a bit more — at least a sentence.");
+      return setError("Tell us a bit more — at least a sentence.");
 
     const body = `Hi Arefin,\n\n${safeMessage}\n\n— ${safeName}${
       safeEmail ? ` (${safeEmail})` : ""

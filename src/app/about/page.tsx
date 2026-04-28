@@ -6,15 +6,15 @@ import BentoCard from "@/components/BentoCard";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "About — Arefin Muin",
+  title: "About — Tensor Studio",
   description:
-    "Arefin Muin is an AI automation and agent engineer specializing in n8n, Zapier, Make, LangChain, LangFlow and GoHighLevel.",
+    "Tensor Studio is an independent AI engineering studio. Founded and operated by Arefin Muin from Dhaka, building AI agents and automation systems with n8n, Zapier, Make, LangChain, LangFlow and GoHighLevel.",
 };
 
 const principles = [
   {
     title: "Outcomes over outputs.",
-    body: "I optimize for the business result, not the prettiest tech stack. Every automation has to earn its place by saving time or making money.",
+    body: "We optimize for the business result, not the prettiest tech stack. Every automation has to earn its place by saving time or making money.",
   },
   {
     title: "No-code where it fits, code where it shouldn't.",
@@ -22,14 +22,14 @@ const principles = [
   },
   {
     title: "Long-term ownership, not handoffs.",
-    body: "I document, train, and stay reachable. The systems I leave behind are ones the team can run, edit and grow on their own.",
+    body: "We document, train, and stay reachable. The systems we leave behind are ones your team can run, edit and grow on its own.",
   },
 ];
 
 const milestones = [
   {
     period: "2022",
-    body: "Started with no-code automations on Zapier — funnels, CRM glue, lead routing — for small businesses.",
+    body: "The studio's founder began with no-code automations on Zapier — funnels, CRM glue, lead routing — for small businesses.",
   },
   {
     period: "2023",
@@ -37,11 +37,11 @@ const milestones = [
   },
   {
     period: "2024",
-    body: "Brought LLMs into production workflows: classification, summarization, and the first real agents with LangChain and LangFlow.",
+    body: "Tensor Studio was founded. Brought LLMs into production workflows: classification, summarization, and the first real agents with LangChain and LangFlow.",
   },
   {
     period: "2025",
-    body: "Going deeper on the engineering side of LLMs — evaluation, observability, retrieval quality, fine-tuning.",
+    body: "Going deeper on the engineering side of LLMs — evaluation, observability, retrieval quality, fine-tuning — and shipping production agents that hold up.",
   },
 ];
 
@@ -49,17 +49,17 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
-        eyebrow="About"
+        eyebrow="Tensor Studio · About"
         index="02"
-        meta="Profile · Portfolio v 2.0"
+        meta="Studio profile · Founded 2024 · Dhaka"
         title={
           <>
-            An engineer who treats{" "}
+            A studio that treats{" "}
             <span className="serif">automation</span> as a craft, not a
             checkbox.
           </>
         }
-        subtitle="I help businesses replace repetitive manual work with quiet, reliable AI-powered systems that run on their own — and keep running long after the demo."
+        subtitle="We help businesses replace repetitive manual work with quiet, reliable AI-powered systems that run on their own — and keep running long after the demo."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
@@ -68,14 +68,19 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10 relative">
           <div className="md:col-span-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
-              Profile
+              The studio
+            </p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
+              Tensor Studio<br />Est. 2024 · Dhaka, BD
             </p>
           </div>
           <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-white/80">
             <p>
-              I&apos;m Arefin Muin. I design and ship the workflows,
-              integrations and LLM-powered agents that operate behind the scenes
-              of modern companies — across <strong className="text-white">n8n</strong>,{" "}
+              <strong className="text-white">Tensor Studio</strong> is an
+              independent AI engineering studio. We design and ship the
+              workflows, integrations and LLM-powered agents that operate
+              behind the scenes of modern companies — across{" "}
+              <strong className="text-white">n8n</strong>,{" "}
               <strong className="text-white">Zapier</strong>,{" "}
               <strong className="text-white">Make</strong>,{" "}
               <strong className="text-white">LangChain</strong>,{" "}
@@ -86,14 +91,16 @@ export default function AboutPage() {
               layer runs out.
             </p>
             <p>
-              What gets me out of bed: the moment a client realizes a process
+              What gets us out of bed: the moment a client realizes a process
               that used to take their team six hours a day now runs on its own,
               with an AI agent making the judgement calls inside it.
             </p>
             <p>
-              I&apos;m currently going deeper on LLM engineering — evaluation,
-              observability, retrieval quality, fine-tuning — to ship agents
-              that hold up in production, not just demos.
+              The studio was founded in 2024 by{" "}
+              <strong className="text-white">Arefin Muin</strong> in Dhaka,
+              Bangladesh, after three years of automation work for clients
+              across the US, EU and APAC. We stay small, hands-on, and senior
+              — every engagement is led by the founder.
             </p>
           </div>
         </div>
@@ -108,7 +115,7 @@ export default function AboutPage() {
               Principles
             </p>
             <h2 className="display text-3xl md:text-5xl text-white">
-              How I work,
+              How we work,
               <br />
               <span className="serif text-[1.04em] iridescent">in three lines.</span>
             </h2>

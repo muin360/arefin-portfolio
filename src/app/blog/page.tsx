@@ -6,9 +6,9 @@ import Reveal from "@/components/Reveal";
 import BentoCard from "@/components/BentoCard";
 
 export const metadata: Metadata = {
-  title: "Journal — Arefin Muin",
+  title: "Journal — Tensor Studio",
   description:
-    "Notes on AI automation, agents and the engineering side of LLMs by Arefin Muin.",
+    "Notes from Tensor Studio on AI automation, agents and the engineering side of LLMs.",
 };
 
 export default function BlogPage() {

@@ -24,17 +24,18 @@ const instrumentSerif = Instrument_Serif({
   style: ["normal", "italic"],
 });
 
-// Update this to your final domain (e.g. https://arefinmuin.com) after deploying.
-const SITE_URL = "https://project-fr051.vercel.app";
+// Update this to your final domain (e.g. https://tensorstudio.com) after deploying.
+const SITE_URL = "https://tensorstudio.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Tensor — AI Engineering Studio · Operated by Arefin Muin",
+  title: "Tensor Studio — AI Engineering for Modern Companies",
   description:
-    "Tensor is an independent AI engineering studio operated by Arefin Muin, designing AI agents, automation workflows and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript.",
+    "Tensor Studio is an independent AI engineering studio. We design and ship AI agents, automation workflows and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript — quietly, reliably.",
   keywords: [
-    "Arefin Muin",
-    "AI Automation",
+    "Tensor Studio",
+    "AI Engineering Studio",
+    "AI Automation Agency",
     "AI Agents",
     "n8n",
     "Zapier",
@@ -45,6 +46,7 @@ export const metadata: Metadata = {
     "LLM Engineer",
     "Python",
     "JavaScript",
+    "Arefin Muin",
   ],
   robots: {
     index: true,
@@ -53,22 +55,22 @@ export const metadata: Metadata = {
   },
   referrer: "strict-origin-when-cross-origin",
   formatDetection: { email: false, telephone: false, address: false },
-  authors: [{ name: "Arefin Muin" }],
-  creator: "Arefin Muin",
-  publisher: "Tensor",
+  authors: [{ name: "Tensor Studio" }, { name: "Arefin Muin" }],
+  creator: "Tensor Studio",
+  publisher: "Tensor Studio",
   openGraph: {
     type: "website",
-    title: "Tensor — AI Engineering Studio",
+    title: "Tensor Studio — AI Engineering",
     description:
-      "Independent AI engineering studio. Quiet, intelligent systems that work while you sleep. Operated by Arefin Muin.",
-    siteName: "Tensor",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensor — AI Engineering Studio" }],
+      "An independent AI engineering studio building quiet, intelligent systems that work while you sleep.",
+    siteName: "Tensor Studio",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensor Studio — AI Engineering" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tensor — AI Engineering Studio",
+    title: "Tensor Studio — AI Engineering",
     description:
-      "Independent AI engineering studio. Quiet, intelligent systems that work while you sleep. Operated by Arefin Muin.",
+      "An independent AI engineering studio building quiet, intelligent systems that work while you sleep.",
     images: ["/og.png"],
   },
   manifest: "/site.webmanifest",

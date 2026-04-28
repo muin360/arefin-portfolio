@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/Section";
 
 export const metadata: Metadata = {
-  title: "Privacy & Security — Arefin Muin",
+  title: "Privacy & Security — Tensor Studio",
   description:
     "How this site handles (and doesn't handle) your data, and the security measures protecting it.",
 };

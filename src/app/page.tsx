@@ -41,7 +41,7 @@ const principles = [
   {
     n: "01",
     title: "Outcomes over outputs.",
-    body: "Every workflow has to earn its place by saving real hours or making real money. If the output isn't measurable, I won't ship it.",
+    body: "Every workflow has to earn its place by saving real hours or making real money. If the output isn't measurable, we won't ship it.",
   },
   {
     n: "02",
@@ -51,12 +51,12 @@ const principles = [
   {
     n: "03",
     title: "LLMs in the loop, not at the wheel.",
-    body: "Models are great judges, terrible drivers. I keep humans and rules in the critical path until the AI proves itself.",
+    body: "Models are great judges, terrible drivers. We keep humans and rules in the critical path until the AI proves itself.",
   },
   {
     n: "04",
     title: "Long-term ownership, not handoffs.",
-    body: "I document, train and stay reachable. The systems I leave behind are ones the team can run and grow on their own.",
+    body: "We document, train and stay reachable. The systems we leave behind are ones your team can run and grow on its own.",
   },
 ];
 
@@ -103,11 +103,9 @@ export default function HomePage() {
             <div className="lg:col-span-7">
               <Reveal>
                 <p className="eyebrow mb-8 inline-flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span className="font-mono tracking-[0.22em] uppercase text-foreground">Tensor</span>
-                  <span className="opacity-30">/</span>
-                  <span>AI Engineering Studio</span>
-                  <span className="opacity-30">·</span>
-                  <span>Operated by Arefin Muin</span>
+                  <span className="font-mono tracking-[0.26em] uppercase text-foreground">Tensor Studio</span>
+                  <span className="opacity-30">—</span>
+                  <span>An independent AI engineering studio</span>
                 </p>
               </Reveal>
 
@@ -126,10 +124,9 @@ export default function HomePage() {
 
               <Reveal delay={160}>
                 <p className="mt-8 text-lg md:text-xl text-muted max-w-xl leading-relaxed">
-                  Tensor is an independent AI engineering studio. We design and
-                  ship the workflows, integrations and LLM-powered agents that
-                  operate behind the scenes of modern companies. Quietly,
-                  reliably, while you sleep.
+                  We design and ship the workflows, integrations and LLM-powered
+                  agents that operate behind the scenes of modern companies.
+                  Quietly, reliably, while you sleep.
                 </p>
               </Reveal>
 
@@ -258,16 +255,16 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 sm:px-8 section grid grid-cols-1 lg:grid-cols-12 gap-12 relative">
           <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-28">
-              <p className="eyebrow text-white/55 mb-5">[ 02 ] How I work</p>
+              <p className="eyebrow text-white/55 mb-5">[ 02 ] How we work</p>
               <h2 className="display text-4xl md:text-6xl">
                 Four principles
                 <br />
-                I refuse to{" "}
+                we refuse to{" "}
                 <span className="serif">break.</span>
               </h2>
               <p className="mt-6 text-white/65 max-w-md leading-relaxed">
                 Most automation breaks because someone optimized for the demo,
-                not the second year. I work the other way.
+                not the second year. Tensor Studio works the other way.
               </p>
             </div>
           </div>
