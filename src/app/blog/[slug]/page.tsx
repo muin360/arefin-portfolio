@@ -15,6 +15,7 @@ import { SITE_URL } from "@/lib/site-url";
 import { IconArrow } from "@/components/icons";
 import ReadingProgress from "@/components/ReadingProgress";
 import { PortableText } from "@/components/PortableText";
+import BreadcrumbsJsonLd from "@/components/BreadcrumbsJsonLd";
 
 // Pre-render every post at build time, then revalidate on webhook.
 export async function generateStaticParams() {
@@ -113,6 +114,15 @@ export default async function BlogPostPage({
       <Script id={`article-jsonld-${post.slug}`} type="application/ld+json">
         {JSON.stringify(articleJsonLd)}
       </Script>
+
+      <BreadcrumbsJsonLd
+        id={`post-${post.slug}`}
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Journal", href: "/blog" },
+          { label: post.title, href: `/blog/${post.slug}` },
+        ]}
+      />
 
       <section className="bg-paper border-b border-line">
         <div className="max-w-3xl mx-auto px-6 sm:px-8 pt-20 pb-14 md:pt-28 md:pb-20">

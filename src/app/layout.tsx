@@ -7,6 +7,8 @@ import ScrollToTop from "@/components/ScrollToTop";
 import CursorRing from "@/components/CursorRing";
 import PageLoader from "@/components/PageLoader";
 import { SITE_URL, GOOGLE_SITE_VERIFICATION } from "@/lib/site-url";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Body — Inter is the variable, optically tuned, high-legibility workhorse used
 // across Vercel / Stripe / Linear-tier products.
@@ -79,9 +81,6 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
-  alternates: {
-    canonical: "/",
-  },
   referrer: "strict-origin-when-cross-origin",
   formatDetection: { email: false, telephone: false, address: false },
   authors: [{ name: "Tensor Studio", url: SITE_URL }, { name: "Arefin Muin", url: SITE_URL }],
@@ -105,6 +104,12 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   manifest: "/site.webmanifest",
+  alternates: {
+    canonical: "/",
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
+  },
   ...(GOOGLE_SITE_VERIFICATION
     ? { verification: { google: GOOGLE_SITE_VERIFICATION } }
     : {}),
@@ -188,7 +193,7 @@ export default function RootLayout({
             respect them and for hosts where headers aren't configurable. */}
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://*.api.sanity.io https://cdn.sanity.io https://api.sanity.io wss://*.api.sanity.io; form-action 'self' mailto:; manifest-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests"
+          content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; connect-src 'self' https://*.api.sanity.io https://cdn.sanity.io https://api.sanity.io wss://*.api.sanity.io https://vitals.vercel-insights.com; form-action 'self'; manifest-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests"
         />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="format-detection" content="telephone=no, email=no, address=no" />
@@ -211,6 +216,8 @@ export default function RootLayout({
         <main id="main" className="flex-1">{children}</main>
         <Footer />
         <ScrollToTop />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
