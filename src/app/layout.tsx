@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Inter, JetBrains_Mono, Instrument_Serif, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,21 +7,38 @@ import ScrollToTop from "@/components/ScrollToTop";
 import CursorRing from "@/components/CursorRing";
 import PageLoader from "@/components/PageLoader";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Body — Inter is the variable, optically tuned, high-legibility workhorse used
+// across Vercel / Stripe / Linear-tier products.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Display — Manrope adds character and slightly humanist warmth for big
+// editorial headlines without going full geometric.
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
+  display: "swap",
 });
 
+// Editorial accent — high-contrast didone-style serif for the studio's
+// signature italic moments.
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   subsets: ["latin"],
   weight: "400",
   style: ["normal", "italic"],
+  display: "swap",
+});
+
+// Mono — JetBrains Mono has stronger ligatures + character than Geist Mono,
+// reads more like real production-engineering text.
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 // Update this to your final domain (e.g. https://tensorstudio.com) after deploying.
@@ -91,7 +108,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <head>
         {/* Defense-in-depth: HTTP headers (set by host config) are the primary

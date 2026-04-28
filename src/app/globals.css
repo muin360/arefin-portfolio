@@ -24,16 +24,16 @@
   --color-accent-1: var(--accent-1);
   --color-accent-2: var(--accent-2);
   --color-accent-3: var(--accent-3);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-serif: var(--font-instrument-serif);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     sans-serif;
   font-feature-settings: "ss01", "ss02", "cv11";
   -webkit-font-smoothing: antialiased;
@@ -58,7 +58,7 @@ html {
 }
 
 .mono {
-  font-family: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
   font-feature-settings: "ss01", "cv11";
 }
 
@@ -70,10 +70,11 @@ html {
 }
 
 .display {
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui;
-  letter-spacing: -0.04em;
-  line-height: 0.96;
-  font-weight: 600;
+  font-family: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+  font-weight: 700;
+  font-feature-settings: "ss01", "ss03";
 }
 
 .eyebrow {
@@ -85,7 +86,7 @@ html {
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
 .eyebrow::before {
@@ -226,7 +227,7 @@ html {
   background: rgba(10, 10, 20, 0.04);
   color: var(--muted);
   border: 1px solid var(--line);
-  font-family: var(--font-geist-mono), monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   text-transform: uppercase;
 }
 .chip-dark {
@@ -383,7 +384,7 @@ html {
 
 /* Big editorial footer email */
 .email-cta {
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-inter);
   letter-spacing: -0.05em;
   line-height: 0.92;
   font-weight: 600;
@@ -396,7 +397,7 @@ html {
 
 /* Number tag for project list */
 .num {
-  font-family: var(--font-geist-mono), monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.05em;
 }
@@ -883,7 +884,7 @@ body.is-loaded main {
 .code-rain span {
   position: absolute;
   top: -10%;
-  font-family: var(--font-geist-mono), monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: 11px;
   color: rgba(168, 130, 255, 0.7);
   letter-spacing: 2px;
@@ -899,7 +900,7 @@ body.is-loaded main {
   gap: 0.4rem;
   padding: 0.18rem 0.55rem;
   border-radius: 9999px;
-  font-family: var(--font-geist-mono), monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: 0.62rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -1126,4 +1127,31 @@ body.is-loaded main {
 @keyframes spark-shimmer {
   0%, 100% { opacity: 0.85; }
   50% { opacity: 0.55; }
+}
+
+/* Live clock digit pop: a gentle scale + fade as each digit value changes */
+@keyframes digit-flip {
+  0% { transform: translateY(-30%) scale(0.94); opacity: 0; }
+  60% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Pipeline data packet — used by TensorPipeline to send pulses along edges */
+@keyframes packet-flow {
+  0% { offset-distance: 0%; opacity: 0; }
+  6% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* Pipeline node activation glow */
+@keyframes node-activate {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.06); filter: brightness(1.5); }
+}
+
+/* Sprint timeline playhead pulse */
+@keyframes phase-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.6); }
+  50% { box-shadow: 0 0 0 14px rgba(236, 72, 153, 0); }
 }

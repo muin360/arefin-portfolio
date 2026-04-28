@@ -13,11 +13,11 @@ import BentoCard from "@/components/BentoCard";
 import LiveTicker from "@/components/LiveTicker";
 import LiveClock from "@/components/LiveClock";
 import TiltCard from "@/components/TiltCard";
-import AIReadinessAudit from "@/components/AIReadinessAudit";
+import TensorPipeline from "@/components/TensorPipeline";
+import SprintTimeline from "@/components/SprintTimeline";
 import PullQuote from "@/components/PullQuote";
 import Manifesto from "@/components/Manifesto";
 import Live30Days from "@/components/Live30Days";
-import GlobalActivityMap from "@/components/GlobalActivityMap";
 
 const tools = [
   "n8n",
@@ -97,8 +97,6 @@ export default function HomePage() {
             </span>
             <span className="ml-auto tag-pill hidden md:inline-flex items-center gap-2">
               <LiveClock />
-              <span className="text-white/40">·</span>
-              <span>GMT+6</span>
             </span>
           </div>
 
@@ -375,7 +373,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* AI READINESS AUDIT — interactive signature element */}
+      {/* SPRINT TIMELINE — autoplay editorial timeline of a 14-day engagement */}
       <section className="hero-dark border-y border-white/5 relative overflow-hidden">
         <div className="aurora opacity-40" aria-hidden="true" />
         <div className="orb orb-violet" aria-hidden="true" />
@@ -385,26 +383,27 @@ export default function HomePage() {
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
               <div>
-                <p className="eyebrow text-white/55 mb-5">[ 04 ] Tensor audit</p>
+                <p className="eyebrow text-white/55 mb-5">[ 04 ] Anatomy of a sprint</p>
                 <h2 className="display text-4xl md:text-6xl text-white max-w-3xl leading-[1.05]">
-                  Where does your team
+                  Fourteen days,
                   <br />
-                  <span className="serif">sit on the AI curve?</span>
+                  <span className="serif">narrated hour by hour.</span>
                 </h2>
                 <p className="mt-5 text-white/65 max-w-xl leading-relaxed">
-                  Six questions. Ninety seconds. A live readiness score and a
-                  Tensor-tailored recommendation, written by the same studio
-                  that would actually do the work.
+                  Most studios sell you the deliverable. Tensor sells you the
+                  visible process. Six phases, every beat scripted — playing
+                  on a loop so you know what you&apos;re buying before the
+                  first call.
                 </p>
               </div>
               <div className="flex items-center gap-2 text-[10px] mono uppercase tracking-[0.22em] text-white/45">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                interactive · runs locally · no email
+                <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse" />
+                autoplay · phases advance every 3.6s
               </div>
             </div>
           </Reveal>
           <Reveal delay={120}>
-            <AIReadinessAudit />
+            <SprintTimeline />
           </Reveal>
         </div>
       </section>
@@ -460,7 +459,7 @@ export default function HomePage() {
           </Reveal>
 
           <Reveal delay={140} className="mt-6 md:mt-8">
-            <GlobalActivityMap />
+            <TensorPipeline />
           </Reveal>
         </div>
       </section>
