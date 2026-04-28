@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { posts } from "@/data/posts";
+import { sanityFetch } from "@/sanity/fetch";
+import { allPostsQuery } from "@/sanity/queries";
+import type { PostListItem } from "@/sanity/types";
 import { PageHeader } from "@/components/Section";
 import Reveal from "@/components/Reveal";
 import BentoCard from "@/components/BentoCard";
@@ -18,8 +20,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
-  const sorted = [...posts].sort((a, b) => (a.date < b.date ? 1 : -1));
+export default async function BlogPage() {
+  const sorted = await sanityFetch<PostListItem[]>({
+    query: allPostsQuery,
+    tags: ["post"],
+  });
   return (
     <>
       <PageHeader
@@ -78,7 +83,7 @@ export default function BlogPage() {
                       </p>
                       <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-mono text-white/45">
                         <span>{post.readingTime}</span>
-                        {post.tags.map((t) => (
+                        {post.tags?.map((t) => (
                           <span key={t}>· {t}</span>
                         ))}
                         <span className="ml-auto inline-flex items-center gap-1.5 text-white/85 group-hover:text-white">

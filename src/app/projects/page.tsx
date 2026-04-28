@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { projects } from "@/data/site";
+import { sanityFetch } from "@/sanity/fetch";
+import { allProjectsQuery } from "@/sanity/queries";
+import type { ProjectDoc } from "@/sanity/types";
+import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import Reveal from "@/components/Reveal";
 import { IconArrow } from "@/components/icons";
@@ -20,16 +23,12 @@ export const metadata: Metadata = {
   },
 };
 
-const outcomes: Record<string, string> = {
-  "AI Lead Qualification Agent": "Cut response time 4h → 6 min, lifted lead-to-meeting 45%.",
-  "GoHighLevel Booking Bot": "Booked 60% of qualified inbound conversations with no human in the loop.",
-  "Content Repurposing Pipeline": "1 hour of video → 12 ready-to-post pieces in under 15 minutes.",
-  "Internal Knowledge-Base Chatbot": "Reduced internal SOP questions by ~70% in the first month.",
-  "E-commerce Auto-Reply Agent": "Auto-resolved ~55% of Tier-1 tickets with brand-tone replies.",
-  "AI Cold-Outreach System": "350+ personalized openers per day per sender, 11% reply rate.",
-};
+export default async function ProjectsPage() {
+  const projects = await sanityFetch<ProjectDoc[]>({
+    query: allProjectsQuery,
+    tags: ["project"],
+  });
 
-export default function ProjectsPage() {
   return (
     <>
       <PageHeader
@@ -53,7 +52,8 @@ export default function ProjectsPage() {
         <div className="orb orb-cyan" aria-hidden="true" />
         <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-            {projects.map(({ Icon, title, summary, stack, category }, i) => {
+            {projects.map(({ iconName, title, summary, stack, category, outcome }, i) => {
+              const Icon = iconFor(iconName);
               // Asymmetric editorial layout
               const spans = [
                 "md:col-span-7",
@@ -87,11 +87,11 @@ export default function ProjectsPage() {
                           <p className="mt-4 text-white/65 max-w-xl leading-relaxed flex-1">
                             {summary}
                           </p>
-                          {outcomes[title] && (
+                          {outcome && (
                             <p className="mt-4 inline-flex items-start gap-2 text-sm">
                               <span className="w-6 h-px bg-[var(--accent-1)] mt-2.5" />
                               <span className="text-white/85 italic serif text-base">
-                                {outcomes[title]}
+                                {outcome}
                               </span>
                             </p>
                           )}

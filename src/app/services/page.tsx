@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { services } from "@/data/site";
+import { sanityFetch } from "@/sanity/fetch";
+import { allServicesQuery } from "@/sanity/queries";
+import type { ServiceDoc } from "@/sanity/types";
+import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import { IconArrow, IconCheck } from "@/components/icons";
 import BentoCard from "@/components/BentoCard";
@@ -98,7 +101,12 @@ const engagement = [
   "Source code under a clear license, in your repo",
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const services = await sanityFetch<ServiceDoc[]>({
+    query: allServicesQuery,
+    tags: ["service"],
+  });
+
   return (
     <>
       <PageHeader
@@ -230,7 +238,9 @@ export default function ServicesPage() {
             </div>
           </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {services.map(({ Icon, title, description }, i) => (
+            {services.map(({ iconName, title, description }, i) => {
+              const Icon = iconFor(iconName);
+              return (
               <Reveal key={title} delay={i * 60}>
                 <BentoCard className="h-full">
                   <div className="h-full flex flex-col group">
@@ -251,7 +261,8 @@ export default function ServicesPage() {
                   </div>
                 </BentoCard>
               </Reveal>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

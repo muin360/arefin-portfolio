@@ -6,15 +6,23 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sanity:seed": "node scripts/seed.mjs",
+    "sanity:dataset": "sanity dataset"
   },
   "dependencies": {
+    "@portabletext/react": "^6.0.3",
+    "@portabletext/types": "^4.0.2",
     "@sanity/client": "^7.22.0",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^5.22.0",
     "motion": "^12.38.0",
-    "next": "^15.5.15",
-    "next-sanity": "^11.2.0",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "next": "16.2.4",
+    "next-sanity": "^12.3.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "sanity": "^5.22.0",
+    "styled-components": "^6.4.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -1,14 +1,10 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site-url";
 
-// Required for `output: "export"` (static export) — bakes the file at build time.
-export const dynamic = "force-static";
-
-// Next.js emits /robots.txt from this at build time. Works with
-// `output: "export"`.
-//
 // Real search engines (Googlebot, Bingbot, DuckDuckBot, etc.) inherit the
 // permissive default rule. Known LLM training scrapers are explicitly blocked.
+// /studio and /api are excluded so the CMS chrome and webhook never appear in
+// search results.
 export default function robots(): MetadataRoute.Robots {
   const trainingScrapers = [
     "GPTBot",
@@ -35,7 +31,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/.well-known/"],
+        disallow: ["/.well-known/", "/studio", "/studio/", "/api/"],
       },
       ...trainingScrapers.map((bot) => ({
         userAgent: bot,

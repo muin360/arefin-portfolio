@@ -1,14 +1,22 @@
 import type { MetadataRoute } from "next";
-import { posts } from "@/data/posts";
+import { sanityFetch } from "@/sanity/fetch";
+import { allPostsQuery, allProjectsQuery } from "@/sanity/queries";
+import type { PostListItem, ProjectDoc } from "@/sanity/types";
 import { SITE_URL } from "@/lib/site-url";
 
-// Required for `output: "export"` (static export) — bakes the file at build time.
-export const dynamic = "force-static";
+// Sitemap is regenerated on demand via the same revalidate webhook
+// (revalidatePath('/sitemap.xml') from /api/revalidate could be added if
+// needed — but tag-based revalidation already covers it because the queries
+// below are tagged with 'post' / 'project').
+export const revalidate = 3600;
 
-// Next.js generates /sitemap.xml from this at build time. Works with
-// `output: "export"` — it's emitted as a static file.
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+
+  const [posts, projects] = await Promise.all([
+    sanityFetch<PostListItem[]>({ query: allPostsQuery, tags: ["post"] }),
+    sanityFetch<ProjectDoc[]>({ query: allProjectsQuery, tags: ["project"] }),
+  ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`,         changeFrequency: "monthly", priority: 1.0, lastModified: now },
@@ -27,6 +35,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
     lastModified: new Date(p.date),
   }));
+
+  // We don't currently render dedicated /projects/[slug] pages, so projects
+  // are intentionally not included in the sitemap. They remain available
+  // via the listing on /projects.
+  void projects;
 
   return [...staticRoutes, ...postRoutes];
 }

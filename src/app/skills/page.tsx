@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { skills } from "@/data/site";
+import { sanityFetch } from "@/sanity/fetch";
+import { allSkillCategoriesQuery } from "@/sanity/queries";
+import type { SkillCategoryDoc } from "@/sanity/types";
+import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import { IconCheck } from "@/components/icons";
 import SkillsConstellation from "@/components/SkillsConstellation";
@@ -78,7 +81,12 @@ const focusAreas = [
   },
 ];
 
-export default function SkillsPage() {
+export default async function SkillsPage() {
+  const skills = await sanityFetch<SkillCategoryDoc[]>({
+    query: allSkillCategoriesQuery,
+    tags: ["skillCategory"],
+  });
+
   return (
     <>
       <PageHeader
@@ -132,7 +140,7 @@ export default function SkillsPage() {
           <p className="eyebrow mb-5">[ B ] Stack, by category</p>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line rounded-2xl overflow-hidden">
-          {skills.map(({ Icon, category, items }, i) => (
+          {skills.map(({ iconName, category, items }, i) => { const Icon = iconFor(iconName); return (
             <Reveal key={category} delay={i * 80} className="bg-surface p-8 md:p-10">
               <div className="flex items-center gap-3">
                 <Icon width={22} height={22} className="text-foreground" />
@@ -152,7 +160,7 @@ export default function SkillsPage() {
                 ))}
               </ul>
             </Reveal>
-          ))}
+          ); })}
         </div>
       </section>
 

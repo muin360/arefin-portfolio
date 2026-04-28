@@ -1,6 +1,16 @@
 import Link from "next/link";
-import { services, projects } from "@/data/site";
-import { posts } from "@/data/posts";
+import { sanityFetch } from "@/sanity/fetch";
+import {
+  allServicesQuery,
+  allProjectsQuery,
+  allPostsQuery,
+} from "@/sanity/queries";
+import type {
+  ServiceDoc,
+  ProjectDoc,
+  PostListItem,
+} from "@/sanity/types";
+import { iconFor } from "@/components/IconRegistry";
 import { IconArrow } from "@/components/icons";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
@@ -63,7 +73,13 @@ const principles = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [services, projects, posts] = await Promise.all([
+    sanityFetch<ServiceDoc[]>({ query: allServicesQuery, tags: ["service"] }),
+    sanityFetch<ProjectDoc[]>({ query: allProjectsQuery, tags: ["project"] }),
+    sanityFetch<PostListItem[]>({ query: allPostsQuery, tags: ["post"] }),
+  ]);
+
   return (
     <>
       {/* HERO — dark luxe with particles, aurora, agent dashboard */}
@@ -206,7 +222,8 @@ export default function HomePage() {
           </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-            {services.map(({ Icon, title, description }, i) => {
+            {services.map(({ iconName, title, description }, i) => {
+              const Icon = iconFor(iconName);
               // 6 cards in 3 asymmetric rows: 4+2 / 2+4 / 3+3
               const spans = [
                 "md:col-span-4",
@@ -314,7 +331,8 @@ export default function HomePage() {
           </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
-            {projects.slice(0, 4).map(({ Icon, title, summary, stack, category }, i) => {
+            {projects.slice(0, 4).map(({ iconName, title, summary, stack, category }, i) => {
+              const Icon = iconFor(iconName);
               const span =
                 i === 0
                   ? "md:col-span-7 md:row-span-2"
