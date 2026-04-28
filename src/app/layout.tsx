@@ -29,9 +29,9 @@ const SITE_URL = "https://project-fr051.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Arefin Muin — AI Automation & Agent Engineer",
+  title: "Tensor — AI Engineering Studio · Operated by Arefin Muin",
   description:
-    "Arefin Muin is an AI Automation and Agent expert specializing in n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and JavaScript — building intelligent workflows and LLM-powered agents.",
+    "Tensor is an independent AI engineering studio operated by Arefin Muin, designing AI agents, automation workflows and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript.",
   keywords: [
     "Arefin Muin",
     "AI Automation",
@@ -55,19 +55,20 @@ export const metadata: Metadata = {
   formatDetection: { email: false, telephone: false, address: false },
   authors: [{ name: "Arefin Muin" }],
   creator: "Arefin Muin",
+  publisher: "Tensor",
   openGraph: {
     type: "website",
-    title: "Arefin Muin — AI Automation & Agent Engineer",
+    title: "Tensor — AI Engineering Studio",
     description:
-      "Engineering quiet, intelligent systems that work while you sleep.",
-    siteName: "Arefin Muin",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Arefin Muin — AI Automation & Agent Engineer" }],
+      "Independent AI engineering studio. Quiet, intelligent systems that work while you sleep. Operated by Arefin Muin.",
+    siteName: "Tensor",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensor — AI Engineering Studio" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arefin Muin — AI Automation & Agent Engineer",
+    title: "Tensor — AI Engineering Studio",
     description:
-      "Engineering quiet, intelligent systems that work while you sleep.",
+      "Independent AI engineering studio. Quiet, intelligent systems that work while you sleep. Operated by Arefin Muin.",
     images: ["/og.png"],
   },
   manifest: "/site.webmanifest",

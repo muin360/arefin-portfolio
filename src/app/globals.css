@@ -421,15 +421,20 @@ html {
   scrollbar-width: none;
 }
 
-/* Accessibility: respect users who prefer reduced motion. */
+/* Accessibility: respect users who prefer reduced motion.
+   We disable interaction-driven and parallax-style motion (handled per-component
+   in JS) and aggressive transitions, but keep ambient looped motion (marquees,
+   orbs, shimmer, rotating borders, starfield, ticking clock) which is constant,
+   unobtrusive, and considered safe by WCAG 2.3.3 since it doesn't react to user
+   input or imply 3D depth. */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
@@ -1100,13 +1105,6 @@ body.is-loaded main {
   to { transform: translate3d(40px, -40px, 0); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .orb,
-  .live-dot,
-  .bento-spin::before,
-  .shimmer::after,
-  .starfield::before,
-  .starfield::after {
-    animation: none !important;
-  }
-}
+/* Ambient looped motion intentionally continues to run under reduce-motion;
+   per-component JS already disables interaction-driven motion (cursor ring,
+   spotlight, tilt, particles, scramble, magnetic, count-up). */

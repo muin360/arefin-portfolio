@@ -53,18 +53,22 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           onClick={() => setOpen(false)}
         >
-          <span className="relative w-8 h-8 rounded-full bg-foreground text-background grid place-items-center overflow-hidden">
-            <span className="serif text-lg leading-none">A</span>
-            <span className="absolute inset-0 rounded-full bg-gradient-to-br from-[var(--accent-1)] to-[var(--accent-2)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 grid place-items-center">
-              <span className="serif text-lg leading-none text-white">A</span>
-            </span>
+          <span className="relative w-9 h-9 rounded-xl bg-foreground text-background grid place-items-center overflow-hidden">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 5h16M4 5v14M20 5v14M4 19h16M9 5v14M15 5v14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <circle cx="9" cy="9" r="1.1" fill="currentColor" />
+              <circle cx="15" cy="15" r="1.1" fill="currentColor" />
+            </svg>
+            <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-[var(--accent-1)] to-[var(--accent-2)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </span>
           <div className="leading-tight">
-            <div className="text-sm font-medium tracking-tight text-foreground">
-              Arefin Muin
+            <div className="text-sm font-medium tracking-[-0.01em] text-foreground inline-flex items-baseline gap-2">
+              <span className="font-mono text-[13px] tracking-[0.22em] uppercase">Tensor</span>
+              <span className="text-muted/60">/</span>
+              <span className="text-foreground/85">Arefin Muin</span>
             </div>
             <div className="mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              AI Automation Engineer
+              AI Engineering Studio · Dhaka
             </div>
           </div>
         </Link>

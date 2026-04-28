@@ -75,17 +75,17 @@ export default function Footer() {
             </p>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
+                <a href="https://github.com/muin360" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
                   <IconGithub width={14} height={14} /> GitHub
                 </a>
               </li>
               <li>
-                <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
+                <a href="https://www.linkedin.com/in/arefinmuin" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
                   <IconLinkedin width={14} height={14} /> LinkedIn
                 </a>
               </li>
               <li>
-                <a href="https://x.com/" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
+                <a href="https://x.com/arefinmuin" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
                   <IconX width={14} height={14} /> X / Twitter
                 </a>
               </li>
@@ -123,9 +123,28 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between text-white/50">
+        {/* Studio identity strip */}
+        <div className="mt-14 pt-8 border-t border-white/10">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55">
+                The studio
+              </p>
+              <p className="display text-[12vw] md:text-[5vw] leading-[0.9] tracking-[-0.04em] mt-3">
+                <span className="font-mono uppercase tracking-[0.06em]">Tensor</span>
+              </p>
+            </div>
+            <p className="text-sm text-white/55 leading-relaxed max-w-md">
+              Tensor is an independent AI engineering studio building quiet,
+              intelligent systems for ambitious teams. Founded and operated
+              by Arefin Muin from Dhaka, Bangladesh.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between text-white/50">
           <p className="mono text-[11px] uppercase tracking-[0.16em]">
-            © {year} Arefin Muin. Hand-coded with Next.js + Tailwind.
+            © {year} Tensor · Founded by Arefin Muin · Hand-coded with Next.js + Tailwind
           </p>
           <p className="mono text-[11px] uppercase tracking-[0.16em]">
             v 2.0 · Editorial

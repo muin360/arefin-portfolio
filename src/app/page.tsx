@@ -102,8 +102,12 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             <div className="lg:col-span-7">
               <Reveal>
-                <p className="eyebrow mb-8">
-                  Arefin Muin · AI Automation &amp; Agent Engineer
+                <p className="eyebrow mb-8 inline-flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="font-mono tracking-[0.22em] uppercase text-foreground">Tensor</span>
+                  <span className="opacity-30">/</span>
+                  <span>AI Engineering Studio</span>
+                  <span className="opacity-30">·</span>
+                  <span>Operated by Arefin Muin</span>
                 </p>
               </Reveal>
 
@@ -122,9 +126,10 @@ export default function HomePage() {
 
               <Reveal delay={160}>
                 <p className="mt-8 text-lg md:text-xl text-muted max-w-xl leading-relaxed">
-                  I&apos;m Arefin — I design and ship the workflows, integrations
-                  and LLM-powered agents that operate behind the scenes of modern
-                  companies.
+                  Tensor is an independent AI engineering studio. We design and
+                  ship the workflows, integrations and LLM-powered agents that
+                  operate behind the scenes of modern companies. Quietly,
+                  reliably, while you sleep.
                 </p>
               </Reveal>
 

@@ -7,10 +7,59 @@ import BentoCard from "@/components/BentoCard";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "Services — Arefin Muin",
+  title: "Services — Tensor · AI Engineering Studio",
   description:
-    "AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits.",
+    "Engagement models, services and pricing. AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits — operated by Arefin Muin.",
 };
+
+const engagements = [
+  {
+    tag: "Sprint",
+    name: "Two-week sprint",
+    price: "From $2.4k",
+    cadence: "2 weeks · fixed scope",
+    summary:
+      "A focused, time-boxed build for a single workflow or one tightly-scoped agent.",
+    deliverables: [
+      "Discovery + scoped proposal",
+      "One workflow or one agent shipped",
+      "Loom walkthrough + written handoff",
+      "30-day reliability guarantee",
+    ],
+    ideal: "When you know exactly what you want and need it live this month.",
+  },
+  {
+    tag: "Build",
+    name: "Engineering engagement",
+    price: "From $7.5k",
+    cadence: "4–8 weeks · milestone-based",
+    summary:
+      "End-to-end design and build of a multi-step automation or production-grade agent system.",
+    deliverables: [
+      "Architecture + integration map",
+      "Custom code where it matters",
+      "Real-data testing + observability",
+      "Documentation, training, source under your repo",
+    ],
+    ideal: "For teams replacing brittle tools with one durable system.",
+    featured: true,
+  },
+  {
+    tag: "Retainer",
+    name: "On-call studio",
+    price: "From $3.2k / mo",
+    cadence: "Monthly · 20–40 hrs",
+    summary:
+      "Ongoing engineering capacity for your existing AI stack — improvements, monitoring, new agents.",
+    deliverables: [
+      "Same-day response on incidents",
+      "Bi-weekly roadmap + reporting",
+      "Continuous improvements + new flows",
+      "Direct Slack channel with the studio",
+    ],
+    ideal: "When AI is a real part of your operation, not a side project.",
+  },
+];
 
 const process = [
   {
@@ -46,22 +95,133 @@ export default function ServicesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Services"
+        eyebrow="Tensor · Services"
         index="03"
-        meta="Capabilities · Pricing on call"
+        meta="Capabilities · Engagement models · Transparent pricing"
         title={
           <>
-            Services for teams that want{" "}
+            Studio engagements for teams that want{" "}
             <span className="serif">leverage,</span> not headcount.
           </>
         }
-        subtitle="Pick what fits, or tell me what's slowing you down — I'll design the right combination."
+        subtitle="Three ways to work with Tensor — sprint, build, or retainer. Pick what fits, or tell us what's slowing you down."
       />
 
+      {/* ENGAGEMENTS — Sprint / Build / Retainer pricing tiers */}
+      <section className="hero-dark relative overflow-hidden border-b border-white/5">
+        <div className="orb orb-violet" aria-hidden="true" />
+        <div className="orb orb-cyan" aria-hidden="true" />
+        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
+          <Reveal>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-5">
+                  [ 01 ] Engagement models
+                </p>
+                <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
+                  Three ways to work{" "}
+                  <span className="serif iridescent">with Tensor.</span>
+                </h2>
+              </div>
+              <p className="text-white/60 max-w-sm leading-relaxed">
+                Every engagement starts with a free 30-min discovery call.
+                Pricing is transparent, scope is fixed, and you own everything.
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            {engagements.map((e, i) => (
+              <Reveal key={e.tag} delay={i * 90}>
+                <BentoCard className={`h-full ${e.featured ? "bento-spin" : ""}`}>
+                  <div className="h-full flex flex-col">
+                    <div className="flex items-start justify-between">
+                      <span
+                        className={`font-mono text-[10px] uppercase tracking-[0.22em] px-2.5 py-1 rounded-full border ${
+                          e.featured
+                            ? "border-white/30 bg-white/10 text-white"
+                            : "border-white/15 bg-white/[0.03] text-white/70"
+                        }`}
+                      >
+                        {e.tag}
+                        {e.featured && " · most popular"}
+                      </span>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
+                        / {(i + 1).toString().padStart(2, "0")}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-7 text-2xl tracking-tight font-medium text-white">
+                      {e.name}
+                    </h3>
+                    <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
+                      {e.cadence}
+                    </p>
+
+                    <p className="mt-5 text-sm text-white/65 leading-relaxed">
+                      {e.summary}
+                    </p>
+
+                    <div className="mt-6 pt-6 border-t border-white/10">
+                      <p className="display text-3xl md:text-4xl text-white tracking-tight">
+                        {e.price}
+                      </p>
+                    </div>
+
+                    <ul className="mt-6 space-y-2.5 text-sm text-white/75 flex-1">
+                      {e.deliverables.map((d) => (
+                        <li key={d} className="flex items-start gap-2.5">
+                          <IconCheck width={16} height={16} className="text-white/55 mt-1 shrink-0" />
+                          <span>{d}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <p className="mt-6 pt-5 border-t border-white/10 text-xs text-white/50 leading-relaxed italic">
+                      {e.ideal}
+                    </p>
+
+                    <Link
+                      href="/contact"
+                      className={`mt-6 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition-all ${
+                        e.featured
+                          ? "bg-white text-foreground hover:bg-white/90 shimmer"
+                          : "border border-white/20 text-white hover:bg-white/10"
+                      }`}
+                    >
+                      {e.featured ? "Start an engagement" : "Discuss this tier"}
+                      <IconArrow width={14} height={14} />
+                    </Link>
+                  </div>
+                </BentoCard>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CAPABILITIES — what Tensor builds */}
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-pink" aria-hidden="true" />
         <div className="max-w-6xl mx-auto px-6 sm:px-8 section relative">
+          <Reveal>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-5">
+                  [ 02 ] Capabilities
+                </p>
+                <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
+                  What we{" "}
+                  <span className="serif iridescent">build.</span>
+                </h2>
+              </div>
+              <p className="text-white/60 max-w-sm leading-relaxed">
+                Mix-and-match capabilities inside any engagement model.
+              </p>
+            </div>
+          </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {services.map(({ Icon, title, description }, i) => (
               <Reveal key={title} delay={i * 60}>
