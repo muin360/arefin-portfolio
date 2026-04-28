@@ -4,17 +4,20 @@ import { posts } from "@/data/posts";
 import { IconArrow } from "@/components/icons";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
-import NowWidget from "@/components/NowWidget";
 import CursorSpotlight from "@/components/CursorSpotlight";
 import ParticleNetwork from "@/components/ParticleNetwork";
 import ScrambleText from "@/components/ScrambleText";
 import LiveAgentDashboard from "@/components/LiveAgentDashboard";
 import MagneticButton from "@/components/MagneticButton";
-import DigitRoll from "@/components/DigitRoll";
 import BentoCard from "@/components/BentoCard";
 import LiveTicker from "@/components/LiveTicker";
 import LiveClock from "@/components/LiveClock";
 import TiltCard from "@/components/TiltCard";
+import AIReadinessAudit from "@/components/AIReadinessAudit";
+import PullQuote from "@/components/PullQuote";
+import Manifesto from "@/components/Manifesto";
+import Live30Days from "@/components/Live30Days";
+import GlobalActivityMap from "@/components/GlobalActivityMap";
 
 const tools = [
   "n8n",
@@ -372,62 +375,93 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* NOW + STATS band */}
-      <section className="border-b border-line">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 section grid grid-cols-1 lg:grid-cols-12 gap-12">
-          <div className="lg:col-span-5">
-            <Reveal>
-              <p className="eyebrow mb-5">[ 04 ] Currently</p>
-              <h2 className="display text-4xl md:text-5xl">
-                What I&apos;m{" "}
-                <span className="serif">up to</span>
-                <br />
-                this season.
-              </h2>
-              <p className="mt-6 text-muted max-w-md leading-relaxed">
-                A snapshot updated every few weeks — what I&apos;m building, what
-                I&apos;m reading, what I&apos;m saying yes to.
-              </p>
-              <div className="mt-10 grid grid-cols-3 gap-6">
-                <div>
-                  <p className="display text-4xl">
-                    <DigitRoll to={4} />
-                  </p>
-                  <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
-                    Years shipping
-                    <br />
-                    automations
-                  </p>
-                </div>
-                <div>
-                  <p className="display text-4xl">
-                    <DigitRoll to={10} suffix="+" />
-                  </p>
-                  <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
-                    Tools &amp; APIs
-                    <br />
-                    orchestrated
-                  </p>
-                </div>
-                <div>
-                  <p className="display text-4xl">
-                    <DigitRoll to={24} suffix="h" />
-                  </p>
-                  <p className="mt-2 mono text-[10px] uppercase tracking-[0.16em] text-muted leading-relaxed">
-                    Reply
-                    <br />
-                    window
-                  </p>
-                </div>
+      {/* AI READINESS AUDIT — interactive signature element */}
+      <section className="hero-dark border-y border-white/5 relative overflow-hidden">
+        <div className="aurora opacity-40" aria-hidden="true" />
+        <div className="orb orb-violet" aria-hidden="true" />
+        <div className="orb orb-cyan" aria-hidden="true" />
+        <div className="absolute inset-0 bg-grid-dark pointer-events-none opacity-50" aria-hidden="true" />
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
+          <Reveal>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
+              <div>
+                <p className="eyebrow text-white/55 mb-5">[ 04 ] Tensor audit</p>
+                <h2 className="display text-4xl md:text-6xl text-white max-w-3xl leading-[1.05]">
+                  Where does your team
+                  <br />
+                  <span className="serif">sit on the AI curve?</span>
+                </h2>
+                <p className="mt-5 text-white/65 max-w-xl leading-relaxed">
+                  Six questions. Ninety seconds. A live readiness score and a
+                  Tensor-tailored recommendation, written by the same studio
+                  that would actually do the work.
+                </p>
               </div>
-            </Reveal>
-          </div>
+              <div className="flex items-center gap-2 text-[10px] mono uppercase tracking-[0.22em] text-white/45">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                interactive · runs locally · no email
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={120}>
+            <AIReadinessAudit />
+          </Reveal>
+        </div>
+      </section>
 
-          <div className="lg:col-span-7">
-            <Reveal delay={120}>
-              <NowWidget />
-            </Reveal>
-          </div>
+      {/* PULL QUOTE — full-bleed editorial */}
+      <PullQuote
+        quote={
+          <>
+            We don&apos;t ship <span className="iridescent">prompts</span>.
+            We ship <em className="serif">systems that survive</em> a Monday
+            morning two years from now — when the team that hired us has
+            grown, the model has changed, and the original requirement
+            has been forgotten.
+          </>
+        }
+        attribution="Tensor Studio · house line"
+      />
+
+      {/* MANIFESTO — scroll-revealed creed */}
+      <Manifesto />
+
+      {/* LIVE STUDIO DASHBOARD — 30-day stats + world map */}
+      <section className="hero-dark border-y border-white/5 relative overflow-hidden">
+        <div className="aurora opacity-40" aria-hidden="true" />
+        <div className="orb orb-pink" aria-hidden="true" />
+        <div className="orb orb-cyan" aria-hidden="true" />
+        <div className="absolute inset-0 bg-grid-dark pointer-events-none opacity-50" aria-hidden="true" />
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
+          <Reveal>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
+              <div>
+                <p className="eyebrow text-white/55 mb-5">[ 06 ] Studio dashboard</p>
+                <h2 className="display text-4xl md:text-6xl text-white max-w-3xl leading-[1.05]">
+                  Last 30 days
+                  <br />
+                  at <span className="serif">the studio.</span>
+                </h2>
+                <p className="mt-5 text-white/65 max-w-xl leading-relaxed">
+                  A live look at what&apos;s running. Workflows shipped,
+                  agents deployed, hours saved, regions served — straight
+                  from the production telemetry, refreshed every visit.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                streaming · last sync &lt; 1 min ago
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <Live30Days />
+          </Reveal>
+
+          <Reveal delay={140} className="mt-6 md:mt-8">
+            <GlobalActivityMap />
+          </Reveal>
         </div>
       </section>
 

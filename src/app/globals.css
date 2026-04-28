@@ -1108,3 +1108,22 @@ body.is-loaded main {
 /* Ambient looped motion intentionally continues to run under reduce-motion;
    per-component JS already disables interaction-driven motion (cursor ring,
    spotlight, tilt, particles, scramble, magnetic, count-up). */
+
+/* World map ping ripple (one-shot fade) */
+@keyframes agentPing {
+  0% { opacity: 0.85; r: 4; }
+  100% { opacity: 0; r: 22; }
+}
+
+/* Horizontal scanner line that crosses the world map */
+@keyframes scanY {
+  0% { transform: translateY(-50vh); opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { transform: translateY(50vh); opacity: 0; }
+}
+
+/* Subtle drift for sparkline gradient overlay */
+@keyframes spark-shimmer {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 0.55; }
+}
