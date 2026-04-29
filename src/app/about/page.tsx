@@ -8,12 +8,12 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Tensor Studio is an independent AI engineering studio founded and operated by Arefin Muin from Dhaka, Bangladesh — building AI agents and automation systems with n8n, Zapier, Make, LangChain, LangFlow and GoHighLevel.",
+    "Tensor is an small AI engineering agency founded and operated by Arefin Muin from Dhaka, Bangladesh — building AI agents and automation systems with n8n, Zapier, Make, LangChain, LangFlow and GoHighLevel.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About — Tensor Studio",
+    title: "About — Tensor",
     description:
-      "Tensor Studio is an independent AI engineering studio founded and operated by Arefin Muin from Dhaka, Bangladesh.",
+      "Tensor is an small AI engineering agency founded and operated by Arefin Muin from Dhaka, Bangladesh.",
     url: "/about",
   },
 };
@@ -36,7 +36,7 @@ const principles = [
 const milestones = [
   {
     period: "2022",
-    body: "The studio's founder began with no-code automations on Zapier — funnels, CRM glue, lead routing — for small businesses.",
+    body: "The agency's founder began with no-code automations on Zapier — funnels, CRM glue, lead routing — for small businesses.",
   },
   {
     period: "2023",
@@ -44,7 +44,7 @@ const milestones = [
   },
   {
     period: "2024",
-    body: "Tensor Studio was founded. Brought LLMs into production workflows: classification, summarization, and the first real agents with LangChain and LangFlow.",
+    body: "Tensor was founded. Brought LLMs into production workflows: classification, summarization, and the first real agents with LangChain and LangFlow.",
   },
   {
     period: "2025",
@@ -56,7 +56,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Tensor Studio · About"
+        eyebrow="Tensor · About"
         index="02"
         meta="Studio profile · Founded 2024 · Dhaka"
         title={
@@ -78,13 +78,13 @@ export default function AboutPage() {
               The studio
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-              Tensor Studio<br />Est. 2024 · Dhaka, BD
+              Tensor<br />Est. 2024 · Dhaka, BD
             </p>
           </div>
           <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-white/80">
             <p>
-              <strong className="text-white">Tensor Studio</strong> is an
-              independent AI engineering studio. We design and ship the
+              <strong className="text-white">Tensor</strong> is an
+              small AI engineering agency. We design and ship the
               workflows, integrations and LLM-powered agents that operate
               behind the scenes of modern companies — across{" "}
               <strong className="text-white">n8n</strong>,{" "}

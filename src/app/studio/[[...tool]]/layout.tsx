@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next";
 // Override the root metadata for /studio so the Studio chrome takes over the
 // full viewport and search engines never index it.
 export const metadata: Metadata = {
-  title: "Tensor Studio CMS",
+  title: "Tensor CMS",
   robots: { index: false, follow: false, nocache: true },
 };
 

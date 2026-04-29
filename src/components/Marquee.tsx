@@ -1,40 +1,54 @@
+"use client";
+
 import { ReactNode } from "react";
+import { motion } from "framer-motion";
 
-type MarqueeProps = {
-  children: ReactNode;
-  duration?: number;
-  className?: string;
-  reverse?: boolean;
-};
-
+// CSS-based seamless marquee (transform-only, no JS scheduling). The content
+// is duplicated and translated -50% to give a perfectly looping ribbon.
+//
+// Two API styles supported:
+//   1. <Marquee>{children}</Marquee>            — wraps already-formed strip
+//   2. <Marquee items={[...]} separator="·" />  — builds the strip for you
 export default function Marquee({
   children,
-  duration = 36,
+  items,
+  duration = 30,
   className = "",
+  separator = "·",
   reverse = false,
-}: MarqueeProps) {
+}: {
+  children?: ReactNode;
+  items?: ReactNode[];
+  duration?: number;
+  className?: string;
+  separator?: string;
+  reverse?: boolean;
+}) {
+  const row = items ? (
+    <div className="flex shrink-0 items-center gap-12 px-6">
+      {items.map((item, i) => (
+        <span key={i} className="flex items-center gap-12 whitespace-nowrap">
+          <span>{item}</span>
+          <span className="text-white/30" aria-hidden="true">
+            {separator}
+          </span>
+        </span>
+      ))}
+    </div>
+  ) : (
+    <div className="flex shrink-0 items-center gap-12 px-6">{children}</div>
+  );
+
   return (
-    <div
-      className={`overflow-hidden relative ${className}`}
-      style={{
-        maskImage:
-          "linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%)",
-        WebkitMaskImage:
-          "linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%)",
-      }}
-    >
-      <div
-        className="marquee"
-        style={{
-          ["--marquee-duration" as string]: `${duration}s`,
-          animationDirection: reverse ? "reverse" : "normal",
-        }}
+    <div className={`overflow-hidden ${className}`}>
+      <motion.div
+        className="flex w-max"
+        animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
+        transition={{ ease: "linear", duration, repeat: Infinity }}
       >
-        <div className="flex shrink-0 items-center">{children}</div>
-        <div className="flex shrink-0 items-center" aria-hidden="true">
-          {children}
-        </div>
-      </div>
+        {row}
+        {row}
+      </motion.div>
     </div>
   );
 }

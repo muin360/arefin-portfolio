@@ -1,53 +1,35 @@
 "use client";
 
-import { useEffect, useRef, useState, ReactNode, ElementType, CSSProperties } from "react";
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
-type RevealProps = {
-  children: ReactNode;
-  delay?: number;
-  as?: ElementType;
-  className?: string;
-  style?: CSSProperties;
-};
-
+// A drop-in scroll-reveal wrapper. Fades + lifts content as it enters the
+// viewport. Honors reduced-motion. Delay is in milliseconds.
 export default function Reveal({
   children,
   delay = 0,
-  as: Tag = "div",
-  className = "",
-  style,
-}: RevealProps) {
-  const ref = useRef<HTMLElement | null>(null);
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    if (typeof IntersectionObserver === "undefined") {
-      // No IO support — schedule a state update outside the effect body.
-      const id = window.setTimeout(() => setShown(true), 0);
-      return () => window.clearTimeout(id);
-    }
-    const el = ref.current;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setShown(true);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
+  y = 24,
+  className,
+  as = "div",
+}: {
+  children: ReactNode;
+  delay?: number;
+  y?: number;
+  className?: string;
+  as?: "div" | "section" | "article" | "li" | "span";
+}) {
+  const Tag = motion[as];
   return (
     <Tag
-      ref={ref as React.Ref<HTMLDivElement>}
-      className={`reveal ${shown ? "in" : ""} ${className}`}
-      style={{ ...style, ["--reveal-delay" as string]: `${delay}ms` }}
+      className={className}
+      initial={{ opacity: 0, y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1],
+        delay: delay / 1000,
+      }}
+      viewport={{ once: true, margin: "-10% 0px" }}
     >
       {children}
     </Tag>

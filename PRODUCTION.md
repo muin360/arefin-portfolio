@@ -15,7 +15,7 @@ Project → **Settings → Environment Variables** (Production + Preview):
 | `SANITY_REVALIDATE_SECRET`            | yes      | Random string. `openssl rand -base64 32`. Same value goes into Sanity webhook config.  |
 | `RESEND_API_KEY`                      | yes      | From https://resend.com — Free tier covers 3,000 emails/mo. Without this the contact form returns an error. |
 | `CONTACT_TO_EMAIL`                    | optional | Defaults to `arefinmuin@gmail.com`. Override if you want submissions sent elsewhere.   |
-| `CONTACT_FROM_EMAIL`                  | optional | Default `Tensor Studio <onboarding@resend.dev>`. After you verify a custom domain in Resend, set this to e.g. `Tensor Studio <hi@tensorstudio.com>`. |
+| `CONTACT_FROM_EMAIL`                  | optional | Default `Tensor <onboarding@resend.dev>`. After you verify a custom domain in Resend, set this to e.g. `Tensor <hi@tensorstudio.com>`. |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`| yes      | Google Search Console verification token (already set: `v1dlYhce2C26iEpbBI1F9mDAwEL40Sh_A_0X1L8j4NU`). |
 | `NEXT_PUBLIC_SENTRY_DSN`              | optional | Drop in your Sentry project DSN to enable error monitoring. Without it the SDK is loaded but inert. |
 | `SENTRY_DSN`                          | optional | Same DSN as above — used by server runtimes.                                            |
@@ -41,7 +41,7 @@ Without this, content edits in `/studio` won't appear on the live site until the
 1. Sign up at https://resend.com (free).
 2. **Domains** → **Add Domain** → enter your domain → add the DNS records Resend gives you (SPF, DKIM). This step is optional — without it, emails will send from `onboarding@resend.dev` which works but looks less professional.
 3. **API Keys** → Create API key → name it `tensor-studio-contact` → copy the `re_...` value → set as `RESEND_API_KEY` on Vercel.
-4. After verifying a domain, set `CONTACT_FROM_EMAIL=Tensor Studio <hi@yourdomain.com>` on Vercel.
+4. After verifying a domain, set `CONTACT_FROM_EMAIL=Tensor <hi@yourdomain.com>` on Vercel.
 
 ## 4. What's already wired up (no setup needed)
 

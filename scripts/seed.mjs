@@ -40,13 +40,20 @@ const client = createClient({
 const siteConfig = {
   _id: "siteConfig",
   _type: "siteConfig",
-  name: "Arefin Muin",
-  role: "AI Automation & Agent Engineer",
+  name: "Tensor",
+  role: "AI Automation & Agent Engineering Agency",
   email: "arefinmuin@gmail.com",
   tagline:
-    "I build AI agents and automation workflows that take repetitive work off your plate so you can focus on growth.",
+    "Tensor is a small AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for ambitious teams.",
   siteDescription:
-    "Tensor Studio is an independent AI engineering studio. We design and ship AI agents, automation workflows and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript — quietly, reliably.",
+    "Tensor is an AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, LangGraph, GoHighLevel, Python and TypeScript — quietly, reliably, in production.",
+  social: {
+    github: "https://github.com/arefinmuin",
+    linkedin: "https://www.linkedin.com/in/arefin-muin/",
+    twitter: "https://x.com/arefin_muin",
+    facebook: "https://www.facebook.com/Mueen360",
+    email: "mailto:arefinmuin@gmail.com",
+  },
 };
 
 const services = [
@@ -257,6 +264,203 @@ The next phase for me is going deeper on the engineering side of LLMs:
 The bar for "production-ready agent" keeps rising. I want to be on the right side of that line.
 
 If you're on the same path, [let's connect](/contact).`,
+  },
+  {
+    slug: "how-we-evaluate-llms-before-shipping",
+    title: "How we evaluate LLMs before shipping them to clients",
+    date: "2025-04-26",
+    excerpt:
+      "Vibes-driven prompt engineering is fine for a demo. Production needs an evaluation harness — here's the one we run at Tensor.",
+    readingTime: "8 min read",
+    category: "Engineering",
+    tags: ["LLM", "Evaluation", "Production"],
+    content: `Most agents look great in the demo and fall apart in week two. The reason is almost always the same — there was no evaluation. The team built a prompt that worked on five examples, shipped it, and discovered the long tail of inputs the hard way.
+
+At Tensor we won't ship an agent without a basic eval harness. Here's the one we use.
+
+## Step 1 — write the eval set before the prompt
+
+This sounds backwards. It isn't. Before I touch a prompt, I write 30–50 input/output pairs by hand. Real inputs from the client's data, with the output I'd want a human to produce. The eval set is the spec.
+
+If you can't write 30 examples of what "good" looks like, **you don't understand the task well enough to ship it.**
+
+## Step 2 — pick three metrics, not thirty
+
+Not every task needs a custom metric. We default to three:
+
+- **Exact match** — for tasks where there's a right answer (classification, extraction).
+- **LLM-as-judge** — for open-ended outputs (summaries, drafts). A separate, stronger model grades the output against a rubric.
+- **Latency p95** — measured under realistic concurrency.
+
+Anything more sophisticated than this should be earned. If you start with **DeepEval** + **Phoenix** + **LangSmith** + a custom metric, you'll spend two weeks on infrastructure before you've shipped a single eval.
+
+## Step 3 — run it on every change
+
+The eval suite runs on every prompt edit, every model swap, every retrieval change. We commit the results to git so we can see regressions over time. \`pytest\` works fine for this.
+
+The most underrated benefit: **regressions stop being a vibe.** When a stakeholder says "the new version is worse", you can show them the score on the same eval set as last week.
+
+## Step 4 — separate the eval set from the training set
+
+If you're tuning prompts based on the eval set, you're overfitting. Keep a held-out set you only look at right before shipping.
+
+## What this catches in practice
+
+In the last six months, our eval harness has caught:
+- A model upgrade (3.5 → 4o) that improved most outputs but regressed on long inputs because of context-window pricing changes.
+- A retrieval change that made answers prettier but factually worse.
+- A prompt edit that fixed one edge case and broke seven others.
+
+None of these would have been caught by manual testing.
+
+## TL;DR
+
+Ship an eval harness with the agent. It doesn't need to be fancy — 30 hand-written examples + LLM-as-judge + a CI script. The discipline of always running it is more valuable than the metric itself.`,
+  },
+  {
+    slug: "the-tensor-agent-stack",
+    title: "The agent stack we use at Tensor",
+    date: "2025-04-22",
+    excerpt:
+      "After two years building agents in production, we've converged on a stack that's small, observable and cheap to run. Here's what's in it.",
+    readingTime: "9 min read",
+    category: "Engineering",
+    tags: ["Agents", "Stack", "LangGraph"],
+    content: `Every six months I rebuild the same parts of the agent stack from scratch. Each iteration gets shorter as the ecosystem matures. Here's what's in our current setup at Tensor and **why** — because the why ages better than the libraries.
+
+## The stack, top to bottom
+
+- **Orchestration:** LangGraph (Python) for stateful, branching agents. n8n for stateless workflow glue.
+- **Models:** Claude 3.5 Sonnet for reasoning. GPT-4o-mini for cheap classification. Together AI for self-hosted fallbacks.
+- **Retrieval:** PostgreSQL + pgvector. Hybrid search (BM25 + vector) via \`pg_search\`.
+- **Storage:** PostgreSQL for everything. Redis for ephemeral state.
+- **Observability:** LangSmith for traces. Sentry for errors. Plain SQL for analytics.
+- **Deployment:** Vercel for the UI. Fly.io for the agent runtime. Cloudflare for routing.
+- **Eval:** Custom \`pytest\` harness (see [how we evaluate LLMs](/blog/how-we-evaluate-llms-before-shipping)).
+
+## Why LangGraph over LangChain
+
+LangChain is excellent for prototyping. The chain abstraction breaks down for anything stateful, branching or long-running. LangGraph models agents as state machines — explicit nodes, explicit edges, explicit checkpoints. It is dramatically easier to debug.
+
+For workflows that don't need agent state (an LLM call wrapped in retries, a triage step inside an n8n flow), I skip LangGraph entirely and call the model directly. Not every problem is an agent.
+
+## Why two models, not one
+
+Cost. A typical Tensor agent does 80% of its work with GPT-4o-mini at $0.15/1M tokens, then escalates to Sonnet for the hard 20%. The cost difference is 30×, the quality difference (for the right tasks) is invisible.
+
+The trick is teaching the agent **when to escalate**. We use a confidence-scoring step: the cheap model decides if it's sure, and only routes to Sonnet when it isn't.
+
+## Why pgvector, not Pinecone
+
+For 95% of clients, pgvector inside Postgres is faster, cheaper and operationally simpler than running a separate vector database. You only need a dedicated vector DB once you're past ~10M embeddings or you need very high concurrent throughput. We've never hit that bar.
+
+## What I removed
+
+Things I was using a year ago and stopped:
+
+- **Auto-GPT-style fully autonomous loops.** Too unpredictable. We use bounded multi-step agents with explicit supervisor checks.
+- **OpenAI's Assistants API.** Vendor lock-in for features you can replicate in 50 lines.
+- **Vector-only retrieval.** Hybrid search with BM25 reranking is consistently better.
+
+## TL;DR
+
+The boring stack wins. Postgres, two models, LangGraph, LangSmith, eval harness. Less abstraction, more observability.`,
+  },
+  {
+    slug: "gohighlevel-vs-build-from-scratch",
+    title: "GoHighLevel vs build-from-scratch: when each makes sense",
+    date: "2025-04-18",
+    excerpt:
+      "GoHighLevel is the right answer 70% of the time. The other 30% it's a trap. Here's how to tell.",
+    readingTime: "6 min read",
+    category: "Strategy",
+    tags: ["GoHighLevel", "SaaS", "Build vs Buy"],
+    content: `Most agencies and service businesses I work with are choosing between **GoHighLevel** (or HubSpot, Close, Active Campaign — same shape) and **building a custom system**. The right answer is GoHighLevel about 70% of the time. Here's how to tell which side of the line you're on.
+
+## When GoHighLevel is right
+
+You should use GoHighLevel if **all** of these are true:
+
+- Your sales process is reasonably standard (lead → qualify → book → close).
+- You'll have <10 power users editing the system.
+- You don't need anything that the platform doesn't already do.
+- Time-to-value matters more than total-cost-of-ownership over 3 years.
+
+In this scenario, GHL gives you funnels, pipelines, calendars, SMS/email automations, AI conversation flows and a customer portal in roughly a week. Building that from scratch is a six-month project that costs more than the platform fee will over the lifetime of the business.
+
+## When custom makes sense
+
+You should build custom if **any** of these are true:
+
+- Your business model has a non-standard piece (multi-leg booking, complex pricing, an unusual handoff).
+- You need integrations the platform doesn't have, and the workarounds are ugly.
+- The platform's data model fights you (you're constantly using "custom fields" to fake what should be a first-class concept).
+- You're at scale where the per-seat / per-contact pricing crosses build-it-yourself economics.
+
+The trap most teams fall into: they pick GHL because it's faster, then bend the platform until it groans. Eventually they're paying SaaS fees to maintain a half-working custom build inside someone else's CRM.
+
+## The "configure first, code second" rule
+
+Whenever I take on a new client, I configure GoHighLevel first — even if I think we'll need custom. The configuration is the spec. Two outcomes:
+
+1. The configuration solves the problem. Great — we're done.
+2. The configuration hits a wall. Now we know exactly which piece we need to replace, and we keep GHL for the parts it does well.
+
+This **hybrid stack** ends up being most of our long-running engagements: GHL for CRM + funnels, our custom code for the one thing it can't do.
+
+## What I avoid
+
+Two failure modes I've seen repeatedly:
+
+- **Replacing GHL with a from-scratch custom CRM.** Almost always a mistake. The features you don't think you need (deliverability infra, calendar sync, SMS compliance) take months to rebuild.
+- **Forcing custom logic through Zapier into GHL.** Works for a while, becomes unmaintainable past a few flows.
+
+## TL;DR
+
+Configure first. Code second. The hybrid stack is the boring, unglamorous, correct answer for most service businesses.`,
+  },
+  {
+    slug: "what-production-grade-ai-means",
+    title: "What 'production-grade AI' actually means in 2025",
+    date: "2025-04-15",
+    excerpt:
+      "The term gets thrown around a lot. Here's the checklist we use at Tensor to decide if a system is actually production-ready.",
+    readingTime: "5 min read",
+    category: "Engineering",
+    tags: ["Production", "Reliability", "Operations"],
+    content: `Everyone in the AI ecosystem says they ship "production-grade" systems. Most of them ship demos that happen to live on the internet. Production means something specific. Here's the checklist we use.
+
+## A system is production-grade if it has:
+
+**1. An eval suite that runs in CI.** If you can't show me the score from the last commit, you don't have an eval suite, you have wishful thinking.
+
+**2. Observability for every model call.** Inputs, outputs, latency, cost, error rate. Logged. Searchable. We use LangSmith for this; you can build it yourself in two days if you want.
+
+**3. Graceful degradation.** What happens when OpenAI returns a 503? When Anthropic rate-limits you? When the user types nonsense? Each of these has been a 2am incident at some point — design for it from day one.
+
+**4. A cost ceiling.** Token-based pricing means a runaway agent can rack up four-figure bills overnight. We hard-cap every agent at a per-request and per-day spend. The cap is in code, not configuration.
+
+**5. PII handling.** What data is going into the prompt? What's coming back? Where is it logged? Most teams haven't thought about this. Auditors will.
+
+**6. A rollback plan.** Prompts, model versions and retrieval data are all things you might need to roll back instantly. Treat them like database migrations — versioned, reviewable, reversible.
+
+**7. Human-in-the-loop where it matters.** The agent should be confident about its uncertainty. Anywhere it isn't sure, escalate to a human. The metric is "% of cases auto-resolved", not "% of cases the agent attempted".
+
+## What's *not* on the list
+
+- **Fancy architecture.** Most production agents we ship are 200 lines of Python.
+- **The latest model.** We default to one major version behind to avoid breakage.
+- **Custom UI.** We use plain HTML email and Slack until the workflow proves it deserves more.
+
+## How long does this take to build?
+
+For a real agent: **six to eight weeks**. The first two weeks are scoping + eval set. The next two are the agent. The last four are everything on the list above. The agent itself is the easy part.
+
+If a vendor tells you a production agent takes a week, what they mean is **a demo**. Demos are easy. Production is what we get paid for.
+
+## TL;DR
+
+Production = eval + observability + degradation + cost cap + PII + rollback + human-in-the-loop. The agent is the smallest part of the work.`,
   },
 ];
 

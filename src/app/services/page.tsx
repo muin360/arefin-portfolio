@@ -12,10 +12,10 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "Services & Pricing",
   description:
-    "AI engineering services from Tensor Studio: AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits. Engagement models, scope and pricing — operated by Arefin Muin.",
+    "AI engineering services from Tensor: AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits. Engagement models, scope and pricing — operated by Arefin Muin.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Services & Pricing — Tensor Studio",
+    title: "Services & Pricing — Tensor",
     description:
       "AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits. Engagement models and pricing.",
     url: "/services",
@@ -65,7 +65,7 @@ const engagements = [
       "Same-day response on incidents",
       "Bi-weekly roadmap + reporting",
       "Continuous improvements + new flows",
-      "Direct Slack channel with the studio",
+      "Direct Slack channel with the agency",
     ],
     ideal: "When AI is a real part of your operation, not a side project.",
   },

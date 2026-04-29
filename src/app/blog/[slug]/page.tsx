@@ -97,7 +97,7 @@ export default async function BlogPostPage({
     author: { "@type": "Person", name: "Arefin Muin", url: SITE_URL },
     publisher: {
       "@type": "Organization",
-      name: "Tensor Studio",
+      name: "Tensor",
       url: SITE_URL,
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/blog/${post.slug}` },

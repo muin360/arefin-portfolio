@@ -21,6 +21,10 @@ export type SiteConfig = {
     github?: string;
     linkedin?: string;
     twitter?: string;
+    facebook?: string;
+    instagram?: string;
+    youtube?: string;
+    whatsapp?: string;
     email?: string;
   };
 };

@@ -120,9 +120,9 @@ export default async function HomePage() {
             <div className="lg:col-span-7">
               <Reveal>
                 <p className="eyebrow mb-8 inline-flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span className="font-mono tracking-[0.26em] uppercase text-foreground">Tensor Studio</span>
+                  <span className="font-mono tracking-[0.26em] uppercase text-foreground">Tensor</span>
                   <span className="opacity-30">—</span>
-                  <span>An independent AI engineering studio</span>
+                  <span>A small AI engineering agency</span>
                 </p>
               </Reveal>
 
@@ -282,7 +282,7 @@ export default async function HomePage() {
               </h2>
               <p className="mt-6 text-white/65 max-w-md leading-relaxed">
                 Most automation breaks because someone optimized for the demo,
-                not the second year. Tensor Studio works the other way.
+                not the second year. Tensor works the other way.
               </p>
             </div>
           </div>
@@ -437,7 +437,7 @@ export default async function HomePage() {
             has been forgotten.
           </>
         }
-        attribution="Tensor Studio · house line"
+        attribution="Tensor · house line"
       />
 
       {/* MANIFESTO — scroll-revealed creed */}
@@ -457,7 +457,7 @@ export default async function HomePage() {
                 <h2 className="display text-4xl md:text-6xl text-white max-w-3xl leading-[1.05]">
                   Last 30 days
                   <br />
-                  at <span className="serif">the studio.</span>
+                  at <span className="serif">Tensor.</span>
                 </h2>
                 <p className="mt-5 text-white/65 max-w-xl leading-relaxed">
                   A live look at what&apos;s running. Workflows shipped,

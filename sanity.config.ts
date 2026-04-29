@@ -9,7 +9,7 @@ import { structure } from "./src/sanity/structure";
 
 export default defineConfig({
   name: "default",
-  title: "Tensor Studio CMS",
+  title: "Tensor CMS",
   basePath: studioUrl,
   projectId,
   dataset,

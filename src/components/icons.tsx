@@ -106,6 +106,34 @@ export const IconX = (p: IconProps) => (
   </svg>
 );
 
+export const IconFacebook = (p: IconProps) => (
+  <svg {...baseProps} {...p}>
+    <path d="M14 8h2.5V5h-2A3.5 3.5 0 0 0 11 8.5V11H8.5v3H11v7h3v-7h2.5l.5-3H14V9a1 1 0 0 1 1-1z" />
+  </svg>
+);
+
+export const IconInstagram = (p: IconProps) => (
+  <svg {...baseProps} {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
+  </svg>
+);
+
+export const IconYoutube = (p: IconProps) => (
+  <svg {...baseProps} {...p}>
+    <rect x="2" y="6" width="20" height="12" rx="3" />
+    <path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+export const IconWhatsapp = (p: IconProps) => (
+  <svg {...baseProps} {...p}>
+    <path d="M3 21l1.5-4.4A8 8 0 1 1 8 19.6L3 21z" />
+    <path d="M9 9c0 4 3 6 6 6 .5 0 1-.4 1-1 0-.4-.3-.7-.5-.8l-1.4-.8a.7.7 0 0 0-.8.1l-.5.5c-1-.4-1.7-1.1-2.1-2l.5-.5a.7.7 0 0 0 .1-.8L10.6 8a1 1 0 0 0-.8-.5c-.6 0-.9.4-.9 1z" />
+  </svg>
+);
+
 export const IconSpark = (p: IconProps) => (
   <svg {...baseProps} {...p}>
     <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" />

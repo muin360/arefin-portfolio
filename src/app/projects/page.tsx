@@ -13,12 +13,12 @@ import TiltCard from "@/components/TiltCard";
 export const metadata: Metadata = {
   title: "Selected Work",
   description:
-    "Selected automation and AI-agent systems built by Tensor Studio for clients and engagements across the US, EU and APAC — lead qualification, booking bots, content pipelines, knowledge bases and outreach systems.",
+    "Selected automation and AI-agent systems built by Tensor for clients and engagements across the US, EU and APAC — lead qualification, booking bots, content pipelines, knowledge bases and outreach systems.",
   alternates: { canonical: "/projects" },
   openGraph: {
-    title: "Selected Work — Tensor Studio",
+    title: "Selected Work — Tensor",
     description:
-      "Selected automation and AI-agent systems built by Tensor Studio for clients across the US, EU and APAC.",
+      "Selected automation and AI-agent systems built by Tensor for clients across the US, EU and APAC.",
     url: "/projects",
   },
 };
@@ -43,7 +43,7 @@ export default async function ProjectsPage() {
             so the team doesn&apos;t.
           </>
         }
-        subtitle="A selection of automations and AI agents Tensor Studio has put into production. Case studies are anonymized — we share specifics on a call."
+        subtitle="A selection of automations and AI agents Tensor has put into production. Case studies are anonymized — we share specifics on a call."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">

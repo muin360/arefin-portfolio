@@ -173,7 +173,7 @@ export default function ContactForm() {
       </button>
 
       <p className="text-xs text-white/45 text-center">
-        Submissions are emailed directly to the studio. We don&apos;t store them
+        Submissions are emailed directly to the agency. We don&apos;t store them
         anywhere else.
       </p>
     </form>

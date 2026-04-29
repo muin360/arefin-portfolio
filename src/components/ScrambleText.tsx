@@ -2,81 +2,96 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const CHARS = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#@%&*+-=<>";
+// Renders text that "scrambles" through random characters before resolving
+// to the real string. Used sparingly — eye-catching, so reserved for
+// hero accents and key moments. Honors prefers-reduced-motion.
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&@*+-/<>?{}[]";
 
-/**
- * Decrypt-style text effect. Renders the final string from a stream
- * of randomized characters that lock into place letter by letter.
- * Triggered once on mount (or when scrolled into view).
- */
 export default function ScrambleText({
   text,
-  speed = 35,
+  duration,
+  speed,
   delay = 0,
-  className = "",
+  className,
+  triggerOnView = true,
 }: {
   text: string;
-  speed?: number;
-  delay?: number;
+  duration?: number;
+  speed?: number; // legacy alias for total animation time (ms)
+  delay?: number; // ms before starting
   className?: string;
+  triggerOnView?: boolean;
 }) {
-  const ref = useRef<HTMLSpanElement | null>(null);
-  const [out, setOut] = useState("");
-  const startedRef = useRef(false);
+  const [out, setOut] = useState(text);
+  const ref = useRef<HTMLSpanElement>(null);
+  const playedRef = useRef(false);
+  const total = duration ?? speed ?? 800;
 
   useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      // Skip animation; the initial state already matches `text`.
+      return;
+    }
+
+    let raf = 0;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+
+    const play = () => {
+      if (playedRef.current) return;
+      playedRef.current = true;
+      timeout = setTimeout(() => {
+        const start = performance.now();
+        const step = (now: number) => {
+          const t = Math.min(1, (now - start) / total);
+          const reveal = Math.floor(t * text.length);
+          let result = "";
+          for (let i = 0; i < text.length; i++) {
+            if (i < reveal) result += text[i];
+            else if (text[i] === " ") result += " ";
+            else result += CHARS[Math.floor(Math.random() * CHARS.length)];
+          }
+          setOut(result);
+          if (t < 1) raf = requestAnimationFrame(step);
+          else setOut(text);
+        };
+        raf = requestAnimationFrame(step);
+      }, delay);
+    };
+
+    if (!triggerOnView) {
+      play();
+      return () => {
+        if (timeout) clearTimeout(timeout);
+        if (raf) cancelAnimationFrame(raf);
+      };
+    }
+
     const el = ref.current;
     if (!el) return;
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      const t = window.setTimeout(() => setOut(text), 0);
-      return () => window.clearTimeout(t);
-    }
-    const observer = new IntersectionObserver(
+    const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting && !startedRef.current) {
-            startedRef.current = true;
-            let i = 0;
-            const startedAt = performance.now() + delay;
-            const tick = (now: number) => {
-              if (now < startedAt) {
-                requestAnimationFrame(tick);
-                return;
-              }
-              const lockSteps = 3; // how many random frames before lock
-              const elapsed = (now - startedAt) / speed;
-              const targetLock = Math.floor(elapsed / lockSteps);
-              i = Math.min(text.length, targetLock);
-              const locked = text.slice(0, i);
-              const noise = text
-                .slice(i)
-                .split("")
-                .map((ch) =>
-                  ch === " " || ch === "\n"
-                    ? ch
-                    : CHARS[Math.floor(Math.random() * CHARS.length)]
-                )
-                .join("");
-              setOut(locked + noise);
-              if (i < text.length) requestAnimationFrame(tick);
-            };
-            requestAnimationFrame(tick);
-            observer.disconnect();
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            play();
+            io.disconnect();
+            return;
           }
-        });
+        }
       },
-      { threshold: 0.2 }
+      { threshold: 0.3 },
     );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [text, speed, delay]);
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      if (timeout) clearTimeout(timeout);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [text, total, delay, triggerOnView]);
 
   return (
     <span ref={ref} className={className} aria-label={text}>
-      {out || "\u00A0"}
+      {out}
     </span>
   );
 }

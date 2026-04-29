@@ -1,30 +1,54 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/Section";
 import ContactForm from "./ContactForm";
-import { IconMail, IconCheck } from "@/components/icons";
+import {
+  IconMail,
+  IconCheck,
+  IconGithub,
+  IconLinkedin,
+  IconX,
+  IconFacebook,
+} from "@/components/icons";
 import BentoCard from "@/components/BentoCard";
+import StudioTime from "@/components/StudioTime";
+import { sanityFetch } from "@/sanity/fetch";
+import { siteConfigQuery } from "@/sanity/queries";
+import type { SiteConfig } from "@/sanity/types";
 
 export const metadata: Metadata = {
   title: "Contact",
   alternates: { canonical: "/contact" },
   description:
-    "Get in touch with Tensor Studio to discuss AI automation, agents and LLM engineering projects.",
+    "Get in touch with Tensor to discuss AI agents, automation workflows and LLM engineering work. Replies within a day, Monday to Saturday, Asia/Dhaka.",
 };
 
-export default function ContactPage() {
+const FALLBACK_SOCIAL = {
+  github: "https://github.com/arefinmuin",
+  linkedin: "https://www.linkedin.com/in/arefin-muin/",
+  twitter: "https://x.com/arefin_muin",
+  facebook: "https://www.facebook.com/Mueen360",
+};
+
+export default async function ContactPage() {
+  const cfg = await sanityFetch<SiteConfig | null>({
+    query: siteConfigQuery,
+    tags: ["siteConfig"],
+  });
+  const social = { ...FALLBACK_SOCIAL, ...(cfg?.social ?? {}) };
+
   return (
     <>
       <PageHeader
         eyebrow="Contact"
         index="07"
-        meta="Replies within 24h · Mon–Sat"
+        meta="Replies within a day · Mon–Sat (Asia/Dhaka)"
         title={
           <>
             Tell us about the workflow you&apos;d like to{" "}
             <span className="serif">automate.</span>
           </>
         }
-        subtitle="A short message is enough to get the conversation started. Tensor Studio replies within a day, Monday to Saturday."
+        subtitle="A short message is enough to start. We reply within a working day, Monday to Saturday — answering on Asia/Dhaka time."
       />
 
       <section className="hero-dark relative overflow-hidden">
@@ -47,8 +71,9 @@ export default function ContactPage() {
                     arefinmuin@gmail.com
                   </a>
                   <p className="mt-4 text-white/65 leading-relaxed">
-                    The fastest way to reach the studio. Tell us what you&apos;re trying
-                    to automate and the tools you currently use.
+                    The fastest way to reach the agency. Tell us what
+                    you&apos;re trying to automate and the tools you
+                    currently use.
                   </p>
                 </div>
               </BentoCard>
@@ -86,10 +111,69 @@ export default function ContactPage() {
                     <span className="live-dot" /> Availability
                   </p>
                   <p className="text-white/85 leading-relaxed">
-                    Currently taking on a few projects per quarter. Free 30-minute
-                    discovery calls always available — no pitch, just a real look
-                    at whether it&apos;s a fit.
+                    Currently taking on a few engagements per quarter. Free
+                    30-minute discovery calls always available — no pitch,
+                    just a real look at whether it&apos;s a fit.
                   </p>
+                  <StudioTime />
+                </div>
+              </BentoCard>
+
+              <BentoCard className="h-full">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-4">
+                    Find Tensor elsewhere
+                  </p>
+                  <ul className="grid grid-cols-2 gap-3">
+                    {social.github && (
+                      <li>
+                        <a
+                          href={social.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
+                        >
+                          <IconGithub width={14} height={14} /> GitHub
+                        </a>
+                      </li>
+                    )}
+                    {social.linkedin && (
+                      <li>
+                        <a
+                          href={social.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
+                        >
+                          <IconLinkedin width={14} height={14} /> LinkedIn
+                        </a>
+                      </li>
+                    )}
+                    {social.twitter && (
+                      <li>
+                        <a
+                          href={social.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
+                        >
+                          <IconX width={14} height={14} /> X / Twitter
+                        </a>
+                      </li>
+                    )}
+                    {social.facebook && (
+                      <li>
+                        <a
+                          href={social.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
+                        >
+                          <IconFacebook width={14} height={14} /> Facebook
+                        </a>
+                      </li>
+                    )}
+                  </ul>
                 </div>
               </BentoCard>
             </div>

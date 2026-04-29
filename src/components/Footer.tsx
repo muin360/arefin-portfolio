@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { IconMail, IconGithub, IconLinkedin, IconX, IconArrow } from "./icons";
+import { IconMail, IconGithub, IconLinkedin, IconX, IconFacebook, IconArrow } from "./icons";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -90,6 +90,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a href="https://www.facebook.com/Mueen360" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
+                  <IconFacebook width={14} height={14} /> Facebook
+                </a>
+              </li>
+              <li>
                 <a href="mailto:arefinmuin@gmail.com" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
                   <IconMail width={14} height={14} /> Email
                 </a>
@@ -130,7 +135,7 @@ export default function Footer() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/tensor-logo-256.png"
-                alt="Tensor Studio"
+                alt="Tensor"
                 width={72}
                 height={72}
                 className="w-16 h-16 md:w-20 md:h-20 object-contain"
@@ -138,18 +143,18 @@ export default function Footer() {
               />
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-2">
-                  The studio
+                  The agency
                 </p>
-                <p className="font-mono text-2xl md:text-3xl tracking-[0.18em] uppercase text-white">
-                  Tensor<span className="text-white/55"> Studio</span>
+                <p className="font-mono text-2xl md:text-3xl tracking-[0.22em] uppercase text-white">
+                  Tensor
                 </p>
                 <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-white/45">
-                  Intelligence that connects future
+                  Intelligence that connects the future
                 </p>
               </div>
             </div>
             <p className="text-sm text-white/55 leading-relaxed max-w-md">
-              Tensor Studio is an independent AI engineering studio building
+              Tensor is a small AI engineering agency building
               quiet, intelligent systems for ambitious teams. Founded and
               operated by Arefin Muin from Dhaka, Bangladesh.
             </p>
@@ -158,7 +163,7 @@ export default function Footer() {
 
         <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between text-white/50">
           <p className="mono text-[11px] uppercase tracking-[0.16em]">
-            © {year} Tensor Studio · Founded by Arefin Muin · Hand-coded with Next.js + Tailwind
+            © {year} Tensor · Founded by Arefin Muin · Hand-coded with Next.js + Tailwind
           </p>
           <p className="mono text-[11px] uppercase tracking-[0.16em]">
             v 2.0 · Editorial
