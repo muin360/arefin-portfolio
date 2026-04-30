@@ -11,8 +11,11 @@ export default defineConfig({
   name: "default",
   title: "Tensor CMS",
   basePath: studioUrl,
-  projectId,
-  dataset,
+  // The studio is only meaningful when Sanity is configured. If env vars
+  // are missing we still need to satisfy the type signature; a clearly-
+  // bogus default makes the misconfiguration obvious in the studio UI.
+  projectId: projectId || "missing-project-id",
+  dataset: dataset || "production",
   schema,
   plugins: [
     structureTool({ structure }),

@@ -14,7 +14,7 @@ export async function generateStaticParams() {
     query: postSlugsQuery,
     tags: ["post"],
   });
-  return slugs.map((slug) => ({ slug }));
+  return (slugs ?? []).map((slug) => ({ slug }));
 }
 
 export default async function Image({

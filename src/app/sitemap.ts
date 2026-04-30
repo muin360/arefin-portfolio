@@ -13,10 +13,12 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  const [posts, projects] = await Promise.all([
+  const [postsRaw, projectsRaw] = await Promise.all([
     sanityFetch<PostListItem[]>({ query: allPostsQuery, tags: ["post"] }),
     sanityFetch<ProjectDoc[]>({ query: allProjectsQuery, tags: ["project"] }),
   ]);
+  const posts = postsRaw ?? [];
+  const projects = projectsRaw ?? [];
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`,         changeFrequency: "monthly", priority: 1.0, lastModified: now },

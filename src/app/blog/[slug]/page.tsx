@@ -23,7 +23,7 @@ export async function generateStaticParams() {
     query: postSlugsQuery,
     tags: ["post"],
   });
-  return slugs.map((slug) => ({ slug }));
+  return (slugs ?? []).map((slug) => ({ slug }));
 }
 
 async function getPost(slug: string) {
@@ -82,7 +82,7 @@ export default async function BlogPostPage({
   ]);
   if (!post) notFound();
 
-  const others = allPosts
+  const others = (allPosts ?? [])
     .filter((p) => p.slug !== post.slug)
     .slice(0, 2);
 

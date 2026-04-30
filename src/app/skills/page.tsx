@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/fetch";
 import { allSkillCategoriesQuery } from "@/sanity/queries";
 import type { SkillCategoryDoc } from "@/sanity/types";
+import { FALLBACK_SKILLS } from "@/data/fallbacks";
 import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import { IconCheck } from "@/components/icons";
@@ -82,10 +83,11 @@ const focusAreas = [
 ];
 
 export default async function SkillsPage() {
-  const skills = await sanityFetch<SkillCategoryDoc[]>({
+  const raw = await sanityFetch<SkillCategoryDoc[]>({
     query: allSkillCategoriesQuery,
     tags: ["skillCategory"],
   });
+  const skills = raw && raw.length > 0 ? raw : FALLBACK_SKILLS;
 
   return (
     <>

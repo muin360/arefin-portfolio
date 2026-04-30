@@ -8,12 +8,14 @@ import {
   IconLinkedin,
   IconX,
   IconFacebook,
+  IconWhatsapp,
 } from "@/components/icons";
 import BentoCard from "@/components/BentoCard";
 import StudioTime from "@/components/StudioTime";
 import { sanityFetch } from "@/sanity/fetch";
 import { siteConfigQuery } from "@/sanity/queries";
 import type { SiteConfig } from "@/sanity/types";
+import { FALLBACK_SITE_CONFIG } from "@/data/fallbacks";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -22,19 +24,23 @@ export const metadata: Metadata = {
     "Get in touch with Tensor to discuss AI agents, automation workflows and LLM engineering work. Replies within a day, Monday to Saturday, Asia/Dhaka.",
 };
 
-const FALLBACK_SOCIAL = {
-  github: "https://github.com/arefinmuin",
-  linkedin: "https://www.linkedin.com/in/arefin-muin/",
-  twitter: "https://x.com/arefin_muin",
-  facebook: "https://www.facebook.com/Mueen360",
-};
+function whatsappLink(cfg: SiteConfig): string | undefined {
+  if (cfg.social?.whatsapp) return cfg.social.whatsapp;
+  if (cfg.phoneE164) return `https://wa.me/${cfg.phoneE164}`;
+  return undefined;
+}
 
 export default async function ContactPage() {
-  const cfg = await sanityFetch<SiteConfig | null>({
+  const cfgRaw = await sanityFetch<SiteConfig>({
     query: siteConfigQuery,
     tags: ["siteConfig"],
   });
-  const social = { ...FALLBACK_SOCIAL, ...(cfg?.social ?? {}) };
+  const cfg: SiteConfig = cfgRaw ?? FALLBACK_SITE_CONFIG;
+  const social = { ...(FALLBACK_SITE_CONFIG.social ?? {}), ...(cfg.social ?? {}) };
+  const email = cfg.email ?? FALLBACK_SITE_CONFIG.email;
+  const phone = cfg.phone ?? FALLBACK_SITE_CONFIG.phone;
+  const phoneE164 = cfg.phoneE164 ?? FALLBACK_SITE_CONFIG.phoneE164;
+  const whatsapp = whatsappLink({ ...cfg, social });
 
   return (
     <>
@@ -64,11 +70,11 @@ export default async function ContactPage() {
                     Direct
                   </p>
                   <a
-                    href="mailto:arefinmuin@gmail.com"
+                    href={`mailto:${email}`}
                     className="inline-flex items-center gap-3 text-xl md:text-2xl tracking-tight font-medium link-underline text-white break-all"
                   >
                     <IconMail width={22} height={22} />
-                    arefinmuin@gmail.com
+                    {email}
                   </a>
                   <p className="mt-4 text-white/65 leading-relaxed">
                     The fastest way to reach the agency. Tell us what
@@ -77,6 +83,44 @@ export default async function ContactPage() {
                   </p>
                 </div>
               </BentoCard>
+
+              {(whatsapp || phone) && (
+                <BentoCard className="h-full">
+                  <div>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
+                      WhatsApp &amp; phone
+                    </p>
+                    <div className="flex flex-col gap-3">
+                      {whatsapp && (
+                        <a
+                          href={whatsapp}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-3 text-lg md:text-xl tracking-tight font-medium link-underline text-white"
+                        >
+                          <IconWhatsapp width={20} height={20} />
+                          {phone ? `WhatsApp ${phone}` : "Open WhatsApp"}
+                        </a>
+                      )}
+                      {phone && phoneE164 && (
+                        <a
+                          href={`tel:+${phoneE164}`}
+                          className="inline-flex items-center gap-3 text-base text-white/85 link-underline"
+                        >
+                          <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/45">
+                            Call
+                          </span>
+                          {phone}
+                        </a>
+                      )}
+                    </div>
+                    <p className="mt-4 text-white/65 leading-relaxed">
+                      Prefer voice? Drop a WhatsApp message any day, or call
+                      between 10:00–19:00 Asia/Dhaka.
+                    </p>
+                  </div>
+                </BentoCard>
+              )}
 
               <BentoCard className="h-full">
                 <div>
@@ -170,6 +214,18 @@ export default async function ContactPage() {
                           className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
                         >
                           <IconFacebook width={14} height={14} /> Facebook
+                        </a>
+                      </li>
+                    )}
+                    {whatsapp && (
+                      <li>
+                        <a
+                          href={whatsapp}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
+                        >
+                          <IconWhatsapp width={14} height={14} /> WhatsApp
                         </a>
                       </li>
                     )}

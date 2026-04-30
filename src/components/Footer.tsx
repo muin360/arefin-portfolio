@@ -1,8 +1,32 @@
 import Link from "next/link";
-import { IconMail, IconGithub, IconLinkedin, IconX, IconFacebook, IconArrow } from "./icons";
+import {
+  IconMail,
+  IconGithub,
+  IconLinkedin,
+  IconX,
+  IconFacebook,
+  IconWhatsapp,
+  IconArrow,
+} from "./icons";
+import { sanityFetch } from "@/sanity/fetch";
+import { siteConfigQuery } from "@/sanity/queries";
+import type { SiteConfig } from "@/sanity/types";
+import { FALLBACK_SITE_CONFIG } from "@/data/fallbacks";
 
-export default function Footer() {
+export default async function Footer() {
   const year = new Date().getFullYear();
+  const cfg = (await sanityFetch<SiteConfig>({
+    query: siteConfigQuery,
+    tags: ["siteConfig"],
+  })) ?? FALLBACK_SITE_CONFIG;
+
+  const social = { ...(FALLBACK_SITE_CONFIG.social ?? {}), ...(cfg.social ?? {}) };
+  const email = cfg.email ?? FALLBACK_SITE_CONFIG.email;
+  const availability = cfg.availability ?? FALLBACK_SITE_CONFIG.availability ?? "";
+  const whatsapp =
+    social.whatsapp ??
+    (cfg.phoneE164 ? `https://wa.me/${cfg.phoneE164}` : undefined);
+
   return (
     <footer className="bg-foreground text-white relative overflow-hidden">
       <div className="noise" aria-hidden="true" />
@@ -19,12 +43,10 @@ export default function Footer() {
         </h2>
 
         <a
-          href="mailto:arefinmuin@gmail.com"
+          href={`mailto:${email}`}
           className="mt-10 inline-flex items-center gap-3 group"
         >
-          <span className="email-cta text-2xl md:text-4xl">
-            arefinmuin@gmail.com
-          </span>
+          <span className="email-cta text-2xl md:text-4xl">{email}</span>
           <span className="grid place-items-center w-10 h-10 rounded-full border border-white/20 group-hover:bg-white group-hover:text-foreground transition-colors">
             <IconArrow width={16} height={16} />
           </span>
@@ -74,28 +96,71 @@ export default function Footer() {
               Elsewhere
             </p>
             <ul className="space-y-2.5 text-sm">
+              {social.github && (
+                <li>
+                  <a
+                    href={social.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2"
+                  >
+                    <IconGithub width={14} height={14} /> GitHub
+                  </a>
+                </li>
+              )}
+              {social.linkedin && (
+                <li>
+                  <a
+                    href={social.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2"
+                  >
+                    <IconLinkedin width={14} height={14} /> LinkedIn
+                  </a>
+                </li>
+              )}
+              {social.twitter && (
+                <li>
+                  <a
+                    href={social.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2"
+                  >
+                    <IconX width={14} height={14} /> X / Twitter
+                  </a>
+                </li>
+              )}
+              {social.facebook && (
+                <li>
+                  <a
+                    href={social.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2"
+                  >
+                    <IconFacebook width={14} height={14} /> Facebook
+                  </a>
+                </li>
+              )}
+              {whatsapp && (
+                <li>
+                  <a
+                    href={whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2"
+                  >
+                    <IconWhatsapp width={14} height={14} /> WhatsApp
+                  </a>
+                </li>
+              )}
               <li>
-                <a href="https://github.com/muin360" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
-                  <IconGithub width={14} height={14} /> GitHub
-                </a>
-              </li>
-              <li>
-                <a href="https://www.linkedin.com/in/arefinmuin" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
-                  <IconLinkedin width={14} height={14} /> LinkedIn
-                </a>
-              </li>
-              <li>
-                <a href="https://x.com/arefinmuin" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
-                  <IconX width={14} height={14} /> X / Twitter
-                </a>
-              </li>
-              <li>
-                <a href="https://www.facebook.com/Mueen360" target="_blank" rel="noopener noreferrer" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
-                  <IconFacebook width={14} height={14} /> Facebook
-                </a>
-              </li>
-              <li>
-                <a href="mailto:arefinmuin@gmail.com" className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2">
+                <a
+                  href={`mailto:${email}`}
+                  className="text-white/85 hover:text-white link-underline inline-flex items-center gap-2"
+                >
                   <IconMail width={14} height={14} /> Email
                 </a>
               </li>
@@ -106,10 +171,12 @@ export default function Footer() {
             <p className="mono text-[11px] uppercase tracking-[0.18em] text-white/45 mb-4">
               Status
             </p>
-            <p className="text-sm text-white/85 inline-flex items-center gap-2">
-              <span className="live-dot" />
-              Available · April 2025
-            </p>
+            {availability && (
+              <p className="text-sm text-white/85 inline-flex items-center gap-2">
+                <span className="live-dot" />
+                {availability}
+              </p>
+            )}
             <p className="mt-3 text-sm text-white/55 leading-relaxed">
               Booking 1–2 new engagements per month. Replies within a day.
             </p>

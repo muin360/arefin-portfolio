@@ -19,7 +19,7 @@ const items = [
   },
   {
     h: "The contact form never leaves your device",
-    p: "When you submit the form, it opens your own email client with a draft pre-filled. The message is never sent through any third-party server. If you'd rather, email arefinmuin@gmail.com directly.",
+    p: "When you submit the form, it opens your own email client with a draft pre-filled. The message is never sent through any third-party server. If you'd rather, email arefinmueen360@gmail.com directly.",
   },
   {
     h: "Strict transport security",
@@ -39,7 +39,7 @@ const items = [
   },
   {
     h: "Security disclosure",
-    p: "Found something suspicious? See /.well-known/security.txt — or email arefinmuin@gmail.com with subject \"Security report\".",
+    p: "Found something suspicious? See /.well-known/security.txt — or email arefinmueen360@gmail.com with subject \"Security report\".",
   },
 ];
 

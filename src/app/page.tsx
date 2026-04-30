@@ -4,12 +4,20 @@ import {
   allServicesQuery,
   allProjectsQuery,
   allPostsQuery,
+  siteConfigQuery,
 } from "@/sanity/queries";
 import type {
   ServiceDoc,
   ProjectDoc,
   PostListItem,
+  SiteConfig,
 } from "@/sanity/types";
+import {
+  FALLBACK_SERVICES,
+  FALLBACK_PROJECTS,
+  FALLBACK_POSTS,
+  FALLBACK_SITE_CONFIG,
+} from "@/data/fallbacks";
 import { iconFor } from "@/components/IconRegistry";
 import { IconArrow } from "@/components/icons";
 import Marquee from "@/components/Marquee";
@@ -74,11 +82,26 @@ const principles = [
 ];
 
 export default async function HomePage() {
-  const [services, projects, posts] = await Promise.all([
+  const [servicesRaw, projectsRaw, postsRaw, cfgRaw] = await Promise.all([
     sanityFetch<ServiceDoc[]>({ query: allServicesQuery, tags: ["service"] }),
     sanityFetch<ProjectDoc[]>({ query: allProjectsQuery, tags: ["project"] }),
     sanityFetch<PostListItem[]>({ query: allPostsQuery, tags: ["post"] }),
+    sanityFetch<SiteConfig>({ query: siteConfigQuery, tags: ["siteConfig"] }),
   ]);
+
+  const services = servicesRaw && servicesRaw.length > 0 ? servicesRaw : FALLBACK_SERVICES;
+  const projects = projectsRaw && projectsRaw.length > 0 ? projectsRaw : FALLBACK_PROJECTS;
+  const posts = postsRaw && postsRaw.length > 0 ? postsRaw : FALLBACK_POSTS;
+  const cfg: SiteConfig = cfgRaw ?? FALLBACK_SITE_CONFIG;
+
+  const heroTiles = cfg.heroTiles ?? [];
+  const showHeroTiles = (cfg.showHeroTiles ?? true) && heroTiles.length > 0;
+
+  const live30Days = cfg.live30Days ?? [];
+  const showLive30Days = (cfg.showLive30Days ?? true) && live30Days.length > 0;
+
+  const showLiveTicker = cfg.showLiveTicker ?? false;
+  const availability = cfg.availability ?? "Available · accepting new engagements";
 
   return (
     <>
@@ -97,13 +120,15 @@ export default async function HomePage() {
         <CursorSpotlight />
 
         {/* Top live ticker */}
-        <div className="relative"><LiveTicker /></div>
+        {showLiveTicker && (
+          <div className="relative"><LiveTicker /></div>
+        )}
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-24 pb-20 md:pt-36 md:pb-28 relative">
           {/* Top status bar — terminal-style */}
           <div className="flex flex-wrap items-center gap-3 mb-12 md:mb-16 text-xs">
             <span className="chip chip-live">
-              <span className="live-dot" /> Available · April 2025
+              <span className="live-dot" /> {availability}
             </span>
             <span className="tag-pill">
               <ScrambleText text="PORTFOLIO · V 2.0" speed={28} />
@@ -160,14 +185,15 @@ export default async function HomePage() {
               </Reveal>
 
               {/* System status strip — feels like a terminal heartbeat */}
-              <Reveal delay={280}>
-                <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
-                  <SystemTile label="agents online" value="04" />
-                  <SystemTile label="workflows live" value="27" />
-                  <SystemTile label="events / 24h" value="14.2k" />
-                  <SystemTile label="uptime / 30d" value="99.97%" />
-                </div>
-              </Reveal>
+              {showHeroTiles && (
+                <Reveal delay={280}>
+                  <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
+                    {heroTiles.map((tile) => (
+                      <SystemTile key={tile.label} label={tile.label} value={tile.value} />
+                    ))}
+                  </div>
+                </Reveal>
+              )}
             </div>
 
             {/* Live agent dashboard — the centerpiece */}
@@ -443,44 +469,43 @@ export default async function HomePage() {
       {/* MANIFESTO — scroll-revealed creed */}
       <Manifesto />
 
-      {/* LIVE STUDIO DASHBOARD — 30-day stats + world map */}
-      <section className="hero-dark border-y border-white/5 relative overflow-hidden">
-        <div className="aurora opacity-40" aria-hidden="true" />
-        <div className="orb orb-pink" aria-hidden="true" />
-        <div className="orb orb-cyan" aria-hidden="true" />
-        <div className="absolute inset-0 bg-grid-dark pointer-events-none opacity-50" aria-hidden="true" />
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
-          <Reveal>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
-              <div>
-                <p className="eyebrow text-white/55 mb-5">[ 06 ] Studio dashboard</p>
-                <h2 className="display text-4xl md:text-6xl text-white max-w-3xl leading-[1.05]">
-                  Last 30 days
-                  <br />
-                  at <span className="serif">Tensor.</span>
-                </h2>
-                <p className="mt-5 text-white/65 max-w-xl leading-relaxed">
-                  A live look at what&apos;s running. Workflows shipped,
-                  agents deployed, hours saved, regions served — straight
-                  from the production telemetry, refreshed every visit.
-                </p>
+      {/* LIVE STUDIO DASHBOARD — 30-day stats + world map. Hidden when no
+          stats are configured in /studio so the site never shows fabricated
+          numbers. */}
+      {showLive30Days && (
+        <section className="hero-dark border-y border-white/5 relative overflow-hidden">
+          <div className="aurora opacity-40" aria-hidden="true" />
+          <div className="orb orb-pink" aria-hidden="true" />
+          <div className="orb orb-cyan" aria-hidden="true" />
+          <div className="absolute inset-0 bg-grid-dark pointer-events-none opacity-50" aria-hidden="true" />
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
+            <Reveal>
+              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
+                <div>
+                  <p className="eyebrow text-white/55 mb-5">[ 06 ] Studio dashboard</p>
+                  <h2 className="display text-4xl md:text-6xl text-white max-w-3xl leading-[1.05]">
+                    Last 30 days
+                    <br />
+                    at <span className="serif">Tensor.</span>
+                  </h2>
+                  <p className="mt-5 text-white/65 max-w-xl leading-relaxed">
+                    A live look at what&apos;s running across active
+                    engagements — straight from the studio dashboard.
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                streaming · last sync &lt; 1 min ago
-              </div>
-            </div>
-          </Reveal>
+            </Reveal>
 
-          <Reveal delay={80}>
-            <Live30Days />
-          </Reveal>
+            <Reveal delay={80}>
+              <Live30Days stats={live30Days} />
+            </Reveal>
 
-          <Reveal delay={140} className="mt-6 md:mt-8">
-            <TensorPipeline />
-          </Reveal>
-        </div>
-      </section>
+            <Reveal delay={140} className="mt-6 md:mt-8">
+              <TensorPipeline />
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       {/* JOURNAL */}
       <section className="border-b border-line">

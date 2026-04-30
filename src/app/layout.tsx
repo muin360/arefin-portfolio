@@ -131,17 +131,15 @@ const jsonLd = [
     description:
       "Independent AI engineer building agents, automations and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript.",
     image: `${SITE_URL}/og.png`,
-    email: "mailto:arefinmuin@gmail.com",
+    email: "mailto:arefinmueen360@gmail.com",
     worksFor: {
       "@type": "Organization",
       name: "Tensor",
       url: SITE_URL,
     },
     sameAs: [
-      "https://github.com/arefinmuin",
-      "https://www.linkedin.com/in/arefin-muin/",
-      "https://x.com/arefin_muin",
-      "https://www.facebook.com/Mueen360",
+      "https://www.facebook.com/profile.php?id=61588840534814",
+      "https://wa.me/8801994605717",
     ],
     knowsAbout: [
       "AI Engineering",
@@ -169,10 +167,8 @@ const jsonLd = [
       "A small AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for modern companies.",
     founder: { "@type": "Person", name: "Arefin Muin" },
     sameAs: [
-      "https://github.com/arefinmuin",
-      "https://www.linkedin.com/in/arefin-muin/",
-      "https://x.com/arefin_muin",
-      "https://www.facebook.com/Mueen360",
+      "https://www.facebook.com/profile.php?id=61588840534814",
+      "https://wa.me/8801994605717",
     ],
   },
   {

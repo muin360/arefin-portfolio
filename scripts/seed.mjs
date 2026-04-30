@@ -42,19 +42,92 @@ const siteConfig = {
   _type: "siteConfig",
   name: "Tensor",
   role: "AI Automation & Agent Engineering Agency",
-  email: "arefinmuin@gmail.com",
+  email: "arefinmueen360@gmail.com",
+  phone: "+880 1994-605717",
+  phoneE164: "8801994605717",
   tagline:
     "Tensor is a small AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for ambitious teams.",
   siteDescription:
     "Tensor is an AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, LangGraph, GoHighLevel, Python and TypeScript — quietly, reliably, in production.",
+  availability: "Available · accepting new engagements",
   social: {
-    github: "https://github.com/arefinmuin",
-    linkedin: "https://www.linkedin.com/in/arefin-muin/",
-    twitter: "https://x.com/arefin_muin",
-    facebook: "https://www.facebook.com/Mueen360",
-    email: "mailto:arefinmuin@gmail.com",
+    facebook: "https://www.facebook.com/profile.php?id=61588840534814",
+    whatsapp: "https://wa.me/8801994605717",
+    email: "mailto:arefinmueen360@gmail.com",
   },
+  // Hero status tiles — leave empty by default. Edit in /studio when you
+  // have real numbers to show; until then the row is hidden.
+  heroTiles: [],
+  // "Last 30 days" stat cards — leave empty by default. Editable in /studio.
+  live30Days: [],
+  showLiveTicker: false,
+  showHeroTiles: false,
+  showLive30Days: false,
 };
+
+// Engagement / pricing tiers shown on /services. All prices default to
+// "Custom quote" so the live site never advertises numbers the studio
+// hasn't actually committed to.
+const engagements = [
+  {
+    _id: "engagement.sprint",
+    _type: "engagement",
+    tag: "Sprint",
+    name: "Two-week sprint",
+    price: "Custom quote",
+    cadence: "2 weeks · fixed scope",
+    summary:
+      "A focused, time-boxed build for a single workflow or one tightly-scoped agent.",
+    deliverables: [
+      "Discovery + scoped proposal",
+      "One workflow or one agent shipped",
+      "Loom walkthrough + written handoff",
+      "30-day reliability guarantee",
+    ],
+    ideal: "When you know exactly what you want and need it live this month.",
+    featured: false,
+    order: 0,
+  },
+  {
+    _id: "engagement.build",
+    _type: "engagement",
+    tag: "Build",
+    name: "Engineering engagement",
+    price: "Custom quote",
+    cadence: "4–8 weeks · milestone-based",
+    summary:
+      "End-to-end design and build of a multi-step automation or production-grade agent system.",
+    deliverables: [
+      "Architecture + integration map",
+      "Custom code where it matters",
+      "Real-data testing + observability",
+      "Documentation, training, source under your repo",
+    ],
+    ideal: "For teams replacing brittle tools with one durable system.",
+    featured: true,
+    ctaLabel: "Start an engagement",
+    order: 1,
+  },
+  {
+    _id: "engagement.retainer",
+    _type: "engagement",
+    tag: "Retainer",
+    name: "On-call studio",
+    price: "Custom quote",
+    cadence: "Monthly · ongoing capacity",
+    summary:
+      "Ongoing engineering capacity for your existing AI stack — improvements, monitoring, new agents.",
+    deliverables: [
+      "Same-day response on incidents",
+      "Bi-weekly roadmap + reporting",
+      "Continuous improvements + new flows",
+      "Direct WhatsApp / email channel",
+    ],
+    ideal: "When AI is a real part of your operation, not a side project.",
+    featured: false,
+    order: 2,
+  },
+];
 
 const services = [
   {
@@ -618,6 +691,11 @@ async function run() {
 
   // Site config — singleton, deterministic _id.
   tx.createOrReplace(siteConfig);
+
+  // Engagement / pricing tiers — deterministic _ids.
+  engagements.forEach((e) => {
+    tx.createOrReplace(e);
+  });
 
   services.forEach((s, i) => {
     tx.createOrReplace({

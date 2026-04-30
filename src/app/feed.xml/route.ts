@@ -18,10 +18,11 @@ function escapeXml(s: string): string {
 }
 
 export async function GET() {
-  const posts = await sanityFetch<PostListItem[]>({
-    query: allPostsQuery,
-    tags: ["post"],
-  });
+  const posts =
+    (await sanityFetch<PostListItem[]>({
+      query: allPostsQuery,
+      tags: ["post"],
+    })) ?? [];
 
   const updated = posts[0]?.date ?? new Date().toISOString();
 

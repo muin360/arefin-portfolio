@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sanityFetch } from "@/sanity/fetch";
-import { allServicesQuery } from "@/sanity/queries";
-import type { ServiceDoc } from "@/sanity/types";
+import { allEngagementsQuery, allServicesQuery } from "@/sanity/queries";
+import type { EngagementDoc, ServiceDoc } from "@/sanity/types";
+import { FALLBACK_ENGAGEMENTS, FALLBACK_SERVICES } from "@/data/fallbacks";
 import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import { IconArrow, IconCheck } from "@/components/icons";
@@ -22,54 +23,7 @@ export const metadata: Metadata = {
   },
 };
 
-const engagements = [
-  {
-    tag: "Sprint",
-    name: "Two-week sprint",
-    price: "From $2.4k",
-    cadence: "2 weeks · fixed scope",
-    summary:
-      "A focused, time-boxed build for a single workflow or one tightly-scoped agent.",
-    deliverables: [
-      "Discovery + scoped proposal",
-      "One workflow or one agent shipped",
-      "Loom walkthrough + written handoff",
-      "30-day reliability guarantee",
-    ],
-    ideal: "When you know exactly what you want and need it live this month.",
-  },
-  {
-    tag: "Build",
-    name: "Engineering engagement",
-    price: "From $7.5k",
-    cadence: "4–8 weeks · milestone-based",
-    summary:
-      "End-to-end design and build of a multi-step automation or production-grade agent system.",
-    deliverables: [
-      "Architecture + integration map",
-      "Custom code where it matters",
-      "Real-data testing + observability",
-      "Documentation, training, source under your repo",
-    ],
-    ideal: "For teams replacing brittle tools with one durable system.",
-    featured: true,
-  },
-  {
-    tag: "Retainer",
-    name: "On-call studio",
-    price: "From $3.2k / mo",
-    cadence: "Monthly · 20–40 hrs",
-    summary:
-      "Ongoing engineering capacity for your existing AI stack — improvements, monitoring, new agents.",
-    deliverables: [
-      "Same-day response on incidents",
-      "Bi-weekly roadmap + reporting",
-      "Continuous improvements + new flows",
-      "Direct Slack channel with the agency",
-    ],
-    ideal: "When AI is a real part of your operation, not a side project.",
-  },
-];
+
 
 const process = [
   {
@@ -102,10 +56,19 @@ const engagement = [
 ];
 
 export default async function ServicesPage() {
-  const services = await sanityFetch<ServiceDoc[]>({
-    query: allServicesQuery,
-    tags: ["service"],
-  });
+  const [servicesRaw, engagementsRaw] = await Promise.all([
+    sanityFetch<ServiceDoc[]>({
+      query: allServicesQuery,
+      tags: ["service"],
+    }),
+    sanityFetch<EngagementDoc[]>({
+      query: allEngagementsQuery,
+      tags: ["engagement"],
+    }),
+  ]);
+  const services = servicesRaw && servicesRaw.length > 0 ? servicesRaw : FALLBACK_SERVICES;
+  const engagements =
+    engagementsRaw && engagementsRaw.length > 0 ? engagementsRaw : FALLBACK_ENGAGEMENTS;
 
   return (
     <>
@@ -148,7 +111,7 @@ export default async function ServicesPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {engagements.map((e, i) => (
-              <Reveal key={e.tag} delay={i * 90}>
+              <Reveal key={e._id ?? e.tag} delay={i * 90}>
                 <BentoCard className={`h-full ${e.featured ? "bento-spin" : ""}`}>
                   <div className="h-full flex flex-col">
                     <div className="flex items-start justify-between">
@@ -185,7 +148,7 @@ export default async function ServicesPage() {
                     </div>
 
                     <ul className="mt-6 space-y-2.5 text-sm text-white/75 flex-1">
-                      {e.deliverables.map((d) => (
+                      {(e.deliverables ?? []).map((d) => (
                         <li key={d} className="flex items-start gap-2.5">
                           <IconCheck width={16} height={16} className="text-white/55 mt-1 shrink-0" />
                           <span>{d}</span>
@@ -193,9 +156,11 @@ export default async function ServicesPage() {
                       ))}
                     </ul>
 
-                    <p className="mt-6 pt-5 border-t border-white/10 text-xs text-white/50 leading-relaxed italic">
-                      {e.ideal}
-                    </p>
+                    {e.ideal && (
+                      <p className="mt-6 pt-5 border-t border-white/10 text-xs text-white/50 leading-relaxed italic">
+                        {e.ideal}
+                      </p>
+                    )}
 
                     <Link
                       href="/contact"
@@ -205,7 +170,7 @@ export default async function ServicesPage() {
                           : "border border-white/20 text-white hover:bg-white/10"
                       }`}
                     >
-                      {e.featured ? "Start an engagement" : "Discuss this tier"}
+                      {e.ctaLabel ?? (e.featured ? "Start an engagement" : "Discuss this tier")}
                       <IconArrow width={14} height={14} />
                     </Link>
                   </div>

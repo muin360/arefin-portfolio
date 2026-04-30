@@ -21,4 +21,5 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem("project").title("Projects"),
       S.documentTypeListItem("service").title("Services"),
       S.documentTypeListItem("skillCategory").title("Skill Categories"),
+      S.documentTypeListItem("engagement").title("Engagement Tiers (Pricing)"),
     ]);

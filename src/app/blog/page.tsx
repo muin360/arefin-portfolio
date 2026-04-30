@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/fetch";
 import { allPostsQuery } from "@/sanity/queries";
 import type { PostListItem } from "@/sanity/types";
+import { FALLBACK_POSTS } from "@/data/fallbacks";
 import { PageHeader } from "@/components/Section";
 import BlogList from "./BlogList";
 
@@ -19,10 +20,11 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const sorted = await sanityFetch<PostListItem[]>({
+  const raw = await sanityFetch<PostListItem[]>({
     query: allPostsQuery,
     tags: ["post"],
   });
+  const sorted = raw && raw.length > 0 ? raw : FALLBACK_POSTS;
   return (
     <>
       <PageHeader

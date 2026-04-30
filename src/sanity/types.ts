@@ -11,12 +11,29 @@ export type SanityImage = {
   dimensions?: { width: number; height: number; aspectRatio: number };
 } | null;
 
+export type HeroTile = {
+  label: string;
+  value: string;
+};
+
+export type Live30DayStat = {
+  label: string;
+  value: string;
+  suffix?: string;
+  hint?: string;
+  delta?: string;
+  trendUp?: boolean;
+};
+
 export type SiteConfig = {
   name: string;
   role: string;
   email: string;
+  phone?: string;
+  phoneE164?: string;
   tagline: string;
   siteDescription?: string;
+  availability?: string;
   social?: {
     github?: string;
     linkedin?: string;
@@ -27,6 +44,25 @@ export type SiteConfig = {
     whatsapp?: string;
     email?: string;
   };
+  heroTiles?: HeroTile[];
+  live30Days?: Live30DayStat[];
+  showLiveTicker?: boolean;
+  showHeroTiles?: boolean;
+  showLive30Days?: boolean;
+};
+
+export type EngagementDoc = {
+  _id: string;
+  tag: string;
+  name: string;
+  price: string;
+  cadence?: string;
+  summary: string;
+  deliverables?: string[];
+  ideal?: string;
+  ctaLabel?: string;
+  featured?: boolean;
+  order?: number;
 };
 
 export type ServiceDoc = {

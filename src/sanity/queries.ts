@@ -5,7 +5,26 @@ import { groq } from "next-sanity";
 
 export const siteConfigQuery = groq`
   *[_type == "siteConfig"][0]{
-    name, role, email, tagline, siteDescription, social
+    name,
+    role,
+    email,
+    phone,
+    phoneE164,
+    tagline,
+    siteDescription,
+    availability,
+    social,
+    heroTiles,
+    live30Days,
+    showLiveTicker,
+    showHeroTiles,
+    showLive30Days
+  }
+`;
+
+export const allEngagementsQuery = groq`
+  *[_type == "engagement"] | order(coalesce(order, 9999) asc, _createdAt asc){
+    _id, tag, name, price, cadence, summary, deliverables, ideal, ctaLabel, featured, order
   }
 `;
 

@@ -112,7 +112,7 @@ export async function sendContact(
     return {
       ok: false,
       error:
-        "Email delivery isn't configured yet. Please email arefinmuin@gmail.com directly.",
+        "Email delivery isn't configured yet. Please email arefinmueen360@gmail.com directly.",
     };
   }
 
@@ -124,7 +124,7 @@ export async function sendContact(
   // sends from `onboarding@resend.dev`. After verifying tensorstudio.com
   // (or whatever), set CONTACT_FROM_EMAIL to "Tensor <hi@your.dev>".
   const from = process.env.CONTACT_FROM_EMAIL || "Tensor <onboarding@resend.dev>";
-  const to = process.env.CONTACT_TO_EMAIL || "arefinmuin@gmail.com";
+  const to = process.env.CONTACT_TO_EMAIL || "arefinmueen360@gmail.com";
 
   try {
     const result = await resend.emails.send({
