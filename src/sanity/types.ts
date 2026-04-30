@@ -68,9 +68,50 @@ export type EngagementDoc = {
 export type ServiceDoc = {
   _id: string;
   title: string;
-  description: string;
   iconName: IconName;
+  hook?: string;
+  problem?: string;
+  solution?: string;
+  outcome?: string;
+  bullets?: string[];
+  ctaLabel?: string;
+  ctaPrefill?: string;
+  isFeatured?: boolean;
+  badge?: string;
+  description?: string;
   order?: number;
+};
+
+export type FaqDoc = {
+  _id: string;
+  question: string;
+  answer: string;
+  order?: number;
+};
+
+export type TestimonialDoc = {
+  _id: string;
+  name: string;
+  role?: string;
+  content: string;
+  rating?: number;
+  image?: SanityImage;
+};
+
+export type HeroCTA = {
+  label?: string;
+  href?: string;
+};
+
+export type HeroDoc = {
+  _id: string;
+  eyebrow?: string;
+  headline: string;
+  subheadline: string;
+  trustLine?: string;
+  scarcityPill?: string;
+  primaryCTA?: HeroCTA;
+  secondaryCTA?: HeroCTA;
 };
 
 export type SkillCategoryDoc = {

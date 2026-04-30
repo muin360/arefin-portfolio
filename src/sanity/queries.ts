@@ -30,7 +30,40 @@ export const allEngagementsQuery = groq`
 
 export const allServicesQuery = groq`
   *[_type == "service"] | order(coalesce(order, 9999) asc, _createdAt asc){
-    _id, title, description, iconName, order
+    _id,
+    title,
+    iconName,
+    hook,
+    problem,
+    solution,
+    outcome,
+    bullets,
+    ctaLabel,
+    ctaPrefill,
+    isFeatured,
+    badge,
+    description,
+    order
+  }
+`;
+
+export const allFaqsQuery = groq`
+  *[_type == "faq"] | order(coalesce(order, 9999) asc, _createdAt asc){
+    _id, question, answer, order
+  }
+`;
+
+export const allTestimonialsQuery = groq`
+  *[_type == "testimonial"] | order(coalesce(order, 9999) asc, _createdAt desc){
+    _id, name, role, content, rating,
+    "image": image{ "url": asset->url, alt, "lqip": asset->metadata.lqip }
+  }
+`;
+
+export const heroQuery = groq`
+  *[_type == "hero"][0]{
+    _id, eyebrow, headline, subheadline, trustLine, scarcityPill,
+    primaryCTA, secondaryCTA
   }
 `;
 

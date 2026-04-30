@@ -5,7 +5,20 @@ import { service } from "./service";
 import { skillCategory } from "./skillCategory";
 import { siteConfig } from "./siteConfig";
 import { engagement } from "./engagement";
+import { faq } from "./faq";
+import { testimonial } from "./testimonial";
+import { hero } from "./hero";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [post, project, service, skillCategory, siteConfig, engagement],
+  types: [
+    post,
+    project,
+    service,
+    skillCategory,
+    siteConfig,
+    engagement,
+    faq,
+    testimonial,
+    hero,
+  ],
 };

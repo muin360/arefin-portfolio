@@ -26,7 +26,7 @@ import CursorSpotlight from "@/components/CursorSpotlight";
 import ParticleNetwork from "@/components/ParticleNetwork";
 import LiveAgentDashboard from "@/components/LiveAgentDashboard";
 import MagneticButton from "@/components/MagneticButton";
-import BentoCard from "@/components/BentoCard";
+import ServiceCardLarge from "@/components/ServiceCardLarge";
 import LiveTicker from "@/components/LiveTicker";
 
 import TiltCard from "@/components/TiltCard";
@@ -203,84 +203,63 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CAPABILITIES — 3 productized services with P/S/O CTAs */}
+      {/* SERVICES — 3 large premium cards (Problem / Solution / Outcome) */}
       <section id="services" className="hero-dark border-b border-white/5 relative overflow-hidden scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 section">
+        <div className="orb orb-violet hidden md:block opacity-40" aria-hidden="true" />
+        <div className="orb orb-cyan hidden md:block opacity-30" aria-hidden="true" />
+        <div className="absolute inset-0 bg-grid-dark pointer-events-none opacity-50" aria-hidden="true" />
+
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
           <Reveal>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14 md:mb-20">
-              <div>
-                <p className="eyebrow mb-5">[ 01 ] What I do</p>
-                <h2 className="display text-4xl md:text-6xl max-w-3xl">
-                  Three ways to stop
-                  <br />
-                  <span className="serif">losing time, leads or sales.</span>
-                </h2>
-              </div>
+            <div className="text-center mb-12 md:mb-16">
+              <p className="eyebrow mb-5">[ 01 ] Services</p>
+              <h2 className="display text-4xl md:text-6xl text-white max-w-4xl mx-auto leading-[1.05]">
+                What I can{" "}
+                <span className="serif iridescent">build for your business.</span>
+              </h2>
+              <p className="mt-6 text-white/65 max-w-2xl mx-auto leading-relaxed">
+                Choose the system that saves you time, gets you more leads,
+                or grows your business. Flat price. Free 30-min audit.
+              </p>
+              <p className="mt-7 inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.2em] text-white/70 rounded-full border border-white/15 bg-white/5 px-3 py-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Only 2 client slots available this month
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 items-stretch">
+            {services.slice(0, 3).map((s, i) => (
+              <ServiceCardLarge
+                key={s._id ?? s.title}
+                index={i}
+                title={s.title}
+                iconName={s.iconName}
+                hook={s.hook}
+                problem={s.problem}
+                solution={s.solution}
+                outcome={s.outcome}
+                bullets={s.bullets}
+                description={s.description}
+                ctaLabel={s.ctaLabel}
+                ctaPrefill={s.ctaPrefill}
+                badge={s.badge}
+                isFeatured={s.isFeatured}
+              />
+            ))}
+          </div>
+
+          <Reveal delay={300}>
+            <div className="mt-12 text-center">
               <Link
                 href="/services"
-                className="hover-arrow text-sm text-muted hover:text-foreground self-start md:self-end"
+                className="hover-arrow text-sm text-white/65 hover:text-white"
               >
-                <span className="link-underline">See pricing & engagements</span>
+                <span className="link-underline">See full pricing & engagement models</span>
                 <span aria-hidden="true">→</span>
               </Link>
             </div>
           </Reveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {services.slice(0, 3).map(({ _id, iconName, title, description }, i) => {
-              const Icon = iconFor(iconName);
-              const ctas = [
-                {
-                  label: "See if your workflow can be automated",
-                  prefill:
-                    "Hi Arefin! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
-                },
-                {
-                  label: "Get a free Messenger bot demo",
-                  prefill:
-                    "Hi Arefin! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
-                },
-                {
-                  label: "Get a free 1-page website teardown",
-                  prefill:
-                    "Hi Arefin! I'd like a free teardown of my current website. My site is: ",
-                },
-              ];
-              const cta = ctas[i] ?? ctas[0];
-              const waHref = `https://wa.me/8801994605717?text=${encodeURIComponent(cta.prefill)}`;
-              return (
-                <Reveal key={_id ?? title} delay={i * 80}>
-                  <BentoCard className="h-full">
-                    <div className="h-full flex flex-col group">
-                      <div className="flex items-start justify-between">
-                        <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 border border-white/10 transition-all duration-500 group-hover:scale-110 group-hover:border-white/30">
-                          <Icon width={24} height={24} className="text-white" />
-                        </span>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
-                          / {String(i + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                      <h3 className="mt-7 text-2xl md:text-[1.6rem] font-medium tracking-tight text-white leading-tight">
-                        {title}
-                      </h3>
-                      <p className="mt-4 text-sm md:text-[0.95rem] text-white/65 leading-relaxed flex-1">
-                        {description}
-                      </p>
-                      <a
-                        href={waHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-7 inline-flex items-center justify-between gap-3 text-sm text-white/85 hover:text-white border-t border-white/10 pt-5 group/cta"
-                      >
-                        <span className="font-medium">{cta.label}</span>
-                        <span aria-hidden="true" className="transition-transform duration-300 group-hover/cta:translate-x-1">→</span>
-                      </a>
-                    </div>
-                  </BentoCard>
-                </Reveal>
-              );
-            })}
-          </div>
         </div>
       </section>
 

@@ -13,11 +13,14 @@
 
 import type {
   EngagementDoc,
+  FaqDoc,
+  HeroDoc,
   PostListItem,
   ProjectDoc,
   ServiceDoc,
   SiteConfig,
   SkillCategoryDoc,
+  TestimonialDoc,
 } from "@/sanity/types";
 
 export const FALLBACK_SITE_CONFIG: SiteConfig = {
@@ -106,6 +109,21 @@ export const FALLBACK_SERVICES: ServiceDoc[] = [
     _id: "service.ai-automation",
     title: "AI Automation",
     iconName: "agent",
+    hook: "Get back 15–40 hours a month — without new software to learn.",
+    problem:
+      "Your team copies, pastes and replies the same things 40 times a week. Lead qualification, follow-ups and CRM updates eat your most expensive hours.",
+    solution:
+      "I build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — sitting on top of the tools you already use.",
+    outcome: "Save 15–40 hours every month. Zero new software.",
+    bullets: [
+      "Lead qualification + auto-routing",
+      "AI follow-ups + CRM hygiene on autopilot",
+      "Daily WhatsApp updates while building",
+    ],
+    ctaLabel: "See if your workflow can be automated",
+    ctaPrefill:
+      "Hi Arefin! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
+    isFeatured: false,
     description:
       "Your team copies, pastes and replies the same things 40 times a week. I build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — lead qualification, follow-ups, CRM updates, AI replies. Get back 15–40 hours every month, zero new software to learn.",
     order: 0,
@@ -114,6 +132,22 @@ export const FALLBACK_SERVICES: ServiceDoc[] = [
     _id: "service.messenger-automation",
     title: "Facebook & Messenger Automation",
     iconName: "chart",
+    hook: "Reply in 30 seconds, all day, every day. Even at 3am.",
+    problem:
+      "Your Messenger inbox is your storefront — but DMs and comments pile up faster than you can reply. Hot leads go cold while you sleep.",
+    solution:
+      "A 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments — and only hands off when it actually matters.",
+    outcome: "Reply in under 30s. Capture every lead. Sleep at night.",
+    bullets: [
+      "Answers FAQs in your brand voice",
+      "Qualifies buyers + books appointments",
+      "Smart human handoff for real opportunities",
+    ],
+    ctaLabel: "Get a free Messenger bot demo",
+    ctaPrefill:
+      "Hi Arefin! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
+    isFeatured: true,
+    badge: "Most Popular",
     description:
       "Your Messenger inbox is your storefront — but DMs and comments pile up faster than you can reply. I build a 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments and only hands off when it really matters. Reply in under 30 seconds, all day, every day.",
     order: 1,
@@ -122,11 +156,85 @@ export const FALLBACK_SERVICES: ServiceDoc[] = [
     _id: "service.website-development",
     title: "Website Development",
     iconName: "code",
+    hook: "A site built around one job: turning visitors into customers.",
+    problem:
+      "Your current site looks like 2017 and quietly tells visitors you're not the serious option. Buyers click away before they reach the form.",
+    solution:
+      "Fast, mobile-first websites with WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
+    outcome: "Visitors that convert. Pages that load in <2s.",
+    bullets: [
+      "Mobile-first, conversion-focused design",
+      "WhatsApp + booking + payment built in",
+      "You can edit copy without calling me",
+    ],
+    ctaLabel: "Get a free 1-page website teardown",
+    ctaPrefill:
+      "Hi Arefin! I'd like a free teardown of my current website. My site is: ",
+    isFeatured: false,
     description:
       "Your current site looks like 2017 and quietly tells visitors you're not the serious option. I ship fast, mobile-first websites built around one job: turning visitors into customers. WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
     order: 2,
   },
 ];
+
+export const FALLBACK_FAQS: FaqDoc[] = [
+  {
+    _id: "faq.pricing",
+    question: "How much does it cost?",
+    answer:
+      "Most AI automation projects fall between BDT 25,000–250,000 (~$200–$2,000) depending on scope. Messenger bots start at BDT 15,000 (~$125). Websites start at BDT 35,000 (~$300). We agree on a flat price before I start — no surprises, no hourly billing.",
+    order: 0,
+  },
+  {
+    _id: "faq.timeline",
+    question: "How long does it take?",
+    answer:
+      "7–14 days for most automations and Messenger bots. 14–21 days for a complete website. You'll get daily updates on WhatsApp.",
+    order: 1,
+  },
+  {
+    _id: "faq.ownership",
+    question: "Will I be able to run it after you leave?",
+    answer:
+      "Yes. Every project ships with Loom video walkthroughs, written docs, and 30 days of free post-launch support. If your team can't run it on Day 30 — it's not done.",
+    order: 2,
+  },
+  {
+    _id: "faq.tools",
+    question: "What if I don't have a CRM or the right tools yet?",
+    answer:
+      "No problem. I'll recommend the simplest stack for your size and budget — usually free or low-cost tools you'll actually use. I make money building, not reselling software.",
+    order: 3,
+  },
+  {
+    _id: "faq.industries",
+    question: "Do you work with my industry?",
+    answer:
+      "If your business has customers, messages, leads or repetitive tasks — yes. So far: e-commerce, dental & beauty clinics, coaches, real estate, online agencies and local services across Bangladesh, the GCC and the US.",
+    order: 4,
+  },
+  {
+    _id: "faq.guarantee",
+    question: "What if it doesn't work?",
+    answer:
+      "The 30-min audit call is free, no obligation. If you start a project and the system doesn't deliver the agreed outcome by handoff, I'll keep working on it without billing more — until it does.",
+    order: 5,
+  },
+];
+
+export const FALLBACK_TESTIMONIALS: TestimonialDoc[] = [];
+
+export const FALLBACK_HERO: HeroDoc = {
+  _id: "hero.fallback",
+  eyebrow: "AI automation, Messenger bots & websites for small businesses",
+  headline: "We build the systems that bring you more leads — while you sleep.",
+  subheadline:
+    "Done-for-you AI chatbots, Facebook & Messenger automation, and high-converting websites. Built in days, not months. Owned by you, not us.",
+  trustLine: "Reply in 1 hour · Written plan in 48 hrs · 2 spots left this month",
+  scarcityPill: "Booking 2 clients this month · Free 30-min audit",
+  primaryCTA: { label: "Get my free 30-min audit", href: "/book" },
+  secondaryCTA: { label: "See how it works", href: "#services" },
+};
 
 export const FALLBACK_SKILLS: SkillCategoryDoc[] = [
   {
