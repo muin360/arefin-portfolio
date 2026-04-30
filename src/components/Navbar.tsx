@@ -98,7 +98,7 @@ export default function Navbar() {
             </svg>
           </a>
           <Link
-            href="/contact"
+            href="/book"
             className="btn-primary text-sm ml-2"
           >
             <span className="live-dot" aria-hidden="true" />

@@ -34,7 +34,7 @@ export default function FinalCTASection() {
         <Reveal delay={120}>
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/contact"
+              href="/book"
               className="btn-primary shimmer bg-white text-foreground border-white hover:bg-white/90 w-full sm:w-auto"
             >
               Book my free audit call

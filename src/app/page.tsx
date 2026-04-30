@@ -112,13 +112,13 @@ export default async function HomePage() {
         {/* Background layers */}
         <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
         <div className="starfield" aria-hidden="true" />
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden="true">
           <ParticleNetwork density={70} linkDistance={150} />
         </div>
-        <div className="aurora" aria-hidden="true" />
-        <div className="orb orb-violet" aria-hidden="true" />
-        <div className="orb orb-pink" aria-hidden="true" />
-        <div className="orb orb-cyan" aria-hidden="true" />
+        <div className="aurora hidden md:block" aria-hidden="true" />
+        <div className="orb orb-violet hidden md:block" aria-hidden="true" />
+        <div className="orb orb-pink hidden md:block" aria-hidden="true" />
+        <div className="orb orb-cyan hidden md:block" aria-hidden="true" />
         <CursorSpotlight />
 
         {/* Top live ticker */}

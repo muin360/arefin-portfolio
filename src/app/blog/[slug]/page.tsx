@@ -212,7 +212,7 @@ export default async function BlogPostPage({
             </h2>
           </div>
           <Link href="/contact" className="btn-primary">
-            Start a project
+            Get my free 30-min audit
             <IconArrow width={16} height={16} />
           </Link>
         </div>

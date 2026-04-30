@@ -78,7 +78,7 @@ export const FALLBACK_ENGAGEMENTS: EngagementDoc[] = [
     ],
     ideal: "For teams replacing brittle tools with one durable system.",
     featured: true,
-    ctaLabel: "Start an engagement",
+    ctaLabel: "Talk on WhatsApp",
     order: 1,
   },
   {
