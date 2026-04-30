@@ -24,17 +24,14 @@ import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
 import CursorSpotlight from "@/components/CursorSpotlight";
 import ParticleNetwork from "@/components/ParticleNetwork";
-import ScrambleText from "@/components/ScrambleText";
 import LiveAgentDashboard from "@/components/LiveAgentDashboard";
 import MagneticButton from "@/components/MagneticButton";
 import BentoCard from "@/components/BentoCard";
 import LiveTicker from "@/components/LiveTicker";
-import LiveClock from "@/components/LiveClock";
+
 import TiltCard from "@/components/TiltCard";
 import TensorPipeline from "@/components/TensorPipeline";
 import SprintTimeline from "@/components/SprintTimeline";
-import PullQuote from "@/components/PullQuote";
-import Manifesto from "@/components/Manifesto";
 import Live30Days from "@/components/Live30Days";
 import FaqSection from "@/components/FaqSection";
 import FinalCTASection from "@/components/FinalCTASection";
@@ -60,29 +57,6 @@ const tools = [
   "Airtable",
 ];
 
-const principles = [
-  {
-    n: "01",
-    title: "Outcomes over outputs.",
-    body: "Every workflow has to earn its place by saving real hours or making real money. If the output isn't measurable, we won't ship it.",
-  },
-  {
-    n: "02",
-    title: "No-code where it fits, code where it shouldn't.",
-    body: "n8n, Zapier and Make get you 80% of the way fast. The remaining 20% is where Python and TypeScript earn their keep.",
-  },
-  {
-    n: "03",
-    title: "LLMs in the loop, not at the wheel.",
-    body: "Models are great judges, terrible drivers. We keep humans and rules in the critical path until the AI proves itself.",
-  },
-  {
-    n: "04",
-    title: "Long-term ownership, not handoffs.",
-    body: "We document, train and stay reachable. The systems we leave behind are ones your team can run and grow on its own.",
-  },
-];
-
 export default async function HomePage() {
   const [servicesRaw, projectsRaw, postsRaw, cfgRaw] = await Promise.all([
     sanityFetch<ServiceDoc[]>({ query: allServicesQuery, tags: ["service"] }),
@@ -103,7 +77,6 @@ export default async function HomePage() {
   const showLive30Days = (cfg.showLive30Days ?? true) && live30Days.length > 0;
 
   const showLiveTicker = cfg.showLiveTicker ?? false;
-  const availability = cfg.availability ?? "Available · accepting new engagements";
 
   return (
     <>
@@ -127,19 +100,10 @@ export default async function HomePage() {
         )}
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-24 pb-20 md:pt-36 md:pb-28 relative">
-          {/* Top status bar — terminal-style */}
+          {/* Top status bar — single high-signal trust pill, no dev-fluff */}
           <div className="flex flex-wrap items-center gap-3 mb-12 md:mb-16 text-xs">
             <span className="chip chip-live">
-              <span className="live-dot" /> {availability}
-            </span>
-            <span className="tag-pill">
-              <ScrambleText text="PORTFOLIO · V 2.0" speed={28} />
-            </span>
-            <span className="tag-pill hidden md:inline-flex">
-              <ScrambleText text="STATUS · SHIPPING" speed={28} delay={150} />
-            </span>
-            <span className="ml-auto tag-pill hidden md:inline-flex items-center gap-2">
-              <LiveClock />
+              <span className="live-dot" /> Booking 2 clients this month · Free 30-min audit
             </span>
           </div>
 
@@ -174,27 +138,27 @@ export default async function HomePage() {
               </Reveal>
 
               <Reveal delay={220}>
-                <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <MagneticButton href="/contact" className="btn-primary shimmer">
+                <div className="mt-10 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4">
+                  <MagneticButton href="/book" className="btn-primary shimmer w-full sm:w-auto justify-center">
                     Get my free 30-min audit
                     <IconArrow width={16} height={16} />
                   </MagneticButton>
-                  <Link href="#services" className="btn-secondary">
+                  <Link href="#services" className="btn-secondary w-full sm:w-auto justify-center">
                     See how it works
                   </Link>
                 </div>
               </Reveal>
 
               <Reveal delay={280}>
-                <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono uppercase tracking-[0.16em] text-muted">
+                <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
                   <span className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Reply on WhatsApp in under 1 hour
+                    Reply in 1 hour
                   </span>
                   <span className="opacity-30">·</span>
-                  <span>Built by an AI engineer</span>
+                  <span>Written plan in 48 hrs</span>
                   <span className="opacity-30">·</span>
-                  <span>4+ years shipping automations</span>
+                  <span>2 spots left this month</span>
                 </div>
               </Reveal>
 
@@ -210,8 +174,10 @@ export default async function HomePage() {
               )}
             </div>
 
-            {/* Live agent dashboard — the centerpiece */}
-            <div className="lg:col-span-5 relative">
+            {/* Live agent dashboard — desktop only. On mobile we let the
+                hero copy own the full viewport so the headline + CTA hit
+                first-time visitors without competition. */}
+            <div className="hidden lg:block lg:col-span-5 relative">
               <Reveal delay={300}>
                 <LiveAgentDashboard />
               </Reveal>
@@ -314,45 +280,6 @@ export default async function HomePage() {
                 </Reveal>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* PRINCIPLES — sticky scroll */}
-      <section className="bg-foreground text-white relative overflow-hidden border-b border-foreground">
-        <div className="noise" aria-hidden="true" />
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 section grid grid-cols-1 lg:grid-cols-12 gap-12 relative">
-          <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-28">
-              <p className="eyebrow text-white/55 mb-5">[ 02 ] How we work</p>
-              <h2 className="display text-4xl md:text-6xl">
-                Four principles
-                <br />
-                we refuse to{" "}
-                <span className="serif">break.</span>
-              </h2>
-              <p className="mt-6 text-white/65 max-w-md leading-relaxed">
-                Most automation breaks because someone optimized for the demo,
-                not the second year. Tensor works the other way.
-              </p>
-            </div>
-          </div>
-          <div className="lg:col-span-7 space-y-8">
-            {principles.map((p, i) => (
-              <Reveal key={p.n} delay={i * 80}>
-                <div className="border-t border-white/10 pt-8 md:pt-10 grid grid-cols-12 gap-4">
-                  <span className="col-span-2 mono text-xs text-white/45 tracking-[0.14em]">
-                    {p.n}
-                  </span>
-                  <div className="col-span-10">
-                    <h3 className="display text-2xl md:text-3xl">{p.title}</h3>
-                    <p className="mt-3 text-white/65 leading-relaxed max-w-xl">
-                      {p.body}
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
           </div>
         </div>
       </section>
@@ -475,23 +402,6 @@ export default async function HomePage() {
           </Reveal>
         </div>
       </section>
-
-      {/* PULL QUOTE — full-bleed editorial */}
-      <PullQuote
-        quote={
-          <>
-            We don&apos;t ship <span className="iridescent">prompts</span>.
-            We ship <em className="serif">systems that survive</em> a Monday
-            morning two years from now — when the team that hired us has
-            grown, the model has changed, and the original requirement
-            has been forgotten.
-          </>
-        }
-        attribution="Tensor · house line"
-      />
-
-      {/* MANIFESTO — scroll-revealed creed */}
-      <Manifesto />
 
       {/* LIVE STUDIO DASHBOARD — 30-day stats + world map. Hidden when no
           stats are configured in /studio so the site never shows fabricated
