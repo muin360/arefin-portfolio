@@ -16,13 +16,26 @@
 # next.js
 /.next/
 /out/
+.next/
 
 # production
 /build
+/dist
+
+# env — NEVER commit these. Use .env.example as a template.
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+.env.production
+.env.development
 
 # misc
 .DS_Store
 *.pem
+Thumbs.db
 
 # debug
 npm-debug.log*
@@ -30,8 +43,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # vercel
 .vercel
@@ -39,3 +55,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Sanity studio — built artifacts, never commit
+/dist
+/.sanity
+
+# turbo
+.turbo
+
+# local fs caches
+.cache
+.tmp

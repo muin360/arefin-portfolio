@@ -4,6 +4,7 @@ import { sanityFetch } from "@/sanity/fetch";
 import { allFaqsQuery } from "@/sanity/queries";
 import type { FaqDoc } from "@/sanity/types";
 import { FALLBACK_FAQS } from "@/data/fallbacks";
+import { safeJsonLd } from "@/lib/json-ld";
 
 export default async function FaqSection() {
   const faqsRaw = await sanityFetch<FaqDoc[]>({
@@ -30,7 +31,7 @@ export default async function FaqSection() {
     <section className="border-b border-line">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <div className="max-w-5xl mx-auto px-6 sm:px-8 section">
         <Reveal>
