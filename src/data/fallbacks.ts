@@ -103,52 +103,28 @@ export const FALLBACK_ENGAGEMENTS: EngagementDoc[] = [
 
 export const FALLBACK_SERVICES: ServiceDoc[] = [
   {
-    _id: "service.ai-agents",
-    title: "AI Agents",
+    _id: "service.ai-automation",
+    title: "AI Automation",
     iconName: "agent",
     description:
-      "Custom autonomous and semi-autonomous agents that research, write, summarize, qualify leads or operate other tools — built with LangChain, LangFlow and modern LLMs.",
+      "Your team copies, pastes and replies the same things 40 times a week. I build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — lead qualification, follow-ups, CRM updates, AI replies. Get back 15–40 hours every month, zero new software to learn.",
     order: 0,
   },
   {
-    _id: "service.workflow-automation",
-    title: "Workflow Automation",
-    iconName: "workflow",
+    _id: "service.messenger-automation",
+    title: "Facebook & Messenger Automation",
+    iconName: "chart",
     description:
-      "End-to-end business automations that connect your apps, databases and APIs across n8n, Zapier and Make — CRM sync, lead routing, AI-enriched workflows and more.",
+      "Your Messenger inbox is your storefront — but DMs and comments pile up faster than you can reply. I build a 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments and only hands off when it really matters. Reply in under 30 seconds, all day, every day.",
     order: 1,
   },
   {
-    _id: "service.gohighlevel",
-    title: "GoHighLevel Setup",
-    iconName: "chart",
-    description:
-      "Sub-account configuration, funnels, calendars, pipelines, SMS and email automations and AI-powered conversation flows tailored to your agency or business.",
-    order: 2,
-  },
-  {
-    _id: "service.custom-llm",
-    title: "Custom LLM Solutions",
-    iconName: "brain",
-    description:
-      "Retrieval-augmented systems, knowledge-base chatbots, prompt engineering and integrating OpenAI, Anthropic and open-source models into your product.",
-    order: 3,
-  },
-  {
-    _id: "service.python-js",
-    title: "Python & JavaScript",
+    _id: "service.website-development",
+    title: "Website Development",
     iconName: "code",
     description:
-      "Custom scripts and small services to glue systems together, scrape data, batch-process content or extend a no-code workflow with real code.",
-    order: 4,
-  },
-  {
-    _id: "service.audit",
-    title: "Audit & Consultation",
-    iconName: "compass",
-    description:
-      "Not sure what to automate first? I review your current workflow and recommend the highest-ROI automations and AI integrations.",
-    order: 5,
+      "Your current site looks like 2017 and quietly tells visitors you're not the serious option. I ship fast, mobile-first websites built around one job: turning visitors into customers. WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
+    order: 2,
   },
 ];
 

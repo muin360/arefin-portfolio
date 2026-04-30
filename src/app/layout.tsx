@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono, Instrument_Serif, Manrope } from "next/font/goog
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import WhatsAppFab from "@/components/WhatsAppFab";
 import ScrollToTop from "@/components/ScrollToTop";
 import CursorRing from "@/components/CursorRing";
 import PageLoader from "@/components/PageLoader";
@@ -47,11 +48,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Tensor — AI Engineering Agency for Modern Companies",
+    default: "Tensor — AI Automation, Messenger Bots & Websites for Small Businesses",
     template: "%s — Tensor",
   },
   description:
-    "Tensor is a small AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, LangGraph, GoHighLevel, Python and TypeScript — quietly, reliably, in production.",
+    "We build AI chatbots, Facebook & Messenger automation, and high-converting websites for small businesses. Done-for-you systems built in days, not months. Free 30-min audit. Reply on WhatsApp within 1 hour.",
   applicationName: "Tensor",
   keywords: [
     "Tensor",
@@ -225,6 +226,7 @@ export default function RootLayout({
         <Navbar />
         <main id="main" className="flex-1">{children}</main>
         <Footer />
+        <WhatsAppFab />
         <ScrollToTop />
         <Analytics />
         <SpeedInsights />

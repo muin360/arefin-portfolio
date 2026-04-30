@@ -85,12 +85,24 @@ export default function Navbar() {
               )}
             </Link>
           ))}
+          <a
+            href="https://wa.me/8801994605717?text=Hi%20Arefin!%20I%27d%20like%20to%20chat%20about%20automating%20my%20business."
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp Arefin"
+            className="hidden lg:inline-flex items-center justify-center w-9 h-9 rounded-full text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-colors ml-2"
+            title="WhatsApp"
+          >
+            <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true" fill="currentColor">
+              <path d="M19.11 17.21c-.31-.16-1.83-.9-2.11-1-.28-.1-.49-.16-.7.16s-.81 1-.99 1.21c-.18.21-.36.23-.67.08-.31-.16-1.31-.48-2.5-1.54-.92-.83-1.55-1.84-1.73-2.15-.18-.31-.02-.48.13-.63.13-.13.31-.36.46-.54.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.7-1.69-.95-2.32-.25-.6-.51-.52-.7-.53l-.59-.01c-.21 0-.55.08-.84.39-.29.31-1.1 1.07-1.1 2.61 0 1.54 1.13 3.03 1.29 3.24.16.21 2.22 3.39 5.39 4.75.75.32 1.34.51 1.8.66.75.24 1.44.21 1.98.13.6-.09 1.83-.75 2.09-1.47.26-.72.26-1.34.18-1.47-.08-.13-.29-.21-.6-.36zM16 4C9.37 4 4 9.37 4 16c0 2.12.55 4.11 1.5 5.84L4 28l6.32-1.45A11.93 11.93 0 0 0 16 28c6.63 0 12-5.37 12-12S22.63 4 16 4z" />
+            </svg>
+          </a>
           <Link
             href="/contact"
-            className="btn-primary text-sm ml-4"
+            className="btn-primary text-sm ml-2"
           >
             <span className="live-dot" aria-hidden="true" />
-            Available
+            Get free audit
           </Link>
         </nav>
 

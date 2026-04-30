@@ -8,47 +8,47 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Tensor is an small AI engineering agency founded and operated by Arefin Muin from Dhaka, Bangladesh — building AI agents and automation systems with n8n, Zapier, Make, LangChain, LangFlow and GoHighLevel.",
+    "Hi, I'm Arefin Muin — the AI engineer behind Tensor. I build AI automation, Messenger bots and high-converting websites for small businesses, from Dhaka to Dubai to Toronto. Two clients at a time. No agency overhead. You get the operator.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About — Tensor",
     description:
-      "Tensor is an small AI engineering agency founded and operated by Arefin Muin from Dhaka, Bangladesh.",
+      "I'm Arefin Muin. I build AI automation, Messenger bots and high-converting websites for small businesses.",
     url: "/about",
   },
 };
 
 const principles = [
   {
-    title: "Outcomes over outputs.",
-    body: "We optimize for the business result, not the prettiest tech stack. Every automation has to earn its place by saving time or making money.",
+    title: "Outcomes, not features.",
+    body: "Every system I ship has to save you real hours or make you real money. If it can't be measured in your bank account or your team's calendar, I won't build it.",
   },
   {
-    title: "No-code where it fits, code where it shouldn't.",
-    body: "n8n, Zapier and Make get you 80% of the way fast. The remaining 20% is where Python and TypeScript earn their keep — and where most teams cut corners.",
+    title: "You own everything.",
+    body: "All accounts, all logins, all source code — in your name, on your hardware, with full documentation. I never hold your business hostage. If you want to take it elsewhere on day 31, you can.",
   },
   {
-    title: "Long-term ownership, not handoffs.",
-    body: "We document, train, and stay reachable. The systems we leave behind are ones your team can run, edit and grow on its own.",
+    title: "Two clients at a time.",
+    body: "I work small on purpose. No project managers, no junior handoffs, no agency overhead. You get the operator who built it — reachable on WhatsApp, every working day.",
   },
 ];
 
 const milestones = [
   {
     period: "2022",
-    body: "The agency's founder began with no-code automations on Zapier — funnels, CRM glue, lead routing — for small businesses.",
+    body: "Started with no-code automations on Zapier for small businesses — funnels, CRM glue, lead routing. Learned that most SMBs don't need fancy AI; they need the boring stuff to stop breaking.",
   },
   {
     period: "2023",
-    body: "Went deep on Make and self-hosted n8n. Took ownership of full operations stacks on GoHighLevel.",
+    body: "Went deep on Make and self-hosted n8n. Built full operations stacks for clinics, coaches and online agencies on GoHighLevel.",
   },
   {
     period: "2024",
-    body: "Tensor was founded. Brought LLMs into production workflows: classification, summarization, and the first real agents with LangChain and LangFlow.",
+    body: "Founded Tensor. Brought LLMs into real production workflows for paying clients — lead qualification agents, Messenger bots, RAG chatbots over internal docs.",
   },
   {
     period: "2025",
-    body: "Going deeper on the engineering side of LLMs — evaluation, observability, retrieval quality, fine-tuning — and shipping production agents that hold up.",
+    body: "Now: AI automation, Facebook & Messenger bots, and high-converting websites for small businesses across Bangladesh, the GCC and the US. Replies on WhatsApp within 1 hour, 7 days a week.",
   },
 ];
 
@@ -58,15 +58,17 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="Tensor · About"
         index="02"
-        meta="Studio profile · Founded 2024 · Dhaka"
+        meta="Operator-led · Founded 2024 · Dhaka, Bangladesh"
         title={
           <>
-            A studio that treats{" "}
-            <span className="serif">automation</span> as a craft, not a
-            checkbox.
+            Hi, I&rsquo;m Arefin.
+            <br />
+            I build the systems{" "}
+            <span className="serif">that quietly run</span>{" "}
+            small businesses.
           </>
         }
-        subtitle="We help businesses replace repetitive manual work with quiet, reliable AI-powered systems that run on their own — and keep running long after the demo."
+        subtitle="AI automation, Facebook & Messenger bots, and high-converting websites — done-for-you, owned by you, supported by me."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
@@ -75,39 +77,43 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10 relative">
           <div className="md:col-span-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
-              The studio
+              The operator
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-              Tensor<br />Est. 2024 · Dhaka, BD
+              Arefin Muin<br />Est. 2024 · Dhaka, BD<br />Replies in &lt; 1 hour
             </p>
           </div>
           <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-white/80">
             <p>
-              <strong className="text-white">Tensor</strong> is an
-              small AI engineering agency. We design and ship the
-              workflows, integrations and LLM-powered agents that operate
-              behind the scenes of modern companies — across{" "}
-              <strong className="text-white">n8n</strong>,{" "}
-              <strong className="text-white">Zapier</strong>,{" "}
-              <strong className="text-white">Make</strong>,{" "}
-              <strong className="text-white">LangChain</strong>,{" "}
-              <strong className="text-white">LangFlow</strong> and{" "}
-              <strong className="text-white">GoHighLevel</strong>, with{" "}
-              <strong className="text-white">Python</strong> and{" "}
-              <strong className="text-white">TypeScript</strong> when the no-code
-              layer runs out.
+              I build the AI systems, automations and websites that quietly
+              run small businesses — so the owner can stop copy-pasting,
+              stop missing Messenger replies, and start sleeping.
             </p>
             <p>
-              What gets us out of bed: the moment a client realizes a process
-              that used to take their team six hours a day now runs on its own,
-              with an AI agent making the judgement calls inside it.
+              Most &ldquo;automation guys&rdquo; sell you a Zapier zap and disappear.
+              I do the opposite: I learn your workflow, build something that
+              actually fits your business, document it, train you on it, and
+              stay reachable on WhatsApp. The systems I leave behind are
+              ones your team can run — and grow on.
             </p>
             <p>
-              The studio was founded in 2024 by{" "}
-              <strong className="text-white">Arefin Muin</strong> in Dhaka,
-              Bangladesh, after three years of automation work for clients
-              across the US, EU and APAC. We stay small, hands-on, and senior
-              — every engagement is led by the founder.
+              I&rsquo;m an AI engineer based in{" "}
+              <strong className="text-white">Dhaka, Bangladesh</strong>, and over
+              the last few years I&rsquo;ve shipped automations and websites for
+              e-commerce stores, dental and beauty clinics, coaches, real-estate
+              brokers, online agencies and local services — from Dhaka to
+              Dubai to Toronto.
+            </p>
+            <p>
+              I work small on purpose. <strong className="text-white">Two clients at a time</strong>,
+              no junior handoffs, no agency overhead. You get the operator,
+              not a project manager.
+            </p>
+            <p>
+              If your team is drowning in repetitive work, your Messenger
+              inbox is quietly costing you sales, or your website is silently
+              killing your conversions —{" "}
+              <strong className="text-white">let&rsquo;s talk for 30 minutes. Free. No pitch.</strong>
             </p>
           </div>
         </div>
@@ -191,15 +197,19 @@ export default function AboutPage() {
             </div>
             <div className="relative">
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
-                Let&apos;s talk
+                Let&rsquo;s talk · Free 30-min audit
               </p>
               <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                Currently taking on{" "}
-                <span className="serif text-[1.04em] iridescent">a few projects.</span>
+                Two slots open{" "}
+                <span className="serif text-[1.04em] iridescent">this month.</span>
               </h2>
+              <p className="mt-4 text-white/65 max-w-md">
+                30 minutes. I&rsquo;ll review your workflow, inbox or website
+                live and tell you exactly what to fix first. No pitch.
+              </p>
             </div>
             <Link href="/contact" className="btn-primary shimmer relative z-10 bg-white text-foreground border-white">
-              Start a project
+              Book my free audit
               <IconArrow width={16} height={16} />
             </Link>
           </div>

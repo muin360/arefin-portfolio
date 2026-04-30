@@ -36,6 +36,8 @@ import SprintTimeline from "@/components/SprintTimeline";
 import PullQuote from "@/components/PullQuote";
 import Manifesto from "@/components/Manifesto";
 import Live30Days from "@/components/Live30Days";
+import FaqSection from "@/components/FaqSection";
+import FinalCTASection from "@/components/FinalCTASection";
 
 const tools = [
   "n8n",
@@ -147,18 +149,17 @@ export default async function HomePage() {
                 <p className="eyebrow mb-8 inline-flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className="font-mono tracking-[0.26em] uppercase text-foreground">Tensor</span>
                   <span className="opacity-30">—</span>
-                  <span>A small AI engineering agency</span>
+                  <span>AI automation, Messenger bots & websites for small businesses</span>
                 </p>
               </Reveal>
 
               <Reveal delay={80}>
                 <h1 className="display text-[10vw] sm:text-7xl md:text-8xl lg:text-[6.4rem] xl:text-[7.4rem]">
-                  Engineering
+                  We build the
                   <br />
-                  <span className="serif">quiet, intelligent</span>
+                  <span className="serif">systems that bring you</span>
                   <br />
-                  systems that{" "}
-                  <span className="iridescent draw-underline">work</span>
+                  more <span className="iridescent draw-underline">leads</span> —
                   <br />
                   while you sleep.
                 </h1>
@@ -166,21 +167,34 @@ export default async function HomePage() {
 
               <Reveal delay={160}>
                 <p className="mt-8 text-lg md:text-xl text-muted max-w-xl leading-relaxed">
-                  We design and ship the workflows, integrations and LLM-powered
-                  agents that operate behind the scenes of modern companies.
-                  Quietly, reliably, while you sleep.
+                  Done-for-you AI chatbots, Facebook & Messenger automation,
+                  and high-converting websites. Built in days, not months.
+                  Owned by you, not us.
                 </p>
               </Reveal>
 
               <Reveal delay={220}>
                 <div className="mt-10 flex flex-wrap items-center gap-4">
                   <MagneticButton href="/contact" className="btn-primary shimmer">
-                    Start a project
+                    Get my free 30-min audit
                     <IconArrow width={16} height={16} />
                   </MagneticButton>
-                  <Link href="/projects" className="btn-secondary">
-                    View selected work
+                  <Link href="#services" className="btn-secondary">
+                    See how it works
                   </Link>
+                </div>
+              </Reveal>
+
+              <Reveal delay={280}>
+                <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono uppercase tracking-[0.16em] text-muted">
+                  <span className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Reply on WhatsApp in under 1 hour
+                  </span>
+                  <span className="opacity-30">·</span>
+                  <span>Built by an AI engineer</span>
+                  <span className="opacity-30">·</span>
+                  <span>4+ years shipping automations</span>
                 </div>
               </Reveal>
 
@@ -223,67 +237,78 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CAPABILITIES — bento grid (dark luxe) */}
-      <section className="hero-dark border-b border-white/5 relative overflow-hidden">
+      {/* CAPABILITIES — 3 productized services with P/S/O CTAs */}
+      <section id="services" className="hero-dark border-b border-white/5 relative overflow-hidden scroll-mt-20">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 section">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14 md:mb-20">
               <div>
-                <p className="eyebrow mb-5">[ 01 ] What I build</p>
+                <p className="eyebrow mb-5">[ 01 ] What I do</p>
                 <h2 className="display text-4xl md:text-6xl max-w-3xl">
-                  Not a freelancer.
+                  Three ways to stop
                   <br />
-                  <span className="serif">An engineering partner</span> for
-                  the workflows your team has outgrown.
+                  <span className="serif">losing time, leads or sales.</span>
                 </h2>
               </div>
               <Link
                 href="/services"
                 className="hover-arrow text-sm text-muted hover:text-foreground self-start md:self-end"
               >
-                <span className="link-underline">All capabilities</span>
+                <span className="link-underline">See pricing & engagements</span>
                 <span aria-hidden="true">→</span>
               </Link>
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-            {services.map(({ iconName, title, description }, i) => {
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {services.slice(0, 3).map(({ _id, iconName, title, description }, i) => {
               const Icon = iconFor(iconName);
-              // 6 cards in 3 asymmetric rows: 4+2 / 2+4 / 3+3
-              const spans = [
-                "md:col-span-4",
-                "md:col-span-2",
-                "md:col-span-2",
-                "md:col-span-4",
-                "md:col-span-3",
-                "md:col-span-3",
+              const ctas = [
+                {
+                  label: "See if your workflow can be automated",
+                  prefill:
+                    "Hi Arefin! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
+                },
+                {
+                  label: "Get a free Messenger bot demo",
+                  prefill:
+                    "Hi Arefin! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
+                },
+                {
+                  label: "Get a free 1-page website teardown",
+                  prefill:
+                    "Hi Arefin! I'd like a free teardown of my current website. My site is: ",
+                },
               ];
-              const span = spans[i] || "md:col-span-2";
+              const cta = ctas[i] ?? ctas[0];
+              const waHref = `https://wa.me/8801994605717?text=${encodeURIComponent(cta.prefill)}`;
               return (
-                <Reveal key={title} delay={i * 60} className={span}>
+                <Reveal key={_id ?? title} delay={i * 80}>
                   <BentoCard className="h-full">
                     <div className="h-full flex flex-col group">
                       <div className="flex items-start justify-between">
-                        <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 transition-all duration-500 group-hover:scale-110 group-hover:border-white/30">
-                          <Icon width={22} height={22} className="text-white" />
+                        <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 border border-white/10 transition-all duration-500 group-hover:scale-110 group-hover:border-white/30">
+                          <Icon width={24} height={24} className="text-white" />
                         </span>
                         <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
                           / {String(i + 1).padStart(2, "0")}
                         </span>
                       </div>
-                      <h3 className="mt-7 text-xl md:text-2xl font-medium tracking-tight text-white">
+                      <h3 className="mt-7 text-2xl md:text-[1.6rem] font-medium tracking-tight text-white leading-tight">
                         {title}
                       </h3>
-                      <p className="mt-3 text-sm md:text-[0.95rem] text-white/60 leading-relaxed flex-1">
+                      <p className="mt-4 text-sm md:text-[0.95rem] text-white/65 leading-relaxed flex-1">
                         {description}
                       </p>
-                      <span className="mt-6 inline-flex items-center gap-2 text-xs text-white/55">
-                        <span className="w-6 h-px bg-white/30 transition-all duration-300 group-hover:w-10 group-hover:bg-white/80" />
-                        <span className="font-mono uppercase tracking-[0.14em]">
-                          Read more
-                        </span>
-                      </span>
+                      <a
+                        href={waHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-7 inline-flex items-center justify-between gap-3 text-sm text-white/85 hover:text-white border-t border-white/10 pt-5 group/cta"
+                      >
+                        <span className="font-medium">{cta.label}</span>
+                        <span aria-hidden="true" className="transition-transform duration-300 group-hover/cta:translate-x-1">→</span>
+                      </a>
                     </div>
                   </BentoCard>
                 </Reveal>
@@ -427,17 +452,16 @@ export default async function HomePage() {
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 md:mb-14">
               <div>
-                <p className="eyebrow text-white/55 mb-5">[ 04 ] Anatomy of a sprint</p>
+                <p className="eyebrow text-white/55 mb-5">[ 04 ] How it works</p>
                 <h2 className="display text-4xl md:text-6xl text-white max-w-3xl leading-[1.05]">
-                  Fourteen days,
+                  From first message
                   <br />
-                  <span className="serif">narrated hour by hour.</span>
+                  <span className="serif">to live system in 14 days.</span>
                 </h2>
                 <p className="mt-5 text-white/65 max-w-xl leading-relaxed">
-                  Most studios sell you the deliverable. Tensor sells you the
-                  visible process. Six phases, every beat scripted — playing
-                  on a loop so you know what you&apos;re buying before the
-                  first call.
+                  Six steps. You always know what&apos;s happening, what&apos;s
+                  next, and what you&apos;ll have at the end of each phase —
+                  starting with a free 30-minute audit call.
                 </p>
               </div>
               <div className="flex items-center gap-2 text-[10px] mono uppercase tracking-[0.22em] text-white/45">
@@ -566,6 +590,12 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* FAQ — 6 honest answers to the questions every SMB asks */}
+      <FaqSection />
+
+      {/* FINAL CTA — free audit + WhatsApp, dual-channel close */}
+      <FinalCTASection />
     </>
   );
 }

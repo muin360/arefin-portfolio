@@ -13,12 +13,12 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "Services & Pricing",
   description:
-    "AI engineering services from Tensor: AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits. Engagement models, scope and pricing — operated by Arefin Muin.",
+    "Three ways to work with Tensor: AI Automation, Facebook & Messenger bots, and high-converting websites. Flat-price engagements. Free 30-min audit. Reply on WhatsApp within 1 hour.",
   alternates: { canonical: "/services" },
   openGraph: {
     title: "Services & Pricing — Tensor",
     description:
-      "AI agents, workflow automation, GoHighLevel setup, custom LLM solutions and engineering audits. Engagement models and pricing.",
+      "AI Automation, Messenger bots, and high-converting websites for small businesses. Flat-price engagements. Free 30-min audit.",
     url: "/services",
   },
 };
@@ -28,31 +28,33 @@ export const metadata: Metadata = {
 const process = [
   {
     step: "01",
-    title: "Discovery",
-    body: "A short call to understand the business, the tools, and the bottleneck. Free, no pitch.",
+    title: "Free 30-min audit call",
+    body: "Tell me what's broken — a workflow eating hours, a Messenger inbox losing leads, a website that doesn't convert. I'll tell you what to fix first, on the call. No pitch.",
   },
   {
     step: "02",
-    title: "Audit & proposal",
-    body: "I map the current workflow, identify the highest-ROI opportunities, and send a clear scope and price.",
+    title: "Written plan + flat price",
+    body: "Within 48 hours: a written plan ranking the top 3 things to build, with a flat price for each. No hourly billing. No surprises.",
   },
   {
     step: "03",
-    title: "Build & test",
-    body: "I build the system, share progress as I go, and run it against real data before going live.",
+    title: "Build & daily updates",
+    body: "I build the system, send daily WhatsApp updates with screenshots and Looms, and run it against your real data before going live.",
   },
   {
     step: "04",
-    title: "Launch & support",
-    body: "Once it's live, I document everything, train the team and stay reachable for iteration.",
+    title: "Launch + 30 days free support",
+    body: "Once it's live, I train you on Loom, hand over docs, and stay reachable on WhatsApp for 30 days of free fixes and tweaks.",
   },
 ];
 
 const engagement = [
-  "Weekly progress updates with live links",
-  "All work delivered in your accounts (you own everything)",
-  "Documentation and Loom handoff at the end of every project",
-  "Source code under a clear license, in your repo",
+  "Daily WhatsApp updates with live links and Loom videos",
+  "All accounts, logins and source code in your name — you own everything",
+  "Loom walkthroughs and written docs at handoff so your team can run it",
+  "30 days of free post-launch support and tweaks after go-live",
+  "Flat price agreed up-front — no hourly billing, no scope-creep invoices",
+  "If the agreed outcome isn't met by handoff, I keep working until it is",
 ];
 
 export default async function ServicesPage() {
@@ -73,16 +75,17 @@ export default async function ServicesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Tensor · Services"
+        eyebrow="Tensor · Services & Pricing"
         index="03"
-        meta="Capabilities · Engagement models · Transparent pricing"
+        meta="Three engagements · Flat pricing · Free 30-min audit"
         title={
           <>
-            Studio engagements for teams that want{" "}
-            <span className="serif">leverage,</span> not headcount.
+            Pick the engagement that{" "}
+            <span className="serif">fits your business,</span> not the
+            other way around.
           </>
         }
-        subtitle="Three ways to work with Tensor — sprint, build, or retainer. Pick what fits, or tell us what's slowing you down."
+        subtitle="Three ways to work with me: a focused two-week sprint, a full build, or ongoing capacity. Every engagement starts with a free 30-min audit. Flat price. You own everything."
       />
 
       {/* ENGAGEMENTS — Sprint / Build / Retainer pricing tiers */}
@@ -99,12 +102,12 @@ export default async function ServicesPage() {
                 </p>
                 <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
                   Three ways to work{" "}
-                  <span className="serif iridescent">with Tensor.</span>
+                  <span className="serif iridescent">with Arefin.</span>
                 </h2>
               </div>
               <p className="text-white/60 max-w-sm leading-relaxed">
-                Every engagement starts with a free 30-min discovery call.
-                Pricing is transparent, scope is fixed, and you own everything.
+                Every engagement starts with a free 30-min audit. Pricing is
+                flat and agreed up-front. You own everything I build.
               </p>
             </div>
           </Reveal>
@@ -162,17 +165,21 @@ export default async function ServicesPage() {
                       </p>
                     )}
 
-                    <Link
-                      href="/contact"
+                    <a
+                      href={`https://wa.me/8801994605717?text=${encodeURIComponent(
+                        `Hi Arefin! I'd like to discuss the "${e.name}" engagement. Here's a quick overview of my situation: `,
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className={`mt-6 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition-all ${
                         e.featured
                           ? "bg-white text-foreground hover:bg-white/90 shimmer"
                           : "border border-white/20 text-white hover:bg-white/10"
                       }`}
                     >
-                      {e.ctaLabel ?? (e.featured ? "Start an engagement" : "Discuss this tier")}
+                      {e.ctaLabel ?? (e.featured ? "Talk on WhatsApp" : "Discuss on WhatsApp")}
                       <IconArrow width={14} height={14} />
-                    </Link>
+                    </a>
                   </div>
                 </BentoCard>
               </Reveal>
@@ -240,12 +247,12 @@ export default async function ServicesPage() {
               Process
             </p>
             <h2 className="display text-3xl md:text-5xl text-white">
-              Simple, deliberate,{" "}
-              <span className="serif text-[1.04em] iridescent">no surprises.</span>
+              From first message{" "}
+              <span className="serif text-[1.04em] iridescent">to live system.</span>
             </h2>
             <p className="mt-5 text-white/60 leading-relaxed">
-              The same lightweight loop every project — built around clarity
-              and tight feedback.
+              The same four-step loop every project. Daily WhatsApp updates.
+              Flat price. Zero surprises.
             </p>
           </div>
           <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -316,15 +323,19 @@ export default async function ServicesPage() {
                 Get started
               </p>
               <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                Tell us what&apos;s on{" "}
+                Tell me what&rsquo;s on{" "}
                 <span className="serif text-[1.04em] iridescent">your plate.</span>
               </h2>
+              <p className="mt-4 text-white/65 max-w-md">
+                30 minutes. I&rsquo;ll tell you exactly what to fix first.
+                No pitch. No obligation.
+              </p>
             </div>
             <Link
               href="/contact"
               className="btn-primary shimmer relative z-10 bg-white text-foreground border-white hover:bg-accent-1 hover:text-white hover:border-accent-1"
             >
-              Start a project
+              Book my free audit
               <IconArrow width={16} height={16} />
             </Link>
           </div>
