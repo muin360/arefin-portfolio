@@ -21,17 +21,17 @@ export function whatsappHref(message: string, phoneE164: string = PHONE_E164) {
 // ── Pre-filled WhatsApp messages, indexed by intent ────────────────────────
 export const WA_MESSAGES = {
   generic:
-    "Hi Arefin, I saw your website. I want to know how AI automation can help my business.",
+    "Hi Tensorix team, I saw your website. I want to know how AI automation can help my business.",
   audit:
-    "Hi Arefin! I'd like to book a free 30-min audit call. Best time for me is …",
+    "Hi Tensorix team! I'd like to book a free 30-min audit call. Best time for me is …",
   aiAutomation:
-    "Hi Arefin! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
+    "Hi Tensorix team! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
   messengerBot:
-    "Hi Arefin! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
+    "Hi Tensorix team! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
   websiteTeardown:
-    "Hi Arefin! I'd like a free teardown of my current website. My site is: ",
+    "Hi Tensorix team! I'd like a free teardown of my current website. My site is: ",
   engagement: (name: string) =>
-    `Hi Arefin! I'd like to discuss the "${name}" engagement. Here's a quick overview of my situation: `,
+    `Hi Tensorix team! I'd like to discuss the "${name}" engagement. Here's a quick overview of my situation: `,
 } as const;
 
 // ── 5 CTA button variations (A/B-able from a single constant) ─────────────
@@ -107,7 +107,7 @@ export const HERO_VARIANTS: Record<"A" | "B" | "C", HeroVariant> = {
       line4: "that pay for themselves.",
     },
     sub:
-      "I build AI automations, Messenger bots and high-converting websites for small businesses. Flat price. You own everything. Reachable on WhatsApp every working day.",
+      "We build AI automations, Messenger bots and high-converting websites for small businesses. Flat price. You own everything. Reachable on WhatsApp every working day.",
     trust: [
       "Operated by a senior AI engineer, not a sales team",
       "All accounts and source code in your name",

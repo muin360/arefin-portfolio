@@ -50,6 +50,14 @@ export const siteConfig = defineType({
       type: "string",
       group: "identity",
     }),
+    defineField({
+      name: "availabilityNote",
+      title: "Scarcity / availability note (homepage + services)",
+      description:
+        "The pill text shown above the hero CTAs and inside the services section. Drives both the homepage scarcity strip and the services-page scarcity copy.",
+      type: "string",
+      group: "identity",
+    }),
 
     // ── Contact ────────────────────────────────────────────────────────
     defineField({
@@ -120,7 +128,7 @@ export const siteConfig = defineType({
       name: "live30Days",
       title: "Last 30 days · stat cards",
       description:
-        "The big stat cards in the \"Last 30 days at Tensor\" section. Leave empty to hide the section entirely.",
+        "The big stat cards in the \"Last 30 days at Tensorix\" section. Leave empty to hide the section entirely.",
       type: "array",
       group: "stats",
       of: [
@@ -163,7 +171,7 @@ export const siteConfig = defineType({
     }),
     defineField({
       name: "showLive30Days",
-      title: "Show \"Last 30 days at Tensor\" section",
+      title: "Show \"Last 30 days at Tensorix\" section",
       description: "Auto-hides if no stat cards are configured.",
       type: "boolean",
       group: "toggles",

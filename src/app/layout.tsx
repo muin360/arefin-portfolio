@@ -49,17 +49,17 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Tensor — AI Automation, Messenger Bots & Websites for Small Businesses",
-    template: "%s — Tensor",
+    default: "Tensorix — AI Automation, Intelligent Systems & Future Solutions",
+    template: "%s — Tensorix",
   },
   description:
-    "We build AI chatbots, Facebook & Messenger automation, and high-converting websites for small businesses. Done-for-you systems built in days, not months. Free 30-min audit. Reply on WhatsApp within 1 hour.",
-  applicationName: "Tensor",
+    "Tensorix builds AI chatbots, Facebook & Messenger automation, and high-converting websites for small businesses. Done-for-you systems built in days, not months. Free 30-min audit. Reply on WhatsApp within 1 hour.",
+  applicationName: "Tensorix",
   keywords: [
     "AI automation for small business",
     "Facebook chatbot automation",
     "Messenger bot for small business",
-    "website development for business",
+    "website development Bangladesh",
     "AI chatbot for business",
     "small business automation",
     "AI agency Bangladesh",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     "AI workflow automation",
     "lead generation automation",
     "WhatsApp automation for business",
-    "Tensor",
+    "Tensorix",
     "Arefin Muin",
   ],
   robots: {
@@ -88,24 +88,24 @@ export const metadata: Metadata = {
   },
   referrer: "strict-origin-when-cross-origin",
   formatDetection: { email: false, telephone: false, address: false },
-  authors: [{ name: "Tensor", url: SITE_URL }, { name: "Arefin Muin", url: SITE_URL }],
-  creator: "Tensor",
-  publisher: "Tensor",
+  authors: [{ name: "Tensorix", url: SITE_URL }, { name: "Arefin Muin", url: SITE_URL }],
+  creator: "Tensorix",
+  publisher: "Tensorix",
   openGraph: {
     type: "website",
     url: SITE_URL,
-    title: "Tensor — AI Engineering Agency",
+    title: "Tensorix — AI Automation Agency",
     description:
-      "A small AI engineering agency building quiet, intelligent systems that work while you sleep.",
-    siteName: "Tensor",
+      "We build intelligent AI systems, automation workflows, and high-converting websites for small businesses — done for you, owned by you.",
+    siteName: "Tensorix",
     locale: "en_US",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensor — AI Engineering Agency" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensorix — AI Automation Agency" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tensor — AI Engineering Agency",
+    title: "Tensorix — AI Automation Agency",
     description:
-      "A small AI engineering agency building quiet, intelligent systems that work while you sleep.",
+      "We build intelligent AI systems, automation workflows, and high-converting websites — done for you, owned by you.",
     images: ["/og.png"],
   },
   manifest: "/site.webmanifest",
@@ -132,12 +132,12 @@ const jsonLd = [
     url: SITE_URL,
     jobTitle: "AI Automation & Agent Engineer",
     description:
-      "Independent AI engineer building agents, automations and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript.",
+      "Founder of Tensorix. Independent AI engineer building agents, automations and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript.",
     image: `${SITE_URL}/og.png`,
-    email: "mailto:arefinmueen360@gmail.com",
+    email: "mailto:hello@tensorix.ai",
     worksFor: {
       "@type": "Organization",
-      name: "Tensor",
+      name: "Tensorix",
       url: SITE_URL,
     },
     sameAs: [
@@ -162,12 +162,12 @@ const jsonLd = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Tensor",
-    alternateName: ["Tensor Agency", "Tensor"],
+    name: "Tensorix",
+    alternateName: ["Tensorix Agency", "Tensor"],
     url: SITE_URL,
-    logo: `${SITE_URL}/tensor-logo-256.png`,
+    logo: `${SITE_URL}/tensorix-logo-256.png`,
     description:
-      "A small AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for modern companies.",
+      "Tensorix is an AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for modern companies.",
     founder: { "@type": "Person", name: "Arefin Muin" },
     sameAs: [
       "https://www.facebook.com/profile.php?id=61588840534814",
@@ -177,7 +177,7 @@ const jsonLd = [
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Tensor",
+    name: "Tensorix",
     url: SITE_URL,
     inLanguage: "en",
   },
@@ -189,7 +189,7 @@ const jsonLd = [
     "@type": "Service",
     name: "AI Automation for Small Business",
     serviceType: "AI Automation",
-    provider: { "@type": "Organization", name: "Tensor", url: SITE_URL },
+    provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
       "Custom AI workflow automation on n8n, Zapier, Make and GoHighLevel for small businesses. Lead qualification, follow-ups, CRM updates and AI replies — built around the tools you already use.",
@@ -210,7 +210,7 @@ const jsonLd = [
     "@type": "Service",
     name: "Facebook & Messenger Chatbot Automation",
     serviceType: "Conversational AI / Chatbot",
-    provider: { "@type": "Organization", name: "Tensor", url: SITE_URL },
+    provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
       "24/7 AI Messenger bot for Facebook business pages. Answers FAQs in your brand voice, qualifies buyers, books appointments and hands off to humans only when it really matters.",
@@ -226,7 +226,7 @@ const jsonLd = [
     "@type": "Service",
     name: "Website Development for Small Business",
     serviceType: "Web Development",
-    provider: { "@type": "Organization", name: "Tensor", url: SITE_URL },
+    provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
       "Fast, mobile-first websites built around conversion. WhatsApp, booking and payment built in. Owner-editable copy, no developer needed for small changes.",

@@ -9,7 +9,7 @@ import { structure } from "./src/sanity/structure";
 
 export default defineConfig({
   name: "default",
-  title: "Tensor CMS",
+  title: "Tensorix CMS",
   basePath: studioUrl,
   // The studio is only meaningful when Sanity is configured. If env vars
   // are missing we still need to satisfy the type signature; a clearly-

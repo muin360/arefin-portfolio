@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "Contact",
   alternates: { canonical: "/contact" },
   description:
-    "Get in touch with Tensor to discuss AI agents, automation workflows and LLM engineering work. Replies within a day, Monday to Saturday, Asia/Dhaka.",
+    "Get in touch with Tensorix to discuss AI agents, automation workflows and LLM engineering work. Replies within a day, Monday to Saturday, Asia/Dhaka.",
 };
 
 function whatsappLink(cfg: SiteConfig): string | undefined {
@@ -166,7 +166,7 @@ export default async function ContactPage() {
               <BentoCard className="h-full">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-4">
-                    Find Tensor elsewhere
+                    Find Tensorix elsewhere
                   </p>
                   <ul className="grid grid-cols-2 gap-3">
                     {social.github && (

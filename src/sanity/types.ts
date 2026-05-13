@@ -34,6 +34,7 @@ export type SiteConfig = {
   tagline: string;
   siteDescription?: string;
   availability?: string;
+  availabilityNote?: string;
   social?: {
     github?: string;
     linkedin?: string;

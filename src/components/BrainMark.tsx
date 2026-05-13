@@ -7,7 +7,7 @@ type Props = {
 };
 
 /**
- * Tensor neural-brain mark.
+ * Tensorix neural-brain mark.
  * Two-lobe brain silhouette with a small neural network rendered inside.
  * Strokes use a violet → pink → cyan gradient. A handful of nodes pulse
  * softly to keep the mark feeling alive.
@@ -30,7 +30,7 @@ export default function BrainMark({
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       role="img"
-      aria-label="Tensor"
+      aria-label="Tensorix"
     >
       <defs>
         <linearGradient id={grad} x1="2" y1="6" x2="30" y2="26" gradientUnits="userSpaceOnUse">

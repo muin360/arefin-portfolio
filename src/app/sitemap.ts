@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     sanityFetch<ProjectDoc[]>({ query: allProjectsQuery, tags: ["project"] }),
   ]);
   const posts = postsRaw ?? [];
-  const projects = projectsRaw ?? [];
+  const liveProjects = projectsRaw ?? [];
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`,         changeFrequency: "monthly", priority: 1.0, lastModified: now },
@@ -30,6 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/contact`,  changeFrequency: "yearly",  priority: 0.9, lastModified: now },
     { url: `${SITE_URL}/book`,     changeFrequency: "monthly", priority: 0.95, lastModified: now },
     { url: `${SITE_URL}/privacy`,  changeFrequency: "yearly",  priority: 0.3, lastModified: now },
+    { url: `${SITE_URL}/terms`,    changeFrequency: "yearly",  priority: 0.3, lastModified: now },
   ];
 
   const postRoutes: MetadataRoute.Sitemap = posts.map((p) => ({
@@ -39,10 +40,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(p.date),
   }));
 
-  // We don't currently render dedicated /projects/[slug] pages, so projects
-  // are intentionally not included in the sitemap. They remain available
-  // via the listing on /projects.
-  void projects;
+  // Include built-in fallback projects so /projects/<slug> URLs surface
+  // even when Sanity is empty or not configured (matches the static-params
+  // behavior in the dynamic route).
+  const { FALLBACK_PROJECTS } = await import("@/data/fallbacks");
+  const slugs = Array.from(
+    new Set([
+      ...liveProjects.map((p) => p.slug),
+      ...FALLBACK_PROJECTS.map((p) => p.slug),
+    ]),
+  );
+  const projectRoutes: MetadataRoute.Sitemap = slugs.map((slug) => ({
+    url: `${SITE_URL}/projects/${slug}`,
+    changeFrequency: "yearly",
+    priority: 0.6,
+    lastModified: now,
+  }));
 
-  return [...staticRoutes, ...postRoutes];
+  return [...staticRoutes, ...postRoutes, ...projectRoutes];
 }

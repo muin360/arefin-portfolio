@@ -236,7 +236,7 @@ export default function TensorPipeline() {
             viewBox="0 0 1000 420"
             className="relative w-full h-auto"
             preserveAspectRatio="xMidYMid meet"
-            aria-label="Animated diagram of a Tensor production workflow"
+            aria-label="Animated diagram of a Tensorix production workflow"
           >
             <defs>
               <linearGradient id="pipeEdge" x1="0" y1="0" x2="1" y2="0">

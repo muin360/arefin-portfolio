@@ -5,18 +5,21 @@ import {
   allProjectsQuery,
   allPostsQuery,
   siteConfigQuery,
+  allTestimonialsQuery,
 } from "@/sanity/queries";
 import type {
   ServiceDoc,
   ProjectDoc,
   PostListItem,
   SiteConfig,
+  TestimonialDoc,
 } from "@/sanity/types";
 import {
   FALLBACK_SERVICES,
   FALLBACK_PROJECTS,
   FALLBACK_POSTS,
   FALLBACK_SITE_CONFIG,
+  FALLBACK_TESTIMONIALS,
 } from "@/data/fallbacks";
 import { iconFor } from "@/components/IconRegistry";
 import { IconArrow } from "@/components/icons";
@@ -58,17 +61,31 @@ const tools = [
 ];
 
 export default async function HomePage() {
-  const [servicesRaw, projectsRaw, postsRaw, cfgRaw] = await Promise.all([
-    sanityFetch<ServiceDoc[]>({ query: allServicesQuery, tags: ["service"] }),
-    sanityFetch<ProjectDoc[]>({ query: allProjectsQuery, tags: ["project"] }),
-    sanityFetch<PostListItem[]>({ query: allPostsQuery, tags: ["post"] }),
-    sanityFetch<SiteConfig>({ query: siteConfigQuery, tags: ["siteConfig"] }),
-  ]);
+  const [servicesRaw, projectsRaw, postsRaw, cfgRaw, testimonialsRaw] =
+    await Promise.all([
+      sanityFetch<ServiceDoc[]>({ query: allServicesQuery, tags: ["service"] }),
+      sanityFetch<ProjectDoc[]>({ query: allProjectsQuery, tags: ["project"] }),
+      sanityFetch<PostListItem[]>({ query: allPostsQuery, tags: ["post"] }),
+      sanityFetch<SiteConfig>({ query: siteConfigQuery, tags: ["siteConfig"] }),
+      sanityFetch<TestimonialDoc[]>({
+        query: allTestimonialsQuery,
+        tags: ["testimonial"],
+      }),
+    ]);
 
   const services = servicesRaw && servicesRaw.length > 0 ? servicesRaw : FALLBACK_SERVICES;
   const projects = projectsRaw && projectsRaw.length > 0 ? projectsRaw : FALLBACK_PROJECTS;
   const posts = postsRaw && postsRaw.length > 0 ? postsRaw : FALLBACK_POSTS;
   const cfg: SiteConfig = cfgRaw ?? FALLBACK_SITE_CONFIG;
+  const testimonials =
+    testimonialsRaw && testimonialsRaw.length > 0
+      ? testimonialsRaw
+      : FALLBACK_TESTIMONIALS;
+
+  const availabilityNote =
+    cfg.availabilityNote ??
+    FALLBACK_SITE_CONFIG.availabilityNote ??
+    "Free 30-min audit";
 
   const heroTiles = cfg.heroTiles ?? [];
   const showHeroTiles = (cfg.showHeroTiles ?? true) && heroTiles.length > 0;
@@ -103,7 +120,7 @@ export default async function HomePage() {
           {/* Top status bar — single high-signal trust pill, no dev-fluff */}
           <div className="flex flex-wrap items-center gap-3 mb-12 md:mb-16 text-xs">
             <span className="chip chip-live">
-              <span className="live-dot" /> Booking 2 clients this month · Free 30-min audit
+              <span className="live-dot" /> {availabilityNote}
             </span>
           </div>
 
@@ -111,9 +128,9 @@ export default async function HomePage() {
             <div className="lg:col-span-7">
               <Reveal>
                 <p className="eyebrow mb-8 inline-flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span className="font-mono tracking-[0.26em] uppercase text-foreground">Tensor</span>
+                  <span className="font-mono tracking-[0.26em] uppercase text-foreground">Tensorix</span>
                   <span className="opacity-30">—</span>
-                  <span>AI automation, Messenger bots & websites for small businesses</span>
+                  <span>AI Automation, Intelligent Systems & Future Solutions</span>
                 </p>
               </Reveal>
 
@@ -182,6 +199,16 @@ export default async function HomePage() {
                 <LiveAgentDashboard />
               </Reveal>
             </div>
+
+            {/* Mobile hero visual — stat cards. Replaces the desktop
+                LiveAgentDashboard on phones where animations are expensive
+                and the dashboard would compete with the headline. */}
+            <div className="lg:hidden grid grid-cols-2 gap-3 mt-2">
+              <MobileStat label="Reply time" value={"< 1 hour"} />
+              <MobileStat label="Delivery" value="14 days" />
+              <MobileStat label="You own" value="Everything" />
+              <MobileStat label="Support" value="30 days free" />
+            </div>
           </div>
 
           {/* Marquee of tools — dark variant */}
@@ -214,7 +241,7 @@ export default async function HomePage() {
             <div className="text-center mb-12 md:mb-16">
               <p className="eyebrow mb-5">[ 01 ] Services</p>
               <h2 className="display text-4xl md:text-6xl text-white max-w-4xl mx-auto leading-[1.05]">
-                What I can{" "}
+                What we can{" "}
                 <span className="serif iridescent">build for your business.</span>
               </h2>
               <p className="mt-6 text-white/65 max-w-2xl mx-auto leading-relaxed">
@@ -223,7 +250,7 @@ export default async function HomePage() {
               </p>
               <p className="mt-7 inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.2em] text-white/70 rounded-full border border-white/15 bg-white/5 px-3 py-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Only 2 client slots available this month
+                {availabilityNote}
               </p>
             </div>
           </Reveal>
@@ -288,7 +315,7 @@ export default async function HomePage() {
           </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
-            {projects.slice(0, 4).map(({ iconName, title, summary, stack, category }, i) => {
+            {projects.slice(0, 4).map(({ iconName, title, summary, stack, category, slug }, i) => {
               const Icon = iconFor(iconName);
               const span =
                 i === 0
@@ -307,7 +334,7 @@ export default async function HomePage() {
                 >
                   <TiltCard className="h-full rounded-3xl">
                   <Link
-                    href="/projects"
+                    href={slug ? `/projects/${slug}` : "/projects"}
                     className="block h-full rounded-3xl border border-line bg-surface p-8 md:p-10 transition-all duration-300 hover:border-foreground/30 hover:shadow-[0_20px_60px_-30px_rgba(10,10,20,0.25)]"
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -399,7 +426,7 @@ export default async function HomePage() {
                   <h2 className="display text-4xl md:text-6xl text-white max-w-3xl leading-[1.05]">
                     Last 30 days
                     <br />
-                    at <span className="serif">Tensor.</span>
+                    at <span className="serif">Tensorix.</span>
                   </h2>
                   <p className="mt-5 text-white/65 max-w-xl leading-relaxed">
                     A live look at what&apos;s running across active
@@ -416,6 +443,57 @@ export default async function HomePage() {
             <Reveal delay={140} className="mt-6 md:mt-8">
               <TensorPipeline />
             </Reveal>
+          </div>
+        </section>
+      )}
+
+      {/* TESTIMONIALS — social proof for SMB conversion. Auto-hides when
+          neither Sanity nor the fallback array has entries. */}
+      {testimonials.length > 0 && (
+        <section className="border-b border-line">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 section">
+            <Reveal>
+              <div className="text-center mb-12 md:mb-16">
+                <p className="eyebrow mb-5">[ 04 ] Client results</p>
+                <h2 className="display text-4xl md:text-6xl max-w-3xl mx-auto">
+                  What clients say{" "}
+                  <span className="serif">after we ship.</span>
+                </h2>
+              </div>
+            </Reveal>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {testimonials.slice(0, 3).map((t, i) => (
+                <Reveal key={t._id ?? t.name} delay={i * 80}>
+                  <figure className="h-full rounded-3xl border border-line bg-surface p-8 md:p-10 flex flex-col">
+                    {typeof t.rating === "number" && t.rating > 0 && (
+                      <div
+                        className="flex items-center gap-0.5 text-amber-500"
+                        aria-label={`${t.rating} out of 5`}
+                      >
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <span
+                            key={idx}
+                            aria-hidden="true"
+                            className={idx < (t.rating ?? 0) ? "" : "opacity-20"}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <blockquote className="mt-5 text-foreground/85 leading-relaxed italic">
+                      “{t.content}”
+                    </blockquote>
+                    <figcaption className="mt-auto pt-8 border-t border-line">
+                      <p className="font-medium tracking-tight">{t.name}</p>
+                      {t.role && (
+                        <p className="mono text-xs text-muted mt-1">{t.role}</p>
+                      )}
+                    </figcaption>
+                  </figure>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
       )}
@@ -486,6 +564,17 @@ export default async function HomePage() {
       {/* FINAL CTA — free audit + WhatsApp, dual-channel close */}
       <FinalCTASection />
     </>
+  );
+}
+
+function MobileStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p className="font-mono text-[10px] uppercase tracking-widest text-white/45">
+        {label}
+      </p>
+      <p className="font-mono text-xl text-white mt-1 tabular-nums">{value}</p>
+    </div>
   );
 }
 

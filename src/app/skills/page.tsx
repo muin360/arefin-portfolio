@@ -13,10 +13,10 @@ import Marquee from "@/components/Marquee";
 export const metadata: Metadata = {
   title: "Stack & Tools",
   description:
-    "The platforms, languages and AI tooling Tensor uses to build production automations and agents — n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, OpenAI, Claude, Python, TypeScript and more.",
+    "The platforms, languages and AI tooling Tensorix uses to build production automations and agents — n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, OpenAI, Claude, Python, TypeScript and more.",
   alternates: { canonical: "/skills" },
   openGraph: {
-    title: "Stack & Tools — Tensor",
+    title: "Stack & Tools — Tensorix",
     description:
       "Platforms, languages and AI tooling used to build production automations and agents.",
     url: "/skills",

@@ -8,12 +8,12 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Hi, I'm Arefin Muin — the AI engineer behind Tensor. I build AI automation, Messenger bots and high-converting websites for small businesses, from Dhaka to Dubai to Toronto. Two clients at a time. No agency overhead. You get the operator.",
+    "Hi, I'm Arefin Muin — the AI engineer behind Tensorix. We build AI automation, Messenger bots and high-converting websites for small businesses, from Dhaka to Dubai to Toronto. Two clients at a time. No agency overhead. You get the operator.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About — Tensor",
+    title: "About — Tensorix",
     description:
-      "I'm Arefin Muin. I build AI automation, Messenger bots and high-converting websites for small businesses.",
+      "I'm Arefin Muin, founder of Tensorix. We build AI automation, Messenger bots and high-converting websites for small businesses.",
     url: "/about",
   },
 };
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
 const principles = [
   {
     title: "Outcomes, not features.",
-    body: "Every system I ship has to save you real hours or make you real money. If it can't be measured in your bank account or your team's calendar, I won't build it.",
+    body: "Every system we ship has to save you real hours or make you real money. If it can't be measured in your bank account or your team's calendar, we won't build it.",
   },
   {
     title: "You own everything.",
-    body: "All accounts, all logins, all source code — in your name, on your hardware, with full documentation. I never hold your business hostage. If you want to take it elsewhere on day 31, you can.",
+    body: "All accounts, all logins, all source code — in your name, on your hardware, with full documentation. We never hold your business hostage. If you want to take it elsewhere on day 31, you can.",
   },
   {
     title: "Two clients at a time.",
-    body: "I work small on purpose. No project managers, no junior handoffs, no agency overhead. You get the operator who built it — reachable on WhatsApp, every working day.",
+    body: "We work small on purpose. No project managers, no junior handoffs, no agency overhead. You get the operator who built it — reachable on WhatsApp, every working day.",
   },
 ];
 
@@ -44,7 +44,7 @@ const milestones = [
   },
   {
     period: "2024",
-    body: "Founded Tensor. Brought LLMs into real production workflows for paying clients — lead qualification agents, Messenger bots, RAG chatbots over internal docs.",
+    body: "Founded Tensorix. Brought LLMs into real production workflows for paying clients — lead qualification agents, Messenger bots, RAG chatbots over internal docs.",
   },
   {
     period: "2025",
@@ -56,7 +56,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Tensor · About"
+        eyebrow="Tensorix · About"
         index="02"
         meta="Operator-led · Founded 2024 · Dhaka, Bangladesh"
         title={

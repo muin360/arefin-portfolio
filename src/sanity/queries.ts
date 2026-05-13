@@ -13,6 +13,7 @@ export const siteConfigQuery = groq`
     tagline,
     siteDescription,
     availability,
+    availabilityNote,
     social,
     heroTiles,
     live30Days,
@@ -75,6 +76,25 @@ export const allSkillCategoriesQuery = groq`
 
 export const allProjectsQuery = groq`
   *[_type == "project"] | order(coalesce(order, 9999) asc, _createdAt desc){
+    _id,
+    title,
+    "slug": slug.current,
+    summary,
+    outcome,
+    stack,
+    iconName,
+    category,
+    featured,
+    "thumbnail": thumbnail{ "url": asset->url, alt, "lqip": asset->metadata.lqip, "dimensions": asset->metadata.dimensions }
+  }
+`;
+
+export const projectSlugsQuery = groq`
+  *[_type == "project" && defined(slug.current)][].slug.current
+`;
+
+export const projectBySlugQuery = groq`
+  *[_type == "project" && slug.current == $slug][0]{
     _id,
     title,
     "slug": slug.current,

@@ -60,7 +60,7 @@ export default function Navbar() {
           </span>
           <div className="leading-tight">
             <div className="font-mono text-[15px] tracking-[0.26em] uppercase text-foreground">
-              Tensor<span className="text-foreground/55"> studio</span>
+              Tensorix<span className="text-foreground/55"> studio</span>
             </div>
             <div className="mono text-[10px] uppercase tracking-[0.22em] text-muted">
               Intelligence that connects future

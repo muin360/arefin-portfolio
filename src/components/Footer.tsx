@@ -85,7 +85,12 @@ export default async function Footer() {
               </li>
               <li>
                 <Link href="/privacy" className="text-white/85 hover:text-white link-underline">
-                  Privacy &amp; Security
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-white/85 hover:text-white link-underline">
+                  Terms
                 </Link>
               </li>
             </ul>
@@ -201,8 +206,8 @@ export default async function Footer() {
             <div className="flex items-center gap-5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/tensor-logo-256.png"
-                alt="Tensor"
+                src="/tensorix-logo-256.png"
+                alt="Tensorix"
                 width={72}
                 height={72}
                 className="w-16 h-16 md:w-20 md:h-20 object-contain"
@@ -213,7 +218,7 @@ export default async function Footer() {
                   The agency
                 </p>
                 <p className="font-mono text-2xl md:text-3xl tracking-[0.22em] uppercase text-white">
-                  Tensor
+                  Tensorix
                 </p>
                 <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-white/45">
                   Intelligence that connects the future
@@ -221,7 +226,7 @@ export default async function Footer() {
               </div>
             </div>
             <p className="text-sm text-white/55 leading-relaxed max-w-md">
-              Tensor is a small AI engineering agency building
+              Tensorix is a small AI engineering agency building
               quiet, intelligent systems for ambitious teams. Founded and
               operated by Arefin Muin from Dhaka, Bangladesh.
             </p>
@@ -230,7 +235,7 @@ export default async function Footer() {
 
         <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between text-white/50">
           <p className="mono text-[11px] uppercase tracking-[0.16em]">
-            © {year} Tensor · Founded by Arefin Muin · Hand-coded with Next.js + Tailwind
+            © {year} Tensorix · Founded by Arefin Muin · Hand-coded with Next.js + Tailwind
           </p>
           <p className="mono text-[11px] uppercase tracking-[0.16em]">
             v 2.0 · Editorial

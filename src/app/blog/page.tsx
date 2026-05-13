@@ -9,12 +9,12 @@ import BlogList from "./BlogList";
 export const metadata: Metadata = {
   title: "Journal",
   description:
-    "Notes from Tensor on AI automation, agents and the engineering side of LLMs — lessons from real client work, opinions on the toolchain, and what I'm learning in production.",
+    "Notes from Tensorix on AI automation, agents and the engineering side of LLMs — lessons from real client work, opinions on the toolchain, and what I'm learning in production.",
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: "Journal — Tensor",
+    title: "Journal — Tensorix",
     description:
-      "Notes from Tensor on AI automation, agents and the engineering side of LLMs.",
+      "Notes from Tensorix on AI automation, agents and the engineering side of LLMs.",
     url: "/blog",
   },
 };

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 /**
  * SprintTimeline — autoplay editorial timeline showing what a real
- * 14-day Tensor Sprint looks like. Six phases auto-advance on a
+ * 14-day Tensorix Sprint looks like. Six phases auto-advance on a
  * 3.6 second loop with a glowing pink playhead. Each phase reveals
  * its hour-by-hour breakdown in the right panel as it activates.
  *

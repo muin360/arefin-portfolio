@@ -13,10 +13,10 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "Services & Pricing",
   description:
-    "Three ways to work with Tensor: AI Automation, Facebook & Messenger bots, and high-converting websites. Flat-price engagements. Free 30-min audit. Reply on WhatsApp within 1 hour.",
+    "Three ways to work with Tensorix: AI Automation, Facebook & Messenger bots, and high-converting websites. Flat-price engagements. Free 30-min audit. Reply on WhatsApp within 1 hour.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Services & Pricing — Tensor",
+    title: "Services & Pricing — Tensorix",
     description:
       "AI Automation, Messenger bots, and high-converting websites for small businesses. Flat-price engagements. Free 30-min audit.",
     url: "/services",
@@ -29,7 +29,7 @@ const process = [
   {
     step: "01",
     title: "Free 30-min audit call",
-    body: "Tell me what's broken — a workflow eating hours, a Messenger inbox losing leads, a website that doesn't convert. I'll tell you what to fix first, on the call. No pitch.",
+    body: "Tell us what's broken — a workflow eating hours, a Messenger inbox losing leads, a website that doesn't convert. We'll tell you what to fix first, on the call. No pitch.",
   },
   {
     step: "02",
@@ -39,12 +39,12 @@ const process = [
   {
     step: "03",
     title: "Build & daily updates",
-    body: "I build the system, send daily WhatsApp updates with screenshots and Looms, and run it against your real data before going live.",
+    body: "We build the system, send daily WhatsApp updates with screenshots and Looms, and run it against your real data before going live.",
   },
   {
     step: "04",
     title: "Launch + 30 days free support",
-    body: "Once it's live, I train you on Loom, hand over docs, and stay reachable on WhatsApp for 30 days of free fixes and tweaks.",
+    body: "Once it's live, we train you on Loom, hand over docs, and stay reachable on WhatsApp for 30 days of free fixes and tweaks.",
   },
 ];
 
@@ -54,7 +54,7 @@ const engagement = [
   "Loom walkthroughs and written docs at handoff so your team can run it",
   "30 days of free post-launch support and tweaks after go-live",
   "Flat price agreed up-front — no hourly billing, no scope-creep invoices",
-  "If the agreed outcome isn't met by handoff, I keep working until it is",
+  "If the agreed outcome isn't met by handoff, we keep working until it is",
 ];
 
 export default async function ServicesPage() {
@@ -75,7 +75,7 @@ export default async function ServicesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Tensor · Services & Pricing"
+        eyebrow="Tensorix · Services & Pricing"
         index="03"
         meta="Three engagements · Flat pricing · Free 30-min audit"
         title={
@@ -85,7 +85,7 @@ export default async function ServicesPage() {
             other way around.
           </>
         }
-        subtitle="Three ways to work with me: a focused two-week sprint, a full build, or ongoing capacity. Every engagement starts with a free 30-min audit. Flat price. You own everything."
+        subtitle="Three ways to work with Tensorix: a focused two-week sprint, a full build, or ongoing capacity. Every engagement starts with a free 30-min audit. Flat price. You own everything."
       />
 
       {/* ENGAGEMENTS — Sprint / Build / Retainer pricing tiers */}
@@ -102,12 +102,12 @@ export default async function ServicesPage() {
                 </p>
                 <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
                   Three ways to work{" "}
-                  <span className="serif iridescent">with Arefin.</span>
+                  <span className="serif iridescent">with Tensorix.</span>
                 </h2>
               </div>
               <p className="text-white/60 max-w-sm leading-relaxed">
                 Every engagement starts with a free 30-min audit. Pricing is
-                flat and agreed up-front. You own everything I build.
+                flat and agreed up-front. You own everything we build.
               </p>
             </div>
           </Reveal>
@@ -167,7 +167,7 @@ export default async function ServicesPage() {
 
                     <a
                       href={`https://wa.me/8801994605717?text=${encodeURIComponent(
-                        `Hi Arefin! I'd like to discuss the "${e.name}" engagement. Here's a quick overview of my situation: `,
+                        `Hi Tensorix team! I'd like to discuss the "${e.name}" engagement. Here's a quick overview of my situation: `,
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -188,7 +188,7 @@ export default async function ServicesPage() {
         </div>
       </section>
 
-      {/* CAPABILITIES — what Tensor builds */}
+      {/* CAPABILITIES — what Tensorix builds */}
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-pink" aria-hidden="true" />
@@ -251,7 +251,7 @@ export default async function ServicesPage() {
               <span className="serif text-[1.04em] iridescent">to live system.</span>
             </h2>
             <p className="mt-5 text-white/60 leading-relaxed">
-              The same four-step loop every project. Daily WhatsApp updates.
+              The same four-step loop every project. Daily WhatsApp updates from the Tensorix team.
               Flat price. Zero surprises.
             </p>
           </div>
@@ -323,11 +323,11 @@ export default async function ServicesPage() {
                 Get started
               </p>
               <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                Tell me what&rsquo;s on{" "}
+                Tell us what&rsquo;s on{" "}
                 <span className="serif text-[1.04em] iridescent">your plate.</span>
               </h2>
               <p className="mt-4 text-white/65 max-w-md">
-                30 minutes. I&rsquo;ll tell you exactly what to fix first.
+                30 minutes. We&rsquo;ll tell you exactly what to fix first.
                 No pitch. No obligation.
               </p>
             </div>

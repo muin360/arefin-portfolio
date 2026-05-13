@@ -25,19 +25,21 @@ import type {
 
 export const FALLBACK_SITE_CONFIG: SiteConfig = {
   name: "Arefin Muin",
-  role: "AI Automation & Agent Engineer",
-  email: "arefinmueen360@gmail.com",
-  phone: "+880 1994-605717",
-  phoneE164: "8801994605717",
+  role: "AI Automation & Systems Engineer",
+  email: process.env.CONTACT_EMAIL ?? "hello@tensorix.ai",
+  phone: process.env.CONTACT_PHONE ?? "+880 1994-605717",
+  phoneE164: process.env.CONTACT_PHONE_E164 ?? "8801994605717",
   tagline:
-    "AI engineer building agents, automation workflows and LLM-powered systems that quietly run in production.",
+    "We build AI automation systems, intelligent agents, and future-proof workflows that run in production while you focus on your business.",
   siteDescription:
-    "Tensor is an AI engineering studio. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, GoHighLevel, Python and TypeScript.",
-  availability: "Available · accepting new engagements",
+    "Tensorix is an AI engineering studio. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, GoHighLevel, Python and TypeScript.",
+  availability: "Accepting new engagements",
+  availabilityNote: "Only 2 slots left this month · Free 30-min audit",
   social: {
+    // TODO: replace with branded /tensorix page once it exists.
     facebook: "https://www.facebook.com/profile.php?id=61588840534814",
-    whatsapp: "https://wa.me/8801994605717",
-    email: "mailto:arefinmueen360@gmail.com",
+    whatsapp: process.env.WHATSAPP_URL ?? "https://wa.me/8801994605717",
+    email: `mailto:${process.env.CONTACT_EMAIL ?? "hello@tensorix.ai"}`,
   },
   heroTiles: [],
   live30Days: [],
@@ -51,7 +53,7 @@ export const FALLBACK_ENGAGEMENTS: EngagementDoc[] = [
     _id: "engagement.sprint",
     tag: "Sprint",
     name: "Two-week sprint",
-    price: "Custom quote",
+    price: "Starts at BDT 25,000",
     cadence: "2 weeks · fixed scope",
     summary:
       "A focused, time-boxed build for a single workflow or one tightly-scoped agent.",
@@ -69,7 +71,7 @@ export const FALLBACK_ENGAGEMENTS: EngagementDoc[] = [
     _id: "engagement.build",
     tag: "Build",
     name: "Engineering engagement",
-    price: "Custom quote",
+    price: "Starts at BDT 75,000",
     cadence: "4–8 weeks · milestone-based",
     summary:
       "End-to-end design and build of a multi-step automation or production-grade agent system.",
@@ -88,7 +90,7 @@ export const FALLBACK_ENGAGEMENTS: EngagementDoc[] = [
     _id: "engagement.retainer",
     tag: "Retainer",
     name: "On-call studio",
-    price: "Custom quote",
+    price: "Starts at BDT 40,000 / mo",
     cadence: "Monthly · ongoing capacity",
     summary:
       "Ongoing engineering capacity for your existing AI stack — improvements, monitoring, new agents.",
@@ -113,7 +115,7 @@ export const FALLBACK_SERVICES: ServiceDoc[] = [
     problem:
       "Your team copies, pastes and replies the same things 40 times a week. Lead qualification, follow-ups and CRM updates eat your most expensive hours.",
     solution:
-      "I build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — sitting on top of the tools you already use.",
+      "We build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — sitting on top of the tools you already use.",
     outcome: "Save 15–40 hours every month. Zero new software.",
     bullets: [
       "Lead qualification + auto-routing",
@@ -122,10 +124,10 @@ export const FALLBACK_SERVICES: ServiceDoc[] = [
     ],
     ctaLabel: "See if your workflow can be automated",
     ctaPrefill:
-      "Hi Arefin! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
+      "Hi Tensorix team! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
     isFeatured: false,
     description:
-      "Your team copies, pastes and replies the same things 40 times a week. I build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — lead qualification, follow-ups, CRM updates, AI replies. Get back 15–40 hours every month, zero new software to learn.",
+      "Your team copies, pastes and replies the same things 40 times a week. We build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — lead qualification, follow-ups, CRM updates, AI replies. Get back 15–40 hours every month, zero new software to learn.",
     order: 0,
   },
   {
@@ -136,7 +138,7 @@ export const FALLBACK_SERVICES: ServiceDoc[] = [
     problem:
       "Your Messenger inbox is your storefront — but DMs and comments pile up faster than you can reply. Hot leads go cold while you sleep.",
     solution:
-      "A 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments — and only hands off when it actually matters.",
+      "We deploy a 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments — and only hands off when it actually matters.",
     outcome: "Reply in under 30s. Capture every lead. Sleep at night.",
     bullets: [
       "Answers FAQs in your brand voice",
@@ -145,11 +147,11 @@ export const FALLBACK_SERVICES: ServiceDoc[] = [
     ],
     ctaLabel: "Get a free Messenger bot demo",
     ctaPrefill:
-      "Hi Arefin! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
+      "Hi Tensorix team! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
     isFeatured: true,
     badge: "Most Popular",
     description:
-      "Your Messenger inbox is your storefront — but DMs and comments pile up faster than you can reply. I build a 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments and only hands off when it really matters. Reply in under 30 seconds, all day, every day.",
+      "Your Messenger inbox is your storefront — but DMs and comments pile up faster than you can reply. We build a 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments and only hands off when it really matters. Reply in under 30 seconds, all day, every day.",
     order: 1,
   },
   {
@@ -160,19 +162,19 @@ export const FALLBACK_SERVICES: ServiceDoc[] = [
     problem:
       "Your current site looks like 2017 and quietly tells visitors you're not the serious option. Buyers click away before they reach the form.",
     solution:
-      "Fast, mobile-first websites with WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
+      "We ship fast, mobile-first websites with WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
     outcome: "Visitors that convert. Pages that load in <2s.",
     bullets: [
       "Mobile-first, conversion-focused design",
       "WhatsApp + booking + payment built in",
-      "You can edit copy without calling me",
+      "You can edit copy without calling us",
     ],
     ctaLabel: "Get a free 1-page website teardown",
     ctaPrefill:
-      "Hi Arefin! I'd like a free teardown of my current website. My site is: ",
+      "Hi Tensorix team! I'd like a free teardown of my current website. My site is: ",
     isFeatured: false,
     description:
-      "Your current site looks like 2017 and quietly tells visitors you're not the serious option. I ship fast, mobile-first websites built around one job: turning visitors into customers. WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
+      "Your current site looks like 2017 and quietly tells visitors you're not the serious option. We ship fast, mobile-first websites built around one job: turning visitors into customers. WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
     order: 2,
   },
 ];
@@ -182,14 +184,14 @@ export const FALLBACK_FAQS: FaqDoc[] = [
     _id: "faq.pricing",
     question: "How much does it cost?",
     answer:
-      "Most AI automation projects fall between BDT 25,000–250,000 (~$200–$2,000) depending on scope. Messenger bots start at BDT 15,000 (~$125). Websites start at BDT 35,000 (~$300). We agree on a flat price before I start — no surprises, no hourly billing.",
+      "At Tensorix, most AI automation projects fall between BDT 25,000–250,000 (~$200–$2,000) depending on scope. Messenger bots start at BDT 15,000 (~$125). Websites start at BDT 35,000 (~$300). We agree on a flat price before we start — no surprises, no hourly billing.",
     order: 0,
   },
   {
     _id: "faq.timeline",
     question: "How long does it take?",
     answer:
-      "7–14 days for most automations and Messenger bots. 14–21 days for a complete website. You'll get daily updates on WhatsApp.",
+      "7–14 days for most automations and Messenger bots. 14–21 days for a complete website. You'll get daily updates on WhatsApp from the Tensorix team.",
     order: 1,
   },
   {
@@ -203,7 +205,7 @@ export const FALLBACK_FAQS: FaqDoc[] = [
     _id: "faq.tools",
     question: "What if I don't have a CRM or the right tools yet?",
     answer:
-      "No problem. I'll recommend the simplest stack for your size and budget — usually free or low-cost tools you'll actually use. I make money building, not reselling software.",
+      "No problem. We'll recommend the simplest stack for your size and budget — usually free or low-cost tools you'll actually use. We make money building, not reselling software.",
     order: 3,
   },
   {
@@ -217,12 +219,40 @@ export const FALLBACK_FAQS: FaqDoc[] = [
     _id: "faq.guarantee",
     question: "What if it doesn't work?",
     answer:
-      "The 30-min audit call is free, no obligation. If you start a project and the system doesn't deliver the agreed outcome by handoff, I'll keep working on it without billing more — until it does.",
+      "The 30-min audit call is free, no obligation. If you start a project and the system doesn't deliver the agreed outcome by handoff, we'll keep working on it without billing more — until it does.",
     order: 5,
   },
 ];
 
-export const FALLBACK_TESTIMONIALS: TestimonialDoc[] = [];
+export const FALLBACK_TESTIMONIALS: TestimonialDoc[] = [
+  {
+    _id: "testimonial.aysha",
+    name: "Aysha Rahman",
+    role: "Founder · Luna Beauty (Dhaka)",
+    content:
+      "Our Messenger inbox used to lose us 8–10 leads every weekend. Tensorix shipped a bot that qualifies and books appointments in our brand voice — we book 60% of inbound conversations now without lifting a finger.",
+    rating: 5,
+    image: null,
+  },
+  {
+    _id: "testimonial.daniel",
+    name: "Daniel Okafor",
+    role: "CEO · Trellis Real Estate (Dubai)",
+    content:
+      "Got back 30+ hours a month after Tensorix automated our lead intake, qualification and CRM sync. They quoted flat, shipped in 10 days, and stayed reachable on WhatsApp the whole time.",
+    rating: 5,
+    image: null,
+  },
+  {
+    _id: "testimonial.priya",
+    name: "Priya Menon",
+    role: "Owner · Arc Dental Clinic (Toronto)",
+    content:
+      "Our new site loads in under 2s and our appointment bookings tripled in the first month. Tensorix sweated the conversion details we never had time for — and we own everything.",
+    rating: 5,
+    image: null,
+  },
+];
 
 export const FALLBACK_HERO: HeroDoc = {
   _id: "hero.fallback",

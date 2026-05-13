@@ -40,15 +40,15 @@ const client = createClient({
 const siteConfig = {
   _id: "siteConfig",
   _type: "siteConfig",
-  name: "Tensor",
+  name: "Tensorix",
   role: "AI Automation & Agent Engineering Agency",
   email: "arefinmueen360@gmail.com",
   phone: "+880 1994-605717",
   phoneE164: "8801994605717",
   tagline:
-    "Tensor is a small AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for ambitious teams.",
+    "Tensorix is a small AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for ambitious teams.",
   siteDescription:
-    "Tensor is an AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, LangGraph, GoHighLevel, Python and TypeScript — quietly, reliably, in production.",
+    "Tensorix is an AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, LangGraph, GoHighLevel, Python and TypeScript — quietly, reliably, in production.",
   availability: "Available · accepting new engagements",
   social: {
     facebook: "https://www.facebook.com/profile.php?id=61588840534814",
@@ -343,13 +343,13 @@ If you're on the same path, [let's connect](/contact).`,
     title: "How we evaluate LLMs before shipping them to clients",
     date: "2025-04-26",
     excerpt:
-      "Vibes-driven prompt engineering is fine for a demo. Production needs an evaluation harness — here's the one we run at Tensor.",
+      "Vibes-driven prompt engineering is fine for a demo. Production needs an evaluation harness — here's the one we run at Tensorix.",
     readingTime: "8 min read",
     category: "Engineering",
     tags: ["LLM", "Evaluation", "Production"],
     content: `Most agents look great in the demo and fall apart in week two. The reason is almost always the same — there was no evaluation. The team built a prompt that worked on five examples, shipped it, and discovered the long tail of inputs the hard way.
 
-At Tensor we won't ship an agent without a basic eval harness. Here's the one we use.
+At Tensorix we won't ship an agent without a basic eval harness. Here's the one we use.
 
 ## Step 1 — write the eval set before the prompt
 
@@ -392,14 +392,14 @@ Ship an eval harness with the agent. It doesn't need to be fancy — 30 hand-wri
   },
   {
     slug: "the-tensor-agent-stack",
-    title: "The agent stack we use at Tensor",
+    title: "The agent stack we use at Tensorix",
     date: "2025-04-22",
     excerpt:
       "After two years building agents in production, we've converged on a stack that's small, observable and cheap to run. Here's what's in it.",
     readingTime: "9 min read",
     category: "Engineering",
     tags: ["Agents", "Stack", "LangGraph"],
-    content: `Every six months I rebuild the same parts of the agent stack from scratch. Each iteration gets shorter as the ecosystem matures. Here's what's in our current setup at Tensor and **why** — because the why ages better than the libraries.
+    content: `Every six months I rebuild the same parts of the agent stack from scratch. Each iteration gets shorter as the ecosystem matures. Here's what's in our current setup at Tensorix and **why** — because the why ages better than the libraries.
 
 ## The stack, top to bottom
 
@@ -419,7 +419,7 @@ For workflows that don't need agent state (an LLM call wrapped in retries, a tri
 
 ## Why two models, not one
 
-Cost. A typical Tensor agent does 80% of its work with GPT-4o-mini at $0.15/1M tokens, then escalates to Sonnet for the hard 20%. The cost difference is 30×, the quality difference (for the right tasks) is invisible.
+Cost. A typical Tensorix agent does 80% of its work with GPT-4o-mini at $0.15/1M tokens, then escalates to Sonnet for the hard 20%. The cost difference is 30×, the quality difference (for the right tasks) is invisible.
 
 The trick is teaching the agent **when to escalate**. We use a confidence-scoring step: the cheap model decides if it's sure, and only routes to Sonnet when it isn't.
 
@@ -497,7 +497,7 @@ Configure first. Code second. The hybrid stack is the boring, unglamorous, corre
     title: "What 'production-grade AI' actually means in 2025",
     date: "2025-04-15",
     excerpt:
-      "The term gets thrown around a lot. Here's the checklist we use at Tensor to decide if a system is actually production-ready.",
+      "The term gets thrown around a lot. Here's the checklist we use at Tensorix to decide if a system is actually production-ready.",
     readingTime: "5 min read",
     category: "Engineering",
     tags: ["Production", "Reliability", "Operations"],

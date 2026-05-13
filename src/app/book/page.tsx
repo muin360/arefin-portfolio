@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "Book a free 30-minute audit call with Arefin. We'll review your workflow, Messenger inbox or current website live and tell you exactly what to fix first. No pitch, no obligation.",
   alternates: { canonical: "/book" },
   openGraph: {
-    title: "Book a free 30-min audit — Tensor",
+    title: "Book a free 30-min audit — Tensorix",
     description:
       "30 minutes. I'll tell you exactly what to fix first. No pitch.",
     url: "/book",

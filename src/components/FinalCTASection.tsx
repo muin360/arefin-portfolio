@@ -4,7 +4,7 @@ import { IconArrow } from "@/components/icons";
 
 const PHONE_E164 = "8801994605717";
 const PREFILL =
-  "Hi Arefin! I'd like to book a free 30-min audit call. Best time for me is …";
+  "Hi Tensorix team! I'd like to book a free 30-min audit call. Best time for me is …";
 const WA_HREF = `https://wa.me/${PHONE_E164}?text=${encodeURIComponent(PREFILL)}`;
 
 export default function FinalCTASection() {
@@ -27,7 +27,7 @@ export default function FinalCTASection() {
               <span className="serif iridescent">&ldquo;I&rsquo;ll reply tomorrow.&rdquo;</span>
             </h2>
             <p className="mt-7 text-white/70 max-w-2xl mx-auto text-lg leading-relaxed">
-              30 free minutes. I&rsquo;ll review your workflow, Messenger inbox or
+              30 free minutes. We&rsquo;ll review your workflow, Messenger inbox or
               current website live on the call and tell you exactly what to
               fix first.
             </p>

@@ -43,9 +43,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tensor — Journal</title>
+    <title>Tensorix — Journal</title>
     <link>${SITE_URL}/blog</link>
-    <description>Notes from Tensor on AI automation, agents and the engineering side of LLMs.</description>
+    <description>Notes from Tensorix on AI automation, agents and the engineering side of LLMs.</description>
     <language>en-us</language>
     <lastBuildDate>${new Date(updated).toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />

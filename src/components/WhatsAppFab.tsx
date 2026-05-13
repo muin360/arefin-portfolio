@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const PHONE_E164 = "8801994605717";
 const DEFAULT_MSG =
-  "Hi Arefin! I saw your website and I'd like to know if AI automation, a Messenger bot, or a new website is right for my business.";
+  "Hi Tensorix team! I saw your website and I'd like to know if AI automation, a Messenger bot, or a new website is right for my business.";
 
 export default function WhatsAppFab({
   phoneE164 = PHONE_E164,

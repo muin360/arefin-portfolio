@@ -112,7 +112,7 @@ export async function sendContact(
     return {
       ok: false,
       error:
-        "Email delivery isn't configured yet. Please email arefinmueen360@gmail.com directly.",
+        "Email delivery isn't configured yet. Please email hello@tensorix.ai directly.",
     };
   }
 
@@ -121,17 +121,17 @@ export async function sendContact(
 
   // FROM domain must be verified in Resend. Until you verify your own
   // domain, use the Resend onboarding sender; it works out of the box but
-  // sends from `onboarding@resend.dev`. After verifying tensorstudio.com
-  // (or whatever), set CONTACT_FROM_EMAIL to "Tensor <hi@your.dev>".
-  const from = process.env.CONTACT_FROM_EMAIL || "Tensor <onboarding@resend.dev>";
-  const to = process.env.CONTACT_TO_EMAIL || "arefinmueen360@gmail.com";
+  // sends from `onboarding@resend.dev`. After verifying tensorix.ai
+  // (or whatever), set CONTACT_FROM_EMAIL to "Tensorix <hi@your.dev>".
+  const from = process.env.CONTACT_FROM_EMAIL || "Tensorix <onboarding@resend.dev>";
+  const to = process.env.CONTACT_TO_EMAIL || "hello@tensorix.ai";
 
   try {
     const result = await resend.emails.send({
       from,
       to,
       replyTo: email,
-      subject: `[Tensor] ${subject} — ${name}`,
+      subject: `[Tensorix] ${subject} — ${name}`,
       text: `From: ${name} <${email}>\nTopic: ${subject}\n\n${message}\n`,
       html: `
         <div style="font-family: -apple-system, system-ui, sans-serif; max-width: 600px;">

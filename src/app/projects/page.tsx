@@ -14,12 +14,12 @@ import TiltCard from "@/components/TiltCard";
 export const metadata: Metadata = {
   title: "Selected Work",
   description:
-    "Selected automation and AI-agent systems built by Tensor for clients and engagements across the US, EU and APAC — lead qualification, booking bots, content pipelines, knowledge bases and outreach systems.",
+    "Selected automation and AI-agent systems built by Tensorix for clients and engagements across the US, EU and APAC — lead qualification, booking bots, content pipelines, knowledge bases and outreach systems.",
   alternates: { canonical: "/projects" },
   openGraph: {
-    title: "Selected Work — Tensor",
+    title: "Selected Work — Tensorix",
     description:
-      "Selected automation and AI-agent systems built by Tensor for clients across the US, EU and APAC.",
+      "Selected automation and AI-agent systems built by Tensorix for clients across the US, EU and APAC.",
     url: "/projects",
   },
 };
@@ -45,7 +45,7 @@ export default async function ProjectsPage() {
             so the team doesn&apos;t.
           </>
         }
-        subtitle="A selection of automations and AI agents Tensor has put into production. Case studies are anonymized — we share specifics on a call."
+        subtitle="A selection of automations and AI agents Tensorix has put into production. Case studies are anonymized — we share specifics on a call."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
@@ -54,7 +54,7 @@ export default async function ProjectsPage() {
         <div className="orb orb-cyan" aria-hidden="true" />
         <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-            {projects.map(({ iconName, title, summary, stack, category, outcome }, i) => {
+            {projects.map(({ iconName, title, summary, stack, category, outcome, slug }, i) => {
               const Icon = iconFor(iconName);
               // Asymmetric editorial layout
               const spans = [
@@ -70,7 +70,7 @@ export default async function ProjectsPage() {
                 <Reveal key={title} delay={i * 70} className={span}>
                   <TiltCard className="h-full rounded-3xl">
                     <BentoCard className="h-full">
-                      <Link href="/contact" className="block h-full">
+                      <Link href={slug ? `/projects/${slug}` : "/contact"} className="block h-full">
                         <div className="h-full flex flex-col group">
                           <div className="flex items-start justify-between gap-4">
                             <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 border border-white/10">
