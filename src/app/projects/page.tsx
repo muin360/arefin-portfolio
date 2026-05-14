@@ -132,7 +132,7 @@ export default async function ProjectsPage() {
                 </h2>
               </div>
               <Link href="/contact" className="btn-primary shimmer relative z-10 bg-white text-foreground border-white">
-                Get my free 30-min audit
+                Book a free systems audit
                 <IconArrow width={16} height={16} />
               </Link>
             </div>

@@ -11,14 +11,14 @@ import BentoCard from "@/components/BentoCard";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "Services & Pricing",
+  title: "Services & Engagements",
   description:
-    "Three ways to work with Tensorix: AI Automation, Facebook & Messenger bots, and high-converting websites. Flat-price engagements. Free 30-min audit. Reply on WhatsApp within 1 hour.",
+    "Four service pillars from Tensorix: AI agents & chatbots, workflow automation, API integrations, and conversion websites. Engagement starts with a free 30-minute systems audit. Pricing quoted after audit.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Services & Pricing — Tensorix",
+    title: "Services & Engagements — Tensorix",
     description:
-      "AI Automation, Messenger bots, and high-converting websites for small businesses. Flat-price engagements. Free 30-min audit.",
+      "AI agents, workflow automation, API integrations and conversion-focused websites for small teams. Quoted after a free systems audit.",
     url: "/services",
   },
 };
@@ -28,33 +28,33 @@ export const metadata: Metadata = {
 const process = [
   {
     step: "01",
-    title: "Free 30-min audit call",
-    body: "Tell us what's broken — a workflow eating hours, a Messenger inbox losing leads, a website that doesn't convert. We'll tell you what to fix first, on the call. No pitch.",
+    title: "Audit — free 30 min",
+    body: "A focused conversation to map your current workflows, surface the highest-leverage automation opportunities, and agree on next steps in writing. No obligation — you keep the notes either way.",
   },
   {
     step: "02",
-    title: "Written plan + flat price",
-    body: "Within 48 hours: a written plan ranking the top 3 things to build, with a flat price for each. No hourly billing. No surprises.",
+    title: "Blueprint",
+    body: "Architecture, integration map, deliverables, acceptance criteria and indicative scope, written down before any build starts. So both sides know exactly what 'done' looks like.",
   },
   {
     step: "03",
-    title: "Build & daily updates",
-    body: "We build the system, send daily WhatsApp updates with screenshots and Looms, and run it against your real data before going live.",
+    title: "Build & test",
+    body: "Milestone-based build with real-data testing, logging, and error handling. Fast async updates during active milestones, with regular check-ins so nothing drifts off-spec.",
   },
   {
     step: "04",
-    title: "Launch + 30 days free support",
-    body: "Once it's live, we train you on Loom, hand over docs, and stay reachable on WhatsApp for 30 days of free fixes and tweaks.",
+    title: "Launch & support",
+    body: "Documentation, handover training, and source under your accounts and repos. 30 days of launch support included — we fix anything that doesn't meet the agreed acceptance criteria.",
   },
 ];
 
 const engagement = [
-  "Daily WhatsApp updates with live links and Loom videos",
-  "All accounts, logins and source code in your name — you own everything",
-  "Loom walkthroughs and written docs at handoff so your team can run it",
-  "30 days of free post-launch support and tweaks after go-live",
-  "Flat price agreed up-front — no hourly billing, no scope-creep invoices",
-  "If the agreed outcome isn't met by handoff, we keep working until it is",
+  "All accounts, logins, and source code in your name — you own everything",
+  "Documentation, handover, and Loom walkthroughs at launch",
+  "Acceptance criteria written and agreed before the build starts",
+  "30 days of launch support included on every engagement",
+  "Fast async communication during active project milestones",
+  "Small client load so you get direct founder attention",
 ];
 
 export default async function ServicesPage() {
@@ -75,17 +75,16 @@ export default async function ServicesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Tensorix · Services & Pricing"
+        eyebrow="Tensorix · Services & Engagements"
         index="03"
-        meta="Three engagements · Flat pricing · Free 30-min audit"
+        meta="Four pillars · Four engagements · Quoted after audit"
         title={
           <>
-            Pick the engagement that{" "}
-            <span className="serif">fits your business,</span> not the
-            other way around.
+            Four service pillars,{" "}
+            <span className="serif">four ways</span> to engage.
           </>
         }
-        subtitle="Three ways to work with Tensorix: a focused two-week sprint, a full build, or ongoing capacity. Every engagement starts with a free 30-min audit. Flat price. You own everything."
+        subtitle="Tensorix is a founder-led AI systems studio. We design, build, and ship reliable AI agents, workflow automation, API integrations, and conversion-focused web systems. Every engagement starts with a free 30-min audit and a written recommendation."
       />
 
       {/* ENGAGEMENTS — Sprint / Build / Retainer pricing tiers */}
@@ -101,18 +100,18 @@ export default async function ServicesPage() {
                   [ 01 ] Engagement models
                 </p>
                 <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                  Three ways to work{" "}
-                  <span className="serif iridescent">with Tensorix.</span>
+                  Four ways to{" "}
+                  <span className="serif iridescent">engage Tensorix.</span>
                 </h2>
               </div>
               <p className="text-white/60 max-w-sm leading-relaxed">
-                Every engagement starts with a free 30-min audit. Pricing is
-                flat and agreed up-front. You own everything we build.
+                Every engagement starts with a free 30-min systems audit.
+                Scope and pricing are quoted in writing before any build.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {engagements.map((e, i) => (
               <Reveal key={e._id ?? e.tag} delay={i * 90}>
                 <BentoCard className={`h-full ${e.featured ? "bento-spin" : ""}`}>
@@ -205,7 +204,7 @@ export default async function ServicesPage() {
                 </h2>
               </div>
               <p className="text-white/60 max-w-sm leading-relaxed">
-                Mix-and-match capabilities inside any engagement model.
+                Four service pillars that combine inside any engagement.
               </p>
             </div>
           </Reveal>
@@ -247,12 +246,12 @@ export default async function ServicesPage() {
               Process
             </p>
             <h2 className="display text-3xl md:text-5xl text-white">
-              From first message{" "}
-              <span className="serif text-[1.04em] iridescent">to live system.</span>
+              Audit → Blueprint{" "}
+              <span className="serif text-[1.04em] iridescent">→ Build → Launch.</span>
             </h2>
             <p className="mt-5 text-white/60 leading-relaxed">
-              The same four-step loop every project. Daily WhatsApp updates from the Tensorix team.
-              Flat price. Zero surprises.
+              The same four-step loop on every engagement. Acceptance
+              criteria up-front and 30 days of launch support after go-live.
             </p>
           </div>
           <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -323,19 +322,19 @@ export default async function ServicesPage() {
                 Get started
               </p>
               <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                Tell us what&rsquo;s on{" "}
-                <span className="serif text-[1.04em] iridescent">your plate.</span>
+                Start with a{" "}
+                <span className="serif text-[1.04em] iridescent">free systems audit.</span>
               </h2>
               <p className="mt-4 text-white/65 max-w-md">
-                30 minutes. We&rsquo;ll tell you exactly what to fix first.
-                No pitch. No obligation.
+                30 minutes. We&rsquo;ll map your workflows and share a written
+                recommendation. No obligation either way.
               </p>
             </div>
             <Link
               href="/contact"
               className="btn-primary shimmer relative z-10 bg-white text-foreground border-white hover:bg-accent-1 hover:text-white hover:border-accent-1"
             >
-              Book my free audit
+              Book a free systems audit
               <IconArrow width={16} height={16} />
             </Link>
           </div>

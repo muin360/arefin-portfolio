@@ -96,7 +96,7 @@ export default function BookPage() {
                     </div>
 
                     <p className="mt-10 text-xs font-mono uppercase tracking-[0.22em] text-white/45">
-                      Reply within 1 hour · 7 days a week
+                      Fast async communication during active projects
                     </p>
                   </div>
                 </div>
@@ -111,8 +111,9 @@ export default function BookPage() {
                   / 01 What you get
                 </p>
                 <p>
-                  A free 30-minute call where I review your workflow, inbox or
-                  website on screen with you and tell you what to fix first.
+                  A free 30-minute call where I map your current workflows
+                  on screen with you and share where automation will give
+                  the highest leverage — in writing afterwards.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
@@ -120,8 +121,9 @@ export default function BookPage() {
                   / 02 What I&rsquo;ll ask
                 </p>
                 <p>
-                  What does your team do manually? What&rsquo;s leaking leads?
-                  What outcome would make this call worth your time?
+                  What does your team do manually? Which tools aren&rsquo;t
+                  talking to each other? What outcome would make this
+                  engagement worth your time?
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
@@ -129,8 +131,9 @@ export default function BookPage() {
                   / 03 What happens after
                 </p>
                 <p>
-                  Within 48 hours, a written plan ranking the top 3 things to
-                  build, with a flat price for each. No obligation.
+                  A written recommendation with the highest-leverage
+                  automations, an indicative scope, and clear next steps.
+                  No obligation either way.
                 </p>
               </div>
             </div>

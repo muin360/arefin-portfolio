@@ -25,16 +25,16 @@ import type {
 
 export const FALLBACK_SITE_CONFIG: SiteConfig = {
   name: "Arefin Muin",
-  role: "AI Automation & Systems Engineer",
+  role: "AI Automation Engineer & Agent Developer",
   email: process.env.CONTACT_EMAIL ?? "hello@tensorix.ai",
   phone: process.env.CONTACT_PHONE ?? "+880 1994-605717",
   phoneE164: process.env.CONTACT_PHONE_E164 ?? "8801994605717",
   tagline:
-    "We build AI automation systems, intelligent agents, and future-proof workflows that run in production while you focus on your business.",
+    "AI systems that turn repetitive work into reliable workflows. Practical agents, automation, and web systems for small teams.",
   siteDescription:
-    "Tensorix is an AI engineering studio. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, GoHighLevel, Python and TypeScript.",
+    "Tensorix is a founder-led AI systems studio run by Arefin Muin. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
   availability: "Accepting new engagements",
-  availabilityNote: "Only 2 slots left this month · Free 30-min audit",
+  availabilityNote: "Limited project capacity · Free 30-min systems audit",
   social: {
     // TODO: replace with branded /tensorix page once it exists.
     facebook: "https://www.facebook.com/profile.php?id=61588840534814",
@@ -50,205 +50,256 @@ export const FALLBACK_SITE_CONFIG: SiteConfig = {
 
 export const FALLBACK_ENGAGEMENTS: EngagementDoc[] = [
   {
-    _id: "engagement.sprint",
-    tag: "Sprint",
-    name: "Two-week sprint",
-    price: "Starts at BDT 25,000",
-    cadence: "2 weeks · fixed scope",
+    _id: "engagement.audit",
+    tag: "Audit",
+    name: "Systems audit",
+    price: "Free · 30 minutes",
+    cadence: "One call · no obligation",
     summary:
-      "A focused, time-boxed build for a single workflow or one tightly-scoped agent.",
+      "A focused conversation to map your current workflows, surface the highest-leverage automation opportunities, and agree on next steps in writing.",
     deliverables: [
-      "Discovery + scoped proposal",
-      "One workflow or one agent shipped",
-      "Loom walkthrough + written handoff",
-      "30-day reliability guarantee",
+      "Workflow map of where time is being lost",
+      "Shortlist of the 2–3 highest-ROI automations",
+      "Written recommendation + indicative scope",
+      "No obligation — you keep the notes either way",
     ],
-    ideal: "When you know exactly what you want and need it live this month.",
+    ideal: "Start here if you're not yet sure what to automate or where to begin.",
     featured: false,
     order: 0,
   },
   {
+    _id: "engagement.sprint",
+    tag: "Sprint",
+    name: "Focused automation sprint",
+    price: "Quoted after audit",
+    cadence: "2 weeks · fixed scope",
+    summary:
+      "A time-boxed build for one tightly-scoped workflow, agent, or integration — with acceptance criteria agreed up-front.",
+    deliverables: [
+      "One workflow, agent, or integration shipped end-to-end",
+      "Acceptance criteria defined before build",
+      "Loom walkthrough + written handoff documentation",
+      "30-day launch support after go-live",
+    ],
+    ideal: "When you know exactly which workflow needs to be automated.",
+    featured: false,
+    order: 1,
+  },
+  {
     _id: "engagement.build",
     tag: "Build",
-    name: "Engineering engagement",
-    price: "Starts at BDT 75,000",
+    name: "AI systems build",
+    price: "Quoted after audit",
     cadence: "4–8 weeks · milestone-based",
     summary:
-      "End-to-end design and build of a multi-step automation or production-grade agent system.",
+      "End-to-end design and build of a multi-workflow agent system or integration, with documentation and observability built in.",
     deliverables: [
       "Architecture + integration map",
-      "Custom code where it matters",
-      "Real-data testing + observability",
-      "Documentation, training, source under your repo",
+      "Custom code where the no-code stack stops",
+      "Real-data testing, logging, and error handling",
+      "Documentation, handoff training, source under your repo",
     ],
     ideal: "For teams replacing brittle tools with one durable system.",
     featured: true,
-    ctaLabel: "Talk on WhatsApp",
-    order: 1,
+    ctaLabel: "Book a free systems audit",
+    order: 2,
   },
   {
     _id: "engagement.retainer",
     tag: "Retainer",
-    name: "On-call studio",
-    price: "Starts at BDT 40,000 / mo",
+    name: "Ongoing automation partner",
+    price: "Quoted after audit",
     cadence: "Monthly · ongoing capacity",
     summary:
-      "Ongoing engineering capacity for your existing AI stack — improvements, monitoring, new agents.",
+      "Ongoing engineering capacity for your live AI and automation stack — monitoring, improvements, and new flows as you grow.",
     deliverables: [
-      "Same-day response on incidents",
-      "Bi-weekly roadmap + reporting",
-      "Continuous improvements + new flows",
-      "Direct WhatsApp / email channel",
+      "Monitoring and incident response on existing flows",
+      "Monthly roadmap + improvement reporting",
+      "New automations and agents as priorities shift",
+      "Direct WhatsApp / email channel for the team",
     ],
-    ideal: "When AI is a real part of your operation, not a side project.",
+    ideal: "When automation is a real part of your operation, not a side project.",
     featured: false,
-    order: 2,
+    order: 3,
   },
 ];
 
 export const FALLBACK_SERVICES: ServiceDoc[] = [
   {
-    _id: "service.ai-automation",
-    title: "AI Automation",
+    _id: "service.agent-chatbot",
+    title: "AI Agent & Chatbot Systems",
     iconName: "agent",
-    hook: "Get back 15–40 hours a month — without new software to learn.",
+    hook: "Capture and respond to more qualified leads, even outside business hours.",
     problem:
-      "Your team copies, pastes and replies the same things 40 times a week. Lead qualification, follow-ups and CRM updates eat your most expensive hours.",
+      "Inbound messages on your website, WhatsApp, and Messenger pile up faster than your team can reply, and qualified leads go cold while waiting for a response.",
     solution:
-      "We build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — sitting on top of the tools you already use.",
-    outcome: "Save 15–40 hours every month. Zero new software.",
+      "We design and ship AI chat agents that handle lead qualification, FAQs, appointment booking, and human handoff — trained on your real content and integrated with the tools you already use.",
+    outcome: "Faster replies, fewer lost leads, and a clear audit trail on every conversation.",
     bullets: [
-      "Lead qualification + auto-routing",
-      "AI follow-ups + CRM hygiene on autopilot",
-      "Daily WhatsApp updates while building",
+      "Web, WhatsApp, and Messenger chatbots",
+      "Lead qualification + appointment booking",
+      "Human handoff with full context",
     ],
-    ctaLabel: "See if your workflow can be automated",
+    ctaLabel: "Book a free systems audit",
     ctaPrefill:
-      "Hi Tensorix team! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
-    isFeatured: false,
+      "Hi Tensorix team! I'd like to talk about an AI agent or chatbot for my business. Here's the channel and the kind of questions it would handle: ",
+    isFeatured: true,
+    badge: "Most requested",
     description:
-      "Your team copies, pastes and replies the same things 40 times a week. We build custom AI workflows on n8n, Zapier and Make that handle the repetitive 80% — lead qualification, follow-ups, CRM updates, AI replies. Get back 15–40 hours every month, zero new software to learn.",
+      "AI chat agents for your website, WhatsApp, and Messenger. We design them around your real content, integrate them with your existing CRM and tools, and build clear human handoff for the cases that matter.",
     order: 0,
   },
   {
-    _id: "service.messenger-automation",
-    title: "Facebook & Messenger Automation",
-    iconName: "chart",
-    hook: "Reply in 30 seconds, all day, every day. Even at 3am.",
+    _id: "service.workflow-automation",
+    title: "Workflow Automation",
+    iconName: "workflow",
+    hook: "Remove the repetitive operations work that doesn't need a human.",
     problem:
-      "Your Messenger inbox is your storefront — but DMs and comments pile up faster than you can reply. Hot leads go cold while you sleep.",
+      "Your team spends hours every week on the same handoffs — CRM updates, follow-up emails, invoicing, internal notifications, and weekly reporting.",
     solution:
-      "We deploy a 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments — and only hands off when it actually matters.",
-    outcome: "Reply in under 30s. Capture every lead. Sleep at night.",
+      "We build production workflows on n8n, Make, Zapier, and GoHighLevel with proper error handling, retries, and documentation so the automations keep running when you're not watching.",
+    outcome: "Hours saved every week and consistent execution on the steps that used to slip.",
     bullets: [
-      "Answers FAQs in your brand voice",
-      "Qualifies buyers + books appointments",
-      "Smart human handoff for real opportunities",
+      "n8n, Make, Zapier, GoHighLevel",
+      "CRM updates, follow-ups, invoicing, reporting",
+      "Error handling, logging, written documentation",
     ],
-    ctaLabel: "Get a free Messenger bot demo",
+    ctaLabel: "Book a free systems audit",
     ctaPrefill:
-      "Hi Tensorix team! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
-    isFeatured: true,
-    badge: "Most Popular",
+      "Hi Tensorix team! I'd like to look at a workflow automation for my team. Here's what we do manually today: ",
+    isFeatured: false,
     description:
-      "Your Messenger inbox is your storefront — but DMs and comments pile up faster than you can reply. We build a 24/7 AI Messenger bot that answers FAQs in your voice, qualifies buyers, books appointments and only hands off when it really matters. Reply in under 30 seconds, all day, every day.",
+      "Reliable workflow automation on n8n, Make, Zapier, and GoHighLevel — CRM updates, follow-ups, invoices, notifications, reporting — with error handling and documentation so things keep running when you stop watching.",
     order: 1,
   },
   {
-    _id: "service.website-development",
-    title: "Website Development",
-    iconName: "code",
-    hook: "A site built around one job: turning visitors into customers.",
+    _id: "service.api-integrations",
+    title: "API & System Integrations",
+    iconName: "layers",
+    hook: "Make the tools you already pay for talk to each other.",
     problem:
-      "Your current site looks like 2017 and quietly tells visitors you're not the serious option. Buyers click away before they reach the form.",
+      "Data lives in too many places — Airtable, Notion, your CRM, Slack, Sheets, payment tools — and your team copies between them by hand.",
     solution:
-      "We ship fast, mobile-first websites with WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
-    outcome: "Visitors that convert. Pages that load in <2s.",
+      "We build REST APIs, webhooks, and SaaS-to-SaaS integrations that keep your systems in sync, with proper auth, retries, and observability.",
+    outcome: "Single source of truth across tools, with fewer manual updates and fewer data mistakes.",
     bullets: [
-      "Mobile-first, conversion-focused design",
-      "WhatsApp + booking + payment built in",
-      "You can edit copy without calling us",
+      "REST APIs, webhooks, event-driven sync",
+      "Airtable, Notion, Slack, Sheets, CRM, email, payments",
+      "Auth, retries, monitoring built in",
     ],
-    ctaLabel: "Get a free 1-page website teardown",
+    ctaLabel: "Book a free systems audit",
     ctaPrefill:
-      "Hi Tensorix team! I'd like a free teardown of my current website. My site is: ",
+      "Hi Tensorix team! I'd like to integrate some of our tools. Here's what we use and what isn't talking to what: ",
     isFeatured: false,
     description:
-      "Your current site looks like 2017 and quietly tells visitors you're not the serious option. We ship fast, mobile-first websites built around one job: turning visitors into customers. WhatsApp, booking and payment built in. Easy for you to update — no developer needed for small changes.",
+      "REST APIs, webhooks, and SaaS-to-SaaS integrations between Airtable, Notion, Slack, Sheets, CRM, email, and payment tools — with auth, retries, and observability so the data stays clean.",
     order: 2,
+  },
+  {
+    _id: "service.conversion-websites",
+    title: "Conversion Websites with Automation",
+    iconName: "code",
+    hook: "Web systems, not generic web design — built to convert and run themselves.",
+    problem:
+      "A site that only looks good doesn't help if the forms, follow-ups, bookings, and chat don't actually work together.",
+    solution:
+      "We design and build fast websites with forms, WhatsApp, booking, analytics, AI chat, and CMS-editable content wired into your CRM and automation stack from day one.",
+    outcome: "A site that captures, qualifies, and routes leads on its own — not just a brochure.",
+    bullets: [
+      "Fast, mobile-first websites with editable content",
+      "Forms, WhatsApp, booking, payments, AI chat",
+      "Wired into your CRM and automation stack",
+    ],
+    ctaLabel: "Book a free systems audit",
+    ctaPrefill:
+      "Hi Tensorix team! I'd like a website that ties into our automations and CRM. Here's our current site (or what we're starting from): ",
+    isFeatured: false,
+    description:
+      "Conversion-focused websites built as web systems — with forms, WhatsApp, booking, analytics, AI chat, and CMS-editable content, wired into your CRM and automations from day one.",
+    order: 3,
   },
 ];
 
 export const FALLBACK_FAQS: FaqDoc[] = [
   {
-    _id: "faq.pricing",
-    question: "How much does it cost?",
+    _id: "faq.technical",
+    question: "Do I need technical knowledge to work with you?",
     answer:
-      "At Tensorix, most AI automation projects fall between BDT 25,000–250,000 (~$200–$2,000) depending on scope. Messenger bots start at BDT 15,000 (~$125). Websites start at BDT 35,000 (~$300). We agree on a flat price before we start — no surprises, no hourly billing.",
+      "No. Most of our clients are founders and small teams without engineering backgrounds. We translate between your business workflow and the technical implementation, and hand everything over with plain-language documentation and Loom walkthroughs.",
     order: 0,
   },
   {
-    _id: "faq.timeline",
-    question: "How long does it take?",
+    _id: "faq.tools",
+    question: "What tools do you work with?",
     answer:
-      "7–14 days for most automations and Messenger bots. 14–21 days for a complete website. You'll get daily updates on WhatsApp from the Tensorix team.",
+      "For automation: n8n, Make, Zapier, GoHighLevel. For agents and chat: OpenAI, Anthropic Claude, LangChain, LangFlow, web/Messenger/WhatsApp channels. For integrations: REST APIs, webhooks, Airtable, Notion, Slack, Google Sheets, common CRMs, email, and payment tools. For websites: Next.js, Sanity, Tailwind, Vercel.",
     order: 1,
   },
   {
-    _id: "faq.ownership",
-    question: "Will I be able to run it after you leave?",
+    _id: "faq.integrations",
+    question: "Can you integrate with my existing tools?",
     answer:
-      "Yes. Every project ships with Loom video walkthroughs, written docs, and 30 days of free post-launch support. If your team can't run it on Day 30 — it's not done.",
+      "Almost always, yes. If a tool exposes a REST API, webhooks, or a Zapier/Make connector, we can integrate it. As part of the systems audit, we map your current stack and confirm what's possible before any build.",
     order: 2,
   },
   {
-    _id: "faq.tools",
-    question: "What if I don't have a CRM or the right tools yet?",
+    _id: "faq.timeline",
+    question: "How long does a project take?",
     answer:
-      "No problem. We'll recommend the simplest stack for your size and budget — usually free or low-cost tools you'll actually use. We make money building, not reselling software.",
+      "A focused automation sprint is typically 2 weeks. A multi-workflow AI systems build is usually 4–8 weeks, milestone-based. We agree on the timeline and acceptance criteria in writing before the build starts.",
     order: 3,
   },
   {
-    _id: "faq.industries",
-    question: "Do you work with my industry?",
+    _id: "faq.ownership",
+    question: "Who owns the system after launch?",
     answer:
-      "If your business has customers, messages, leads or repetitive tasks — yes. So far: e-commerce, dental & beauty clinics, coaches, real estate, online agencies and local services across Bangladesh, the GCC and the US.",
+      "You do. All accounts, source code, automations, agents, and documentation live in your accounts and your repositories. We hand everything over and walk your team through it on a recorded call.",
     order: 4,
   },
   {
-    _id: "faq.guarantee",
-    question: "What if it doesn't work?",
+    _id: "faq.post-launch",
+    question: "What happens after launch?",
     answer:
-      "The 30-min audit call is free, no obligation. If you start a project and the system doesn't deliver the agreed outcome by handoff, we'll keep working on it without billing more — until it does.",
+      "Every engagement includes 30 days of launch support — we fix anything that doesn't meet the agreed acceptance criteria and answer questions while your team gets comfortable. After that, ongoing support is optional via the Automation Partner engagement.",
     order: 5,
+  },
+  {
+    _id: "faq.industries",
+    question: "Can you work with my industry?",
+    answer:
+      "If your business has customers, messages, leads, or repetitive operations, the answer is usually yes. Past work spans e-commerce, clinics, coaches, real estate, agencies, and local services across Bangladesh, the GCC, and North America. We'll tell you up-front if your industry has constraints we can't meet.",
+    order: 6,
   },
 ];
 
+// Anonymized example engagements — illustrative of the kind of work Tensorix
+// ships, not real named-client quotes. Replace with real testimonials
+// (with permission) as soon as they're available.
 export const FALLBACK_TESTIMONIALS: TestimonialDoc[] = [
   {
-    _id: "testimonial.aysha",
-    name: "Aysha Rahman",
-    role: "Founder · Luna Beauty (Dhaka)",
+    _id: "testimonial.example.beauty",
+    name: "Example engagement",
+    role: "Beauty studio · Dhaka",
     content:
-      "Our Messenger inbox used to lose us 8–10 leads every weekend. Tensorix shipped a bot that qualifies and books appointments in our brand voice — we book 60% of inbound conversations now without lifting a finger.",
+      "A Messenger qualification bot trained on the studio's services and FAQs, integrated with their booking calendar and a clear human handoff for complex enquiries. After-hours leads now get an instant reply and a tentative time before the team opens the next morning.",
     rating: 5,
     image: null,
   },
   {
-    _id: "testimonial.daniel",
-    name: "Daniel Okafor",
-    role: "CEO · Trellis Real Estate (Dubai)",
+    _id: "testimonial.example.realestate",
+    name: "Example engagement",
+    role: "Real-estate brokerage · Dubai",
     content:
-      "Got back 30+ hours a month after Tensorix automated our lead intake, qualification and CRM sync. They quoted flat, shipped in 10 days, and stayed reachable on WhatsApp the whole time.",
+      "An inbound lead workflow that captures enquiries from the website and WhatsApp, qualifies them with a short AI conversation, and routes hot leads into the agent's calendar with full context. Manual lead-intake time on the brokerage side dropped substantially.",
     rating: 5,
     image: null,
   },
   {
-    _id: "testimonial.priya",
-    name: "Priya Menon",
-    role: "Owner · Arc Dental Clinic (Toronto)",
+    _id: "testimonial.example.dental",
+    name: "Example engagement",
+    role: "Dental clinic · Toronto",
     content:
-      "Our new site loads in under 2s and our appointment bookings tripled in the first month. Tensorix sweated the conversion details we never had time for — and we own everything.",
+      "A conversion-focused website with online intake forms and automated appointment reminders, wired into their existing practice-management system. New-patient enquiries now arrive pre-qualified with the right context for the front desk.",
     rating: 5,
     image: null,
   },
@@ -256,14 +307,16 @@ export const FALLBACK_TESTIMONIALS: TestimonialDoc[] = [
 
 export const FALLBACK_HERO: HeroDoc = {
   _id: "hero.fallback",
-  eyebrow: "AI automation, Messenger bots & websites for small businesses",
-  headline: "We build the systems that bring you more leads — while you sleep.",
+  eyebrow: "Tensorix · AI Automation & Agent Engineering",
+  headline:
+    "AI systems that turn repetitive work into reliable workflows.",
   subheadline:
-    "Done-for-you AI chatbots, Facebook & Messenger automation, and high-converting websites. Built in days, not months. Owned by you, not us.",
-  trustLine: "Reply in 1 hour · Written plan in 48 hrs · 2 spots left this month",
-  scarcityPill: "Booking 2 clients this month · Free 30-min audit",
-  primaryCTA: { label: "Get my free 30-min audit", href: "/book" },
-  secondaryCTA: { label: "See how it works", href: "#services" },
+    "I help small teams automate lead handling, customer replies, CRM updates, reporting, and internal operations with practical AI agents, workflow automation, and integrated web systems.",
+  trustLine:
+    "Founder-led · n8n / Make / GoHighLevel · APIs · LLM agents · Websites",
+  scarcityPill: "Limited project capacity · Free 30-min systems audit",
+  primaryCTA: { label: "Book a free systems audit", href: "/book" },
+  secondaryCTA: { label: "See services", href: "#services" },
 };
 
 export const FALLBACK_SKILLS: SkillCategoryDoc[] = [

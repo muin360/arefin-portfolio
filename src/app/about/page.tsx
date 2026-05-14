@@ -8,12 +8,12 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Hi, I'm Arefin Muin — the AI engineer behind Tensorix. We build AI automation, Messenger bots and high-converting websites for small businesses, from Dhaka to Dubai to Toronto. Two clients at a time. No agency overhead. You get the operator.",
+    "Hi, I'm Arefin Muin — founder of Tensorix, a founder-led AI systems studio in Dhaka. I design and build practical AI agents, workflow automation, API integrations and conversion-focused web systems for small teams.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About — Tensorix",
     description:
-      "I'm Arefin Muin, founder of Tensorix. We build AI automation, Messenger bots and high-converting websites for small businesses.",
+      "Tensorix is a founder-led AI systems studio. I design and build AI agents, workflow automation, integrations, and conversion-focused websites for small teams.",
     url: "/about",
   },
 };
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
 const principles = [
   {
     title: "Outcomes, not features.",
-    body: "Every system we ship has to save you real hours or make you real money. If it can't be measured in your bank account or your team's calendar, we won't build it.",
+    body: "Every system we ship has to save real hours or move a real number. If it can't be measured in your team's calendar or your CRM, we won't build it.",
   },
   {
     title: "You own everything.",
-    body: "All accounts, all logins, all source code — in your name, on your hardware, with full documentation. We never hold your business hostage. If you want to take it elsewhere on day 31, you can.",
+    body: "All accounts, all logins, all source code — in your name, with documentation and handover. We never hold your business hostage. If you want to take it elsewhere after launch, you can.",
   },
   {
-    title: "Two clients at a time.",
-    body: "We work small on purpose. No project managers, no junior handoffs, no agency overhead. You get the operator who built it — reachable on WhatsApp, every working day.",
+    title: "Small client load on purpose.",
+    body: "We work small so each engagement gets direct founder attention. No project managers, no junior handoffs, no agency overhead. You get the engineer who built it.",
   },
 ];
 
@@ -44,11 +44,11 @@ const milestones = [
   },
   {
     period: "2024",
-    body: "Founded Tensorix. Brought LLMs into real production workflows for paying clients — lead qualification agents, Messenger bots, RAG chatbots over internal docs.",
+    body: "Founded Tensorix. Brought LLMs into real production workflows for paying clients — lead-qualification agents, Messenger bots, RAG chatbots over internal docs.",
   },
   {
     period: "2025",
-    body: "Now: AI automation, Facebook & Messenger bots, and high-converting websites for small businesses across Bangladesh, the GCC and the US. Replies on WhatsApp within 1 hour, 7 days a week.",
+    body: "Now: AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams across Bangladesh, the GCC, and North America — quoted after a free systems audit.",
   },
 ];
 
@@ -58,17 +58,17 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="Tensorix · About"
         index="02"
-        meta="Operator-led · Founded 2024 · Dhaka, Bangladesh"
+        meta="Founder-led · Founded 2024 · Dhaka, Bangladesh"
         title={
           <>
             Hi, I&rsquo;m Arefin.
             <br />
-            I build the systems{" "}
+            I build AI systems{" "}
             <span className="serif">that quietly run</span>{" "}
-            small businesses.
+            small teams.
           </>
         }
-        subtitle="AI automation, Facebook & Messenger bots, and high-converting websites — done-for-you, owned by you, supported by me."
+        subtitle="Tensorix is a founder-led AI systems studio. I design and build practical AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams — with documentation, handover, and 30-day launch support included."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
@@ -80,40 +80,42 @@ export default function AboutPage() {
               The operator
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-              Arefin Muin<br />Est. 2024 · Dhaka, BD<br />Replies in &lt; 1 hour
+              Arefin Muin<br />Est. 2024 · Dhaka, BD<br />Founder-led studio
             </p>
           </div>
           <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-white/80">
             <p>
-              I build the AI systems, automations and websites that quietly
-              run small businesses — so the owner can stop copy-pasting,
-              stop missing Messenger replies, and start sleeping.
+              I build the AI systems, automations, and integrations that
+              quietly run small teams — so the people inside can stop
+              copy-pasting between tools, stop missing inbound messages,
+              and focus on the work only humans can do.
             </p>
             <p>
-              Most &ldquo;automation guys&rdquo; sell you a Zapier zap and disappear.
-              I do the opposite: I learn your workflow, build something that
-              actually fits your business, document it, train you on it, and
-              stay reachable on WhatsApp. The systems I leave behind are
-              ones your team can run — and grow on.
+              Most automation work I see is a brittle Zapier zap and a hand
+              wave. I do the opposite: I map your workflow, design something
+              that fits your real operations, build it with proper error
+              handling and documentation, and hand it over with training.
+              The systems I leave behind are ones your team can actually run.
             </p>
             <p>
               I&rsquo;m an AI engineer based in{" "}
               <strong className="text-white">Dhaka, Bangladesh</strong>, and over
-              the last few years I&rsquo;ve shipped automations and websites for
-              e-commerce stores, dental and beauty clinics, coaches, real-estate
-              brokers, online agencies and local services — from Dhaka to
-              Dubai to Toronto.
+              the last few years I&rsquo;ve shipped agents, automations,
+              integrations, and conversion-focused web systems for
+              e-commerce stores, clinics, coaches, real-estate brokerages,
+              online agencies, and local services — from Dhaka to Dubai to
+              Toronto.
             </p>
             <p>
-              I work small on purpose. <strong className="text-white">Two clients at a time</strong>,
-              no junior handoffs, no agency overhead. You get the operator,
+              I work small on purpose. <strong className="text-white">Small client load</strong>,
+              no junior handoffs, no agency overhead. You get the engineer,
               not a project manager.
             </p>
             <p>
-              If your team is drowning in repetitive work, your Messenger
-              inbox is quietly costing you sales, or your website is silently
-              killing your conversions —{" "}
-              <strong className="text-white">let&rsquo;s talk for 30 minutes. Free. No pitch.</strong>
+              If your team is drowning in repetitive work, your inbound
+              channels are losing qualified leads, or your tools aren&rsquo;t
+              talking to each other —{" "}
+              <strong className="text-white">let&rsquo;s talk for 30 minutes. Free. No obligation.</strong>
             </p>
           </div>
         </div>
@@ -197,19 +199,20 @@ export default function AboutPage() {
             </div>
             <div className="relative">
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
-                Let&rsquo;s talk · Free 30-min audit
+                Let&rsquo;s talk · Free 30-min systems audit
               </p>
               <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                Two slots open{" "}
-                <span className="serif text-[1.04em] iridescent">this month.</span>
+                Limited project capacity{" "}
+                <span className="serif text-[1.04em] iridescent">this quarter.</span>
               </h2>
               <p className="mt-4 text-white/65 max-w-md">
-                30 minutes. I&rsquo;ll review your workflow, inbox or website
-                live and tell you exactly what to fix first. No pitch.
+                30 minutes. I&rsquo;ll map your current workflows, share a written
+                recommendation, and tell you where I think the highest-leverage
+                automation lives. No obligation either way.
               </p>
             </div>
             <Link href="/contact" className="btn-primary shimmer relative z-10 bg-white text-foreground border-white">
-              Book my free audit
+              Book a free systems audit
               <IconArrow width={16} height={16} />
             </Link>
           </div>

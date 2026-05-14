@@ -21,28 +21,28 @@ export function whatsappHref(message: string, phoneE164: string = PHONE_E164) {
 // ── Pre-filled WhatsApp messages, indexed by intent ────────────────────────
 export const WA_MESSAGES = {
   generic:
-    "Hi Tensorix team, I saw your website. I want to know how AI automation can help my business.",
+    "Hi Tensorix team, I saw your site. I'd like to talk about AI automation or agent systems for my business.",
   audit:
-    "Hi Tensorix team! I'd like to book a free 30-min audit call. Best time for me is …",
+    "Hi Tensorix team, I'd like to book a free 30-min systems audit. Best time for me is …",
   aiAutomation:
-    "Hi Tensorix team! I'd like to know if my workflow can be automated. Here's what my team does manually right now: ",
+    "Hi Tensorix team, I'd like to look at a workflow automation for my team. Here's what we do manually today: ",
   messengerBot:
-    "Hi Tensorix team! I'd like a free Messenger bot demo for my Facebook page. My page name is: ",
+    "Hi Tensorix team, I'd like to talk about an AI chat agent for my business. The channels and the kinds of questions it would handle: ",
   websiteTeardown:
-    "Hi Tensorix team! I'd like a free teardown of my current website. My site is: ",
+    "Hi Tensorix team, I'd like to talk about a conversion-focused website wired into our automations. Here's our current site (or what we're starting from): ",
   engagement: (name: string) =>
-    `Hi Tensorix team! I'd like to discuss the "${name}" engagement. Here's a quick overview of my situation: `,
+    `Hi Tensorix team, I'd like to discuss the "${name}" engagement. Here's a quick overview of my situation: `,
 } as const;
 
 // ── 5 CTA button variations (A/B-able from a single constant) ─────────────
 // `primary` = the headline button on hero / final-cta. Pick the one that's
 // converting best in your analytics and rename `active` below.
 export const CTA_VARIANTS = {
-  freeAudit: "Get my free 30-min audit",
-  bookAudit: "Book my free audit call",
-  whatsappNow: "WhatsApp me now",
-  freeBotDemo: "Get a free Messenger bot demo",
-  websiteTeardown: "Get a free 1-page website teardown",
+  freeAudit: "Book a free systems audit",
+  bookAudit: "Book a free 30-min audit",
+  whatsappNow: "Message on WhatsApp",
+  freeBotDemo: "Talk about an AI chat agent",
+  websiteTeardown: "Talk about a conversion website",
 } as const;
 
 export const CTA = {
@@ -66,52 +66,51 @@ export type HeroVariant = {
 
 export const HERO_VARIANTS: Record<"A" | "B" | "C", HeroVariant> = {
   A: {
-    eyebrow:
-      "AI automation, Messenger bots & websites for small businesses",
+    eyebrow: "Tensorix · AI Automation & Agent Engineering",
     headline: {
-      line1: "We build the",
-      line2: "systems that bring you",
-      line3: "more leads —",
-      line4: "while you sleep.",
+      line1: "AI systems",
+      line2: "that turn repetitive",
+      line3: "work into reliable",
+      line4: "workflows.",
     },
     sub:
-      "Done-for-you AI chatbots, Facebook & Messenger automation, and high-converting websites. Built in days, not months. Owned by you, not us.",
+      "I help small teams automate lead handling, customer replies, CRM updates, reporting, and internal operations with practical AI agents, workflow automation, and integrated web systems.",
     trust: [
-      "Reply on WhatsApp in under 1 hour",
-      "Built by an AI engineer",
-      "4+ years shipping automations",
+      "Founder-led · n8n / Make / GoHighLevel",
+      "APIs · LLM agents · Websites",
+      "Dhaka → Global",
     ],
   },
   B: {
-    eyebrow: "Stop losing leads to slow replies and a dated site",
+    eyebrow: "Tensorix · Practical AI for small teams",
     headline: {
-      line1: "Your Messenger inbox",
-      line2: "is your storefront.",
-      line3: "We make it sell —",
-      line4: "even at 3am.",
+      line1: "Practical AI agents,",
+      line2: "workflow automation,",
+      line3: "and web systems —",
+      line4: "built around your work.",
     },
     sub:
-      "AI chatbots, Facebook & Messenger automation, and conversion-built websites for small businesses. Reply in 30 seconds. Sell while you sleep.",
+      "Reliable agents and automations that capture qualified leads, sync your tools, and remove the operations work that doesn't need a human.",
     trust: [
-      "Reply on WhatsApp in under 1 hour",
-      "Two clients at a time",
-      "30 days free post-launch support",
+      "Acceptance criteria up-front",
+      "30-day launch support",
+      "You own accounts and source code",
     ],
   },
   C: {
-    eyebrow: "Trusted by small businesses from Dhaka to Dubai",
+    eyebrow: "Tensorix · Founder-led AI systems studio",
     headline: {
-      line1: "An AI engineer,",
-      line2: "not an agency.",
-      line3: "Building systems",
-      line4: "that pay for themselves.",
+      line1: "Founder-led",
+      line2: "AI systems studio.",
+      line3: "Engineering-first,",
+      line4: "not tool-reseller.",
     },
     sub:
-      "We build AI automations, Messenger bots and high-converting websites for small businesses. Flat price. You own everything. Reachable on WhatsApp every working day.",
+      "Small client load for direct founder attention. Documentation, handover, and 30-day launch support included on every engagement.",
     trust: [
-      "Operated by a senior AI engineer, not a sales team",
-      "All accounts and source code in your name",
-      "Flat price — no hourly surprises",
+      "Engineering-first, not hype",
+      "You own everything we build",
+      "Docs and handover included",
     ],
   },
 };

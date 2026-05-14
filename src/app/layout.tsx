@@ -49,28 +49,28 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Tensorix — AI Automation, Intelligent Systems & Future Solutions",
+    default: "Tensorix — AI Automation & Agent Engineering Studio",
     template: "%s — Tensorix",
   },
   description:
-    "Tensorix builds AI chatbots, Facebook & Messenger automation, and high-converting websites for small businesses. Done-for-you systems built in days, not months. Free 30-min audit. Reply on WhatsApp within 1 hour.",
+    "Tensorix is a founder-led AI systems studio. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams. Quoted after a free systems audit.",
   applicationName: "Tensorix",
   keywords: [
     "AI automation for small business",
-    "Facebook chatbot automation",
-    "Messenger bot for small business",
-    "website development Bangladesh",
+    "AI agent engineer",
     "AI chatbot for business",
-    "small business automation",
-    "AI agency Bangladesh",
+    "workflow automation studio",
+    "API and systems integration",
+    "conversion-focused website",
     "AI engineer Dhaka",
+    "AI engineering studio Bangladesh",
     "n8n consultant",
+    "Make automation",
     "Zapier consultant",
-    "GoHighLevel agency",
+    "GoHighLevel automation",
     "LLM engineer",
+    "LangChain agents",
     "AI workflow automation",
-    "lead generation automation",
-    "WhatsApp automation for business",
     "Tensorix",
     "Arefin Muin",
   ],
@@ -94,18 +94,18 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: SITE_URL,
-    title: "Tensorix — AI Automation Agency",
+    title: "Tensorix — AI Automation & Agent Engineering Studio",
     description:
-      "We build intelligent AI systems, automation workflows, and high-converting websites for small businesses — done for you, owned by you.",
+      "Founder-led AI systems studio. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
     siteName: "Tensorix",
     locale: "en_US",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensorix — AI Automation Agency" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensorix — AI Automation & Agent Engineering Studio" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tensorix — AI Automation Agency",
+    title: "Tensorix — AI Automation & Agent Engineering Studio",
     description:
-      "We build intelligent AI systems, automation workflows, and high-converting websites — done for you, owned by you.",
+      "Founder-led AI systems studio. Reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
     images: ["/og.png"],
   },
   manifest: "/site.webmanifest",
@@ -132,7 +132,7 @@ const jsonLd = [
     url: SITE_URL,
     jobTitle: "AI Automation & Agent Engineer",
     description:
-      "Founder of Tensorix. Independent AI engineer building agents, automations and LLM-powered systems with n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, Python and TypeScript.",
+      "Founder of Tensorix. Independent AI engineer building reliable agents, workflow automation, API integrations and conversion-focused web systems with n8n, Make, Zapier, GoHighLevel, LangChain, LangFlow, Python and TypeScript.",
     image: `${SITE_URL}/og.png`,
     email: "mailto:hello@tensorix.ai",
     worksFor: {
@@ -167,7 +167,7 @@ const jsonLd = [
     url: SITE_URL,
     logo: `${SITE_URL}/tensorix-logo-256.png`,
     description:
-      "Tensorix is an AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for modern companies.",
+      "Tensorix is a founder-led AI systems studio. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
     founder: { "@type": "Person", name: "Arefin Muin" },
     sameAs: [
       "https://www.facebook.com/profile.php?id=61588840534814",
@@ -187,12 +187,12 @@ const jsonLd = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "AI Automation for Small Business",
-    serviceType: "AI Automation",
+    name: "Workflow Automation",
+    serviceType: "AI Workflow Automation",
     provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
-      "Custom AI workflow automation on n8n, Zapier, Make and GoHighLevel for small businesses. Lead qualification, follow-ups, CRM updates and AI replies — built around the tools you already use.",
+      "Production workflow automation on n8n, Make, Zapier, and GoHighLevel — CRM updates, follow-ups, invoicing, reporting — with proper error handling, logging, and documentation built in.",
     offers: {
       "@type": "Offer",
       url: `${SITE_URL}/services`,
@@ -201,19 +201,19 @@ const jsonLd = [
       priceSpecification: {
         "@type": "PriceSpecification",
         priceCurrency: "USD",
-        description: "Flat price · custom quote per scope",
+        description: "Quoted after a free systems audit",
       },
     },
   },
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Facebook & Messenger Chatbot Automation",
-    serviceType: "Conversational AI / Chatbot",
+    name: "AI Agent & Chatbot Systems",
+    serviceType: "Conversational AI / AI Agent",
     provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
-      "24/7 AI Messenger bot for Facebook business pages. Answers FAQs in your brand voice, qualifies buyers, books appointments and hands off to humans only when it really matters.",
+      "AI chat agents for web, WhatsApp, and Messenger. Trained on your real content, integrated with your existing CRM and tools, with clear human handoff for the cases that matter.",
     offers: {
       "@type": "Offer",
       url: `${SITE_URL}/services`,
@@ -224,12 +224,12 @@ const jsonLd = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Website Development for Small Business",
-    serviceType: "Web Development",
+    name: "Conversion Websites with Automation",
+    serviceType: "Web Development & Automation",
     provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
-      "Fast, mobile-first websites built around conversion. WhatsApp, booking and payment built in. Owner-editable copy, no developer needed for small changes.",
+      "Fast, mobile-first websites built as web systems — forms, WhatsApp, booking, payments, and AI chat wired into your CRM and automation stack from day one.",
     offers: {
       "@type": "Offer",
       url: `${SITE_URL}/services`,

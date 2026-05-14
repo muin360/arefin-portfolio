@@ -90,9 +90,10 @@ export default function TermsPage() {
           <Block num="04" title="Free audits & calls">
             <p>
               The 30-minute audit call is free, no-obligation, and not a
-              binding engagement. After the call we may send a written plan
-              with a flat price. You&apos;re free to take the plan, walk away, or
-              implement it yourself with anyone.
+              binding engagement. After the call we may send a written
+              recommendation with an indicative scope and pricing. You&apos;re
+              free to take the recommendation, walk away, or implement it
+              yourself with anyone.
             </p>
             <p>
               The audit is delivered &quot;as-is&quot; — recommendations only, no
@@ -118,8 +119,8 @@ export default function TermsPage() {
                 <strong>Flat-price builds</strong>, no hidden hourly billing.
               </li>
               <li>
-                <strong>Daily WhatsApp updates</strong> while a project is
-                active.
+                <strong>Fast async communication</strong> during active project
+                milestones.
               </li>
               <li>
                 <strong>30-day post-launch support</strong> for bug fixes

@@ -35,7 +35,7 @@ export const hero = defineType({
       name: "trustLine",
       title: "Trust line (under buttons)",
       type: "string",
-      description: "e.g. 'Reply in 1 hour · Plan in 48 hours · 2 spots left this month'",
+      description: "e.g. 'Founder-led · Agents · Automation · Integrations · Web'",
       validation: (r) => r.max(200),
     }),
     defineField({

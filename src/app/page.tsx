@@ -129,39 +129,40 @@ export default async function HomePage() {
               <Reveal>
                 <p className="eyebrow mb-8 inline-flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className="font-mono tracking-[0.26em] uppercase text-foreground">Tensorix</span>
-                  <span className="opacity-30">—</span>
-                  <span>AI Automation, Intelligent Systems & Future Solutions</span>
+                  <span className="opacity-30">·</span>
+                  <span>AI Automation & Agent Engineering</span>
                 </p>
               </Reveal>
 
               <Reveal delay={80}>
                 <h1 className="display text-[10vw] sm:text-7xl md:text-8xl lg:text-[6.4rem] xl:text-[7.4rem]">
-                  We build the
+                  AI systems
                   <br />
-                  <span className="serif">systems that bring you</span>
+                  <span className="serif">that turn repetitive</span>
                   <br />
-                  more <span className="iridescent draw-underline">leads</span> —
+                  work into <span className="iridescent draw-underline">reliable</span>
                   <br />
-                  while you sleep.
+                  workflows.
                 </h1>
               </Reveal>
 
               <Reveal delay={160}>
                 <p className="mt-8 text-lg md:text-xl text-muted max-w-xl leading-relaxed">
-                  Done-for-you AI chatbots, Facebook & Messenger automation,
-                  and high-converting websites. Built in days, not months.
-                  Owned by you, not us.
+                  I help small teams automate lead handling, customer replies,
+                  CRM updates, reporting, and internal operations with
+                  practical AI agents, workflow automation, and integrated
+                  web systems.
                 </p>
               </Reveal>
 
               <Reveal delay={220}>
                 <div className="mt-10 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4">
                   <MagneticButton href="/book" className="btn-primary shimmer w-full sm:w-auto justify-center">
-                    Get my free 30-min audit
+                    Book a free systems audit
                     <IconArrow width={16} height={16} />
                   </MagneticButton>
                   <Link href="#services" className="btn-secondary w-full sm:w-auto justify-center">
-                    See how it works
+                    See services
                   </Link>
                 </div>
               </Reveal>
@@ -170,12 +171,12 @@ export default async function HomePage() {
                 <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
                   <span className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Reply in 1 hour
+                    Founder-led
                   </span>
                   <span className="opacity-30">·</span>
-                  <span>Written plan in 48 hrs</span>
+                  <span>Agents · Automation · Integrations · Web</span>
                   <span className="opacity-30">·</span>
-                  <span>2 spots left this month</span>
+                  <span>Dhaka → Global</span>
                 </div>
               </Reveal>
 
@@ -241,12 +242,13 @@ export default async function HomePage() {
             <div className="text-center mb-12 md:mb-16">
               <p className="eyebrow mb-5">[ 01 ] Services</p>
               <h2 className="display text-4xl md:text-6xl text-white max-w-4xl mx-auto leading-[1.05]">
-                What we can{" "}
-                <span className="serif iridescent">build for your business.</span>
+                Four ways we{" "}
+                <span className="serif iridescent">build with you.</span>
               </h2>
               <p className="mt-6 text-white/65 max-w-2xl mx-auto leading-relaxed">
-                Choose the system that saves you time, gets you more leads,
-                or grows your business. Flat price. Free 30-min audit.
+                Distinct service pillars built around real workflows.
+                Scoped after a 30-minute audit, with acceptance criteria
+                agreed in writing before any build.
               </p>
               <p className="mt-7 inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.2em] text-white/70 rounded-full border border-white/15 bg-white/5 px-3 py-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -255,8 +257,8 @@ export default async function HomePage() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 items-stretch">
-            {services.slice(0, 3).map((s, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 items-stretch">
+            {services.slice(0, 4).map((s, i) => (
               <ServiceCardLarge
                 key={s._id ?? s.title}
                 index={i}
@@ -454,11 +456,16 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-6 sm:px-8 section">
             <Reveal>
               <div className="text-center mb-12 md:mb-16">
-                <p className="eyebrow mb-5">[ 04 ] Client results</p>
+                <p className="eyebrow mb-5">[ 04 ] Example engagements</p>
                 <h2 className="display text-4xl md:text-6xl max-w-3xl mx-auto">
-                  What clients say{" "}
-                  <span className="serif">after we ship.</span>
+                  Anonymized examples{" "}
+                  <span className="serif">of the work we ship.</span>
                 </h2>
+                <p className="mt-6 text-muted max-w-xl mx-auto leading-relaxed">
+                  Illustrative outcomes from real engagements, anonymized for
+                  client privacy. Real named testimonials will be added as
+                  written permission comes through.
+                </p>
               </div>
             </Reveal>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -485,9 +492,11 @@ export default async function HomePage() {
                       “{t.content}”
                     </blockquote>
                     <figcaption className="mt-auto pt-8 border-t border-line">
-                      <p className="font-medium tracking-tight">{t.name}</p>
+                      <p className="mono text-[10px] uppercase tracking-[0.2em] text-muted/80">
+                        {t.name}
+                      </p>
                       {t.role && (
-                        <p className="mono text-xs text-muted mt-1">{t.role}</p>
+                        <p className="mt-1 font-medium tracking-tight">{t.role}</p>
                       )}
                     </figcaption>
                   </figure>
