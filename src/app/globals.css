@@ -1,17 +1,79 @@
 @import "tailwindcss";
 
+/* ============================================================
+ * Tensorix · Deep Neural Dark — v3.0
+ * Brand DNA: quiet confidence, technical depth, founder-led.
+ * Aesthetic: Linear.app · Vercel · a Bloomberg terminal that
+ * went to design school.
+ * ============================================================ */
+
 :root {
-  --background: #f5f2ea;
-  --paper-deep: #ece7da;
-  --surface: #ffffff;
-  --foreground: #0a0a14;
-  --muted: rgba(10, 10, 20, 0.62);
-  --soft: rgba(10, 10, 20, 0.06);
-  --line: rgba(10, 10, 20, 0.09);
-  --accent-1: #6d28d9; /* violet-700 */
-  --accent-2: #db2777; /* pink-600 */
-  --accent-3: #f97316; /* orange-500 */
-  --accent-glow: 109, 40, 217;
+  /* Backgrounds — layered depth, deepest to most elevated */
+  --bg-void:      #04040a;   /* page base — deepest */
+  --bg-base:      #080810;   /* base surfaces */
+  --bg-surface:   #0d0d1a;   /* cards, panels */
+  --bg-elevated:  #121224;   /* elevated elements */
+  --bg-overlay:   #1a1a30;   /* modals, dropdowns */
+
+  /* Borders — barely-there precision lines */
+  --border-dim:   rgba(255, 255, 255, 0.04);
+  --border-soft:  rgba(255, 255, 255, 0.08);
+  --border-mid:   rgba(255, 255, 255, 0.12);
+  --border-lit:   rgba(255, 255, 255, 0.20);
+
+  /* Text — three-tier hierarchy */
+  --text-primary:   #f0f0f8;   /* headlines */
+  --text-secondary: #a8a8c0;   /* body */
+  --text-muted:     #5c5c7a;   /* labels, captions */
+  --text-ghost:     #2e2e48;   /* decorative/disabled */
+
+  /* Accent — electric indigo, signal teal-green */
+  --accent-core:   #5B6EF5;   /* primary CTA, links */
+  --accent-bright: #7B8FFF;   /* hover states */
+  --accent-soft:   rgba(91, 110, 245, 0.15);
+  --accent-pulse:  rgba(91, 110, 245, 0.06);
+
+  /* Signal colors */
+  --signal-green:  #22d3a5;
+  --signal-amber:  #f59e0b;
+  --signal-red:    #f43f5e;
+
+  /* Gradients */
+  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(91, 110, 245, 0.18) 0%, transparent 65%);
+  --gradient-card: linear-gradient(135deg, rgba(91, 110, 245, 0.08) 0%, transparent 60%);
+  --gradient-text: linear-gradient(135deg, #f0f0f8 0%, #a8a8c0 100%);
+  --gradient-accent: linear-gradient(135deg, #5B6EF5 0%, #22d3a5 100%);
+
+  /* Spacing scale */
+  --space-section: clamp(6rem, 12vw, 10rem);
+  --space-block:   clamp(3rem, 6vw, 5rem);
+  --space-gap:     clamp(1.5rem, 3vw, 2.5rem);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth:   cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast:  150ms;
+  --duration-base:  250ms;
+  --duration-slow:  400ms;
+  --duration-crawl: 600ms;
+
+  /* ── Legacy aliases ───────────────────────────────────────
+   * The codebase already uses these names extensively. Aliasing
+   * them to the new Deep Neural Dark palette flips the entire
+   * site to dark theme without any per-component rewrites.
+   * ──────────────────────────────────────────────────────── */
+  --background: var(--bg-void);
+  --paper-deep: var(--bg-base);
+  --surface:    var(--bg-surface);
+  --foreground: var(--text-primary);
+  --muted:      var(--text-secondary);
+  --soft:       rgba(255, 255, 255, 0.04);
+  --line:       var(--border-soft);
+  --accent-1:   var(--accent-core);
+  --accent-2:   var(--signal-green);
+  --accent-3:   var(--accent-bright);
+  --accent-glow: 91, 110, 245;
 }
 
 @theme inline {
@@ -24,20 +86,52 @@
   --color-accent-1: var(--accent-1);
   --color-accent-2: var(--accent-2);
   --color-accent-3: var(--accent-3);
-  --font-sans: var(--font-inter);
+  --color-accent-core: var(--accent-core);
+  --color-accent-bright: var(--accent-bright);
+  --color-signal-green: var(--signal-green);
+  --color-signal-amber: var(--signal-amber);
+  --color-signal-red: var(--signal-red);
+  --color-bg-void: var(--bg-void);
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-overlay: var(--bg-overlay);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border-soft: var(--border-soft);
+  --color-border-mid: var(--border-mid);
+  --color-border-lit: var(--border-lit);
+  --font-sans: var(--font-dm-sans), var(--font-inter);
+  --font-display: var(--font-syne), var(--font-manrope);
   --font-serif: var(--font-instrument-serif);
   --font-mono: var(--font-jetbrains-mono);
 }
 
 html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
-    sans-serif;
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-dm-sans), var(--font-inter), ui-sans-serif, system-ui,
+    -apple-system, sans-serif;
   font-feature-settings: "ss01", "ss02", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Grain texture overlay — cinematic depth, sits above all content
+ * but receives no pointer events. Very subtle (3.5% opacity). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  mix-blend-mode: overlay;
 }
 
 html {
@@ -45,11 +139,69 @@ html {
 }
 
 ::selection {
-  background: rgba(109, 40, 217, 0.22);
-  color: var(--foreground);
+  background: var(--accent-soft);
+  color: var(--text-primary);
 }
 
-/* Typography */
+/* ─── Typography Scale ──────────────────────────────────────
+ * Syne for display, DM Sans for body, JetBrains Mono for code.
+ * Fluid sizes via clamp() — scales smoothly from 375px → 1920px.
+ * ─────────────────────────────────────────────────────────── */
+.t-display {
+  font-family: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  font-size: clamp(3rem, 8vw, 7.5rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-feature-settings: "ss01";
+}
+.t-h1 {
+  font-family: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+}
+.t-h2 {
+  font-family: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.t-h3 {
+  font-family: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.t-body {
+  font-family: var(--font-dm-sans), var(--font-inter), ui-sans-serif, system-ui;
+  font-size: clamp(0.95rem, 1.1vw, 1.0625rem);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+  color: var(--text-secondary);
+}
+.t-label {
+  font-family: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.t-mono {
+  font-family: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+  font-feature-settings: "ss01", "cv11", "tnum";
+}
+
 .serif {
   font-family: var(--font-instrument-serif), ui-serif, Georgia, serif;
   font-style: italic;
@@ -63,14 +215,15 @@ html {
 }
 
 .text-accent {
-  background: linear-gradient(110deg, var(--accent-1), var(--accent-2));
+  background: var(--gradient-accent);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .display {
-  font-family: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui;
+  font-family: var(--font-syne), var(--font-manrope), var(--font-inter),
+    ui-sans-serif, system-ui;
   letter-spacing: -0.045em;
   line-height: 0.94;
   font-weight: 700;
@@ -81,11 +234,11 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  color: var(--muted);
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.22em;
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
@@ -93,36 +246,36 @@ html {
   content: "";
   width: 1.5rem;
   height: 1px;
-  background: currentColor;
+  background: var(--accent-core);
   display: inline-block;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
-/* Backgrounds */
+/* ─── Backgrounds ──────────────────────────────────────── */
 .bg-paper {
   background:
     radial-gradient(
       1100px 540px at 18% -8%,
-      rgba(109, 40, 217, 0.08),
+      rgba(91, 110, 245, 0.10),
       transparent 60%
     ),
     radial-gradient(
       1100px 540px at 100% 0%,
-      rgba(219, 39, 119, 0.07),
+      rgba(34, 211, 165, 0.05),
       transparent 60%
     ),
-    var(--background);
+    var(--bg-void);
 }
 
 .bg-grid {
   background-image: linear-gradient(
       to right,
-      rgba(10, 10, 20, 0.045) 1px,
+      rgba(255, 255, 255, 0.04) 1px,
       transparent 1px
     ),
     linear-gradient(
       to bottom,
-      rgba(10, 10, 20, 0.045) 1px,
+      rgba(255, 255, 255, 0.04) 1px,
       transparent 1px
     );
   background-size: 56px 56px;
@@ -139,24 +292,27 @@ html {
   pointer-events: none;
   opacity: 0.05;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  mix-blend-mode: multiply;
+  mix-blend-mode: screen;
 }
 
-/* Buttons */
+/* ─── Buttons ─────────────────────────────────────────────
+ * Primary: filled accent on dark; outlined on hover.
+ * Secondary: outlined ghost.
+ * ────────────────────────────────────────────────────────── */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--foreground);
-  color: var(--background);
+  background: var(--text-primary);
+  color: var(--bg-void);
   padding: 0.85rem 1.5rem;
   border-radius: 9999px;
   font-weight: 500;
   font-size: 0.95rem;
   letter-spacing: -0.01em;
-  border: 1px solid var(--foreground);
+  border: 1px solid var(--text-primary);
   transition: transform 0.2s ease, background 0.25s ease, color 0.25s ease,
-    box-shadow 0.25s ease;
+    border-color 0.25s ease, box-shadow 0.25s ease;
   position: relative;
   overflow: hidden;
 }
@@ -164,7 +320,7 @@ html {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, var(--accent-1), var(--accent-2));
+  background: var(--gradient-accent);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -187,46 +343,48 @@ html {
   align-items: center;
   gap: 0.5rem;
   background: transparent;
-  color: var(--foreground);
+  color: var(--text-primary);
   padding: 0.85rem 1.5rem;
   border-radius: 9999px;
   font-weight: 500;
   font-size: 0.95rem;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border-mid);
   transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 .btn-secondary:hover {
-  border-color: var(--foreground);
-  background: rgba(10, 10, 20, 0.03);
+  border-color: var(--border-lit);
+  background: rgba(255, 255, 255, 0.04);
 }
 
-/* Card */
+/* ─── Card ────────────────────────────────────────────────
+ * Dark card with subtle border, lifts and glows on hover. */
 .card {
-  background: var(--surface);
+  background: var(--bg-surface);
   border-radius: 1.25rem;
   padding: 1.75rem;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border-soft);
   transition: border-color 0.25s ease, transform 0.25s ease,
     box-shadow 0.25s ease;
 }
 .card:hover {
-  border-color: rgba(10, 10, 20, 0.22);
-  box-shadow: 0 18px 40px -28px rgba(10, 10, 20, 0.25);
+  border-color: var(--border-mid);
+  box-shadow: 0 18px 40px -28px rgba(var(--accent-glow), 0.45);
 }
 
-/* Chip */
+/* ─── Chip ────────────────────────────────────────────────
+ * Mono inline pills used as labels, status, and metadata. */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   padding: 0.32rem 0.7rem;
   border-radius: 9999px;
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  background: rgba(10, 10, 20, 0.04);
-  color: var(--muted);
-  border: 1px solid var(--line);
+  letter-spacing: 0.18em;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-soft);
   font-family: var(--font-jetbrains-mono), monospace;
   text-transform: uppercase;
 }
@@ -236,9 +394,9 @@ html {
   border-color: rgba(255, 255, 255, 0.1);
 }
 .chip-live {
-  background: rgba(34, 197, 94, 0.08);
-  color: #16a34a;
-  border-color: rgba(34, 197, 94, 0.25);
+  background: rgba(34, 211, 165, 0.10);
+  color: var(--signal-green);
+  border-color: rgba(34, 211, 165, 0.28);
 }
 
 /* Section */
@@ -363,32 +521,32 @@ html {
   );
 }
 
-/* Live dot */
+/* Live dot — signal-green pulse */
 .live-dot {
   display: inline-block;
   width: 8px;
   height: 8px;
   border-radius: 9999px;
-  background: #16a34a;
-  box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+  background: var(--signal-green);
+  box-shadow: 0 0 0 0 rgba(34, 211, 165, 0.5);
   animation: live-pulse 2s ease-out infinite;
 }
 @keyframes live-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.55);
+    box-shadow: 0 0 0 0 rgba(34, 211, 165, 0.55);
   }
   100% {
-    box-shadow: 0 0 0 12px rgba(22, 163, 74, 0);
+    box-shadow: 0 0 0 12px rgba(34, 211, 165, 0);
   }
 }
 
 /* Big editorial footer email */
 .email-cta {
-  font-family: var(--font-inter);
+  font-family: var(--font-syne), var(--font-manrope), var(--font-inter);
   letter-spacing: -0.05em;
   line-height: 0.92;
   font-weight: 600;
-  background: linear-gradient(110deg, var(--accent-1), var(--accent-2));
+  background: var(--gradient-accent);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -439,9 +597,9 @@ html {
   }
 }
 
-/* Focus ring for keyboard users */
+/* Focus ring for keyboard users — accent-core indigo */
 :focus-visible {
-  outline: 2px solid var(--accent-1);
+  outline: 2px solid var(--accent-core);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -557,8 +715,8 @@ html {
   right: 0;
   bottom: 0.05em;
   height: 6px;
-  background: linear-gradient(110deg, var(--accent-1), var(--accent-2));
-  opacity: 0.18;
+  background: var(--gradient-accent);
+  opacity: 0.28;
   transform-origin: left center;
   transform: scaleX(0);
   animation: draw-underline 1.2s 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
@@ -588,7 +746,7 @@ body.is-loaded main {
 }
 .tilt-card:hover {
   transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(-3px);
-  box-shadow: 0 24px 60px -32px rgba(10, 10, 20, 0.28);
+  box-shadow: 0 24px 60px -32px rgba(var(--accent-glow), 0.32);
 }
 
 .line-draw {
@@ -601,7 +759,7 @@ body.is-loaded main {
   right: 0;
   bottom: 0;
   height: 1px;
-  background: linear-gradient(110deg, var(--accent-1), var(--accent-2));
+  background: var(--gradient-accent);
   transform-origin: left center;
   transform: scaleX(0);
   transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -611,7 +769,7 @@ body.is-loaded main {
   transform: scaleX(1);
 }
 
-/* Skill tile glow on hover */
+/* Skill tile glow on hover — dark theme */
 .skill-tile {
   position: relative;
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -624,7 +782,7 @@ body.is-loaded main {
   border-radius: inherit;
   background: radial-gradient(
     circle at var(--mx, 50%) var(--my, 50%),
-    rgba(109, 40, 217, 0.14),
+    rgba(91, 110, 245, 0.18),
     transparent 50%
   );
   opacity: 0;
@@ -633,37 +791,60 @@ body.is-loaded main {
 }
 .skill-tile:hover {
   transform: translateY(-3px);
-  border-color: rgba(109, 40, 217, 0.28);
-  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(91, 110, 245, 0.32);
+  background: rgba(255, 255, 255, 0.03);
 }
 .skill-tile:hover::before {
   opacity: 1;
 }
 
-/* Cursor follower */
+/* Custom cursor — minimal precise ring tracking the mouse on dark
+ * surfaces. Disabled on touch and prefers-reduced-motion. */
 .cursor-ring {
   position: fixed;
   top: 0;
   left: 0;
   width: 28px;
   height: 28px;
-  border: 1.5px solid var(--accent-1);
+  border: 1.5px solid var(--accent-core);
   border-radius: 9999px;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
   transition: width 0.25s ease, height 0.25s ease, opacity 0.25s ease,
     background-color 0.25s ease, border-color 0.25s ease;
-  mix-blend-mode: multiply;
+  mix-blend-mode: difference;
   opacity: 0;
 }
 .cursor-ring.hover-link {
   width: 44px;
   height: 44px;
-  background: rgba(109, 40, 217, 0.08);
+  background: rgba(91, 110, 245, 0.12);
+  border-color: var(--accent-bright);
 }
 @media (hover: none), (prefers-reduced-motion: reduce) {
   .cursor-ring {
+    display: none !important;
+  }
+}
+
+/* Custom cursor dot — inner precise indicator */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--accent-core);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s ease;
+  opacity: 0;
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .cursor-dot {
     display: none !important;
   }
 }
@@ -678,14 +859,14 @@ body.is-loaded main {
  * magnetic buttons, waveform, caret blink, code-rain, gradient meshes.
  * ====================================================================== */
 
-/* Dark hero shell — deep ink with engineered grid + mesh */
+/* Dark hero shell — Deep Neural Dark layered surface */
 .hero-dark {
   background:
-    radial-gradient(1200px 700px at 8% -10%, rgba(109, 40, 217, 0.35), transparent 60%),
-    radial-gradient(1100px 700px at 100% 0%, rgba(236, 72, 153, 0.22), transparent 55%),
-    radial-gradient(900px 600px at 50% 110%, rgba(34, 211, 238, 0.12), transparent 60%),
-    #06060c;
-  color: #f8f8fc;
+    radial-gradient(1200px 700px at 8% -10%, rgba(91, 110, 245, 0.22), transparent 60%),
+    radial-gradient(1100px 700px at 100% 0%, rgba(34, 211, 165, 0.10), transparent 55%),
+    radial-gradient(900px 600px at 50% 110%, rgba(91, 110, 245, 0.08), transparent 60%),
+    var(--bg-void);
+  color: var(--text-primary);
 }
 .hero-dark .text-muted {
   color: rgba(248, 248, 252, 0.6);
@@ -1152,6 +1333,329 @@ body.is-loaded main {
 
 /* Sprint timeline playhead pulse */
 @keyframes phase-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.6); }
-  50% { box-shadow: 0 0 0 14px rgba(236, 72, 153, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(91, 110, 245, 0.6); }
+  50% { box-shadow: 0 0 0 14px rgba(91, 110, 245, 0); }
+}
+
+/* ============================================================
+ * Tensorix v3 · Component utilities
+ * SectionLabel, GlowCard, scan-line, reveal animations,
+ * NeuralMesh & friends.
+ * ============================================================ */
+
+/* ─── Section label — [ 01 ] · SERVICES ─────────────────────
+ * Mono bracketed labels used as section headers. */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.section-label__index {
+  color: var(--accent-core);
+}
+.section-label__rule {
+  width: 2rem;
+  height: 1px;
+  background: var(--border-mid);
+}
+
+/* ─── GlowCard — bordered card with hover ring ──────────────
+ * Lifts -2px and gains an accent border + soft outer glow on hover. */
+.glow-card {
+  position: relative;
+  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-base) 100%);
+  border: 1px solid var(--border-soft);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  transition: border-color var(--duration-base) var(--ease-smooth),
+    transform var(--duration-base) var(--ease-smooth),
+    box-shadow var(--duration-base) var(--ease-smooth);
+}
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--gradient-accent);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-smooth);
+  z-index: -1;
+}
+.glow-card:hover {
+  border-color: var(--border-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px -16px rgba(var(--accent-glow), 0.4);
+}
+.glow-card:hover::before {
+  opacity: 0.6;
+}
+
+/* ─── Scan line — horizontal accent across hero ─────────────
+ * A single hairline that sweeps slowly across the surface. */
+@keyframes scan-line {
+  0% { transform: translateX(-100%); opacity: 0; }
+  10%, 90% { opacity: 0.7; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-core), transparent);
+  animation: scan-line 6s var(--ease-smooth) infinite;
+  pointer-events: none;
+}
+
+/* ─── Scroll reveal — IntersectionObserver-driven ───────────
+ * Set the .reveal-* class then add .reveal--in when the
+ * element enters the viewport. */
+.reveal-stagger {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 800ms var(--ease-out-expo),
+    transform 800ms var(--ease-out-expo);
+  transition-delay: var(--stagger, 0ms);
+}
+.reveal-stagger.reveal--in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 800ms var(--ease-out-expo),
+    transform 800ms var(--ease-out-expo);
+}
+.reveal-left.reveal--in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 800ms var(--ease-out-expo),
+    transform 800ms var(--ease-out-expo);
+}
+.reveal-right.reveal--in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 800ms var(--ease-out-expo),
+    transform 800ms var(--ease-out-expo);
+}
+.reveal-scale.reveal--in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-stagger,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ─── Animated word stagger — used in hero headlines ────────
+ * Each child <span class="anim-word"> reveals on a staggered delay. */
+@keyframes anim-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.anim-words .anim-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.6em);
+  animation: anim-word-in 900ms var(--ease-out-expo) forwards;
+  animation-delay: calc(var(--word-index, 0) * 80ms);
+  /* Keep descenders (g, y, p) visible */
+  padding-bottom: 0.08em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .anim-words .anim-word {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* ─── Live indicator — pulsing dot + label ──────────────────
+ * Reusable system status indicator used in nav, status cards. */
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--signal-green);
+}
+.live-indicator__dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--signal-green);
+  box-shadow: 0 0 8px var(--signal-green);
+}
+.live-indicator__dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--signal-green);
+  animation: live-indicator-ping 2s var(--ease-out-expo) infinite;
+}
+@keyframes live-indicator-ping {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(3); opacity: 0; }
+}
+
+/* ─── Tensorix logo lozenge ◈ ────────────────────────────────
+ * Hard-edged 4-pointed diamond. Used in the nav logo and brand mark. */
+.tx-lozenge {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: var(--gradient-accent);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  transition: transform var(--duration-base) var(--ease-spring);
+}
+.tx-lozenge--hover:hover,
+.group:hover .tx-lozenge--hover {
+  transform: rotate(180deg);
+}
+
+/* ─── Neural mesh — animated SVG canvas backdrop ────────────
+ * Subtle network of nodes + connecting lines that drift slowly. */
+.neural-mesh {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.neural-mesh svg {
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+}
+.neural-mesh__line {
+  stroke: var(--accent-core);
+  stroke-width: 1;
+  opacity: 0.15;
+  animation: neural-line-pulse 4s ease-in-out infinite;
+}
+.neural-mesh__node {
+  fill: var(--accent-core);
+  opacity: 0.55;
+  animation: neural-node-pulse 3s ease-in-out infinite;
+}
+@keyframes neural-line-pulse {
+  0%, 100% { opacity: 0.10; }
+  50% { opacity: 0.22; }
+}
+@keyframes neural-node-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .neural-mesh__line,
+  .neural-mesh__node {
+    animation: none;
+  }
+}
+
+/* ─── Tech ticker — single-line scrolling stack pills ─────── */
+.tech-ticker {
+  position: relative;
+  overflow: hidden;
+  padding-block: 0.85rem;
+  border-block: 1px solid var(--border-soft);
+}
+.tech-ticker__track {
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5rem;
+  animation: tech-ticker-scroll 40s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+}
+.tech-ticker:hover .tech-ticker__track {
+  animation-play-state: paused;
+}
+.tech-ticker__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+.tech-ticker__item::after {
+  content: "·";
+  margin-left: 2.5rem;
+  color: var(--text-muted);
+  opacity: 0.4;
+}
+.tech-ticker__item:last-child::after {
+  content: none;
+}
+@keyframes tech-ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ─── Status card — footer/status surface ───────────────────
+ * Glass surface with hairline border and faint inner gradient. */
+.status-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(91, 110, 245, 0.04), transparent 70%);
+  border: 1px solid var(--border-soft);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  overflow: hidden;
+}
+.status-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-core), transparent);
+  opacity: 0.5;
+}
+
+/* ─── Accent rule — diagonal slash before labels ──────────── */
+.t-rule {
+  display: inline-block;
+  width: 2.25rem;
+  height: 1px;
+  background: var(--border-mid);
+  vertical-align: middle;
+  margin-right: 0.75rem;
 }

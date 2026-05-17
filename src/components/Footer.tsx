@@ -28,8 +28,21 @@ export default async function Footer() {
     (cfg.phoneE164 ? `https://wa.me/${cfg.phoneE164}` : undefined);
 
   return (
-    <footer className="bg-foreground text-white relative overflow-hidden">
+    <footer
+      className="relative overflow-hidden text-white"
+      style={{ background: "var(--bg-base)" }}
+    >
       <div className="noise" aria-hidden="true" />
+      {/* Top hairline accent rule — signals the foot of the page like a
+          terminal status bar. */}
+      <div
+        className="absolute inset-x-0 top-0 h-px pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(91, 110, 245, 0.55), transparent)",
+        }}
+        aria-hidden="true"
+      />
       <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-20 md:pt-32 pb-10 relative">
         {/* Big editorial CTA */}
         <p className="mono text-xs uppercase tracking-[0.18em] text-white/55 mb-8">
@@ -47,7 +60,7 @@ export default async function Footer() {
           className="mt-10 inline-flex items-center gap-3 group"
         >
           <span className="email-cta text-2xl md:text-4xl">{email}</span>
-          <span className="grid place-items-center w-10 h-10 rounded-full border border-white/20 group-hover:bg-white group-hover:text-foreground transition-colors">
+          <span className="grid place-items-center w-10 h-10 rounded-full border border-white/20 group-hover:bg-white group-hover:text-[#04040a] transition-colors">
             <IconArrow width={16} height={16} />
           </span>
         </a>

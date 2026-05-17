@@ -86,12 +86,12 @@ export default function ServiceCardLarge({
                   className={[
                     "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-mono uppercase tracking-[0.18em]",
                     isFeatured
-                      ? "bg-gradient-to-r from-fuchsia-400 to-violet-400 text-foreground font-medium"
+                      ? "bg-gradient-to-r from-fuchsia-400 to-violet-400 text-[#04040a] font-medium"
                       : "border border-white/15 text-white/70",
                   ].join(" ")}
                 >
                   {isFeatured && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-foreground/80" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#04040a]/80" />
                   )}
                   {visibleBadge}
                 </span>
@@ -178,7 +178,7 @@ export default function ServiceCardLarge({
                 "group/cta inline-flex w-full items-center justify-between gap-3 rounded-full px-5 py-3.5 text-sm font-medium transition-all",
                 isFeatured
                   ? "bg-[#25D366] hover:bg-[#1ebe57] text-white"
-                  : "bg-white text-foreground hover:bg-white/90",
+                  : "bg-white text-[#04040a] hover:bg-white/90",
               ].join(" ")}
             >
               <span className="flex items-center gap-2">

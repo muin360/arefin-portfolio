@@ -172,7 +172,7 @@ export default async function ServicesPage() {
                       rel="noopener noreferrer"
                       className={`mt-6 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition-all ${
                         e.featured
-                          ? "bg-white text-foreground hover:bg-white/90 shimmer"
+                          ? "bg-white text-[#04040a] hover:bg-white/90 shimmer"
                           : "border border-white/20 text-white hover:bg-white/10"
                       }`}
                     >
@@ -332,7 +332,7 @@ export default async function ServicesPage() {
             </div>
             <Link
               href="/contact"
-              className="btn-primary shimmer relative z-10 bg-white text-foreground border-white hover:bg-accent-1 hover:text-white hover:border-accent-1"
+              className="btn-primary shimmer relative z-10 bg-white text-[#04040a] border-white hover:bg-accent-1 hover:text-white hover:border-accent-1"
             >
               Book a free systems audit
               <IconArrow width={16} height={16} />

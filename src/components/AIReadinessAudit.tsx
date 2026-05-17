@@ -380,7 +380,7 @@ export default function AIReadinessAudit() {
                 </p>
                 <a
                   href="/contact"
-                  className="inline-flex items-center justify-center gap-2 w-full rounded-full bg-white text-foreground hover:bg-white/90 px-5 py-2.5 text-sm font-medium shimmer transition-colors"
+                  className="inline-flex items-center justify-center gap-2 w-full rounded-full bg-white text-[#04040a] hover:bg-white/90 px-5 py-2.5 text-sm font-medium shimmer transition-colors"
                 >
                   Book a discovery call →
                 </a>

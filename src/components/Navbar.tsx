@@ -54,9 +54,13 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           onClick={() => setOpen(false)}
         >
-          <span className="relative w-10 h-10 rounded-xl bg-foreground grid place-items-center overflow-hidden transition-transform duration-500 group-hover:scale-105">
-            <BrainMark size={26} />
-            <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[var(--accent-1)]/0 via-[var(--accent-2)]/0 to-[var(--accent-3)]/0 group-hover:from-[var(--accent-1)]/15 group-hover:via-[var(--accent-2)]/15 group-hover:to-[var(--accent-3)]/15 transition-all duration-500" />
+          <span className="relative w-10 h-10 rounded-xl bg-foreground grid place-items-center overflow-hidden transition-transform duration-700 group-hover:scale-105">
+            {/* Inner brain mark — rotates 180° on logo hover for the
+                signature Tensorix lozenge “flip” feel. */}
+            <span className="transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:rotate-180">
+              <BrainMark size={26} />
+            </span>
+            <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[var(--accent-core)]/0 via-[var(--signal-green)]/0 to-[var(--accent-bright)]/0 group-hover:from-[var(--accent-core)]/20 group-hover:via-[var(--signal-green)]/15 group-hover:to-[var(--accent-bright)]/20 transition-all duration-500" />
           </span>
           <div className="leading-tight">
             <div className="font-mono text-[15px] tracking-[0.26em] uppercase text-foreground">
@@ -135,7 +139,7 @@ export default function Navbar() {
       {/* Scroll progress bar */}
       <div className="h-px w-full bg-transparent">
         <div
-          className="h-px bg-gradient-to-r from-[var(--accent-1)] via-[var(--accent-2)] to-[var(--accent-3)] origin-left"
+          className="h-px bg-gradient-to-r from-[var(--accent-core)] via-[var(--signal-green)] to-[var(--accent-bright)] origin-left"
           style={{ transform: `scaleX(${progress})`, transition: "transform 80ms linear" }}
         />
       </div>

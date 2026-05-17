@@ -1,5 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Instrument_Serif, Manrope } from "next/font/google";
+import {
+  Inter,
+  JetBrains_Mono,
+  Instrument_Serif,
+  Manrope,
+  Syne,
+  DM_Sans,
+} from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -13,7 +20,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Body — Inter is the variable, optically tuned, high-legibility workhorse used
-// across Vercel / Stripe / Linear-tier products.
+// across Vercel / Stripe / Linear-tier products. Kept as a fallback for any
+// legacy --font-inter references.
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -21,10 +29,29 @@ const inter = Inter({
 });
 
 // Display — Manrope adds character and slightly humanist warmth for big
-// editorial headlines without going full geometric.
+// editorial headlines without going full geometric. Retained as a fallback
+// for any --font-manrope references.
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
+  display: "swap",
+});
+
+// Display — Syne is the primary editorial face. Sharp, slightly engineered
+// geometric serif/sans hybrid that anchors the Tensorix headline voice.
+const syne = Syne({
+  variable: "--font-syne",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
+});
+
+// Body — DM Sans is the production-grade reading face used for body copy,
+// nav, and UI labels. Pairs cleanly with Syne and JetBrains Mono.
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -240,8 +267,8 @@ const jsonLd = [
 ];
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a14",
-  colorScheme: "light",
+  themeColor: "#04040a",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
 };
@@ -254,7 +281,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${inter.variable} ${manrope.variable} ${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <head>
         {/* Defense-in-depth: HTTP headers (set by host config) are the primary
@@ -266,7 +293,7 @@ export default function RootLayout({
         />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="format-detection" content="telephone=no, email=no, address=no" />
-        <meta name="color-scheme" content="light" />
+        <meta name="color-scheme" content="dark" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}

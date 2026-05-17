@@ -211,7 +211,7 @@ export default function AboutPage() {
                 automation lives. No obligation either way.
               </p>
             </div>
-            <Link href="/contact" className="btn-primary shimmer relative z-10 bg-white text-foreground border-white">
+            <Link href="/contact" className="btn-primary shimmer relative z-10 bg-white text-[#04040a] border-white">
               Book a free systems audit
               <IconArrow width={16} height={16} />
             </Link>
