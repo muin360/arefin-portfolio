@@ -1,14 +1,14 @@
 import Link from "next/link";
 import AgentDashboard from "./AgentDashboard";
-import { IconArrow } from "@/components/icons";
 
 /**
  * Hero section (v2).
  *
  * Two-column layout. Left side carries the editorial voice — a top
- * status bar with a live dot, a typographic-contrast headline (geometric
- * sans + serif italic on the key phrase), a subheadline, the primary +
- * secondary CTAs, and a foot row with founder + coverage trust marks.
+ * status bar with a live dot, a 3-line display headline (staggered
+ * word reveal via `.v2-hero-word`), a single-sentence subheadline, the
+ * primary + secondary CTAs, and a foot row with founder + coverage
+ * trust marks.
  *
  * Right side hosts the `<AgentDashboard />` widget. On mobile the
  * widget stacks underneath the copy at 90% scale so the headline owns
@@ -19,6 +19,9 @@ export default function HeroSectionV2({
 }: {
   availabilityNote?: string;
 }) {
+  const headline =
+    "AI systems that turn repetitive work into reliable workflows.".split(" ");
+
   return (
     <section className="v2-hero" aria-label="Hero">
       <div className="v2-hero__grain" aria-hidden="true" />
@@ -28,57 +31,38 @@ export default function HeroSectionV2({
         <div className="v2-hero__grid">
           {/* LEFT COL */}
           <div className="v2-hero__left">
-            {/* Status badge — styled pill with live dot */}
-            <div className="inline-flex items-center gap-2 border border-[#1D9E75]/30 bg-[#1D9E75]/[0.08] rounded-full px-3 py-1 mb-8">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#5DCAA5] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1D9E75]" />
-              </span>
-              <span className="text-xs text-[#5DCAA5] font-mono tracking-wider uppercase">
+            <span className="v2-hero__pill">
+              <span className="v2-hero__pill-dot" aria-hidden="true" />
+              <span className="v2-hero__pill-text">
                 {availabilityNote}
               </span>
-            </div>
+              <span aria-hidden="true" className="v2-hero__pill-sep">·</span>
+              <span className="v2-hero__pill-meta">DHK · GMT+6 · live</span>
+            </span>
 
-            {/* Main headline — typographic contrast */}
             <h1 className="v2-hero__headline">
-              {/* Line 1: geometric sans */}
-              <span className="block">Your team does the work.</span>
-              {/* Line 2: serif italic + accent color on key word */}
-              <span className="block mt-1 serif" style={{ fontStyle: "italic" }}>
-                Your{" "}
-                <span className="relative inline-block">
-                  <span className="text-[#5DCAA5]">systems</span>
-                  <svg
-                    aria-hidden="true"
-                    className="absolute -bottom-1 left-0 w-full"
-                    height="4"
-                    viewBox="0 0 100 4"
-                    preserveAspectRatio="none"
-                  >
-                    <path
-                      d="M0 3 Q25 0 50 2 Q75 4 100 1"
-                      stroke="#1D9E75"
-                      strokeWidth="1.5"
-                      fill="none"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>{" "}
-                should too.
-              </span>
+              {headline.map((w, i) => (
+                <span
+                  key={`${w}-${i}`}
+                  className="v2-hero__word"
+                  style={{ ["--word-delay" as string]: `${i * 55}ms` }}
+                >
+                  {w}{" "}
+                </span>
+              ))}
             </h1>
 
             <p className="v2-hero__sub">
-              We build AI agents, workflow automations, and integrated web
-              systems for small teams — scoped in a free audit, shipped in
-              14 days, owned by you forever.
+              We help small teams automate lead handling, customer replies,
+              CRM updates, reporting and internal operations with practical
+              AI agents, workflow automation and integrated web systems.
               <span className="v2-hero__sub-em"> No fluff. Fixed price. You own it.</span>
             </p>
 
             <div className="v2-hero__cta">
-              <Link href="/book" className="v2-hero__btn v2-hero__btn--primary group">
+              <Link href="/book" className="v2-hero__btn v2-hero__btn--primary">
                 <span>Book free audit</span>
-                <IconArrow width={16} height={16} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                <span aria-hidden="true">→</span>
               </Link>
               <Link href="#services" className="v2-hero__btn v2-hero__btn--ghost">
                 <span>See services</span>

@@ -5,7 +5,7 @@ import { ImageResponse } from "next/og";
 // Renders a 1200×630 PNG at request time. The image is fetched by
 // Facebook / X / LinkedIn / iMessage / Slack when they unfurl any URL
 // on the site that doesn't override `openGraph`, which means
-// tensorix.me → home, /about, /services etc. all get this canonical
+// tensorix.ai → home, /about, /services etc. all get this canonical
 // card unless they declare their own.
 //
 // Uses the Node.js runtime (Next.js default) on purpose — the Edge
@@ -118,7 +118,7 @@ export default async function Image() {
             />
             <span>Accepting new engagements</span>
           </div>
-          <div>tensorix.me</div>
+          <div>Tensorix.ai</div>
         </div>
       </div>
     ),

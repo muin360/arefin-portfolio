@@ -4,7 +4,7 @@ Editorial, hand-coded portfolio for an AI Automation & Agent Engineer. Static-ex
 
 ## Live
 
-https://tensorix.me
+https://tensorix.ai
 (point a custom domain at the project — see [HOSTING.md](./HOSTING.md))
 
 ## Run locally

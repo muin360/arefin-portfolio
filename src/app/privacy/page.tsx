@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 const LAST_UPDATED = "April 2026";
-const CONTACT_EMAIL = "hello@tensorix.me";
+const CONTACT_EMAIL = "hello@tensorix.ai";
 
 export default function PrivacyPage() {
   return (
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
         <div className="prose-tensor space-y-12 text-foreground/85 leading-relaxed">
           <Block num="01" title="Who this applies to">
             <p>
-              This policy covers <strong>tensorix.me</strong> and any
+              This policy covers <strong>tensorix.ai</strong> and any
               subdomains (the &quot;Site&quot;), operated by Arefin Muin trading as
               <strong> Tensorix</strong> (&quot;we&quot;, &quot;us&quot;). It explains what
               happens when you browse the Site, fill out the contact form,

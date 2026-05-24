@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconArrow } from "@/components/icons";
 
 /**
  * Navbar (v2).
@@ -94,9 +93,9 @@ export default function Navbar() {
             <span className="v2-nav__pill-dot" />
             <span className="v2-nav__pill-text">live · taking sprints</span>
           </span>
-          <Link href="/book" className="v2-nav__cta group">
+          <Link href="/book" className="v2-nav__cta">
             Book audit
-            <IconArrow width={14} height={14} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
+            <span aria-hidden="true">→</span>
           </Link>
 
           {/* Mobile toggle */}

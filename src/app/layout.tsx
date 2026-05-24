@@ -162,7 +162,7 @@ const jsonLd = [
     description:
       "Founder of Tensorix. Independent AI engineer building reliable agents, workflow automation, API integrations and conversion-focused web systems with n8n, Make, Zapier, GoHighLevel, LangChain, LangFlow, Python and TypeScript.",
     image: `${SITE_URL}/og.png`,
-    email: "mailto:hello@tensorix.me",
+    email: "mailto:hello@tensorix.ai",
     worksFor: {
       "@type": "Organization",
       name: "Tensorix",

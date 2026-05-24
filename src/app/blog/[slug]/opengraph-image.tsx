@@ -110,7 +110,7 @@ export default async function Image({
           }}
         >
           <span style={{ color: "rgba(255,255,255,0.85)" }}>Tensorix</span>
-          <span style={{ color: "rgba(255,255,255,0.45)" }}>tensorix.me</span>
+          <span style={{ color: "rgba(255,255,255,0.45)" }}>tensorix.ai</span>
         </div>
       </div>
     ),

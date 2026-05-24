@@ -20,7 +20,7 @@ following (Production + Preview scopes):
 | `SANITY_API_READ_TOKEN`               | Sanity manage → **API → Tokens → Add token** → permission **Viewer**. Required only if the dataset is private (default).  | **Yes**    |
 | `SANITY_API_WRITE_TOKEN`              | Same page → permission **Editor**. Used by `scripts/seed.mjs` and the studio when needed.                                 | **Yes**    |
 | `SANITY_REVALIDATE_SECRET`            | A random string. Generate with `openssl rand -base64 32` (or any password manager).                                       | **Yes**    |
-| `NEXT_PUBLIC_SITE_URL`                | e.g. `https://tensorix.me`. No trailing slash.                                                                | No         |
+| `NEXT_PUBLIC_SITE_URL`                | e.g. `https://tensorix.ai`. No trailing slash.                                                                | No         |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`| Search Console verification token.                                                                                        | No         |
 
 > Tip: You can use one Editor token everywhere if you don't want to manage

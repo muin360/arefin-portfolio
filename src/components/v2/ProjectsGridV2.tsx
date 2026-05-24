@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { projects } from "@/data/site";
 import { useInView } from "@/hooks/useInView";
-import { IconArrow } from "@/components/icons";
 
 /**
  * Project case-study grid (v2).
@@ -74,7 +73,7 @@ function Card({
         aria-label={`Read full case study: ${project.title}`}
       >
         <span>Read case study</span>
-        <IconArrow width={14} height={14} aria-hidden="true" />
+        <span aria-hidden="true">→</span>
       </Link>
     </div>
   );

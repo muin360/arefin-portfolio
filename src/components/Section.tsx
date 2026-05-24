@@ -3,7 +3,6 @@ import Reveal from "./Reveal";
 import DarkHero from "./DarkHero";
 import LiveClock from "./LiveClock";
 import LiveTicker from "./LiveTicker";
-import { IconArrow } from "@/components/icons";
 import { sanityFetch } from "@/sanity/fetch";
 import { siteConfigQuery } from "@/sanity/queries";
 import type { SiteConfig } from "@/sanity/types";
@@ -101,7 +100,7 @@ export function SectionHeader({
           }`}
         >
           <span className="link-underline">{link.label}</span>
-          <IconArrow width={14} height={14} className="inline-block ml-1" aria-hidden="true" />
+          <span aria-hidden="true">→</span>
         </a>
       )}
     </div>
