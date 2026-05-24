@@ -14,6 +14,7 @@ import WhatsAppFab from "@/components/WhatsAppFab";
 import ScrollToTop from "@/components/ScrollToTop";
 import CursorRing from "@/components/CursorRing";
 import PageLoader from "@/components/PageLoader";
+import MobileStickyBar from "@/components/MobileStickyBar";
 import { SITE_URL, GOOGLE_SITE_VERIFICATION } from "@/lib/site-url";
 import { safeJsonLd } from "@/lib/json-ld";
 import { Analytics } from "@vercel/analytics/next";
@@ -312,6 +313,7 @@ export default function RootLayout({
         <main id="main" className="flex-1">{children}</main>
         <Footer />
         <WhatsAppFab />
+        <MobileStickyBar />
         <ScrollToTop />
         <Analytics />
         <SpeedInsights />

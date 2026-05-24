@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useInView } from "@/hooks/useInView";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -35,19 +35,22 @@ export default function CountUp({
   const [ref, inView] = useInView<HTMLSpanElement>({ threshold: 0.4 });
   const reduced = useReducedMotion();
   const [value, setValue] = useState(0);
-  const startedRef = useRef(false);
 
-  // Run the rAF count-up only when motion is allowed and the element
-  // has just scrolled into view for the first time. Reduced-motion
-  // users get the final number via the conditional render below — we
-  // never call setState in this effect for that branch.
+  // Run the rAF count-up whenever the element is in view and motion is
+  // allowed. Cleanup cancels the in-flight rAF — in Strict Mode the
+  // effect is mounted twice in dev; both mounts run to completion
+  // (second mount overwrites the first, ending on `target`), so the
+  // counter never gets stuck at 0. Reduced-motion users render the
+  // final number via the conditional below — we never call setState
+  // in this effect for that branch.
   useEffect(() => {
-    if (reduced || !inView || startedRef.current) return;
-    startedRef.current = true;
+    if (reduced || !inView) return;
 
     let rafId = 0;
+    let cancelled = false;
     const start = performance.now();
     const animate = (now: number) => {
+      if (cancelled) return;
       const elapsed = now - start;
       const progress = Math.min(1, elapsed / duration);
       const eased = easeOutExpo(progress);
@@ -59,7 +62,10 @@ export default function CountUp({
       }
     };
     rafId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafId);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId);
+    };
   }, [reduced, inView, target, duration]);
 
   // When reduced motion is on (or before the element is in view), the

@@ -3321,6 +3321,27 @@ body.is-loaded main {
   text-transform: uppercase;
   color: var(--t3);
 }
+.v2-testimonial__badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-family: var(--f-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-2);
+}
+.v2-testimonial__badge.is-verified {
+  color: var(--green);
+  border-color: color-mix(in oklab, var(--green) 35%, transparent);
+  background: color-mix(in oklab, var(--green) 8%, transparent);
+}
+.v2-testimonial__badge.is-anonymized {
+  color: var(--t4);
+  background: transparent;
+}
 
 .v2-journal__grid {
   display: grid;

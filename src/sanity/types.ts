@@ -97,6 +97,11 @@ export type TestimonialDoc = {
   content: string;
   rating?: number;
   image?: SanityImage;
+  // When true, the card renders a "✓ Verified" badge. When false (or
+  // omitted), the card renders an "Anonymized for privacy" label. The
+  // Sanity schema can opt in by adding a `verified` boolean field; the
+  // current FALLBACK_TESTIMONIALS are all anonymized client engagements.
+  verified?: boolean;
 };
 
 export type HeroCTA = {

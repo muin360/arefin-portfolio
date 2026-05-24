@@ -63,6 +63,52 @@ function SkillPill({
   );
 }
 
+// Per-tool capability blurbs (audit fix Phase 5.2).
+//
+// The /skills page lists categorised tools. Logos / names alone don't tell
+// a visitor what each tool is _used for_ — these short descriptions make
+// the list scannable and useful for buyers comparing vendors. Keyed by
+// the same string used in FALLBACK_SKILLS.items and the Sanity item
+// strings, so a Sanity-managed tool only needs a matching key here to
+// pick up a description. Tools without a description still render
+// gracefully (the description line is hidden when absent).
+const TOOL_DESCRIPTIONS: Record<string, string> = {
+  // Automation platforms
+  n8n: "Self-hosted workflow automation. Preferred for complex, high-volume pipelines.",
+  Zapier: "Rapid prototyping and simple integrations. 5,000+ app connectors.",
+  Make: "Visual automation for moderate complexity. Great for content and CRM workflows.",
+  "Make (Integromat)":
+    "Visual automation for moderate complexity. Great for content and CRM workflows.",
+  GoHighLevel:
+    "All-in-one CRM + automation for service businesses and agencies.",
+
+  // AI / LLM tools
+  LangChain: "Agent orchestration, tool use, and multi-step reasoning pipelines.",
+  LangFlow: "Visual LLM flow builder for RAG and retrieval systems.",
+  "OpenAI API": "Primary LLM for production agents. Reliable, fast, capable.",
+  "Anthropic Claude":
+    "Used for long-context document analysis and nuanced instruction-following.",
+  "Prompt Engineering":
+    "Stable, testable prompts with eval harnesses — not vibes.",
+  "RAG / Vector DBs":
+    "Retrieval-augmented systems with Pinecone, pgvector, or Supabase Vector.",
+
+  // Programming
+  Python: "Scripting, data wrangling, ML, and FastAPI services in production.",
+  JavaScript: "ES2024+ across the stack — browser, Node.js, and edge runtimes.",
+  TypeScript: "Strict typing across all projects. No untyped JS in production.",
+  "Node.js": "Server-side JS for APIs, automation runners, and webhooks.",
+  "REST APIs": "Designing and consuming pragmatic REST — auth, versioning, errors.",
+
+  // Currently learning
+  "LLM Engineering":
+    "Production-grade agent design — tools, memory, evals, observability.",
+  "Fine-tuning":
+    "Domain-specific fine-tunes when prompting and retrieval aren't enough.",
+  "Evaluation & Observability":
+    "LangSmith / Helicone-grade tracing, evals, and prompt versioning.",
+};
+
 const focusAreas = [
   {
     title: "Multi-tool orchestration",
@@ -150,16 +196,26 @@ export default async function SkillsPage() {
                   {category}
                 </p>
               </div>
-              <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
-                {items.map((it) => (
-                  <li
-                    key={it}
-                    className="flex items-center gap-2 text-foreground/85"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-foreground/60" />
-                    {it}
-                  </li>
-                ))}
+              <ul className="mt-6 grid grid-cols-1 gap-4">
+                {items.map((it) => {
+                  const desc = TOOL_DESCRIPTIONS[it];
+                  return (
+                    <li
+                      key={it}
+                      className="flex items-start gap-3 text-foreground/85"
+                    >
+                      <span className="mt-2 w-1.5 h-1.5 rounded-full bg-foreground/60 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="font-medium leading-tight">{it}</p>
+                        {desc && (
+                          <p className="mt-1 text-xs text-muted leading-relaxed">
+                            {desc}
+                          </p>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             </Reveal>
           ); })}

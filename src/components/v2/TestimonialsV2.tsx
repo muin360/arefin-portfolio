@@ -20,6 +20,10 @@ type Quote = {
   role: string;
   org: string;
   city: string;
+  // `true` → renders a "✓ Verified" badge. `false` → renders an
+  // "Anonymized for privacy" label. Per-card disclosure replaces the
+  // old blanket disclaimer paragraph (audit fix Phase 3.1).
+  verified: boolean;
 };
 
 const QUOTES: Quote[] = [
@@ -30,6 +34,7 @@ const QUOTES: Quote[] = [
     role: "Head of Sales",
     org: "Logistics SaaS",
     city: "Riyadh, KSA",
+    verified: false,
   },
   {
     body:
@@ -38,6 +43,7 @@ const QUOTES: Quote[] = [
     role: "Founder",
     org: "Wellness Studio",
     city: "Toronto, Canada",
+    verified: false,
   },
   {
     body:
@@ -46,6 +52,7 @@ const QUOTES: Quote[] = [
     role: "Operations Lead",
     org: "E-commerce Brand",
     city: "Dhaka, Bangladesh",
+    verified: false,
   },
 ];
 
@@ -81,6 +88,13 @@ function Card({ quote, idx }: { quote: Quote; idx: number }) {
         </span>
         <span className="v2-testimonial__where">
           {quote.org} · {quote.city}
+        </span>
+        <span
+          className={`v2-testimonial__badge ${
+            quote.verified ? "is-verified" : "is-anonymized"
+          }`}
+        >
+          {quote.verified ? "✓ Verified" : "Anonymized for privacy"}
         </span>
       </div>
     </article>

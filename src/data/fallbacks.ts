@@ -270,6 +270,13 @@ export const FALLBACK_FAQS: FaqDoc[] = [
       "If your business has customers, messages, leads, or repetitive operations, the answer is usually yes. Past work spans e-commerce, clinics, coaches, real estate, agencies, and local services across Bangladesh, the GCC, and North America. We'll tell you up-front if your industry has constraints we can't meet.",
     order: 6,
   },
+  {
+    _id: "faq.pricing",
+    question: "What does a typical project cost?",
+    answer:
+      "Automation sprints start from $2,400 for a single, tightly-scoped workflow. AI systems builds with multiple workflows or a custom agent system typically run $6,000–$15,000 depending on complexity. Everything is quoted in writing after a free 30-minute audit — no vague estimates, no surprise invoices.",
+    order: 7,
+  },
 ];
 
 // Anonymized example engagements — illustrative of the kind of work Tensorix
@@ -284,6 +291,7 @@ export const FALLBACK_TESTIMONIALS: TestimonialDoc[] = [
       "A Messenger qualification bot trained on the studio's services and FAQs, integrated with their booking calendar and a clear human handoff for complex enquiries. After-hours leads now get an instant reply and a tentative time before the team opens the next morning.",
     rating: 5,
     image: null,
+    verified: false,
   },
   {
     _id: "testimonial.example.realestate",
@@ -293,6 +301,7 @@ export const FALLBACK_TESTIMONIALS: TestimonialDoc[] = [
       "An inbound lead workflow that captures enquiries from the website and WhatsApp, qualifies them with a short AI conversation, and routes hot leads into the agent's calendar with full context. Manual lead-intake time on the brokerage side dropped substantially.",
     rating: 5,
     image: null,
+    verified: false,
   },
   {
     _id: "testimonial.example.dental",
@@ -302,6 +311,7 @@ export const FALLBACK_TESTIMONIALS: TestimonialDoc[] = [
       "A conversion-focused website with online intake forms and automated appointment reminders, wired into their existing practice-management system. New-patient enquiries now arrive pre-qualified with the right context for the front desk.",
     rating: 5,
     image: null,
+    verified: false,
   },
 ];
 

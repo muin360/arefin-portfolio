@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { whatsappHref, WA_MESSAGES } from "@/lib/cta";
 
 /**
  * Final CTA (v2).
@@ -57,7 +58,7 @@ export default function FinalCtaV2() {
             <span aria-hidden="true">→</span>
           </Link>
           <a
-            href="https://wa.me/8801234567890"
+            href={whatsappHref(WA_MESSAGES.generic)}
             className="v2-finalcta__secondary"
             target="_blank"
             rel="noopener noreferrer"
