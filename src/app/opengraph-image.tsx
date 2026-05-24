@@ -2,18 +2,23 @@ import { ImageResponse } from "next/og";
 
 // Root Open Graph image generator (audit fix Phase 6.2).
 //
-// Renders a 1200×630 PNG at request time using the Edge runtime. The
-// image is fetched by Facebook / X / LinkedIn / iMessage / Slack when
-// they unfurl any URL on the site that doesn't override `openGraph`,
-// which means tensorix.ai → home, /about, /services etc. all get this
-// canonical card unless they declare their own.
+// Renders a 1200×630 PNG at request time. The image is fetched by
+// Facebook / X / LinkedIn / iMessage / Slack when they unfurl any URL
+// on the site that doesn't override `openGraph`, which means
+// tensorix.ai → home, /about, /services etc. all get this canonical
+// card unless they declare their own.
+//
+// Uses the Node.js runtime (Next.js default) on purpose — the Edge
+// runtime bundles `next/og`'s satori + resvg deps into the function,
+// which on Vercel free tier exceeds the 1 MB Edge Function size limit.
+// Node.js runtime has no such limit; the cold-start cost is acceptable
+// for an OG endpoint that's hit by social crawlers, not end users.
 //
 // The static `/og.png` is still referenced by `app/layout.tsx`'s
 // `metadata.openGraph.images` as a safety net for any client that
 // doesn't follow the Next.js convention path; this file is the
 // preferred, dynamically-generated source.
 
-export const runtime = "edge";
 export const alt = "Tensorix — AI Automation & Agent Engineering Studio";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
