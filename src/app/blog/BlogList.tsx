@@ -37,7 +37,7 @@ export default function BlogList({ posts }: { posts: PostListItem[] }) {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Try 'n8n', 'agents', 'LLM'…"
-            className="mt-2 w-full rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-white/30 px-4 py-3 text-sm focus:outline-none focus:border-violet-400/60"
+            className="mt-2 w-full rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-white/30 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400/40 focus:border-violet-400/60"
           />
         </label>
         {q && (

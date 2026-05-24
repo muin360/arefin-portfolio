@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { whatsappHref, WA_MESSAGES } from "@/lib/cta";
+import { IconArrow, IconCheck } from "@/components/icons";
 
 /**
  * Final CTA (v2).
@@ -40,9 +41,7 @@ export default function FinalCtaV2() {
             "You own every script, model and credential",
           ].map((line) => (
             <li key={line}>
-              <span className="v2-finalcta__tick" aria-hidden="true">
-                ✓
-              </span>
+              <IconCheck width={14} height={14} className="text-[#5DCAA5] shrink-0 mt-0.5" aria-hidden="true" />
               <span>{line}</span>
             </li>
           ))}
@@ -55,7 +54,7 @@ export default function FinalCtaV2() {
             aria-label="Book a free 30-min audit"
           >
             Book free audit
-            <span aria-hidden="true">→</span>
+            <IconArrow width={14} height={14} aria-hidden="true" />
           </Link>
           <a
             href={whatsappHref(WA_MESSAGES.generic)}

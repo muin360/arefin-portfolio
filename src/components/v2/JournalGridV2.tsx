@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { posts } from "@/data/posts";
 import { useInView } from "@/hooks/useInView";
+import { IconArrow } from "@/components/icons";
 
 /**
  * Journal grid (v2).
@@ -65,7 +66,7 @@ function Card({
 
       <span className="v2-journal__cta">
         Read note
-        <span aria-hidden="true">→</span>
+        <IconArrow width={14} height={14} className="inline-block ml-1" aria-hidden="true" />
       </span>
     </Link>
   );

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { IconArrow } from "@/components/icons";
 
 /**
  * Bento grid services section — 4 cards with internal visuals.
@@ -181,7 +182,7 @@ function BrowserMockup() {
           className="ml-3 px-2 py-0.5 rounded text-[10px] font-mono"
           style={{ background: "rgba(255,255,255,0.04)", color: "var(--t3)" }}
         >
-          tensorix.ai/start
+          tensorix.me/start
         </span>
       </div>
       <div className="p-4 space-y-2">
@@ -263,7 +264,7 @@ function Card({ data }: { data: Card }) {
         style={{ color: "var(--a2)" }}
       >
         See service
-        <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+        <IconArrow width={12} height={12} className="inline-block transition-transform group-hover:translate-x-1" />
       </span>
     </Link>
   );

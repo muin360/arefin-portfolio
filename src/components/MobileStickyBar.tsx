@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { IconArrow } from "@/components/icons";
 
 /**
  * Mobile scroll-depth nudge (audit fix Phase 4.2).
@@ -70,7 +71,7 @@ export default function MobileStickyBar() {
           color: "var(--void)",
         }}
       >
-        Book audit →
+        Book audit <IconArrow width={12} height={12} className="inline-block ml-0.5" />
       </Link>
     </div>
   );

@@ -8,7 +8,7 @@
 // *.vercel.app. The single biggest ranking improvement you can make is moving
 // to a real custom domain and pointing this env var at it.
 export const SITE_URL: string = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://tensorix.ai"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://tensorix.me"
 ).replace(/\/+$/, "");
 
 // Google Search Console "HTML tag" verification — content value of the meta

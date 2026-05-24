@@ -4,6 +4,7 @@ import { siteConfigQuery } from "@/sanity/queries";
 import type { SiteConfig } from "@/sanity/types";
 import { FALLBACK_SITE_CONFIG } from "@/data/fallbacks";
 
+import { IconArrow } from "@/components/icons";
 import SectionLabel from "@/components/SectionLabel";
 import SprintTimeline from "@/components/SprintTimeline";
 
@@ -101,9 +102,9 @@ export default async function HomePage() {
                 so the team doesn&rsquo;t.
               </h2>
             </div>
-            <Link href="/projects" className="v2-section__more">
+            <Link href="/projects" className="v2-section__more group">
               <span>View all</span>
-              <span aria-hidden="true">→</span>
+              <IconArrow width={14} height={14} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </Link>
           </div>
           <div className="v2-section__body">
@@ -168,9 +169,9 @@ export default async function HomePage() {
                 <em className="v2-section__head-em">AI in production.</em>
               </h2>
             </div>
-            <Link href="/blog" className="v2-section__more">
+            <Link href="/blog" className="v2-section__more group">
               <span>All entries</span>
-              <span aria-hidden="true">→</span>
+              <IconArrow width={14} height={14} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </Link>
           </div>
           <div className="v2-section__body">
