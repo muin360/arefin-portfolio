@@ -30,4 +30,4 @@ Disallow: /
 User-agent: FacebookBot
 Disallow: /
 
-Sitemap: https://tensorstudio.vercel.app/sitemap.xml
+Sitemap: https://tensorix.me/sitemap.xml

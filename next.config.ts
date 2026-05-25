@@ -103,6 +103,28 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "tensorix.ai" }],
+        destination: "https://tensorix.me/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.tensorix.ai" }],
+        destination: "https://tensorix.me/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "tensorstudio.vercel.app" }],
+        destination: "https://tensorix.me/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

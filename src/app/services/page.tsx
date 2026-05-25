@@ -187,6 +187,85 @@ export default async function ServicesPage() {
         </div>
       </section>
 
+      {/* PRICING ANCHOR — transparent starting points */}
+      <section id="pricing" className="hero-dark relative overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 section relative">
+          <Reveal>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-5">
+                  [ pricing ] Transparent starting points
+                </p>
+                <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
+                  What it{" "}
+                  <span className="serif iridescent">costs.</span>
+                </h2>
+              </div>
+              <p className="text-white/60 max-w-sm leading-relaxed">
+                Every project is scoped and quoted after the free audit.
+                These are typical starting ranges, not fixed packages.
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                tier: "Systems audit",
+                price: "Free",
+                timeline: "30 min",
+                desc: "A focused conversation to map your workflows, surface the highest-leverage automation opportunities, and share a written recommendation. No obligation.",
+                note: "No commitment required",
+              },
+              {
+                tier: "Focused sprint",
+                price: "From $2,400",
+                timeline: "~2 weeks",
+                desc: "One well-scoped workflow or integration — CRM automation, lead routing, chatbot MVP, or a conversion landing page with forms wired in.",
+                note: "One workflow, end to end",
+              },
+              {
+                tier: "AI systems build",
+                price: "From $6,000",
+                timeline: "4–8 weeks",
+                desc: "Multi-workflow builds: AI agent + CRM + notification stack, full website with booking and automation, or cross-platform integration suites.",
+                note: "Multi-workflow, production-grade",
+              },
+              {
+                tier: "Retainer",
+                price: "Custom",
+                timeline: "Monthly",
+                desc: "Ongoing capacity for teams that need continuous automation improvements, new integrations, monitoring, and priority support.",
+                note: "Ongoing partnership",
+              },
+            ].map((t, i) => (
+              <Reveal key={t.tier} delay={i * 80}>
+                <BentoCard className="h-full">
+                  <div className="h-full flex flex-col">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
+                      {t.tier}
+                    </span>
+                    <p className="mt-4 display text-3xl text-white tracking-tight">
+                      {t.price}
+                    </p>
+                    <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
+                      {t.timeline}
+                    </p>
+                    <p className="mt-4 text-sm text-white/65 leading-relaxed flex-1">
+                      {t.desc}
+                    </p>
+                    <p className="mt-4 pt-4 border-t border-white/10 text-xs text-white/45 italic">
+                      {t.note}
+                    </p>
+                  </div>
+                </BentoCard>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CAPABILITIES — what Tensorix builds */}
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
         <div className="orb orb-violet" aria-hidden="true" />

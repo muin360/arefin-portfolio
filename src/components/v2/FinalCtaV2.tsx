@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight, MessageCircle } from "lucide-react";
 import { whatsappHref, WA_MESSAGES } from "@/lib/cta";
 
 /**
@@ -51,20 +52,31 @@ export default function FinalCtaV2() {
         <div className="v2-finalcta__row">
           <Link
             href="/book"
-            className="v2-finalcta__primary"
+            className="v2-finalcta__primary group"
             aria-label="Book a free 30-min audit"
           >
-            Book free audit
-            <span aria-hidden="true">→</span>
+            <span>Book free audit</span>
+            <ArrowRight
+              size={16}
+              strokeWidth={1.75}
+              aria-hidden="true"
+              className="v2-finalcta__arrow"
+            />
           </Link>
           <a
             href={whatsappHref(WA_MESSAGES.generic)}
-            className="v2-finalcta__secondary"
+            className="v2-finalcta__secondary group"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Message on WhatsApp"
           >
-            WhatsApp the studio
+            <MessageCircle
+              size={16}
+              strokeWidth={1.75}
+              aria-hidden="true"
+              className="v2-finalcta__wa-icon"
+            />
+            <span>WhatsApp the studio</span>
           </a>
         </div>
       </div>

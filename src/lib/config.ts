@@ -1,0 +1,66 @@
+/**
+ * Centralised site / contact / brand config (v3).
+ *
+ * Single source of truth for every URL, email, phone, and social
+ * profile used across the site. Re-import from `@/lib/config` in any
+ * component, metadata block, JSON-LD schema, or server action — never
+ * hard-code these values inline.
+ *
+ * `url` falls back to `https://tensorix.me` (the canonical production
+ * domain) when `NEXT_PUBLIC_SITE_URL` is not set — for example during
+ * local development or in preview deployments that haven't been wired
+ * to the env var yet. The existing `@/lib/site-url` helper still
+ * exists as a backwards-compat shim and re-exports `SITE.url`.
+ */
+const RAW_SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://tensorix.me";
+
+export const SITE = {
+  /** Canonical site URL with no trailing slash. */
+  url: RAW_SITE_URL.replace(/\/+$/, ""),
+  /** Brand / company display name. */
+  name: "Tensorix",
+  /** One-line positioning. */
+  tagline: "AI Automation & Agent Engineering Studio",
+  /** Long-form description used in meta + JSON-LD. */
+  description:
+    "Tensorix is a founder-led AI systems studio. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
+  /** Person behind the studio. */
+  author: "Arefin Muin",
+  /** Studio contact inbox. Use this for forms / "contact us" links. */
+  contactEmail: "hello@tensorix.me",
+  /** Founder's direct inbox — for owner-only correspondence. */
+  founderEmail: "arefinmuin@gmail.com",
+  /** WhatsApp number in E.164 format (no `+`). Routed through `lib/cta`. */
+  whatsapp: "8801994605717",
+  /** Booking page URL (relative). */
+  bookUrl: "/book",
+  /** Contact page URL (relative). */
+  contactUrl: "/contact",
+  /** Public social profiles — order matters: shown left → right in footer. */
+  socials: {
+    facebook: "https://www.facebook.com/profile.php?id=61588840534814",
+    github: "https://github.com/arefinmuin",
+    linkedin: "https://www.linkedin.com/in/arefin-muin/",
+    twitter: "https://x.com/arefin_muin",
+  },
+  /** Service regions used in JSON-LD `areaServed`. ISO 3166 alpha-2. */
+  areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
+} as const;
+
+/** Helper: build a `wa.me` link with a pre-typed message. */
+export function whatsappLink(message: string): string {
+  return `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
+/** Helper: build a `mailto:` link with an optional pre-typed subject + body. */
+export function mailto(
+  email: string,
+  opts: { subject?: string; body?: string } = {},
+): string {
+  const params = new URLSearchParams();
+  if (opts.subject) params.set("subject", opts.subject);
+  if (opts.body) params.set("body", opts.body);
+  const qs = params.toString();
+  return `mailto:${email}${qs ? `?${qs}` : ""}`;
+}

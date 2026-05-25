@@ -5,12 +5,12 @@ import { PageHeader } from "@/components/Section";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "The terms that govern use of tensorix.ai and any engagement with Tensorix for AI automation, Messenger bots, or website development.",
+    "The terms that govern use of tensorix.me and any engagement with Tensorix for AI automation, Messenger bots, or website development.",
   alternates: { canonical: "/terms" },
 };
 
 const LAST_UPDATED = "April 2026";
-const CONTACT_EMAIL = "hello@tensorix.ai";
+const CONTACT_EMAIL = "hello@tensorix.me";
 
 export default function TermsPage() {
   return (
@@ -35,7 +35,7 @@ export default function TermsPage() {
               &quot;Tensorix&quot;, &quot;we&quot;, and &quot;us&quot; refer to Arefin Muin, an
               independent contractor based in Dhaka, Bangladesh, operating
               under the name Tensorix and accessible at{" "}
-              <strong>tensorix.ai</strong>.
+              <strong>tensorix.me</strong>.
             </p>
             <p>
               &quot;You&quot; means the person browsing the Site, the person who

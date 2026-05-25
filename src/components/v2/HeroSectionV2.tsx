@@ -1,26 +1,47 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import AgentDashboard from "./AgentDashboard";
 
 /**
- * Hero section (v2).
+ * Hero section (v2, upgraded for v3).
  *
  * Two-column layout. Left side carries the editorial voice — a top
- * status bar with a live dot, a 3-line display headline (staggered
- * word reveal via `.v2-hero-word`), a single-sentence subheadline, the
+ * status bar with a live dot, a two-line display headline (geometric
+ * sans + italic serif accent), a single-sentence subheadline, the
  * primary + secondary CTAs, and a foot row with founder + coverage
  * trust marks.
  *
+ * The headline pairs Syne (--f-display) with Instrument Serif
+ * (--font-instrument-serif) for the second line; the accent word
+ * ("systems") picks up the brand a2 colour so the eye lands on the
+ * value prop, not the verb. Per-word stagger animation respects
+ * `prefers-reduced-motion`.
+ *
  * Right side hosts the `<AgentDashboard />` widget. On mobile the
- * widget stacks underneath the copy at 90% scale so the headline owns
- * the first viewport.
+ * widget stacks underneath the copy so the headline owns the first
+ * viewport.
+ *
+ * Alternative headlines for easy A/B swapping (uncomment one to use):
+ *   A — bold promise:      "Stop doing work / machines can do."
+ *   B — outcome-first:     "14 days from first call / to a live AI system."
+ *   C — current (default): "Your team does the work. / Your systems should too."
+ *   D — challenger:        "The tools exist. / Most teams never use them."
  */
 export default function HeroSectionV2({
   availabilityNote = "Free 30-min audit",
 }: {
   availabilityNote?: string;
 }) {
-  const headline =
-    "AI systems that turn repetitive work into reliable workflows.".split(" ");
+  const line1 = "Your team does the work.".split(" ");
+  const line2Pre = ["Your"];
+  const line2Accent = "systems";
+  const line2Post = "should too.".split(" ");
+
+  // Compute word delays continuously across both lines so the
+  // animation reads as one phrase, not two independently-revealing
+  // chunks.
+  let wordIdx = 0;
+  const delay = () => `${wordIdx++ * 55}ms`;
 
   return (
     <section className="v2-hero" aria-label="Hero">
@@ -41,15 +62,45 @@ export default function HeroSectionV2({
             </span>
 
             <h1 className="v2-hero__headline">
-              {headline.map((w, i) => (
+              {/* Line 1 — geometric sans (Syne via --f-display) */}
+              <span className="v2-hero__line">
+                {line1.map((w, i) => (
+                  <span
+                    key={`l1-${i}`}
+                    className="v2-hero__word"
+                    style={{ ["--word-delay" as string]: delay() }}
+                  >
+                    {w}{" "}
+                  </span>
+                ))}
+              </span>
+              {/* Line 2 — italic serif (Instrument Serif) with accent word */}
+              <span className="v2-hero__line v2-hero__line--serif">
+                {line2Pre.map((w, i) => (
+                  <span
+                    key={`l2p-${i}`}
+                    className="v2-hero__word"
+                    style={{ ["--word-delay" as string]: delay() }}
+                  >
+                    {w}{" "}
+                  </span>
+                ))}
                 <span
-                  key={`${w}-${i}`}
-                  className="v2-hero__word"
-                  style={{ ["--word-delay" as string]: `${i * 55}ms` }}
+                  className="v2-hero__word v2-hero__accent"
+                  style={{ ["--word-delay" as string]: delay() }}
                 >
-                  {w}{" "}
+                  {line2Accent}{" "}
                 </span>
-              ))}
+                {line2Post.map((w, i) => (
+                  <span
+                    key={`l2s-${i}`}
+                    className="v2-hero__word"
+                    style={{ ["--word-delay" as string]: delay() }}
+                  >
+                    {w}{" "}
+                  </span>
+                ))}
+              </span>
             </h1>
 
             <p className="v2-hero__sub">
@@ -60,9 +111,14 @@ export default function HeroSectionV2({
             </p>
 
             <div className="v2-hero__cta">
-              <Link href="/book" className="v2-hero__btn v2-hero__btn--primary">
+              <Link href="/book" className="v2-hero__btn v2-hero__btn--primary group">
                 <span>Book free audit</span>
-                <span aria-hidden="true">→</span>
+                <ArrowRight
+                  size={16}
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                  className="v2-hero__btn-arrow"
+                />
               </Link>
               <Link href="#services" className="v2-hero__btn v2-hero__btn--ghost">
                 <span>See services</span>

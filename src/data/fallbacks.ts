@@ -26,7 +26,7 @@ import type {
 export const FALLBACK_SITE_CONFIG: SiteConfig = {
   name: "Arefin Muin",
   role: "AI Automation Engineer & Agent Developer",
-  email: process.env.CONTACT_EMAIL ?? "hello@tensorix.ai",
+  email: process.env.CONTACT_EMAIL ?? "hello@tensorix.me",
   phone: process.env.CONTACT_PHONE ?? "+880 1994-605717",
   phoneE164: process.env.CONTACT_PHONE_E164 ?? "8801994605717",
   tagline:
@@ -39,7 +39,7 @@ export const FALLBACK_SITE_CONFIG: SiteConfig = {
     // TODO: replace with branded /tensorix page once it exists.
     facebook: "https://www.facebook.com/profile.php?id=61588840534814",
     whatsapp: process.env.WHATSAPP_URL ?? "https://wa.me/8801994605717",
-    email: `mailto:${process.env.CONTACT_EMAIL ?? "hello@tensorix.ai"}`,
+    email: `mailto:${process.env.CONTACT_EMAIL ?? "hello@tensorix.me"}`,
   },
   heroTiles: [],
   live30Days: [],
