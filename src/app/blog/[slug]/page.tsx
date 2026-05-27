@@ -17,6 +17,13 @@ import ReadingProgress from "@/components/ReadingProgress";
 import { PortableText } from "@/components/PortableText";
 import BreadcrumbsJsonLd from "@/components/BreadcrumbsJsonLd";
 
+// Slug validation regex — prevent directory traversal and invalid formats
+const VALID_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,100}$/i;
+
+function validateSlug(slug: string): boolean {
+  return VALID_SLUG_PATTERN.test(slug);
+}
+
 // Pre-render every post at build time, then revalidate on webhook.
 export async function generateStaticParams() {
   const slugs = await sanityFetch<string[]>({
@@ -27,6 +34,11 @@ export async function generateStaticParams() {
 }
 
 async function getPost(slug: string) {
+  // Validate slug format before querying to prevent injection attacks
+  if (!validateSlug(slug)) {
+    return null;
+  }
+
   return sanityFetch<PostDetail | null>({
     query: postBySlugQuery,
     params: { slug },
@@ -40,6 +52,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+
+  // Validate slug format
+  if (!validateSlug(slug)) {
+    return { title: "Post not found" };
+  }
+
   const post = await getPost(slug);
   if (!post) return { title: "Post not found" };
 
@@ -76,6 +94,12 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  // Validate slug format
+  if (!validateSlug(slug)) {
+    notFound();
+  }
+
   const [post, allPosts] = await Promise.all([
     getPost(slug),
     sanityFetch<PostListItem[]>({ query: allPostsQuery, tags: ["post"] }),
@@ -187,7 +211,9 @@ export default async function BlogPostPage({
                   href={`/blog/${p.slug}`}
                   className="bg-surface p-8 group flex flex-col"
                 >
-                  {p.category ? <span className="chip self-start">{p.category}</span> : null}
+                  {p.category ? (
+                    <span className="chip self-start">{p.category}</span>
+                  ) : null}
                   <h3 className="mt-5 text-2xl tracking-tight font-medium leading-snug group-hover:text-accent-1 transition-colors">
                     {p.title}
                   </h3>

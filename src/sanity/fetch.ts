@@ -13,9 +13,13 @@
  * fetch resolves to `null`. Callers handle that by falling back to their
  * built-in defaults — so the site still builds and renders sensibly when
  * Sanity hasn't been wired up yet.
+ *
+ * IMPORTANT: All GROQ queries must be hardcoded strings, never constructed
+ * dynamically from user input, to prevent GROQ injection attacks.
  */
 
 import { sanityClient } from "./client";
+import * as Sentry from "@sentry/nextjs";
 
 type FetchOpts<TFallback = null> = {
   query: string;
@@ -39,7 +43,8 @@ export async function sanityFetch<TResult>(
     });
   } catch (err) {
     // Network / auth error — degrade gracefully so the page still renders.
-    console.warn("[sanity] fetch failed, using fallback:", err);
+    // Report to Sentry instead of console.warn
+    Sentry.captureException(err);
     return fallback;
   }
 }

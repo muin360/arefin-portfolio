@@ -3,12 +3,14 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 import { Resend } from "resend";
+import * as Sentry from "@sentry/nextjs";
 
 // Tunables — keep in sync with the client form's maxLengths so server-side
 // validation never appears to "randomly" reject a message that fit on screen.
 const MAX_NAME = 80;
 const MAX_EMAIL = 120;
 const MAX_MESSAGE = 4000;
+const MAX_FORMDATA_SIZE = 5 * 1024 * 1024; // 5MB — prevent abuse
 
 // Topic list mirrors src/app/contact/ContactForm.tsx — duplicated rather
 // than imported because client / server contexts are different.
@@ -38,11 +40,25 @@ export type ContactState = {
   fieldErrors?: Partial<Record<keyof z.infer<typeof ContactSchema>, string>>;
 };
 
-// In-memory rate limit. Process-local (per Vercel function instance) — good
-// enough for a portfolio. For multi-region production, swap with Upstash.
+// In-memory rate limit. Process-local (per Vercel function instance).
+// For production, use Upstash Redis: https://upstash.com
+// This is a temporary solution for portfolio scale.
 const RATE_WINDOW_MS = 60_000;
 const RATE_MAX = 5;
 const rateLog = new Map<string, number[]>();
+
+// Cleanup old entries every 5 minutes to prevent memory leak
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, times] of rateLog.entries()) {
+    const filtered = times.filter((t) => now - t < RATE_WINDOW_MS * 5);
+    if (filtered.length === 0) {
+      rateLog.delete(ip);
+    } else {
+      rateLog.set(ip, filtered);
+    }
+  }
+}, 5 * 60 * 1000);
 
 function rateLimit(ip: string): boolean {
   const now = Date.now();
@@ -62,11 +78,41 @@ function escapeHtml(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
+/**
+ * Validate that email is a single valid address, not comma-separated.
+ * Prevents reply-To header injection.
+ */
+function validateSingleEmail(email: string): boolean {
+  // RFC 5321 simplified — disallow commas, semicolons, and other delimiters
+  return /^[^,;\s]+@[^,;\s]+\.[^,;\s]+$/.test(email);
+}
+
 export async function sendContact(
   _prev: ContactState,
   formData: FormData,
 ): Promise<ContactState> {
   const apiKey = process.env.RESEND_API_KEY;
+
+  // Check FormData size to prevent abuse
+  // Note: FormData size is approximate and not guaranteed
+  const formDataArray = await Promise.all(
+    Array.from(formData.entries()).map(async ([, value]) => {
+      if (typeof value === "string") return value.length;
+      if (value instanceof File) return value.size;
+      return 0;
+    }),
+  );
+  const totalSize = formDataArray.reduce((a, b) => a + b, 0);
+  if (totalSize > MAX_FORMDATA_SIZE) {
+    Sentry.captureMessage(
+      "Contact form payload exceeded size limit",
+      "warning",
+    );
+    return {
+      ok: false,
+      error: "Message too large. Please keep it under 5MB.",
+    };
+  }
 
   // Validate first — even if Resend isn't configured we still want to
   // reject bad payloads cleanly.
@@ -85,11 +131,16 @@ export async function sendContact(
       const key = issue.path[0] as keyof z.infer<typeof ContactSchema>;
       fieldErrors[key] = issue.message;
     }
-    return { ok: false, error: "Please fix the highlighted fields.", fieldErrors };
+    return {
+      ok: false,
+      error: "Please fix the highlighted fields.",
+      fieldErrors,
+    };
   }
 
-  // Honeypot — silently succeed so bots don't learn anything.
+  // Honeypot — detect and log bots, but silently succeed so they don't learn.
   if (parsed.data.website) {
+    Sentry.captureMessage("Honeypot field filled (bot submission)", "info");
     return { ok: true };
   }
 
@@ -100,6 +151,10 @@ export async function sendContact(
     h.get("x-real-ip") ||
     "unknown";
   if (!rateLimit(ip)) {
+    Sentry.captureMessage(
+      `Contact form rate limit exceeded for IP: ${ip}`,
+      "warning",
+    );
     return {
       ok: false,
       error: "Too many messages from this network. Try again in a minute.",
@@ -109,6 +164,10 @@ export async function sendContact(
   if (!apiKey) {
     // Email infra not configured — surface a clear message rather than
     // silently dropping the message. The form falls back to a mailto: link.
+    Sentry.captureMessage(
+      "Contact form submitted but RESEND_API_KEY not configured",
+      "warning",
+    );
     return {
       ok: false,
       error:
@@ -117,13 +176,27 @@ export async function sendContact(
   }
 
   const { name, email, subject, message } = parsed.data;
+
+  // Validate reply-To is a single email (prevent header injection)
+  if (!validateSingleEmail(email)) {
+    Sentry.captureMessage(
+      `Invalid email format in replyTo: ${email}`,
+      "warning",
+    );
+    return {
+      ok: false,
+      error: "Invalid email format. Please check and try again.",
+    };
+  }
+
   const resend = new Resend(apiKey);
 
   // FROM domain must be verified in Resend. Until you verify your own
   // domain, use the Resend onboarding sender; it works out of the box but
   // sends from `onboarding@resend.dev`. After verifying tensorix.me
   // (or whatever), set CONTACT_FROM_EMAIL to "Tensorix <hi@your.dev>".
-  const from = process.env.CONTACT_FROM_EMAIL || "Tensorix <onboarding@resend.dev>";
+  const from =
+    process.env.CONTACT_FROM_EMAIL || "Tensorix <onboarding@resend.dev>";
   const to = process.env.CONTACT_TO_EMAIL || "hello@tensorix.me";
 
   try {
@@ -144,12 +217,20 @@ export async function sendContact(
       `.trim(),
     });
     if (result.error) {
-      console.error("Resend error", result.error);
-      return { ok: false, error: "Couldn't send right now. Try again or email directly." };
+      // Report to Sentry, do NOT log error details to console
+      Sentry.captureException(new Error(`Resend error: ${result.error}`));
+      return {
+        ok: false,
+        error: "Couldn't send right now. Try again or email directly.",
+      };
     }
     return { ok: true };
   } catch (err) {
-    console.error("sendContact failed", err);
-    return { ok: false, error: "Couldn't send right now. Try again or email directly." };
+    // Report to Sentry, do NOT log to console
+    Sentry.captureException(err);
+    return {
+      ok: false,
+      error: "Couldn't send right now. Try again or email directly.",
+    };
   }
 }
