@@ -37,7 +37,14 @@ export default async function DashboardPage() {
     redirect("/admin/login");
   }
 
-  const stats = (await sanityFetch({
+  type Stats = {
+    totalPosts: number;
+    totalProjects: number;
+    totalSubmissions: number;
+    unreadSubmissions: number;
+  };
+
+  const stats = ((await sanityFetch({
     query: statsQuery,
     tags: ["admin", "stats"],
   })) || {
@@ -45,7 +52,7 @@ export default async function DashboardPage() {
     totalProjects: 0,
     totalSubmissions: 0,
     unreadSubmissions: 0,
-  };
+  }) as Stats;
 
   const submissions = (await sanityFetch({
     query: contactSubmissionsQuery,
