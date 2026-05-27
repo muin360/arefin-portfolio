@@ -28,10 +28,10 @@ export default async function SubmissionsPage() {
   }
 
   const submissions =
-    (await sanityFetch({
+    ((await sanityFetch({
       query: submissionsQuery,
       tags: ["admin", "submissions"],
-    })) || [];
+    })) || []) as any[];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">

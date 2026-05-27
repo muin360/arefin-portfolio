@@ -26,7 +26,7 @@ export default async function PostsPage() {
     redirect("/admin/login");
   }
 
-  const posts = (await sanityFetch({ query: postsQuery, tags: ["post"] })) || [];
+  const posts = ((await sanityFetch({ query: postsQuery, tags: ["post"] })) || []) as any[];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">

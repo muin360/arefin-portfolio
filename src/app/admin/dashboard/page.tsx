@@ -54,10 +54,10 @@ export default async function DashboardPage() {
     unreadSubmissions: 0,
   }) as Stats;
 
-  const submissions = (await sanityFetch({
+  const submissions = ((await sanityFetch({
     query: contactSubmissionsQuery,
     tags: ["admin", "submissions"],
-  })) || [];
+  })) || []) as any[];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">

@@ -27,7 +27,7 @@ export default async function ProjectsPage() {
     redirect("/admin/login");
   }
 
-  const projects = (await sanityFetch({ query: projectsQuery, tags: ["project"] })) || [];
+  const projects = ((await sanityFetch({ query: projectsQuery, tags: ["project"] })) || []) as any[];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
