@@ -1,13 +1,13 @@
 import { auth } from "@/lib/auth";
 
-export const middleware = auth((req) => {
-  // Protected admin routes
-  if (req.nextUrl.pathname.startsWith("/admin") && 
-      req.nextUrl.pathname !== "/admin/login") {
-    
-    // Auth.js automatically handles redirects via the authorized callback
-    // If we get here, the user is already authenticated
-  }
+/**
+ * NextAuth middleware for protecting admin routes.
+ * Runs on the edge and checks authentication status.
+ */
+export const middleware = auth((request) => {
+  // NextAuth.js automatically handles redirects
+  // If we reach here, the user is authenticated
+  return undefined;
 });
 
 export const config = {

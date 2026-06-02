@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 
@@ -11,7 +11,7 @@ function isAdmin(email?: string, githubLogin?: string): boolean {
   return false;
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+const config = {
   providers: [
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
@@ -27,7 +27,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/admin/login",
   },
   callbacks: {
-    authorized({ auth, request }) {
+    async authorized({ auth, request }) {
       const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
       const isLoginPath = request.nextUrl.pathname === "/admin/login";
 
@@ -56,4 +56,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-});
+} satisfies NextAuthConfig;
+
+export const { handlers, auth, signIn, signOut } = NextAuth(config);

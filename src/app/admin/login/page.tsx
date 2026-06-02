@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { signIn } from "@/lib/auth";
 import { Button } from "@/components/admin/Button";
-import { Github, Mail } from "lucide-react";
+import { GitHubIcon as Github, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Admin Login",
