@@ -1,88 +1,68 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Github, Mail, AlertCircle } from "lucide-react";
-import OAuthButtons from "@/components/admin/OAuthButtons";
+import type { Metadata } from "next";
+import { signIn } from "@/lib/auth";
+import { Button } from "@/components/admin/Button";
+import { Github, Mail } from "lucide-react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Admin Login",
-  description: "Tensorix Admin Portal — Login with GitHub or Google",
+  description: "Sign in to Tensorix Admin Panel",
 };
 
-export default async function LoginPage() {
-  const session = await auth();
-
-  // If already authenticated, redirect to dashboard
-  if (session?.user) {
-    redirect("/admin/dashboard");
-  }
-
+export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 px-4">
       <div className="w-full max-w-md">
-        {/* Logo / Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-violet-600/20 border border-violet-500/30 mb-4">
-            <span className="text-2xl font-bold text-violet-400">⚡</span>
+        {/* Card */}
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl">
+          {/* Logo / Title */}
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-white mb-2">Tensorix</h1>
+            <p className="text-slate-400">Admin Panel</p>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Tensorix Admin</h1>
-          <p className="text-slate-400">Manage your portfolio and content</p>
-        </div>
 
-        {/* Login Card */}
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-8 backdrop-blur-xl">
+          {/* Description */}
+          <p className="text-slate-400 text-center mb-8 text-sm">
+            Sign in with GitHub or Google to access the admin dashboard
+          </p>
+
+          {/* Login Buttons */}
           <div className="space-y-4">
-            {/* Info Box */}
-            <div className="flex gap-3 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-blue-200">
-                Login with GitHub or Google to access the admin panel.
-              </p>
-            </div>
+            {/* GitHub Login */}
+            <form
+              action={async () => {
+                "use server";
+                await signIn("github", { redirectTo: "/admin" });
+              }}
+            >
+              <Button
+                type="submit"
+                className="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <Github className="w-5 h-5" />
+                Sign in with GitHub
+              </Button>
+            </form>
 
-            <OAuthButtons />
-
-            {/* Divider */}
-            <div className="relative py-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-700"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-slate-800/50 text-slate-400">Or</span>
-              </div>
-            </div>
-
-            {/* Info */}
-            <div className="space-y-3 pt-2">
-              <div className="flex gap-3">
-                <Github className="w-5 h-5 text-slate-400 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-sm font-semibold text-white">GitHub</h3>
-                  <p className="text-xs text-slate-400">
-                    Quick login with your GitHub account
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <Mail className="w-5 h-5 text-slate-400 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-sm font-semibold text-white">Google</h3>
-                  <p className="text-xs text-slate-400">
-                    Sign in with your Google account
-                  </p>
-                </div>
-              </div>
-            </div>
+            {/* Google Login */}
+            <form
+              action={async () => {
+                "use server";
+                await signIn("google", { redirectTo: "/admin" });
+              }}
+            >
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <Mail className="w-5 h-5" />
+                Sign in with Google
+              </Button>
+            </form>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="mt-6 text-center text-sm text-slate-400">
-          <p>
-            Back to{" "}
-            <Link href="/" className="text-violet-400 hover:text-violet-300">
-              home
-            </Link>
+          {/* Footer */}
+          <p className="text-slate-500 text-xs text-center mt-8">
+            Only authorized users can access this panel.
           </p>
         </div>
       </div>

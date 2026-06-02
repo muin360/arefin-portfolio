@@ -1,11 +1,17 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import * as Sentry from "@sentry/nextjs";
 
-const adminEmails = process.env.ADMIN_EMAILS?.split(",").map((e) => e.trim()) || [];
+const adminGithubUsers = (process.env.ADMIN_GITHUB_USERS || "").split(",").filter(Boolean);
+const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").filter(Boolean);
 
-export const { auth, handlers, signIn, signOut } = NextAuth({
+function isAdmin(email?: string, githubLogin?: string): boolean {
+  if (email && adminEmails.includes(email)) return true;
+  if (githubLogin && adminGithubUsers.includes(githubLogin)) return true;
+  return false;
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
@@ -21,49 +27,33 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     error: "/admin/login",
   },
   callbacks: {
-    async authorized({ request, auth }) {
-      const { pathname } = request.nextUrl;
+    authorized({ auth, request }) {
+      const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
+      const isLoginPath = request.nextUrl.pathname === "/admin/login";
 
-      // Protected admin routes
-      if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-        // Allow if authenticated and email is in admin list
-        return (
-          !!auth?.user?.email &&
-          adminEmails.includes(auth.user.email)
-        );
+      if (isLoginPath) return true;
+
+      if (isAdminPath && auth) {
+        const user = auth.user;
+        const isUserAdmin = isAdmin(user?.email, (user as any)?.login);
+        return isUserAdmin;
       }
 
-      return true;
+      return !!auth;
     },
-    async jwt({ token, user }) {
-      if (user?.email) {
-        token.isAdmin = adminEmails.includes(user.email);
-        token.email = user.email;
+    jwt({ token, profile }) {
+      if (profile) {
+        token.login = (profile as any).login;
+        token.isAdmin = isAdmin((profile as any)?.email, (profile as any)?.login);
       }
       return token;
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       if (session.user) {
-        session.user.isAdmin = token.isAdmin as boolean;
-        session.user.email = token.email as string;
+        (session.user as any).login = token.login;
+        (session.user as any).isAdmin = token.isAdmin;
       }
       return session;
-    },
-    async signIn({ user, account }) {
-      try {
-        // Check if user email is in admin list
-        if (!user.email || !adminEmails.includes(user.email)) {
-          Sentry.captureMessage(
-            `Unauthorized login attempt: ${user.email} via ${account?.provider}`,
-            "warning",
-          );
-          return false;
-        }
-        return true;
-      } catch (err) {
-        Sentry.captureException(err);
-        return false;
-      }
     },
   },
 });
