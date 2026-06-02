@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import TerminalLog from "./TerminalLog";
 import TypewriterText from "./TypewriterText";
 import { useInView } from "@/hooks/useInView";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import CountUp from "./CountUp";
 
 /**
@@ -20,23 +21,21 @@ import CountUp from "./CountUp";
  */
 export default function AgentDashboard() {
   const [ref, inView] = useInView<HTMLDivElement>({ threshold: 0.2 });
+  const reduced = useReducedMotion();
   const [latency, setLatency] = useState(12);
 
   // Pulse the latency value every ~3.5s while the widget is visible,
   // so the metric strip feels live without being distracting.
   useEffect(() => {
     if (!inView) return;
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
+    if (reduced) return;
 
     const id = window.setInterval(() => {
       // 10ms – 18ms range, integer
       setLatency(10 + Math.floor(Math.random() * 9));
     }, 3400);
     return () => window.clearInterval(id);
-  }, [inView]);
+  }, [inView, reduced]);
 
   const lines = [
     { time: "09:42:11", type: "info" as const,  message: "lead.created · channel=whatsapp",            status: "200 ok" },

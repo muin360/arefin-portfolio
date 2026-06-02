@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type Particle = {
   x: number;
@@ -25,12 +26,13 @@ export default function ParticleNetwork({
   className?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (reduced) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -196,7 +198,7 @@ export default function ParticleNetwork({
       window.removeEventListener("mousemove", onMouseMove);
       canvas.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, [density, linkDistance]);
+  }, [density, linkDistance, reduced]);
 
   return (
     <canvas

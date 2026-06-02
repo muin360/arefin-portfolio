@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
  * A subtle cursor-following radial gradient. Designed to live inside a
@@ -9,11 +10,12 @@ import { useEffect, useRef } from "react";
  */
 export default function CursorSpotlight() {
   const ref = useRef<HTMLDivElement | null>(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (reduced) return;
     if (window.matchMedia("(hover: none)").matches) return;
 
     const parent = el.parentElement;
@@ -35,7 +37,7 @@ export default function CursorSpotlight() {
       parent.removeEventListener("mousemove", onMove);
       parent.removeEventListener("mouseleave", onLeave);
     };
-  }, []);
+  }, [reduced]);
 
   return (
     <div

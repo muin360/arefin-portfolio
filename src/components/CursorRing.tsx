@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
  * A small ring that follows the cursor, magnetizing to interactive
@@ -8,13 +9,14 @@ import { useEffect, useRef } from "react";
  */
 export default function CursorRing() {
   const ringRef = useRef<HTMLDivElement | null>(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const ring = ringRef.current;
     if (!ring) return;
     if (typeof window === "undefined") return;
     if (window.matchMedia("(hover: none)").matches) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (reduced) return;
 
     let rx = window.innerWidth / 2;
     let ry = window.innerHeight / 2;
@@ -57,7 +59,7 @@ export default function CursorRing() {
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseleave", onLeave);
     };
-  }, []);
+  }, [reduced]);
 
   return <div ref={ringRef} className="cursor-ring" aria-hidden="true" />;
 }

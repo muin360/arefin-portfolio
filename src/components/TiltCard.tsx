@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useRef, MouseEvent } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
  * 3D parallax tilt card. Tracks the cursor position and tilts the card
@@ -16,14 +17,15 @@ export default function TiltCard({
   intensity?: number;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const reduced = useReducedMotion();
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     const el = ref.current;
     if (!el) return;
     if (
-      typeof window !== "undefined" &&
-      (window.matchMedia("(hover: none)").matches ||
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      reduced ||
+      (typeof window !== "undefined" &&
+        window.matchMedia("(hover: none)").matches)
     ) {
       return;
     }

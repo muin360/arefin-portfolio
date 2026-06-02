@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import { useInView } from "@/hooks/useInView";
 
 const tools = [
   { name: "n8n", level: 95, group: "Orchestration" },
@@ -26,26 +27,7 @@ const tools = [
  * scroll-in, and tracks the cursor for a magnetic radial-glow hover.
  */
 export default function SkillsConstellation() {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setShown(true);
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.18 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const [ref, shown] = useInView<HTMLDivElement>({ threshold: 0.18, once: true });
 
   return (
     <div

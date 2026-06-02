@@ -1,7 +1,5 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import AdminNav from "@/components/admin/AdminNav";
-import AdminSidebar from "@/components/admin/AdminSidebar";
+import { requireAdmin } from "@/lib/admin-auth";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import SettingsForm from "@/components/admin/SettingsForm";
 import { sanityFetch } from "@/sanity/fetch";
 import { siteConfigQuery } from "@/sanity/queries";
@@ -13,11 +11,7 @@ export const metadata = {
 };
 
 export default async function SettingsPage() {
-  const session = await auth();
-
-  if (!session?.user?.isAdmin) {
-    redirect("/admin/login");
-  }
+  const session = await requireAdmin();
 
   const config = (await sanityFetch<SiteConfig>({
     query: siteConfigQuery,
@@ -25,26 +19,16 @@ export default async function SettingsPage() {
   })) || null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <AdminNav user={session.user} />
-
-      <div className="flex">
-        <AdminSidebar />
-
-        <main className="flex-1 overflow-auto">
-          <div className="p-8">
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
-              <p className="text-slate-400">
-                Manage your portfolio settings and configuration
-              </p>
-            </div>
-
-            <SettingsForm initialConfig={config} />
-          </div>
-        </main>
+    <AdminPageShell user={session.user}>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
+        <p className="text-slate-400">
+          Manage your portfolio settings and configuration
+        </p>
       </div>
-    </div>
+
+      <SettingsForm initialConfig={config} />
+    </AdminPageShell>
   );
 }
