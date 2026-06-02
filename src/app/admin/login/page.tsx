@@ -1,8 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AlertCircle } from "lucide-react";
-import { IconGithub, IconMail } from "@/components/icons";
+import { Github, Mail, AlertCircle } from "lucide-react";
 import OAuthButtons from "@/components/admin/OAuthButtons";
 
 export const metadata = {
@@ -13,6 +12,7 @@ export const metadata = {
 export default async function LoginPage() {
   const session = await auth();
 
+  // If already authenticated, redirect to dashboard
   if (session?.user) {
     redirect("/admin/dashboard");
   }
@@ -36,7 +36,7 @@ export default async function LoginPage() {
             <div className="flex gap-3 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg">
               <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-blue-200">
-                Only authorized admins can access this panel.
+                Login with GitHub or Google to access the admin panel.
               </p>
             </div>
 
@@ -48,14 +48,14 @@ export default async function LoginPage() {
                 <div className="w-full border-t border-slate-700"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-slate-800/50 text-slate-400">Supported providers</span>
+                <span className="px-2 bg-slate-800/50 text-slate-400">Or</span>
               </div>
             </div>
 
             {/* Info */}
             <div className="space-y-3 pt-2">
               <div className="flex gap-3">
-                <IconGithub className="w-5 h-5 text-slate-400 flex-shrink-0 mt-1" />
+                <Github className="w-5 h-5 text-slate-400 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-sm font-semibold text-white">GitHub</h3>
                   <p className="text-xs text-slate-400">
@@ -64,7 +64,7 @@ export default async function LoginPage() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <IconMail className="w-5 h-5 text-slate-400 flex-shrink-0 mt-1" />
+                <Mail className="w-5 h-5 text-slate-400 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-sm font-semibold text-white">Google</h3>
                   <p className="text-xs text-slate-400">
