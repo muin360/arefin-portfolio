@@ -9,14 +9,14 @@ Project → **Settings → Environment Variables** (Production + Preview):
 | Name                                  | Required | Notes                                                                                  |
 | ------------------------------------- | -------- | -------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL`                | yes      | e.g. `https://tensorix.me`. No trailing slash.                              |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID`       | yes      | `h3kwrsuj`                                                                              |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID`       | yes      | Your Sanity project ID (find it in https://www.sanity.io/manage).                      |
 | `NEXT_PUBLIC_SANITY_DATASET`          | yes      | `production`                                                                            |
 | `SANITY_API_READ_TOKEN`               | optional | **Only needed if your Sanity dataset is private.** Generate a Viewer token in Sanity manage. Make the dataset public to skip this. |
 | `SANITY_REVALIDATE_SECRET`            | yes      | Random string. `openssl rand -base64 32`. Same value goes into Sanity webhook config.  |
 | `RESEND_API_KEY`                      | yes      | From https://resend.com — Free tier covers 3,000 emails/mo. Without this the contact form returns an error. |
 | `CONTACT_TO_EMAIL`                    | optional | Defaults to `arefinmuin@gmail.com`. Override if you want submissions sent elsewhere.   |
 | `CONTACT_FROM_EMAIL`                  | optional | Default `Tensorix <onboarding@resend.dev>`. After you verify a custom domain in Resend, set this to e.g. `Tensorix <hi@tensorix.me>`. |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`| yes      | Google Search Console verification token (already set: `v1dlYhce2C26iEpbBI1F9mDAwEL40Sh_A_0X1L8j4NU`). |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`| yes      | Google Search Console verification token (from Search Console → Settings → Ownership). |
 | `NEXT_PUBLIC_SENTRY_DSN`              | optional | Drop in your Sentry project DSN to enable error monitoring. Without it the SDK is loaded but inert. |
 | `SENTRY_DSN`                          | optional | Same DSN as above — used by server runtimes.                                            |
 
@@ -26,7 +26,7 @@ Project → **Settings → Environment Variables** (Production + Preview):
 
 Without this, content edits in `/studio` won't appear on the live site until the next deploy.
 
-1. https://www.sanity.io/manage/personal/project/h3kwrsuj/api/webhooks → **Create webhook**
+1. https://www.sanity.io/manage → your project → **API → Webhooks → Create webhook**
 2. **URL:** `https://tensorix.me/api/revalidate`
 3. **Trigger on:** ✓ Create, ✓ Update, ✓ Delete
 4. **Filter:** `_type in ["post","project","service","skillCategory","siteConfig"]`
