@@ -5,6 +5,9 @@ import { z } from "zod";
 import { Resend } from "resend";
 import * as Sentry from "@sentry/nextjs";
 
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || "arefinmueen360@gmail.com";
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || CONTACT_EMAIL;
+
 // Tunables — keep in sync with the client form's maxLengths so server-side
 // validation never appears to "randomly" reject a message that fit on screen.
 const MAX_NAME = 80;
@@ -171,7 +174,7 @@ export async function sendContact(
     return {
       ok: false,
       error:
-        "Email delivery isn't configured yet. Please email hello@tensorix.me directly.",
+        "Email delivery isn't configured yet. Please email " + CONTACT_EMAIL + " directly.",
     };
   }
 
@@ -193,11 +196,11 @@ export async function sendContact(
 
   // FROM domain must be verified in Resend. Until you verify your own
   // domain, use the Resend onboarding sender; it works out of the box but
-  // sends from `onboarding@resend.dev`. After verifying tensorix.me
-  // (or whatever), set CONTACT_FROM_EMAIL to "Tensorix <hi@your.dev>".
+  // sends from `onboarding@resend.dev`. After verifying your domain
+  // set CONTACT_FROM_EMAIL to "Tensorix <hi@your.dev>".
   const from =
     process.env.CONTACT_FROM_EMAIL || "Tensorix <onboarding@resend.dev>";
-  const to = process.env.CONTACT_TO_EMAIL || "hello@tensorix.me";
+  const to = CONTACT_TO_EMAIL;
 
   try {
     const result = await resend.emails.send({
