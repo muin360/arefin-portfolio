@@ -21,6 +21,7 @@ export default function SubmissionsClient({
   const [submissions, setSubmissions] = useState(initialSubmissions);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
 
   const filtered = submissions.filter((s) => {
@@ -33,6 +34,7 @@ export default function SubmissionsClient({
 
   const toggleRead = async (id: string, currentRead: boolean) => {
     setLoading(id);
+    setError(null);
     try {
       const res = await fetch("/api/admin/submissions", {
         method: "PATCH",
@@ -43,7 +45,11 @@ export default function SubmissionsClient({
         setSubmissions((prev) =>
           prev.map((s) => (s._id === id ? { ...s, read: !currentRead } : s))
         );
+      } else {
+        setError("Failed to update submission. Please try again.");
       }
+    } catch {
+      setError("A network error occurred. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -52,6 +58,7 @@ export default function SubmissionsClient({
   const deleteSubmission = async (id: string) => {
     if (!confirm("Delete this submission?")) return;
     setLoading(id);
+    setError(null);
     try {
       const res = await fetch("/api/admin/submissions", {
         method: "DELETE",
@@ -60,7 +67,11 @@ export default function SubmissionsClient({
       });
       if (res.ok) {
         setSubmissions((prev) => prev.filter((s) => s._id !== id));
+      } else {
+        setError("Failed to delete submission. Please try again.");
       }
+    } catch {
+      setError("A network error occurred. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -68,6 +79,14 @@ export default function SubmissionsClient({
 
   return (
     <div>
+      {error && (
+        <p
+          role="alert"
+          className="text-sm text-red-300 border border-red-500/30 rounded-lg p-3 bg-red-900/20 mb-4"
+        >
+          {error}
+        </p>
+      )}
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-6">
         {(["all", "unread", "read"] as const).map((f) => (

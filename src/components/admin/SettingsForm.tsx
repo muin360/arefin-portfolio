@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Save, AlertCircle } from "lucide-react";
+import * as Sentry from "@sentry/nextjs";
 import type { SiteConfig } from "@/sanity/types";
 
 type Props = {
@@ -52,6 +53,7 @@ export default function SettingsForm({ initialConfig }: Props) {
         });
       }
     } catch (error) {
+      Sentry.captureException(error);
       setMessage({
         type: "error",
         text: "An error occurred while saving settings.",

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@sanity/client";
+import * as Sentry from "@sentry/nextjs";
 
 const writeClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
@@ -25,7 +26,7 @@ export async function PATCH(req: NextRequest) {
     await writeClient.patch(id).set({ read: !!read }).commit();
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error updating submission:", error);
+    Sentry.captureException(error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -45,7 +46,7 @@ export async function DELETE(req: NextRequest) {
     await writeClient.delete(id);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting submission:", error);
+    Sentry.captureException(error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

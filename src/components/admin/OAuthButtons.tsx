@@ -1,17 +1,20 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { Mail } from "lucide-react";
 import { IconGithub } from "@/components/icons";
 import { useState } from "react";
 
 export default function OAuthButtons() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignIn = async (provider: string) => {
     setLoading(provider);
+    setError(null);
     try {
       await signIn(provider, { redirectTo: "/admin/dashboard" });
+    } catch {
+      setError("Sign-in failed. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -19,6 +22,14 @@ export default function OAuthButtons() {
 
   return (
     <div className="space-y-3">
+      {error && (
+        <p
+          role="alert"
+          className="text-sm text-red-300 border border-red-500/30 rounded-lg p-3 bg-red-900/20"
+        >
+          {error}
+        </p>
+      )}
       <button
         onClick={() => handleSignIn("github")}
         disabled={loading !== null}

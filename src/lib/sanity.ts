@@ -1,4 +1,5 @@
 import { createClient } from '@sanity/client'
+import * as Sentry from "@sentry/nextjs";
 
 export const client = createClient({
   projectId: "h3kwrsuj",
@@ -8,5 +9,10 @@ export const client = createClient({
 })
 
 export async function getPosts() {
-  return await client.fetch(`*[_type == "post"]{_id, title}`)
+  try {
+    return await client.fetch(`*[_type == "post"]{_id, title}`)
+  } catch (err) {
+    Sentry.captureException(err);
+    return [];
+  }
 }

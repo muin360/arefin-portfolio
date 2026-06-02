@@ -59,7 +59,6 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     Sentry.captureException(error);
-    console.error("Settings update error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
