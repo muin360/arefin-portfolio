@@ -1,15 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@sanity/client";
+import { writeClient } from "@/sanity/writeClient";
 import * as Sentry from "@sentry/nextjs";
-
-const writeClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-10-01",
-  token: process.env.SANITY_API_WRITE_TOKEN,
-  useCdn: false,
-});
 
 export async function POST(req: NextRequest) {
   try {
@@ -59,7 +51,6 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     Sentry.captureException(error);
-    console.error("Settings update error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

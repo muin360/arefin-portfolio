@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { Resend } from "resend";
 import * as Sentry from "@sentry/nextjs";
+import { hashIp } from "@/lib/hash-ip";
 
 // Tunables — keep in sync with the client form's maxLengths so server-side
 // validation never appears to "randomly" reject a message that fit on screen.
@@ -47,19 +48,6 @@ const RATE_WINDOW_MS = 60_000;
 const RATE_MAX = 5;
 const rateLog = new Map<string, number[]>();
 
-// Cleanup old entries every 5 minutes to prevent memory leak
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, times] of rateLog.entries()) {
-    const filtered = times.filter((t) => now - t < RATE_WINDOW_MS * 5);
-    if (filtered.length === 0) {
-      rateLog.delete(ip);
-    } else {
-      rateLog.set(ip, filtered);
-    }
-  }
-}, 5 * 60 * 1000);
-
 function rateLimit(ip: string): boolean {
   const now = Date.now();
   const arr = (rateLog.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
@@ -76,15 +64,6 @@ function escapeHtml(s: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
-}
-
-/**
- * Validate that email is a single valid address, not comma-separated.
- * Prevents reply-To header injection.
- */
-function validateSingleEmail(email: string): boolean {
-  // RFC 5321 simplified — disallow commas, semicolons, and other delimiters
-  return /^[^,;\s]+@[^,;\s]+\.[^,;\s]+$/.test(email);
 }
 
 export async function sendContact(
@@ -152,7 +131,7 @@ export async function sendContact(
     "unknown";
   if (!rateLimit(ip)) {
     Sentry.captureMessage(
-      `Contact form rate limit exceeded for IP: ${ip}`,
+      `Contact form rate limit exceeded for IP hash: ${hashIp(ip)}`,
       "warning",
     );
     return {
@@ -176,18 +155,6 @@ export async function sendContact(
   }
 
   const { name, email, subject, message } = parsed.data;
-
-  // Validate reply-To is a single email (prevent header injection)
-  if (!validateSingleEmail(email)) {
-    Sentry.captureMessage(
-      `Invalid email format in replyTo: ${email}`,
-      "warning",
-    );
-    return {
-      ok: false,
-      error: "Invalid email format. Please check and try again.",
-    };
-  }
 
   const resend = new Resend(apiKey);
 

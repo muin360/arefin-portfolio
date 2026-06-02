@@ -1,11 +1,16 @@
 import { signOut } from "@/lib/auth";
-import { User, LogOut, Menu } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
-type Session = any;
+type AdminUser = {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  isAdmin?: boolean;
+};
 
-export default function AdminNav({ user }: { user: Session }) {
+export default function AdminNav({ user }: { user: AdminUser }) {
   return (
     <nav className="sticky top-0 z-40 bg-slate-800/50 border-b border-slate-700/50 backdrop-blur-xl">
       <div className="flex items-center justify-between px-6 py-4">

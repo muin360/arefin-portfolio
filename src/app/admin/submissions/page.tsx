@@ -5,6 +5,7 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import { sanityFetch } from "@/sanity/fetch";
 import { groq } from "next-sanity";
 import SubmissionsClient from "./SubmissionsClient";
+import type { AdminSubmission } from "@/types/admin";
 
 export const metadata = {
   title: "Contact Submissions",
@@ -28,10 +29,10 @@ export default async function SubmissionsPage() {
   }
 
   const submissions =
-    ((await sanityFetch({
+    (await sanityFetch<AdminSubmission[]>({
       query: submissionsQuery,
       tags: ["admin", "submissions"],
-    })) || []) as any[];
+    })) ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">

@@ -11,7 +11,6 @@
     "sanity:dataset": "sanity dataset"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.3.4",
     "@portabletext/react": "^6.0.3",
     "@portabletext/types": "^4.0.2",
     "@sanity/client": "^7.22.0",
@@ -28,7 +27,6 @@
     "next-sanity": "^12.3.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-hook-form": "^7.51.4",
     "resend": "^6.12.2",
     "sanity": "^5.22.0",
     "zod": "^4.3.6"

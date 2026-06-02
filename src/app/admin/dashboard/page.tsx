@@ -6,6 +6,7 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import StatsCard from "@/components/admin/StatsCard";
 import { sanityFetch } from "@/sanity/fetch";
 import { groq } from "next-sanity";
+import type { AdminStats, AdminSubmission } from "@/types/admin";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -37,27 +38,20 @@ export default async function DashboardPage() {
     redirect("/admin/login");
   }
 
-  type Stats = {
-    totalPosts: number;
-    totalProjects: number;
-    totalSubmissions: number;
-    unreadSubmissions: number;
-  };
-
-  const stats = ((await sanityFetch({
+  const stats = (await sanityFetch<AdminStats>({
     query: statsQuery,
     tags: ["admin", "stats"],
-  })) || {
+  })) ?? {
     totalPosts: 0,
     totalProjects: 0,
     totalSubmissions: 0,
     unreadSubmissions: 0,
-  }) as Stats;
+  };
 
-  const submissions = ((await sanityFetch({
+  const submissions = (await sanityFetch<AdminSubmission[]>({
     query: contactSubmissionsQuery,
     tags: ["admin", "submissions"],
-  })) || []) as any[];
+  })) ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -125,7 +119,7 @@ export default async function DashboardPage() {
 
               {submissions.length > 0 ? (
                 <div className="space-y-3">
-                  {submissions.map((sub: any) => (
+                  {submissions.map((sub) => (
                     <div
                       key={sub._id}
                       className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg border border-slate-600/30 hover:border-slate-500/50 transition-colors"

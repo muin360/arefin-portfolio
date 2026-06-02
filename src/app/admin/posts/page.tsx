@@ -5,6 +5,7 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import { sanityFetch } from "@/sanity/fetch";
 import { groq } from "next-sanity";
 import { FileText, ExternalLink, Calendar } from "lucide-react";
+import type { AdminPost } from "@/types/admin";
 
 export const metadata = {
   title: "Posts",
@@ -26,7 +27,7 @@ export default async function PostsPage() {
     redirect("/admin/login");
   }
 
-  const posts = ((await sanityFetch({ query: postsQuery, tags: ["post"] })) || []) as any[];
+  const posts = (await sanityFetch<AdminPost[]>({ query: postsQuery, tags: ["post"] })) ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -56,7 +57,7 @@ export default async function PostsPage() {
             <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl overflow-hidden backdrop-blur-xl">
               {posts.length > 0 ? (
                 <div className="divide-y divide-slate-700/30">
-                  {posts.map((post: any) => (
+                  {posts.map((post) => (
                     <div
                       key={post._id}
                       className="flex items-center justify-between p-6 hover:bg-slate-700/20 transition-colors"

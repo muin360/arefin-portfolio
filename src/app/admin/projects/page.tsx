@@ -5,6 +5,7 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import { sanityFetch } from "@/sanity/fetch";
 import { groq } from "next-sanity";
 import { FolderOpen, ExternalLink, Globe } from "lucide-react";
+import type { AdminProject } from "@/types/admin";
 
 export const metadata = {
   title: "Projects",
@@ -27,7 +28,7 @@ export default async function ProjectsPage() {
     redirect("/admin/login");
   }
 
-  const projects = ((await sanityFetch({ query: projectsQuery, tags: ["project"] })) || []) as any[];
+  const projects = (await sanityFetch<AdminProject[]>({ query: projectsQuery, tags: ["project"] })) ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -57,7 +58,7 @@ export default async function ProjectsPage() {
             <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl overflow-hidden backdrop-blur-xl">
               {projects.length > 0 ? (
                 <div className="divide-y divide-slate-700/30">
-                  {projects.map((project: any) => (
+                  {projects.map((project) => (
                     <div
                       key={project._id}
                       className="flex items-center justify-between p-6 hover:bg-slate-700/20 transition-colors"
@@ -75,7 +76,7 @@ export default async function ProjectsPage() {
                           )}
                           {project.tags && project.tags.length > 0 && (
                             <div className="flex gap-1 mt-1 flex-wrap">
-                              {project.tags.slice(0, 3).map((tag: string) => (
+                              {project.tags.slice(0, 3).map((tag) => (
                                 <span
                                   key={tag}
                                   className="text-xs px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-400"

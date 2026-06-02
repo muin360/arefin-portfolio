@@ -24,6 +24,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 import { headers } from "next/headers";
 import * as Sentry from "@sentry/nextjs";
+import { hashIp } from "@/lib/hash-ip";
 
 type Body = { _type?: string; slug?: string };
 
@@ -42,26 +43,14 @@ const ALLOWED_TYPES = new Set([
   "faq",
   "testimonial",
   "hero",
+  "contactSubmission",
 ]);
 
 // In-memory rate limit. Process-local. Good enough at portfolio scale; for
 // multi-region prod, swap with Upstash or Vercel KV.
 const RATE_WINDOW_MS = 60_000;
-const RATE_MAX = 15; // Reduced from 30 for better security
+const RATE_MAX = 15;
 const rateLog = new Map<string, number[]>();
-
-// Cleanup old entries every 10 minutes to prevent memory leak
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, times] of rateLog.entries()) {
-    const filtered = times.filter((t) => now - t < RATE_WINDOW_MS * 10);
-    if (filtered.length === 0) {
-      rateLog.delete(ip);
-    } else {
-      rateLog.set(ip, filtered);
-    }
-  }
-}, 10 * 60 * 1000);
 
 function rateLimit(ip: string): boolean {
   const now = Date.now();
@@ -95,7 +84,7 @@ export async function POST(req: NextRequest) {
       "unknown";
     if (!rateLimit(ip)) {
       Sentry.captureMessage(
-        `Webhook rate limit exceeded for IP: ${ip}`,
+        `Webhook rate limit exceeded for IP hash: ${hashIp(ip)}`,
         "warning",
       );
       return NextResponse.json(
@@ -107,7 +96,7 @@ export async function POST(req: NextRequest) {
     const { isValidSignature, body } = await parseBody<Body>(req, secret);
     if (!isValidSignature) {
       Sentry.captureMessage(
-        `Webhook received with invalid signature from IP: ${ip}`,
+        `Webhook received with invalid signature from IP hash: ${hashIp(ip)}`,
         "warning",
       );
       return NextResponse.json(
@@ -117,7 +106,7 @@ export async function POST(req: NextRequest) {
     }
     if (!body?._type) {
       Sentry.captureMessage(
-        `Webhook payload missing _type field from IP: ${ip}`,
+        `Webhook payload missing _type field from IP hash: ${hashIp(ip)}`,
         "warning",
       );
       return NextResponse.json(
@@ -127,7 +116,7 @@ export async function POST(req: NextRequest) {
     }
     if (!ALLOWED_TYPES.has(body._type)) {
       Sentry.captureMessage(
-        `Webhook received for unknown document type: ${body._type} from IP: ${ip}`,
+        `Webhook received for unknown document type: ${body._type} from IP hash: ${hashIp(ip)}`,
         "warning",
       );
       return NextResponse.json(
