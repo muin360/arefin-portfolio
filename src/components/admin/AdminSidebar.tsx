@@ -76,7 +76,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
           </div>
         </div>
         <button
-          onClick={() => signOut({ redirectTo: "/" })}
+          onClick={() => signOut({ callbackUrl: "/" })}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 hover:bg-red-600/20 text-red-400 hover:text-red-300 rounded-lg transition-colors font-medium text-sm"
         >
           <LogOut className="w-4 h-4" />

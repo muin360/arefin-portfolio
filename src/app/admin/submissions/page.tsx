@@ -21,6 +21,16 @@ const submissionsQuery = groq`*[_type == "contactSubmission"] | order(_createdAt
   read,
 }`;
 
+type Submission = {
+  _id: string;
+  name: string;
+  email: string;
+  subject?: string;
+  message?: string;
+  _createdAt: string;
+  read?: boolean;
+};
+
 export default async function SubmissionsPage() {
   const session = await auth();
 
@@ -28,10 +38,10 @@ export default async function SubmissionsPage() {
     redirect("/admin/login");
   }
 
-  const submissions = (await sanityFetch({
+  const submissions: Submission[] = (await sanityFetch<Submission[]>({
     query: submissionsQuery,
     tags: ["admin", "submissions"],
-  })) || [];
+  })) ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -56,7 +66,7 @@ export default async function SubmissionsPage() {
             <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl overflow-hidden backdrop-blur-xl">
               {submissions.length > 0 ? (
                 <div className="divide-y divide-slate-700/30">
-                  {submissions.map((submission: any) => (
+                  {submissions.map((submission) => (
                     <div
                       key={submission._id}
                       className="p-6 hover:bg-slate-700/20 transition-colors"
