@@ -30,6 +30,22 @@ const statsQuery = groq`{
   "unreadSubmissions": count(*[_type == "contactSubmission" && read != true]),
 }`;
 
+type Stats = {
+  totalPosts: number;
+  totalProjects: number;
+  totalSubmissions: number;
+  unreadSubmissions: number;
+};
+
+type Submission = {
+  _id: string;
+  name: string;
+  email: string;
+  subject: string;
+  _createdAt: string;
+  read: boolean;
+};
+
 export default async function DashboardPage() {
   const session = await auth();
 
@@ -37,20 +53,20 @@ export default async function DashboardPage() {
     redirect("/admin/login");
   }
 
-  const stats = (await sanityFetch({
+  const stats: Stats = (await sanityFetch<Stats>({
     query: statsQuery,
     tags: ["admin", "stats"],
-  })) || {
+  })) ?? {
     totalPosts: 0,
     totalProjects: 0,
     totalSubmissions: 0,
     unreadSubmissions: 0,
   };
 
-  const submissions = (await sanityFetch({
+  const submissions: Submission[] = (await sanityFetch<Submission[]>({
     query: contactSubmissionsQuery,
     tags: ["admin", "submissions"],
-  })) || [];
+  })) ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -118,7 +134,7 @@ export default async function DashboardPage() {
 
               {submissions.length > 0 ? (
                 <div className="space-y-3">
-                  {submissions.map((sub: any) => (
+                  {submissions.map((sub) => (
                     <div
                       key={sub._id}
                       className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg border border-slate-600/30 hover:border-slate-500/50 transition-colors"
