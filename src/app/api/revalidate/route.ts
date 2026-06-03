@@ -10,13 +10,6 @@
  *     HTTP method: POST
  *     API version: v2024-10-01
  *     Secret:     <paste the value of SANITY_REVALIDATE_SECRET>
- *
- * Defense-in-depth on this endpoint:
- *   1. HMAC signature validation — only Sanity-signed payloads pass.
- *   2. _type allowlist — even with a valid signature we reject unknown types.
- *   3. Lightweight in-memory rate limit per IP — blunts a stolen-secret
- *      attacker who tries to revalidate aggressively.
- *   4. Proper HTTP status codes — 401 for auth failure, 429 for rate limit.
  */
 
 import { revalidateTag } from "next/cache";
@@ -30,8 +23,6 @@ type Body = { _type?: string; slug?: string };
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Allowlist of document types we know how to handle. Receiving anything
-// outside this list is treated as a misconfigured / malicious payload.
 const ALLOWED_TYPES = new Set([
   "post",
   "project",
@@ -44,8 +35,6 @@ const ALLOWED_TYPES = new Set([
   "hero",
 ]);
 
-// In-memory rate limit. Process-local. Good enough at portfolio scale; for
-// multi-region prod, swap with Upstash or Vercel KV.
 const RATE_WINDOW_MS = 60_000;
 const RATE_MAX = 15;
 const rateLog = new Map<string, number[]>();
@@ -57,8 +46,6 @@ function rateLimit(ip: string): boolean {
   arr.push(now);
   rateLog.set(ip, arr);
 
-  // Lazy cleanup: randomly purge stale entries during normal request flow
-  // instead of using a module-level setInterval (which leaks in serverless).
   if (Math.random() < 0.1) {
     for (const [key, times] of rateLog.entries()) {
       const fresh = times.filter((t) => now - t < RATE_WINDOW_MS * 10);
@@ -135,15 +122,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Revalidate the broad type tag so any list query that depends on it
-    // (e.g. the homepage projects list) refetches.
-    revalidateTag(body._type);
+    // Next.js 16: revalidateTag requires (tag, type) — "default" covers
+    // all cached data associated with the tag.
+    revalidateTag(body._type, "default");
 
-    // Plus a slug-specific tag for detail pages, when we have one. Slug
-    // values must look like a slug — defense-in-depth in case the
-    // projection ever changes.
     if (body.slug && /^[a-z0-9][a-z0-9-/]{0,80}$/i.test(body.slug)) {
-      revalidateTag(`${body._type}:${body.slug}`);
+      revalidateTag(`${body._type}:${body.slug}`, "default");
     }
 
     return NextResponse.json({
@@ -160,8 +144,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Reject every other HTTP verb explicitly so misconfigured probes get a
-// proper 405 instead of a generic 500.
 export async function GET() {
   return NextResponse.json(
     { ok: false, error: "Method not allowed" },
