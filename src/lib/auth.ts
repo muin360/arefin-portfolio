@@ -5,7 +5,7 @@ import Google from "next-auth/providers/google";
 const adminGithubUsers = (process.env.ADMIN_GITHUB_USERS || "").split(",").filter(Boolean);
 const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").filter(Boolean);
 
-function isAdmin(email?: string, githubLogin?: string): boolean {
+function isAdmin(email?: string | null, githubLogin?: string | null): boolean {
   if (email && adminEmails.includes(email)) return true;
   if (githubLogin && adminGithubUsers.includes(githubLogin)) return true;
   return false;
