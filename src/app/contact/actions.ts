@@ -50,25 +50,27 @@ const RATE_WINDOW_MS = 60_000;
 const RATE_MAX = 5;
 const rateLog = new Map<string, number[]>();
 
-// Cleanup old entries every 5 minutes to prevent memory leak
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, times] of rateLog.entries()) {
-    const filtered = times.filter((t) => now - t < RATE_WINDOW_MS * 5);
-    if (filtered.length === 0) {
-      rateLog.delete(ip);
-    } else {
-      rateLog.set(ip, filtered);
-    }
-  }
-}, 5 * 60 * 1000);
-
 function rateLimit(ip: string): boolean {
   const now = Date.now();
+  // Filter to the current window
   const arr = (rateLog.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
   if (arr.length >= RATE_MAX) return false;
   arr.push(now);
   rateLog.set(ip, arr);
+
+  // Lazy cleanup: periodically purge stale entries for this IP and a few
+  // others, instead of a module-level setInterval (which leaks in serverless).
+  if (Math.random() < 0.05) {
+    for (const [key, times] of rateLog.entries()) {
+      const fresh = times.filter((t) => now - t < RATE_WINDOW_MS * 5);
+      if (fresh.length === 0) {
+        rateLog.delete(key);
+      } else {
+        rateLog.set(key, fresh);
+      }
+    }
+  }
+
   return true;
 }
 
@@ -220,7 +222,6 @@ export async function sendContact(
       `.trim(),
     });
     if (result.error) {
-      // Report to Sentry, do NOT log error details to console
       Sentry.captureException(new Error(`Resend error: ${result.error}`));
       return {
         ok: false,
@@ -229,7 +230,6 @@ export async function sendContact(
     }
     return { ok: true };
   } catch (err) {
-    // Report to Sentry, do NOT log to console
     Sentry.captureException(err);
     return {
       ok: false,

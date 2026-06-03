@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { signIn } from "@/lib/auth";
 import { Button } from "@/components/admin/Button";
-import { GitHubIcon as Github, Mail } from "lucide-react";
+import { GithubIcon, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Admin Login",
@@ -38,7 +38,7 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
-                <Github className="w-5 h-5" />
+                <GithubIcon className="w-5 h-5" />
                 Sign in with GitHub
               </Button>
             </form>

@@ -47,21 +47,8 @@ const ALLOWED_TYPES = new Set([
 // In-memory rate limit. Process-local. Good enough at portfolio scale; for
 // multi-region prod, swap with Upstash or Vercel KV.
 const RATE_WINDOW_MS = 60_000;
-const RATE_MAX = 15; // Reduced from 30 for better security
+const RATE_MAX = 15;
 const rateLog = new Map<string, number[]>();
-
-// Cleanup old entries every 10 minutes to prevent memory leak
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, times] of rateLog.entries()) {
-    const filtered = times.filter((t) => now - t < RATE_WINDOW_MS * 10);
-    if (filtered.length === 0) {
-      rateLog.delete(ip);
-    } else {
-      rateLog.set(ip, filtered);
-    }
-  }
-}, 10 * 60 * 1000);
 
 function rateLimit(ip: string): boolean {
   const now = Date.now();
@@ -69,6 +56,20 @@ function rateLimit(ip: string): boolean {
   if (arr.length >= RATE_MAX) return false;
   arr.push(now);
   rateLog.set(ip, arr);
+
+  // Lazy cleanup: randomly purge stale entries during normal request flow
+  // instead of using a module-level setInterval (which leaks in serverless).
+  if (Math.random() < 0.1) {
+    for (const [key, times] of rateLog.entries()) {
+      const fresh = times.filter((t) => now - t < RATE_WINDOW_MS * 10);
+      if (fresh.length === 0) {
+        rateLog.delete(key);
+      } else {
+        rateLog.set(key, fresh);
+      }
+    }
+  }
+
   return true;
 }
 
@@ -76,8 +77,6 @@ export async function POST(req: NextRequest) {
   try {
     const secret = process.env.SANITY_REVALIDATE_SECRET;
     if (!secret) {
-      // CRITICAL: Return 401 instead of 500 to avoid leaking config state.
-      // Attackers should not know if the secret is missing or just invalid.
       Sentry.captureMessage(
         "Webhook endpoint called but SANITY_REVALIDATE_SECRET not configured",
         "warning",
@@ -138,15 +137,13 @@ export async function POST(req: NextRequest) {
 
     // Revalidate the broad type tag so any list query that depends on it
     // (e.g. the homepage projects list) refetches.
-    // Next 16 takes a cache profile name as the second arg; "default" uses
-    // the default profile defined by Next.js.
-    revalidateTag(body._type, "default");
+    revalidateTag(body._type);
 
     // Plus a slug-specific tag for detail pages, when we have one. Slug
     // values must look like a slug — defense-in-depth in case the
     // projection ever changes.
     if (body.slug && /^[a-z0-9][a-z0-9-/]{0,80}$/i.test(body.slug)) {
-      revalidateTag(`${body._type}:${body.slug}`, "default");
+      revalidateTag(`${body._type}:${body.slug}`);
     }
 
     return NextResponse.json({
@@ -155,7 +152,6 @@ export async function POST(req: NextRequest) {
       slug: body.slug ?? null,
     });
   } catch (err) {
-    // Report to Sentry
     Sentry.captureException(err);
     return NextResponse.json(
       { ok: false, error: "Internal server error" },
