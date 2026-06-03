@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import {
   Inter,
+  Roboto,
   JetBrains_Mono,
   Instrument_Serif,
   Manrope,
@@ -29,6 +30,15 @@ const inter = Inter({
   display: "swap",
 });
 
+
+// Body accent — Roboto adds a humanist warmth to complement Inter.
+// Used as a secondary body/UI face throughout the site.
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  display: "swap",
+});
 // Display — Manrope adds character and slightly humanist warmth for big
 // editorial headlines without going full geometric. Retained as a fallback
 // for any --font-manrope references.
@@ -282,7 +292,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${manrope.variable} ${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${inter.variable} ${roboto.variable} ${manrope.variable} ${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <head>
         {/* Defense-in-depth: HTTP headers (set by host config) are the primary

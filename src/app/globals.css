@@ -110,8 +110,8 @@
   --grad-text:   var(--gradient-text);
   --grad-accent: var(--gradient-accent);
 
-  --f-display: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
-  --f-body:    var(--font-dm-sans), var(--font-inter), ui-sans-serif, system-ui;
+  --f-display: var(--font-roboto), var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  --f-body:    var(--font-inter), var(--font-roboto), ui-sans-serif, system-ui;
   --f-mono:    var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
   --ease-expo:   var(--ease-out-expo);
@@ -143,8 +143,8 @@
   --color-border-soft: var(--border-soft);
   --color-border-mid: var(--border-mid);
   --color-border-lit: var(--border-lit);
-  --font-sans: var(--font-dm-sans), var(--font-inter);
-  --font-display: var(--font-syne), var(--font-manrope);
+  --font-sans: var(--font-inter), var(--font-roboto);
+  --font-display: var(--font-roboto), var(--font-syne), var(--font-manrope);
   --font-serif: var(--font-instrument-serif);
   --font-mono: var(--font-jetbrains-mono);
 }
@@ -153,7 +153,7 @@ html,
 body {
   background: var(--bg-void);
   color: var(--text-primary);
-  font-family: var(--font-dm-sans), var(--font-inter), ui-sans-serif, system-ui,
+  font-family: var(--font-inter), var(--font-roboto), ui-sans-serif, system-ui,
     -apple-system, sans-serif;
   font-feature-settings: "ss01", "ss02", "cv11";
   -webkit-font-smoothing: antialiased;
@@ -189,7 +189,7 @@ html {
  * Fluid sizes via clamp() — scales smoothly from 375px → 1920px.
  * ─────────────────────────────────────────────────────────── */
 .t-display {
-  font-family: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  font-family: var(--font-roboto), var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
   font-size: clamp(3rem, 8vw, 7.5rem);
   font-weight: 700;
   line-height: 0.9;
@@ -197,28 +197,28 @@ html {
   font-feature-settings: "ss01";
 }
 .t-h1 {
-  font-family: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  font-family: var(--font-roboto), var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
   font-size: clamp(2rem, 5vw, 4rem);
   font-weight: 700;
   line-height: 1.0;
   letter-spacing: -0.03em;
 }
 .t-h2 {
-  font-family: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  font-family: var(--font-roboto), var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
   font-size: clamp(1.5rem, 3.5vw, 2.5rem);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
 .t-h3 {
-  font-family: var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
+  font-family: var(--font-roboto), var(--font-syne), var(--font-manrope), ui-sans-serif, system-ui;
   font-size: clamp(1.125rem, 2vw, 1.5rem);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
 .t-body {
-  font-family: var(--font-dm-sans), var(--font-inter), ui-sans-serif, system-ui;
+  font-family: var(--font-inter), var(--font-roboto), ui-sans-serif, system-ui;
   font-size: clamp(0.95rem, 1.1vw, 1.0625rem);
   font-weight: 400;
   line-height: 1.6;
@@ -263,7 +263,7 @@ html {
 }
 
 .display {
-  font-family: var(--font-syne), var(--font-manrope), var(--font-inter),
+  font-family: var(--font-roboto), var(--font-syne), var(--font-manrope), var(--font-inter),
     ui-sans-serif, system-ui;
   letter-spacing: -0.045em;
   line-height: 0.94;
@@ -583,7 +583,7 @@ html {
 
 /* Big editorial footer email */
 .email-cta {
-  font-family: var(--font-syne), var(--font-manrope), var(--font-inter);
+  font-family: var(--font-roboto), var(--font-syne), var(--font-manrope), var(--font-inter));
   letter-spacing: -0.05em;
   line-height: 0.92;
   font-weight: 600;
