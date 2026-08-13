@@ -209,31 +209,31 @@ function BrowserMockup() {
 const CARDS: Card[] = [
   {
     index: "01 / AGENT",
-    title: "AI Agent & Chatbot Systems",
-    hook: "Capture and respond to more qualified leads, even outside business hours.",
+    title: "AI Agent Systems",
+    hook: "Custom AI agents that handle complex business workflows and operational tasks.",
     visual: <AgentTabs />,
     href: "/services#agent-chatbot",
   },
   {
     index: "02 / FLOW",
     title: "Workflow Automation",
-    hook: "Remove the repetitive operations work that doesn't need a human.",
+    hook: "Automate repetitive processes using n8n and API-driven workflows.",
     visual: <WorkflowDiagram />,
     href: "/services#workflow-automation",
   },
   {
     index: "03 / API",
-    title: "API & System Integrations",
-    hook: "Make the tools you already pay for talk to each other.",
+    title: "AI + API Integrations",
+    hook: "Connect AI systems with CRM, e-commerce, and business tools.",
     visual: <ConnectionMap />,
     href: "/services#api-integrations",
   },
   {
-    index: "04 / WEB",
-    title: "Conversion Websites with Automation",
-    hook: "Web systems, not generic web design — built to convert and run themselves.",
+    index: "04 / RAG",
+    title: "RAG & Knowledge Systems",
+    hook: "Build AI assistants that work with structured or unstructured business knowledge.",
     visual: <BrowserMockup />,
-    href: "/services#conversion-websites",
+    href: "/services#rag-systems",
   },
 ];
 

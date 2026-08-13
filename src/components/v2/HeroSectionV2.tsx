@@ -35,10 +35,10 @@ export default function HeroSectionV2({
 }: {
   availabilityNote?: string;
 }) {
-  const line1 = "Your team does the work.".split(" ");
-  const line2Pre = ["Your"];
-  const line2Accent = "systems";
-  const line2Post = "should too.".split(" ");
+  const line1 = "I build AI-powered systems".split(" ");
+  const line2Pre = ["that automate"];
+  const line2Accent = "real";
+  const line2Post = "business operations.".split(" ");
 
   // Compute word delays continuously across both lines so the
   // animation reads as one phrase, not two independently-revealing
@@ -62,10 +62,10 @@ export default function HeroSectionV2({
             <span className="v2-hero__pill">
               <span className="v2-hero__pill-dot" aria-hidden="true" />
               <span className="v2-hero__pill-text">
-                {availabilityNote}
+                AI AUTOMATION & AGENT ENGINEER
               </span>
               <span aria-hidden="true" className="v2-hero__pill-sep">·</span>
-              <span className="v2-hero__pill-meta shimmer-label">DHK · GMT+6 · live</span>
+              <span className="v2-hero__pill-meta shimmer-label">Founder, Tensorix</span>
             </span>
 
             <h1 className="v2-hero__headline">
@@ -111,15 +111,13 @@ export default function HeroSectionV2({
             </h1>
 
             <p className="v2-hero__sub">
-              I build AI agents and automation systems — voice bots that handle calls,
-              multi-agent pipelines that do research, RAG systems that answer from your
-              own docs. Python when code is needed, n8n when speed matters.
-              <span className="v2-hero__sub-em"> No fluff. Fixed price. You own the build.</span>
+              I design and engineer AI agents, intelligent workflows, API integrations, RAG systems, and automation infrastructure that help businesses reduce repetitive work and operate more efficiently.
+              <span className="v2-hero__sub-em"> n8n · Python · LLMs · APIs · RAG · Multi-Agent Systems</span>
             </p>
 
             <div className="v2-hero__cta">
-              <MagneticButton href="/book" className="v2-hero__btn v2-hero__btn--primary group">
-                <span>Book free audit</span>
+              <MagneticButton href="/projects" className="v2-hero__btn v2-hero__btn--primary group">
+                <span>View My Work</span>
                 <ArrowRight
                   size={16}
                   strokeWidth={1.75}
@@ -127,8 +125,8 @@ export default function HeroSectionV2({
                   className="v2-hero__btn-arrow"
                 />
               </MagneticButton>
-              <MagneticButton href="#services" className="v2-hero__btn v2-hero__btn--ghost">
-                <span>See services</span>
+              <MagneticButton href="/contact" className="v2-hero__btn v2-hero__btn--ghost">
+                <span>Work With Me</span>
               </MagneticButton>
             </div>
 

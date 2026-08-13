@@ -69,8 +69,8 @@ export default function Navbar() {
             ◈
           </span>
           <span className="v2-nav__wordmark">
-            TENSORIX
-            <span className="v2-nav__wordmark-sub">studio · DHK</span>
+            AREFIN MUIN
+            <span className="v2-nav__wordmark-sub">engineer · DHK</span>
           </span>
         </Link>
 
@@ -93,8 +93,8 @@ export default function Navbar() {
             <span className="v2-nav__pill-dot" />
             <span className="v2-nav__pill-text">live · taking sprints</span>
           </span>
-          <Link href="/book" className="v2-nav__cta">
-            Book audit
+          <Link href="/contact" className="v2-nav__cta">
+            Contact me
             <span aria-hidden="true">→</span>
           </Link>
 

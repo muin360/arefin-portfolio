@@ -8,12 +8,12 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Hi, I'm Arefin Muin — founder of Tensorix, a founder-led AI systems studio in Dhaka. I design and build practical AI agents, workflow automation, API integrations and conversion-focused web systems for small teams.",
+    "Hi, I'm Arefin Muin — an AI Automation & Agent Engineer. I design and build practical AI agents, workflow automation, API integrations, and conversion-focused web systems.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About — Tensorix",
+    title: "About — Arefin Muin",
     description:
-      "Tensorix is a founder-led AI systems studio. I design and build AI agents, workflow automation, integrations, and conversion-focused websites for small teams.",
+      "I design and build AI agents, workflow automation, integrations, and conversion-focused websites for small teams.",
     url: "/about",
   },
 };
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
 const principles = [
   {
     title: "Outcomes, not features.",
-    body: "Every system we ship has to save real hours or move a real number. If it can't be measured in your team's calendar or your CRM, we won't build it.",
+    body: "Every system I ship has to save real hours or move a real number. If it can't be measured in your team's calendar or your CRM, I won't build it.",
   },
   {
     title: "You own everything.",
-    body: "All accounts, all logins, all source code — in your name, with documentation and handover. We never hold your business hostage. If you want to take it elsewhere after launch, you can.",
+    body: "All accounts, all logins, all source code — in your name, with documentation and handover. I never hold your business hostage. If you want to take it elsewhere after launch, you can.",
   },
   {
     title: "Small client load on purpose.",
-    body: "We work small so each engagement gets direct founder attention. No project managers, no junior handoffs, no agency overhead. You get the engineer who built it.",
+    body: "I work small so each engagement gets direct engineering attention. No project managers, no junior handoffs, no agency overhead. You get the engineer who built it.",
   },
 ];
 
@@ -56,9 +56,9 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Tensorix · About"
+        eyebrow="Arefin Muin · About"
         index="02"
-        meta="Founder-led · Founded 2024 · Dhaka, Bangladesh"
+        meta="AI Automation & Agent Engineer"
         title={
           <>
             Hi, I&rsquo;m Arefin.
@@ -68,7 +68,7 @@ export default function AboutPage() {
             small teams.
           </>
         }
-        subtitle="Tensorix is a founder-led AI systems studio. I design and build practical AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams — with documentation, handover, and 30-day launch support included."
+        subtitle="I am an AI Automation & Agent Engineer. I design and build practical AI agents, workflow automation, API integrations, and conversion-focused web systems — with documentation, handover, and launch support included."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
@@ -80,7 +80,7 @@ export default function AboutPage() {
               The operator
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-              Arefin Muin<br />Est. 2024 · Dhaka, BD<br />Founder-led studio
+              Arefin Muin<br />AI Automation<br />Agent Engineer
             </p>
           </div>
           <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-white/80">
@@ -130,7 +130,7 @@ export default function AboutPage() {
               Principles
             </p>
             <h2 className="display text-3xl md:text-5xl text-white">
-              How we work,
+              How I work,
               <br />
               <span className="serif text-[1.04em] iridescent">in three lines.</span>
             </h2>

@@ -13,12 +13,12 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "Services & Engagements",
   description:
-    "Four service pillars from Tensorix: AI agents & chatbots, workflow automation, API integrations, and conversion websites. Engagement starts with a free 30-minute systems audit. Pricing quoted after audit.",
+    "Four service pillars: AI agents, workflow automation, API integrations, and RAG knowledge systems. Engagements start with a free 30-minute systems audit.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Services & Engagements — Tensorix",
+    title: "Services & Engagements — Arefin Muin",
     description:
-      "AI agents, workflow automation, API integrations and conversion-focused websites for small teams. Quoted after a free systems audit.",
+      "AI agents, workflow automation, API integrations and RAG systems for small teams.",
     url: "/services",
   },
 };
@@ -44,7 +44,7 @@ const process = [
   {
     step: "04",
     title: "Launch & support",
-    body: "Documentation, handover training, and source under your accounts and repos. 30 days of launch support included — we fix anything that doesn't meet the agreed acceptance criteria.",
+    body: "Documentation, handover training, and source under your accounts and repos. 30 days of launch support included — I fix anything that doesn't meet the agreed acceptance criteria.",
   },
 ];
 
@@ -75,16 +75,16 @@ export default async function ServicesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Tensorix · Services & Engagements"
+        eyebrow="Arefin Muin · Services"
         index="03"
-        meta="Four pillars · Four engagements · Quoted after audit"
+        meta="Four pillars · Four engagements"
         title={
           <>
             Four service pillars,{" "}
             <span className="serif">four ways</span> to engage.
           </>
         }
-        subtitle="Tensorix is a founder-led AI systems studio. We design, build, and ship reliable AI agents, workflow automation, API integrations, and conversion-focused web systems. Every engagement starts with a free 30-min audit and a written recommendation."
+        subtitle="I design, build, and ship reliable AI agents, workflow automation, API integrations, and RAG systems. Every engagement starts with a free 30-min audit and a written recommendation."
       />
 
       {/* ENGAGEMENTS — Sprint / Build / Retainer pricing tiers */}
@@ -101,7 +101,7 @@ export default async function ServicesPage() {
                 </p>
                 <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
                   Four ways to{" "}
-                  <span className="serif iridescent">engage Tensorix.</span>
+                  <span className="serif iridescent">engage me.</span>
                 </h2>
               </div>
               <p className="text-white/60 max-w-sm leading-relaxed">
@@ -278,7 +278,7 @@ export default async function ServicesPage() {
                   [ 02 ] Capabilities
                 </p>
                 <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                  What we{" "}
+                  What I{" "}
                   <span className="serif iridescent">build.</span>
                 </h2>
               </div>
@@ -405,7 +405,7 @@ export default async function ServicesPage() {
                 <span className="serif text-[1.04em] iridescent">free systems audit.</span>
               </h2>
               <p className="mt-4 text-white/65 max-w-md">
-                30 minutes. We&rsquo;ll map your workflows and share a written
+                30 minutes. I&rsquo;ll map your workflows and share a written
                 recommendation. No obligation either way.
               </p>
             </div>

@@ -57,7 +57,7 @@ export default async function Footer() {
           <span aria-hidden="true"> ]</span>
         </p>
         <h2 className="v2-footer__head">
-          Got a workflow{" "}
+          Have a workflow{" "}
           <span className="v2-footer__head-italic">worth automating?</span>
         </h2>
         <a href={`mailto:${email}`} className="v2-footer__email group">
@@ -75,12 +75,10 @@ export default async function Footer() {
               <span className="v2-footer__diamond" aria-hidden="true">
                 ◈
               </span>
-              <span className="v2-footer__wordmark">TENSORIX</span>
+              <span className="v2-footer__wordmark">AREFIN MUIN</span>
             </div>
             <p className="v2-footer__desc">
-              Tensorix is a small AI engineering studio building quiet,
-              intelligent systems for ambitious teams. Founded and
-              operated by Arefin Muin in Dhaka, Bangladesh.
+              AI Automation & Agent Engineer. I design and build reliable AI agents, workflow automation, and API integrations. Founder of Tensorix.
             </p>
             <p className="v2-footer__sub">
               Intelligence that connects the future.
@@ -142,7 +140,7 @@ export default async function Footer() {
           {/* COLUMN 3 — status card */}
           <div className="v2-footer__col v2-footer__col--status">
             <div className="v2-footer__status-card">
-              <p className="v2-footer__col-title">Studio status</p>
+              <p className="v2-footer__col-title">Availability</p>
               {availability && (
                 <p className="v2-footer__status-line">
                   <span className="v2-footer__status-dot" aria-hidden="true" />
@@ -246,7 +244,7 @@ export default async function Footer() {
         {/* Bottom strip */}
         <div className="v2-footer__bottom">
           <p>
-            © {year} Tensorix · Founded by Arefin Muin · Hand-coded with Next.js + Tailwind
+            © {year} Arefin Muin · Hand-coded with Next.js + Tailwind
           </p>
           <p>
             <span className="opacity-50">build</span>{" "}

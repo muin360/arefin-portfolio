@@ -68,31 +68,30 @@ export const services: {
 
 export const skills: { category: string; items: string[]; Icon: Icon }[] = [
   {
-    category: "Automation Platforms",
-    Icon: IconWorkflow,
-    items: ["n8n", "Zapier", "Make (Integromat)", "GoHighLevel"],
-  },
-  {
-    category: "AI / LLM Tools",
+    category: "AI",
     Icon: IconBrain,
     items: [
-      "LangChain",
-      "LangFlow",
-      "OpenAI API",
-      "Anthropic Claude",
+      "LLMs",
+      "AI Agents",
+      "RAG",
       "Prompt Engineering",
-      "RAG / Vector DBs",
+      "Multi-Agent Systems",
     ],
   },
   {
-    category: "Programming",
-    Icon: IconTerminal,
-    items: ["Python", "JavaScript", "TypeScript", "Node.js", "REST APIs"],
+    category: "Automation",
+    Icon: IconWorkflow,
+    items: ["n8n", "Workflow Design", "Webhooks", "Event-Driven Automation"],
   },
   {
-    category: "Advanced AI",
-    Icon: IconRocket,
-    items: ["Multi-Agent Systems", "RAG Pipelines", "Voice AI Agents", "LLM Evaluation"],
+    category: "Engineering",
+    Icon: IconCode,
+    items: ["Python", "APIs", "JSON", "Authentication", "Data Processing"],
+  },
+  {
+    category: "Infrastructure",
+    Icon: IconLayers,
+    items: ["GitHub", "Vercel", "Databases", "Deployment", "Monitoring"],
   },
 ];
 
@@ -104,14 +103,6 @@ export const projects: {
   category: string;
 }[] = [
   {
-    title: "Voice-Enabled Live Calling Agent",
-    summary:
-      "A real-time AI voice agent that handles inbound calls, answers FAQs, qualifies leads and books appointments — fully autonomous, no human needed for routine calls.",
-    stack: ["n8n", "OpenAI", "Twilio", "Python"],
-    Icon: IconAgent,
-    category: "Voice AI",
-  },
-  {
     title: "Market Research Multi-Agent System",
     summary:
       "Orchestrated system of 4 specialised agents — researcher, analyst, writer, critic — that produce a full market research report from a single keyword input.",
@@ -120,28 +111,12 @@ export const projects: {
     category: "Multi-Agent",
   },
   {
-    title: "Multilingual Full-Stack AI Assistant",
+    title: "Voice-Enabled Live Calling Agent",
     summary:
-      "A production SaaS assistant with payment gateway integration that handles customer queries in 6 languages, routes to the right department and logs every interaction.",
-    stack: ["n8n", "OpenAI", "Stripe", "Python"],
-    Icon: IconLayers,
-    category: "SaaS",
-  },
-  {
-    title: "AI-Powered Invoice Automation System",
-    summary:
-      "End-to-end invoice pipeline — extracts line items from PDFs using vision LLM, validates against PO data, pushes to accounting software, flags anomalies for review.",
-    stack: ["Python", "OpenAI", "n8n", "REST APIs"],
-    Icon: IconWorkflow,
-    category: "Pipeline",
-  },
-  {
-    title: "Website Lead Generation SaaS (n8n)",
-    summary:
-      "White-label SaaS product built on n8n: captures website visitor intent via embedded widget, enriches lead with public data, scores and routes to CRM in under 60 seconds.",
-    stack: ["n8n", "OpenAI", "Webhook", "CRM API"],
-    Icon: IconRocket,
-    category: "SaaS",
+      "A real-time AI voice agent that handles inbound calls, answers FAQs, qualifies leads and books appointments — fully autonomous, no human needed for routine calls.",
+    stack: ["n8n", "OpenAI", "Twilio", "Python"],
+    Icon: IconAgent,
+    category: "Voice AI",
   },
   {
     title: "Customer Support RAG Bot",
@@ -159,33 +134,4 @@ export const projects: {
     Icon: IconChart,
     category: "E-commerce",
   },
-  {
-    title: "CRM Business Lead Automation",
-    summary:
-      "Automated lead enrichment and nurture pipeline: scrapes contact data, scores with LLM, triggers personalised email sequences, updates CRM and alerts sales on hot signals.",
-    stack: ["n8n", "OpenAI", "Apollo", "SMTP"],
-    Icon: IconSpark,
-    category: "CRM",
-  },
 ];
-
-export const skillProficiency: Record<string, number> = {
-  "n8n": 95,
-  "Zapier": 88,
-  "Make (Integromat)": 82,
-  "GoHighLevel": 78,
-  "LangChain": 85,
-  "LangFlow": 88,
-  "OpenAI API": 92,
-  "Anthropic Claude": 90,
-  "Prompt Engineering": 93,
-  "RAG / Vector DBs": 83,
-  "Multi-Agent Systems": 87,
-  "Voice AI Agents": 80,
-  "LLM Evaluation": 75,
-  "Python": 85,
-  "JavaScript": 80,
-  "TypeScript": 72,
-  "Node.js": 75,
-  "REST APIs": 90,
-};

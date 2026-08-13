@@ -9,8 +9,7 @@ import { IconCheck } from "@/components/icons";
 import SkillsConstellation from "@/components/SkillsConstellation";
 import Reveal from "@/components/Reveal";
 import Marquee from "@/components/Marquee";
-import AnimatedSkillBar from "@/components/AnimatedSkillBar";
-import { skillProficiency } from "@/data/site";
+
 export const metadata: Metadata = {
   title: "Stack & Tools",
   description:
@@ -212,12 +211,6 @@ export default async function SkillsPage() {
                           <p className="mt-1 text-xs text-muted leading-relaxed">
                             {desc}
                           </p>
-                        )}
-                        {skillProficiency[it] && (
-                          <AnimatedSkillBar
-                            proficiency={skillProficiency[it]}
-                            index={i}
-                          />
                         )}
                       </div>
                     </li>
