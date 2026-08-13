@@ -30,7 +30,7 @@ export default function SectionLabel({
       <span aria-hidden="true">]</span>
       <span className="v2-section-label__text">{children}</span>
       <span className="v2-section-label__rule" aria-hidden="true" />
-      {hint && <span className="v2-section-label__hint">{hint}</span>}
+      {hint && <span className="v2-section-label__hint shimmer-label">{hint}</span>}
     </div>
   );
 }

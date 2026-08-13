@@ -3805,3 +3805,184 @@ body.is-loaded main {
     animation: none !important;
   }
 }
+
+/* === MASTERPIECE === */
+
+/* Nebula accent — violet layer distinct from existing indigo */
+:root {
+  --nebula-core: rgba(139, 92, 246, 0.15);
+  --nebula-soft: rgba(139, 92, 246, 0.06);
+  --nebula-border: rgba(139, 92, 246, 0.25);
+  --nebula-text: #a78bfa;
+}
+
+/* Nebula orb — large ambient glow used in hero and CTA */
+@keyframes nebula-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+  33%       { transform: translate(40px, -30px) scale(1.08); opacity: 0.8; }
+  66%       { transform: translate(-25px, 20px) scale(0.95); opacity: 0.5; }
+}
+
+.nebula-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  animation: nebula-drift 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+.nebula-orb--hero {
+  width: 600px;
+  height: 600px;
+  top: -100px;
+  right: -150px;
+  background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%);
+  animation-delay: -8s;
+}
+
+.nebula-orb--mid {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(91,110,245,0.14) 0%, transparent 70%);
+  animation-delay: -15s;
+}
+
+/* Cosmic grid lines — subtle perspective grid for hero */
+.cosmic-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(91,110,245,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,110,245,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 100%);
+}
+
+/* Particle trail — used behind section headings */
+@keyframes particle-float {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateY(-120px) translateX(var(--px, 20px)); opacity: 0; }
+}
+
+/* Neural pulse ring — for the live agent indicator */
+@keyframes neural-ring-pulse {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.neural-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--nebula-border);
+  animation: neural-ring-pulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.neural-ring:nth-child(2) { animation-delay: 0.7s; }
+.neural-ring:nth-child(3) { animation-delay: 1.4s; }
+
+/* Shimmer text — for section labels */
+@keyframes text-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-label {
+  background: linear-gradient(
+    90deg,
+    var(--text-muted) 0%,
+    var(--nebula-text) 40%,
+    var(--accent-bright) 50%,
+    var(--nebula-text) 60%,
+    var(--text-muted) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 4s linear infinite;
+}
+
+/* Card nebula hover — violet glow appears on hover */
+.nebula-card {
+  position: relative;
+  transition: border-color 300ms ease, transform 200ms ease;
+}
+
+.nebula-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--nebula-border), transparent 50%, var(--accent-core) 100%);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.nebula-card:hover::before { opacity: 1; }
+.nebula-card > * { position: relative; z-index: 1; }
+
+/* Typed cursor blink */
+.typed-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--accent-core);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: caret-blink 1s steps(2) infinite;
+}
+
+/* Agent thinking indicator */
+@keyframes agent-think {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%       { opacity: 1; transform: scale(1); }
+}
+
+.agent-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-core);
+  animation: agent-think 1.2s ease-in-out infinite;
+}
+.agent-dot:nth-child(2) { animation-delay: 0.2s; }
+.agent-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* Scroll reveal — cinematic fade-up with blur */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.reveal-up {
+  opacity: 0;
+}
+
+.reveal-up.is-in {
+  animation: reveal-up 0.7s var(--ease-out-expo) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up { opacity: 1; animation: none; }
+  .nebula-orb { animation: none; }
+  .shimmer-label { animation: none; -webkit-text-fill-color: var(--text-muted); }
+  .agent-dot { animation: none; opacity: 1; }
+  .neural-ring { animation: none; }
+}
+
+.v2-project__card:hover .card-demo-hint { opacity: 1; }

@@ -254,7 +254,7 @@ export default function BentoServices() {
 
 function Card({ data }: { data: Card }) {
   return (
-    <Link href={data.href} className="v2-bento__card group block">
+    <Link href={data.href} className="v2-bento__card group block nebula-card">
       <div className="v2-bento__index">{data.index}</div>
       <h3 className="v2-bento__title">{data.title}</h3>
       <p className="v2-bento__hook">{data.hook}</p>

@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import AgentDashboard from "./AgentDashboard";
 import AutomateWidget from "./AutomateWidget";
 import MagneticButton from "@/components/MagneticButton";
+import LiveAgent from "@/components/masterpiece/LiveAgent";
 
 /**
  * Hero section (v2, upgraded for v3).
@@ -49,6 +50,10 @@ export default function HeroSectionV2({
     <section className="v2-hero" aria-label="Hero">
       <div className="v2-hero__grain" aria-hidden="true" />
       <div className="v2-hero__mesh" aria-hidden="true" />
+      {/* Cosmic grid — perspective lines fading from top */}
+      <div className="cosmic-grid" aria-hidden="true" />
+      {/* Nebula orb — violet ambient glow top-right */}
+      <div className="nebula-orb nebula-orb--hero" aria-hidden="true" />
 
       <div className="v2-hero__inner">
         <div className="v2-hero__grid">
@@ -60,7 +65,7 @@ export default function HeroSectionV2({
                 {availabilityNote}
               </span>
               <span aria-hidden="true" className="v2-hero__pill-sep">·</span>
-              <span className="v2-hero__pill-meta">DHK · GMT+6 · live</span>
+              <span className="v2-hero__pill-meta shimmer-label">DHK · GMT+6 · live</span>
             </span>
 
             <h1 className="v2-hero__headline">
@@ -146,6 +151,7 @@ export default function HeroSectionV2({
           {/* RIGHT COL — dashboard widget */}
           <div className="v2-hero__right">
             <AgentDashboard />
+            <LiveAgent />
             <div className="mt-4">
               <AutomateWidget />
             </div>

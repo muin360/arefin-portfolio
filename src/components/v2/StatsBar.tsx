@@ -40,8 +40,8 @@ export default function StatsBar() {
         {STATS.map((s, i) => (
           <div 
             key={`${s.label}-${i}`} 
-            className={`v2-stats__cell v2-float-up ${inView ? "is-in" : ""}`}
-            style={{ transitionDelay: `${i * 120}ms` }}
+            className={`v2-stats__cell reveal-up ${inView ? "is-in" : ""}`}
+            style={{ animationDelay: `${i * 120}ms` }}
           >
             <div className="v2-stats__index">[ {String(i + 1).padStart(2, "0")} ]</div>
             <div className="v2-stats__value">
