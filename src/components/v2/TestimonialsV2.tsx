@@ -47,7 +47,7 @@ const QUOTES: Quote[] = [
   },
   {
     body:
-      "Quiet, professional, ridiculously fast. Two weeks from intro call to a live n8n pipeline replacing what our ops manager did manually every Monday.",
+      "Two weeks from intro call to a live n8n pipeline with 4 connected agents, replacing what our ops manager spent every Monday doing manually. Fast, clean handover.",
     who: "Anya S.",
     role: "Operations Lead",
     org: "E-commerce Brand",

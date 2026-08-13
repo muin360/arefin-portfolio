@@ -1,14 +1,6 @@
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@sanity/client";
-
-const writeClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2024-10-01",
-  token: process.env.SANITY_API_WRITE_TOKEN,
-  useCdn: false,
-});
+import { writeClient } from "@/sanity/client";
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -22,7 +14,8 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
 
-    await writeClient.patch(id).set({ read: !!read }).commit();
+    const client = writeClient();
+    await client.patch(id).set({ read: !!read }).commit();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error updating submission:", error);
@@ -42,7 +35,8 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
 
-    await writeClient.delete(id);
+    const client = writeClient();
+    await client.delete(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting submission:", error);

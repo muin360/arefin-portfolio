@@ -104,10 +104,10 @@ export default function HeroSectionV2({
             </h1>
 
             <p className="v2-hero__sub">
-              We help small teams automate lead handling, customer replies,
-              CRM updates, reporting and internal operations with practical
-              AI agents, workflow automation and integrated web systems.
-              <span className="v2-hero__sub-em"> No fluff. Fixed price. You own it.</span>
+              I build AI agents and automation systems — voice bots that handle calls,
+              multi-agent pipelines that do research, RAG systems that answer from your
+              own docs. Python when code is needed, n8n when speed matters.
+              <span className="v2-hero__sub-em"> No fluff. Fixed price. You own the build.</span>
             </p>
 
             <div className="v2-hero__cta">

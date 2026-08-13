@@ -20,7 +20,7 @@ export const site = {
   role: "AI Automation & Agent Engineer",
   email: "arefinmuin@gmail.com",
   tagline:
-    "I build AI agents and automation workflows that take repetitive work off your plate so you can focus on growth.",
+    "I build AI agents that replace manual work — from voice calling bots to multi-agent research systems. Python, n8n, LangChain, LangFlow — real code, real automation.",
 };
 
 export const services: {
@@ -32,7 +32,7 @@ export const services: {
     Icon: IconAgent,
     title: "AI Agents",
     description:
-      "Custom autonomous and semi-autonomous agents that research, write, summarize, qualify leads or operate other tools — built with LangChain, LangFlow and modern LLMs.",
+      "Custom autonomous agents — voice calling bots, multi-agent research systems, RAG assistants, lead qualifiers — built with LangChain, LangFlow, n8n and modern LLMs.",
   },
   {
     Icon: IconWorkflow,
@@ -56,7 +56,7 @@ export const services: {
     Icon: IconCode,
     title: "Python & JavaScript",
     description:
-      "Custom scripts and small services to glue systems together, scrape data, batch-process content or extend a no-code workflow with real code.",
+      "Custom Python and JavaScript code to extend any automation — data pipelines, API integrations, web scraping, LLM chaining, or anything a no-code tool can't reach.",
   },
   {
     Icon: IconCompass,
@@ -90,9 +90,9 @@ export const skills: { category: string; items: string[]; Icon: Icon }[] = [
     items: ["Python", "JavaScript", "TypeScript", "Node.js", "REST APIs"],
   },
   {
-    category: "Currently Learning",
+    category: "Advanced AI",
     Icon: IconRocket,
-    items: ["LLM Engineering", "Fine-tuning", "Evaluation & Observability"],
+    items: ["Multi-Agent Systems", "RAG Pipelines", "Voice AI Agents", "LLM Evaluation"],
   },
 ];
 
@@ -104,51 +104,67 @@ export const projects: {
   category: string;
 }[] = [
   {
-    title: "AI Lead Qualification Agent",
+    title: "Voice-Enabled Live Calling Agent",
     summary:
-      "An LLM-powered agent that ingests inbound leads, enriches them with public data, scores them, and routes hot ones to the sales team via Slack.",
-    stack: ["LangChain", "n8n", "OpenAI", "Slack API"],
+      "A real-time AI voice agent that handles inbound calls, answers FAQs, qualifies leads and books appointments — fully autonomous, no human needed for routine calls.",
+    stack: ["n8n", "OpenAI", "Twilio", "Python"],
     Icon: IconAgent,
-    category: "Agent",
+    category: "Voice AI",
   },
   {
-    title: "GoHighLevel Booking Bot",
+    title: "Market Research Multi-Agent System",
     summary:
-      "Conversational SMS and email bot built on GoHighLevel that books appointments, answers FAQs, and hands off to a human when the conversation requires it.",
-    stack: ["GoHighLevel", "OpenAI", "Twilio"],
-    Icon: IconChart,
-    category: "Bot",
+      "Orchestrated system of 4 specialised agents — researcher, analyst, writer, critic — that produce a full market research report from a single keyword input.",
+    stack: ["n8n", "LangChain", "OpenAI", "Python"],
+    Icon: IconBrain,
+    category: "Multi-Agent",
   },
   {
-    title: "Content Repurposing Pipeline",
+    title: "Multilingual Full-Stack AI Assistant",
     summary:
-      "A Make.com workflow that turns one long-form video into 10+ pieces of social content using LLM summarization and templated rendering.",
-    stack: ["Make", "OpenAI", "FFmpeg"],
+      "A production SaaS assistant with payment gateway integration that handles customer queries in 6 languages, routes to the right department and logs every interaction.",
+    stack: ["n8n", "OpenAI", "Stripe", "Python"],
     Icon: IconLayers,
+    category: "SaaS",
+  },
+  {
+    title: "AI-Powered Invoice Automation System",
+    summary:
+      "End-to-end invoice pipeline — extracts line items from PDFs using vision LLM, validates against PO data, pushes to accounting software, flags anomalies for review.",
+    stack: ["Python", "OpenAI", "n8n", "REST APIs"],
+    Icon: IconWorkflow,
     category: "Pipeline",
   },
   {
-    title: "Internal Knowledge-Base Chatbot",
+    title: "Website Lead Generation SaaS (n8n)",
     summary:
-      "A retrieval-augmented chatbot over a company's docs, SOPs and Notion workspace — answers staff questions in seconds with source citations.",
+      "White-label SaaS product built on n8n: captures website visitor intent via embedded widget, enriches lead with public data, scores and routes to CRM in under 60 seconds.",
+    stack: ["n8n", "OpenAI", "Webhook", "CRM API"],
+    Icon: IconRocket,
+    category: "SaaS",
+  },
+  {
+    title: "Customer Support RAG Bot",
+    summary:
+      "Retrieval-augmented chatbot trained on company docs, SOPs and Notion workspace. Answers staff questions with source citations and escalates unresolved queries to humans.",
     stack: ["LangFlow", "Pinecone", "OpenAI", "Python"],
     Icon: IconBookmark,
     category: "RAG",
   },
   {
-    title: "E-commerce Auto-Reply Agent",
+    title: "Full-Stack Dropshipping Automation",
     summary:
-      "Zapier and OpenAI automation that drafts and sends personalized customer support replies, escalating complex tickets to humans.",
-    stack: ["Zapier", "OpenAI", "Gmail API"],
-    Icon: IconSpark,
-    category: "Agent",
+      "Complete e-commerce backend: product research agent → listing writer → inventory sync → order routing → customer reply bot. One workflow replacing 3 manual roles.",
+    stack: ["n8n", "OpenAI", "Zapier", "Python"],
+    Icon: IconChart,
+    category: "E-commerce",
   },
   {
-    title: "AI Cold-Outreach System",
+    title: "CRM Business Lead Automation",
     summary:
-      "Multi-step sequence that researches each prospect, generates a personalized opener, and sends through a warmed-up inbox at scale.",
+      "Automated lead enrichment and nurture pipeline: scrapes contact data, scores with LLM, triggers personalised email sequences, updates CRM and alerts sales on hot signals.",
     stack: ["n8n", "OpenAI", "Apollo", "SMTP"],
-    Icon: IconRocket,
-    category: "Outreach",
+    Icon: IconSpark,
+    category: "CRM",
   },
 ];

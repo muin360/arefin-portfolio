@@ -20,9 +20,9 @@ type Stat = {
 };
 
 const STATS: Stat[] = [
-  { target: 47, suffix: "+", label: "Workflows shipped" },
+  { target: 10, suffix: "+", label: "Industrial projects built" },
   { prefix: "<", target: 14, suffix: "d", label: "Avg delivery time" },
-  { target: 3, label: "Countries served" },
+  { target: 8, suffix: "+", label: "Automation tools mastered" },
   { target: 100, suffix: "%", label: "You own the build" },
 ];
 
