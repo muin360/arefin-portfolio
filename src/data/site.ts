@@ -168,3 +168,24 @@ export const projects: {
     category: "CRM",
   },
 ];
+
+export const skillProficiency: Record<string, number> = {
+  "n8n": 95,
+  "Zapier": 88,
+  "Make (Integromat)": 82,
+  "GoHighLevel": 78,
+  "LangChain": 85,
+  "LangFlow": 88,
+  "OpenAI API": 92,
+  "Anthropic Claude": 90,
+  "Prompt Engineering": 93,
+  "RAG / Vector DBs": 83,
+  "Multi-Agent Systems": 87,
+  "Voice AI Agents": 80,
+  "LLM Evaluation": 75,
+  "Python": 85,
+  "JavaScript": 80,
+  "TypeScript": 72,
+  "Node.js": 75,
+  "REST APIs": 90,
+};

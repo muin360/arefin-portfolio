@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import AgentDashboard from "./AgentDashboard";
+import AutomateWidget from "./AutomateWidget";
+import MagneticButton from "@/components/MagneticButton";
 
 /**
  * Hero section (v2, upgraded for v3).
@@ -111,7 +113,7 @@ export default function HeroSectionV2({
             </p>
 
             <div className="v2-hero__cta">
-              <Link href="/book" className="v2-hero__btn v2-hero__btn--primary group">
+              <MagneticButton href="/book" className="v2-hero__btn v2-hero__btn--primary group">
                 <span>Book free audit</span>
                 <ArrowRight
                   size={16}
@@ -119,10 +121,10 @@ export default function HeroSectionV2({
                   aria-hidden="true"
                   className="v2-hero__btn-arrow"
                 />
-              </Link>
-              <Link href="#services" className="v2-hero__btn v2-hero__btn--ghost">
+              </MagneticButton>
+              <MagneticButton href="#services" className="v2-hero__btn v2-hero__btn--ghost">
                 <span>See services</span>
-              </Link>
+              </MagneticButton>
             </div>
 
             <ul className="v2-hero__proof" aria-label="Trust signals">
@@ -144,6 +146,9 @@ export default function HeroSectionV2({
           {/* RIGHT COL — dashboard widget */}
           <div className="v2-hero__right">
             <AgentDashboard />
+            <div className="mt-4">
+              <AutomateWidget />
+            </div>
           </div>
         </div>
       </div>

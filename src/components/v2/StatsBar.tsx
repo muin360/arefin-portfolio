@@ -1,5 +1,6 @@
 "use client";
 
+import { useInView } from "@/hooks/useInView";
 import CountUp from "./CountUp";
 
 /**
@@ -27,15 +28,21 @@ const STATS: Stat[] = [
 ];
 
 export default function StatsBar() {
+  const [ref, inView] = useInView<HTMLDivElement>({ threshold: 0.3 });
+
   return (
     <section
       aria-label="Tensorix at a glance"
       className="v2-stats border-y"
       style={{ borderColor: "var(--border-2)" }}
     >
-      <div className="v2-stats__grid">
+      <div ref={ref} className="v2-stats__grid">
         {STATS.map((s, i) => (
-          <div key={`${s.label}-${i}`} className="v2-stats__cell">
+          <div 
+            key={`${s.label}-${i}`} 
+            className={`v2-stats__cell v2-float-up ${inView ? "is-in" : ""}`}
+            style={{ transitionDelay: `${i * 120}ms` }}
+          >
             <div className="v2-stats__index">[ {String(i + 1).padStart(2, "0")} ]</div>
             <div className="v2-stats__value">
               <CountUp
