@@ -6,6 +6,7 @@ import { Mail, Lock, ShieldCheck, ArrowRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Admin Login",
   description: "Sign in to Arefin Mueen Admin Panel",
+  robots: { index: false, follow: false },
 };
 
 function GitHubSVG({ className }: { className?: string }) {

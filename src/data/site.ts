@@ -16,7 +16,7 @@ type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 export const site = {
   name: "Arefin Mueen",
   role: "AI Automation & AI Agent Developer",
-  email: "hello@tensorix.me",
+  email: "arefinmueen360@gmail.com",
   tagline:
     "I build practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
 };

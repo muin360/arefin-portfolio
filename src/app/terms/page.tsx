@@ -32,10 +32,9 @@ export default function TermsPage() {
         <div className="prose-tensor space-y-12 text-foreground/85 leading-relaxed">
           <Block num="01" title="Who we are">
             <p>
-              &quot;Tensorix&quot;, &quot;we&quot;, and &quot;us&quot; refer to Arefin Mueen, an
-              independent contractor based in Dhaka, Bangladesh, operating
-              under the name Tensorix and accessible at{" "}
-              <strong>tensorix.me</strong>.
+              &quot;We&quot; and &quot;us&quot; refer to Arefin Mueen, an
+              independent developer based in Dhaka, Bangladesh, accessible at{" "}
+              <strong>tensorstudio.vercel.app</strong>.
             </p>
             <p>
               &quot;You&quot; means the person browsing the Site, the person who

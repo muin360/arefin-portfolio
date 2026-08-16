@@ -6,14 +6,11 @@
  * component, metadata block, JSON-LD schema, or server action — never
  * hard-code these values inline.
  *
- * `url` falls back to `https://tensorix.me` (the canonical production
- * domain) when `NEXT_PUBLIC_SITE_URL` is not set — for example during
- * local development or in preview deployments that haven't been wired
- * to the env var yet. The existing `@/lib/site-url` helper still
- * exists as a backwards-compat shim and re-exports `SITE.url`.
+ * `url` falls back to `https://tensorstudio.vercel.app` (the canonical production
+ * domain) when `NEXT_PUBLIC_SITE_URL` is not set.
  */
 const RAW_SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://tensorix.me";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://tensorstudio.vercel.app";
 
 export const SITE = {
   /** Canonical site URL with no trailing slash. */
@@ -28,11 +25,11 @@ export const SITE = {
   /** Person behind the portfolio. */
   author: "Arefin Mueen",
   /** Contact inbox. Use this for forms / "contact me" links. */
-  contactEmail: "hello@tensorix.me",
+  contactEmail: process.env.CONTACT_EMAIL || "arefinmueen360@gmail.com",
   /** Direct inbox. */
-  founderEmail: "arefinmuin@gmail.com",
+  founderEmail: "arefinmueen360@gmail.com",
   /** WhatsApp number in E.164 format (no `+`). Routed through `lib/cta`. */
-  whatsapp: "8801994605717",
+  whatsapp: process.env.CONTACT_PHONE_E164 || "8801994605717",
   /** Booking page URL (relative). */
   bookUrl: "/book",
   /** Contact page URL (relative). */
@@ -48,19 +45,19 @@ export const SITE = {
   areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
 } as const;
 
-/** Helper: build a `wa.me` link with a pre-typed message. */
-export function whatsappLink(message: string): string {
-  return `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
+export function whatsappLink(message?: string): string {
+  const base = `https://wa.me/${SITE.whatsapp}`;
+  if (!message) return `${base}?text=`;
+  return `${base}?text=${encodeURIComponent(message)}`;
 }
 
-/** Helper: build a `mailto:` link with an optional pre-typed subject + body. */
 export function mailto(
   email: string,
-  opts: { subject?: string; body?: string } = {},
+  options?: { subject?: string; body?: string },
 ): string {
   const params = new URLSearchParams();
-  if (opts.subject) params.set("subject", opts.subject);
-  if (opts.body) params.set("body", opts.body);
-  const qs = params.toString();
-  return `mailto:${email}${qs ? `?${qs}` : ""}`;
+  if (options?.subject) params.set("subject", options.subject);
+  if (options?.body) params.set("body", options.body);
+  const query = params.toString();
+  return query ? `mailto:${email}?${query}` : `mailto:${email}`;
 }

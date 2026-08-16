@@ -14,8 +14,8 @@ describe("SITE_URL", () => {
     expect(SITE_URL).not.toMatch(/\/$/);
   });
 
-  it("defaults to tensorix.me when env var not set", () => {
-    expect(SITE_URL).toBe("https://tensorix.me");
+  it("defaults to tensorstudio.vercel.app when env var not set", () => {
+    expect(SITE_URL).toBe("https://tensorstudio.vercel.app");
   });
 });
 

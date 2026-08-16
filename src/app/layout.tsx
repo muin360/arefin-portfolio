@@ -136,7 +136,7 @@ const jsonLd = [
     description:
       "Independent developer specializing in AI automation, AI agents, RAG systems, and multi-agent workflows using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
     image: `${SITE_URL}/og.png`,
-    email: "mailto:hello@tensorix.me",
+    email: "mailto:arefinmueen360@gmail.com",
     sameAs: [
       "https://www.facebook.com/profile.php?id=61588840534814",
       "https://wa.me/8801994605717",

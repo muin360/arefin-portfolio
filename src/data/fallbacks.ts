@@ -133,7 +133,7 @@ export type PostListItem = {
 export const FALLBACK_SITE_CONFIG: SiteConfig = {
   name: "Arefin Mueen",
   role: "AI Automation & AI Agent Developer",
-  email: process.env.CONTACT_EMAIL ?? "hello@tensorix.me",
+  email: process.env.CONTACT_EMAIL ?? "arefinmueen360@gmail.com",
   phone: process.env.CONTACT_PHONE ?? "+880 1994-605717",
   phoneE164: process.env.CONTACT_PHONE_E164 ?? "8801994605717",
   tagline:
@@ -145,7 +145,7 @@ export const FALLBACK_SITE_CONFIG: SiteConfig = {
   social: {
     facebook: "https://www.facebook.com/profile.php?id=61588840534814",
     whatsapp: process.env.WHATSAPP_URL ?? "https://wa.me/8801994605717",
-    email: `mailto:${process.env.CONTACT_EMAIL ?? "hello@tensorix.me"}`,
+    email: `mailto:${process.env.CONTACT_EMAIL ?? "arefinmueen360@gmail.com"}`,
   },
   heroTiles: [],
   live30Days: [],

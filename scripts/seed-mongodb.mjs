@@ -63,7 +63,7 @@ const INITIAL_SEED = {
       siteDescription: "Arefin Mueen builds practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
       ogTitle: "Arefin Mueen — AI Automation & AI Agent Developer",
       ogDescription: "I build practical AI agents, RAG systems, multi-agent workflows, and business automations.",
-      canonicalUrl: "https://tensorix.me",
+      canonicalUrl: "https://tensorstudio.vercel.app",
       author: "Arefin Mueen",
     },
     live30Days: [

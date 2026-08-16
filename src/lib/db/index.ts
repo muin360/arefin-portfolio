@@ -25,8 +25,15 @@ function normalizeDocs<T>(docs: unknown[]): T[] {
   return docs.map((d) => normalizeDoc<T>(d)!);
 }
 
-// In-memory fallback cache if MongoDB is offline or unconfigured
+// In-memory fallback cache for public reads when MongoDB is offline / initializing
 const memoryFallback = JSON.parse(JSON.stringify(INITIAL_DATABASE));
+
+// Helper for checking if test environment allows in-memory mutations
+const isTestEnv = process.env.NODE_ENV === "test";
+
+function handleMutationDbUnavailable(): never {
+  throw new Error("Database unavailable. Your changes were not saved.");
+}
 
 // ─── SITE SETTINGS ─────────────────────────────────────────────────────────
 
@@ -37,12 +44,11 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   try {
     const doc = await col.findOne({});
     if (!doc) {
-      // Seed initial settings document
       const initial = { ...INITIAL_DATABASE.siteSettings };
       await col.insertOne(initial);
       return initial;
     }
-    return normalizeDoc(doc) as SiteSettings;
+    return normalizeDoc<SiteSettings>(doc) as SiteSettings;
   } catch (err) {
     console.error("MongoDB getSiteSettings error:", err);
     return memoryFallback.siteSettings;
@@ -53,16 +59,20 @@ export async function updateSiteSettings(
   updates: Partial<SiteSettings>,
 ): Promise<SiteSettings> {
   const col = await getCollection<SiteSettings>("site_settings");
+  const now = new Date().toISOString();
+
   if (!col) {
-    memoryFallback.siteSettings = {
-      ...memoryFallback.siteSettings,
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
-    return memoryFallback.siteSettings;
+    if (isTestEnv) {
+      memoryFallback.siteSettings = {
+        ...memoryFallback.siteSettings,
+        ...updates,
+        updatedAt: now,
+      };
+      return memoryFallback.siteSettings;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const now = new Date().toISOString();
   try {
     const existing = await col.findOne({});
     if (!existing) {
@@ -83,15 +93,10 @@ export async function updateSiteSettings(
       { $set: { ...cleanUpdates, updatedAt: now } },
     );
     const updated = await col.findOne({ _id: existing._id });
-    return normalizeDoc(updated) as SiteSettings;
+    return normalizeDoc<SiteSettings>(updated) as SiteSettings;
   } catch (err) {
     console.error("MongoDB updateSiteSettings error:", err);
-    memoryFallback.siteSettings = {
-      ...memoryFallback.siteSettings,
-      ...updates,
-      updatedAt: now,
-    };
-    return memoryFallback.siteSettings;
+    throw new Error("Database unavailable. Your changes were not saved.");
   }
 }
 
@@ -108,7 +113,7 @@ export async function getAboutData(): Promise<AboutData> {
       await col.insertOne(initial);
       return initial;
     }
-    return normalizeDoc(doc) as AboutData;
+    return normalizeDoc<AboutData>(doc) as AboutData;
   } catch (err) {
     console.error("MongoDB getAboutData error:", err);
     return memoryFallback.about;
@@ -122,12 +127,15 @@ export async function updateAboutData(
   const now = new Date().toISOString();
 
   if (!col) {
-    memoryFallback.about = {
-      ...memoryFallback.about,
-      ...updates,
-      updatedAt: now,
-    };
-    return memoryFallback.about;
+    if (isTestEnv) {
+      memoryFallback.about = {
+        ...memoryFallback.about,
+        ...updates,
+        updatedAt: now,
+      };
+      return memoryFallback.about;
+    }
+    handleMutationDbUnavailable();
   }
 
   try {
@@ -146,15 +154,10 @@ export async function updateAboutData(
       { $set: { ...cleanUpdates, updatedAt: now } },
     );
     const updated = await col.findOne({ _id: existing._id });
-    return normalizeDoc(updated) as AboutData;
+    return normalizeDoc<AboutData>(updated) as AboutData;
   } catch (err) {
     console.error("MongoDB updateAboutData error:", err);
-    memoryFallback.about = {
-      ...memoryFallback.about,
-      ...updates,
-      updatedAt: now,
-    };
-    return memoryFallback.about;
+    throw new Error("Database unavailable. Your changes were not saved.");
   }
 }
 
@@ -167,16 +170,15 @@ export async function getProjects(options?: {
   const col = await getCollection<Project>("projects");
   if (!col) {
     let list = [...memoryFallback.projects];
-    if (options?.publishedOnly) list = list.filter((p) => p.published !== false);
-    if (options?.featuredOnly) list = list.filter((p) => p.featured);
-    return list.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+    if (options?.publishedOnly) list = list.filter((p: Project) => p.published !== false);
+    if (options?.featuredOnly) list = list.filter((p: Project) => p.featured);
+    return list.sort((a: Project, b: Project) => (a.order ?? 99) - (b.order ?? 99));
   }
 
   try {
     await ensureIndexes();
     const count = await col.countDocuments({});
     if (count === 0) {
-      // Auto-seed initial projects
       await col.insertMany(
         INITIAL_DATABASE.projects.map((p) => {
           const { id, ...rest } = p;
@@ -195,7 +197,7 @@ export async function getProjects(options?: {
     }
 
     const docs = await col.find(query).sort({ order: 1, createdAt: -1 }).toArray();
-    return normalizeDocs(docs);
+    return normalizeDocs<Project>(docs);
   } catch (err) {
     console.error("MongoDB getProjects error:", err);
     return memoryFallback.projects;
@@ -220,7 +222,7 @@ export async function getProjectBySlug(
       query.published = true;
     }
     const doc = await col.findOne(query);
-    return normalizeDoc(doc);
+    return normalizeDoc<Project>(doc);
   } catch (err) {
     console.error("MongoDB getProjectBySlug error:", err);
     return null;
@@ -236,7 +238,7 @@ export async function getProjectById(id: string): Promise<Project | null> {
   try {
     const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
     const doc = await col.findOne(filter as Filter<Project>);
-    return normalizeDoc(doc);
+    return normalizeDoc<Project>(doc);
   } catch {
     return null;
   }
@@ -256,13 +258,21 @@ export async function createProject(
   };
 
   if (!col) {
-    const item = { ...newProject, id: `proj-${Date.now()}` } as Project;
-    memoryFallback.projects.unshift(item);
-    return item;
+    if (isTestEnv) {
+      const item = { ...newProject, id: `proj-${Date.now()}` } as Project;
+      memoryFallback.projects.unshift(item);
+      return item;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const result = await col.insertOne(newProject as unknown as Project);
-  return normalizeDoc<Project>({ ...newProject, _id: result.insertedId })!;
+  try {
+    const result = await col.insertOne(newProject as unknown as Project);
+    return normalizeDoc<Project>({ ...newProject, _id: result.insertedId })!;
+  } catch (err) {
+    console.error("MongoDB createProject error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function updateProject(
@@ -273,44 +283,60 @@ export async function updateProject(
   const now = new Date().toISOString();
 
   if (!col) {
-    const idx = memoryFallback.projects.findIndex((p: Project) => p.id === id);
-    if (idx === -1) return null;
-    memoryFallback.projects[idx] = {
-      ...memoryFallback.projects[idx],
-      ...updates,
-      updatedAt: now,
-    };
-    return memoryFallback.projects[idx];
+    if (isTestEnv) {
+      const idx = memoryFallback.projects.findIndex((p: Project) => p.id === id);
+      if (idx === -1) return null;
+      memoryFallback.projects[idx] = {
+        ...memoryFallback.projects[idx],
+        ...updates,
+        updatedAt: now,
+      };
+      return memoryFallback.projects[idx];
+    }
+    handleMutationDbUnavailable();
   }
 
-  const { _id, id: _cleanId, ...cleanUpdates } = updates as {
-    _id?: unknown;
-    id?: unknown;
-    [key: string]: unknown;
-  };
-  void _id;
-  void _cleanId;
+  try {
+    const { _id, id: _cleanId, ...cleanUpdates } = updates as {
+      _id?: unknown;
+      id?: unknown;
+      [key: string]: unknown;
+    };
+    void _id;
+    void _cleanId;
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  await col.updateOne(
-    filter as Filter<Project>,
-    { $set: { ...cleanUpdates, updatedAt: now } },
-  );
-  const updated = await col.findOne(filter as Filter<Project>);
-  return normalizeDoc(updated);
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    await col.updateOne(
+      filter as Filter<Project>,
+      { $set: { ...cleanUpdates, updatedAt: now } },
+    );
+    const updated = await col.findOne(filter as Filter<Project>);
+    return normalizeDoc<Project>(updated);
+  } catch (err) {
+    console.error("MongoDB updateProject error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function deleteProject(id: string): Promise<boolean> {
   const col = await getCollection<Project>("projects");
   if (!col) {
-    const initialLen = memoryFallback.projects.length;
-    memoryFallback.projects = memoryFallback.projects.filter((p: Project) => p.id !== id);
-    return memoryFallback.projects.length !== initialLen;
+    if (isTestEnv) {
+      const initialLen = memoryFallback.projects.length;
+      memoryFallback.projects = memoryFallback.projects.filter((p: Project) => p.id !== id);
+      return memoryFallback.projects.length !== initialLen;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  const res = await col.deleteOne(filter as Filter<Project>);
-  return res.deletedCount > 0;
+  try {
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    const res = await col.deleteOne(filter as Filter<Project>);
+    return res.deletedCount > 0;
+  } catch (err) {
+    console.error("MongoDB deleteProject error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 // ─── BLOG POSTS ────────────────────────────────────────────────────────────
@@ -322,9 +348,9 @@ export async function getBlogPosts(options?: {
   const col = await getCollection<BlogPost>("posts");
   if (!col) {
     let list = [...memoryFallback.posts];
-    if (options?.publishedOnly) list = list.filter((p) => p.published !== false);
-    if (options?.tag) list = list.filter((p) => p.tags.includes(options.tag!));
-    return list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    if (options?.publishedOnly) list = list.filter((p: BlogPost) => p.published !== false);
+    if (options?.tag) list = list.filter((p: BlogPost) => p.tags.includes(options.tag!));
+    return list.sort((a: BlogPost, b: BlogPost) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
 
   try {
@@ -349,7 +375,7 @@ export async function getBlogPosts(options?: {
     }
 
     const docs = await col.find(query).sort({ date: -1, createdAt: -1 }).toArray();
-    return normalizeDocs(docs);
+    return normalizeDocs<BlogPost>(docs);
   } catch (err) {
     console.error("MongoDB getBlogPosts error:", err);
     return memoryFallback.posts;
@@ -374,7 +400,7 @@ export async function getBlogPostBySlug(
       query.published = true;
     }
     const doc = await col.findOne(query);
-    return normalizeDoc(doc);
+    return normalizeDoc<BlogPost>(doc);
   } catch (err) {
     console.error("MongoDB getBlogPostBySlug error:", err);
     return null;
@@ -389,7 +415,7 @@ export async function getBlogPostById(id: string): Promise<BlogPost | null> {
 
   const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
   const doc = await col.findOne(filter as Filter<BlogPost>);
-  return normalizeDoc(doc);
+  return normalizeDoc<BlogPost>(doc);
 }
 
 export async function createBlogPost(
@@ -405,13 +431,21 @@ export async function createBlogPost(
   };
 
   if (!col) {
-    const item = { ...newPost, id: `post-${Date.now()}` } as BlogPost;
-    memoryFallback.posts.unshift(item);
-    return item;
+    if (isTestEnv) {
+      const item = { ...newPost, id: `post-${Date.now()}` } as BlogPost;
+      memoryFallback.posts.unshift(item);
+      return item;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const result = await col.insertOne(newPost as unknown as BlogPost);
-  return normalizeDoc<BlogPost>({ ...newPost, _id: result.insertedId })!;
+  try {
+    const result = await col.insertOne(newPost as unknown as BlogPost);
+    return normalizeDoc<BlogPost>({ ...newPost, _id: result.insertedId })!;
+  } catch (err) {
+    console.error("MongoDB createBlogPost error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function updateBlogPost(
@@ -422,44 +456,60 @@ export async function updateBlogPost(
   const now = new Date().toISOString();
 
   if (!col) {
-    const idx = memoryFallback.posts.findIndex((p: BlogPost) => p.id === id);
-    if (idx === -1) return null;
-    memoryFallback.posts[idx] = {
-      ...memoryFallback.posts[idx],
-      ...updates,
-      updatedAt: now,
-    };
-    return memoryFallback.posts[idx];
+    if (isTestEnv) {
+      const idx = memoryFallback.posts.findIndex((p: BlogPost) => p.id === id);
+      if (idx === -1) return null;
+      memoryFallback.posts[idx] = {
+        ...memoryFallback.posts[idx],
+        ...updates,
+        updatedAt: now,
+      };
+      return memoryFallback.posts[idx];
+    }
+    handleMutationDbUnavailable();
   }
 
-  const { _id, id: _cleanId, ...cleanUpdates } = updates as {
-    _id?: unknown;
-    id?: unknown;
-    [key: string]: unknown;
-  };
-  void _id;
-  void _cleanId;
+  try {
+    const { _id, id: _cleanId, ...cleanUpdates } = updates as {
+      _id?: unknown;
+      id?: unknown;
+      [key: string]: unknown;
+    };
+    void _id;
+    void _cleanId;
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  await col.updateOne(
-    filter as Filter<BlogPost>,
-    { $set: { ...cleanUpdates, updatedAt: now } },
-  );
-  const updated = await col.findOne(filter as Filter<BlogPost>);
-  return normalizeDoc(updated);
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    await col.updateOne(
+      filter as Filter<BlogPost>,
+      { $set: { ...cleanUpdates, updatedAt: now } },
+    );
+    const updated = await col.findOne(filter as Filter<BlogPost>);
+    return normalizeDoc<BlogPost>(updated);
+  } catch (err) {
+    console.error("MongoDB updateBlogPost error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function deleteBlogPost(id: string): Promise<boolean> {
   const col = await getCollection<BlogPost>("posts");
   if (!col) {
-    const initialLen = memoryFallback.posts.length;
-    memoryFallback.posts = memoryFallback.posts.filter((p: BlogPost) => p.id !== id);
-    return memoryFallback.posts.length !== initialLen;
+    if (isTestEnv) {
+      const initialLen = memoryFallback.posts.length;
+      memoryFallback.posts = memoryFallback.posts.filter((p: BlogPost) => p.id !== id);
+      return memoryFallback.posts.length !== initialLen;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  const res = await col.deleteOne(filter as Filter<BlogPost>);
-  return res.deletedCount > 0;
+  try {
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    const res = await col.deleteOne(filter as Filter<BlogPost>);
+    return res.deletedCount > 0;
+  } catch (err) {
+    console.error("MongoDB deleteBlogPost error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 // ─── SERVICES ──────────────────────────────────────────────────────────────
@@ -470,8 +520,8 @@ export async function getServices(options?: {
   const col = await getCollection<Service>("services");
   if (!col) {
     let list = [...memoryFallback.services];
-    if (options?.publishedOnly) list = list.filter((s) => s.published !== false);
-    return list.sort((a, b) => a.order - b.order);
+    if (options?.publishedOnly) list = list.filter((s: Service) => s.published !== false);
+    return list.sort((a: Service, b: Service) => a.order - b.order);
   }
 
   try {
@@ -493,7 +543,7 @@ export async function getServices(options?: {
     }
 
     const docs = await col.find(query).sort({ order: 1 }).toArray();
-    return normalizeDocs(docs);
+    return normalizeDocs<Service>(docs);
   } catch (err) {
     console.error("MongoDB getServices error:", err);
     return memoryFallback.services;
@@ -508,7 +558,7 @@ export async function getServiceById(id: string): Promise<Service | null> {
 
   const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
   const doc = await col.findOne(filter as Filter<Service>);
-  return normalizeDoc(doc);
+  return normalizeDoc<Service>(doc);
 }
 
 export async function createService(
@@ -525,13 +575,21 @@ export async function createService(
   };
 
   if (!col) {
-    const item = { ...newService, id: `service-${Date.now()}` } as Service;
-    memoryFallback.services.push(item);
-    return item;
+    if (isTestEnv) {
+      const item = { ...newService, id: `service-${Date.now()}` } as Service;
+      memoryFallback.services.push(item);
+      return item;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const result = await col.insertOne(newService as unknown as Service);
-  return normalizeDoc<Service>({ ...newService, _id: result.insertedId })!;
+  try {
+    const result = await col.insertOne(newService as unknown as Service);
+    return normalizeDoc<Service>({ ...newService, _id: result.insertedId })!;
+  } catch (err) {
+    console.error("MongoDB createService error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function updateService(
@@ -542,44 +600,60 @@ export async function updateService(
   const now = new Date().toISOString();
 
   if (!col) {
-    const idx = memoryFallback.services.findIndex((s: Service) => s.id === id);
-    if (idx === -1) return null;
-    memoryFallback.services[idx] = {
-      ...memoryFallback.services[idx],
-      ...updates,
-      updatedAt: now,
-    };
-    return memoryFallback.services[idx];
+    if (isTestEnv) {
+      const idx = memoryFallback.services.findIndex((s: Service) => s.id === id);
+      if (idx === -1) return null;
+      memoryFallback.services[idx] = {
+        ...memoryFallback.services[idx],
+        ...updates,
+        updatedAt: now,
+      };
+      return memoryFallback.services[idx];
+    }
+    handleMutationDbUnavailable();
   }
 
-  const { _id, id: _cleanId, ...cleanUpdates } = updates as {
-    _id?: unknown;
-    id?: unknown;
-    [key: string]: unknown;
-  };
-  void _id;
-  void _cleanId;
+  try {
+    const { _id, id: _cleanId, ...cleanUpdates } = updates as {
+      _id?: unknown;
+      id?: unknown;
+      [key: string]: unknown;
+    };
+    void _id;
+    void _cleanId;
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  await col.updateOne(
-    filter as Filter<Service>,
-    { $set: { ...cleanUpdates, updatedAt: now } },
-  );
-  const updated = await col.findOne(filter as Filter<Service>);
-  return normalizeDoc(updated);
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    await col.updateOne(
+      filter as Filter<Service>,
+      { $set: { ...cleanUpdates, updatedAt: now } },
+    );
+    const updated = await col.findOne(filter as Filter<Service>);
+    return normalizeDoc<Service>(updated);
+  } catch (err) {
+    console.error("MongoDB updateService error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function deleteService(id: string): Promise<boolean> {
   const col = await getCollection<Service>("services");
   if (!col) {
-    const initialLen = memoryFallback.services.length;
-    memoryFallback.services = memoryFallback.services.filter((s: Service) => s.id !== id);
-    return memoryFallback.services.length !== initialLen;
+    if (isTestEnv) {
+      const initialLen = memoryFallback.services.length;
+      memoryFallback.services = memoryFallback.services.filter((s: Service) => s.id !== id);
+      return memoryFallback.services.length !== initialLen;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  const res = await col.deleteOne(filter as Filter<Service>);
-  return res.deletedCount > 0;
+  try {
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    const res = await col.deleteOne(filter as Filter<Service>);
+    return res.deletedCount > 0;
+  } catch (err) {
+    console.error("MongoDB deleteService error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 // ─── SKILLS ────────────────────────────────────────────────────────────────
@@ -590,8 +664,8 @@ export async function getSkills(options?: {
   const col = await getCollection<SkillCategory>("skills");
   if (!col) {
     let list = [...memoryFallback.skills];
-    if (options?.publishedOnly) list = list.filter((s) => s.published !== false);
-    return list.sort((a, b) => a.order - b.order);
+    if (options?.publishedOnly) list = list.filter((s: SkillCategory) => s.published !== false);
+    return list.sort((a: SkillCategory, b: SkillCategory) => a.order - b.order);
   }
 
   try {
@@ -613,7 +687,7 @@ export async function getSkills(options?: {
     }
 
     const docs = await col.find(query).sort({ order: 1 }).toArray();
-    return normalizeDocs(docs);
+    return normalizeDocs<SkillCategory>(docs);
   } catch (err) {
     console.error("MongoDB getSkills error:", err);
     return memoryFallback.skills;
@@ -628,7 +702,7 @@ export async function getSkillById(id: string): Promise<SkillCategory | null> {
 
   const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
   const doc = await col.findOne(filter as Filter<SkillCategory>);
-  return normalizeDoc(doc);
+  return normalizeDoc<SkillCategory>(doc);
 }
 
 export async function createSkill(
@@ -645,13 +719,21 @@ export async function createSkill(
   };
 
   if (!col) {
-    const item = { ...newSkill, id: `skill-${Date.now()}` } as SkillCategory;
-    memoryFallback.skills.push(item);
-    return item;
+    if (isTestEnv) {
+      const item = { ...newSkill, id: `skill-${Date.now()}` } as SkillCategory;
+      memoryFallback.skills.push(item);
+      return item;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const result = await col.insertOne(newSkill as unknown as SkillCategory);
-  return normalizeDoc<SkillCategory>({ ...newSkill, _id: result.insertedId })!;
+  try {
+    const result = await col.insertOne(newSkill as unknown as SkillCategory);
+    return normalizeDoc<SkillCategory>({ ...newSkill, _id: result.insertedId })!;
+  } catch (err) {
+    console.error("MongoDB createSkill error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function updateSkill(
@@ -662,44 +744,60 @@ export async function updateSkill(
   const now = new Date().toISOString();
 
   if (!col) {
-    const idx = memoryFallback.skills.findIndex((s: SkillCategory) => s.id === id);
-    if (idx === -1) return null;
-    memoryFallback.skills[idx] = {
-      ...memoryFallback.skills[idx],
-      ...updates,
-      updatedAt: now,
-    };
-    return memoryFallback.skills[idx];
+    if (isTestEnv) {
+      const idx = memoryFallback.skills.findIndex((s: SkillCategory) => s.id === id);
+      if (idx === -1) return null;
+      memoryFallback.skills[idx] = {
+        ...memoryFallback.skills[idx],
+        ...updates,
+        updatedAt: now,
+      };
+      return memoryFallback.skills[idx];
+    }
+    handleMutationDbUnavailable();
   }
 
-  const { _id, id: _cleanId, ...cleanUpdates } = updates as {
-    _id?: unknown;
-    id?: unknown;
-    [key: string]: unknown;
-  };
-  void _id;
-  void _cleanId;
+  try {
+    const { _id, id: _cleanId, ...cleanUpdates } = updates as {
+      _id?: unknown;
+      id?: unknown;
+      [key: string]: unknown;
+    };
+    void _id;
+    void _cleanId;
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  await col.updateOne(
-    filter as Filter<SkillCategory>,
-    { $set: { ...cleanUpdates, updatedAt: now } },
-  );
-  const updated = await col.findOne(filter as Filter<SkillCategory>);
-  return normalizeDoc(updated);
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    await col.updateOne(
+      filter as Filter<SkillCategory>,
+      { $set: { ...cleanUpdates, updatedAt: now } },
+    );
+    const updated = await col.findOne(filter as Filter<SkillCategory>);
+    return normalizeDoc<SkillCategory>(updated);
+  } catch (err) {
+    console.error("MongoDB updateSkill error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function deleteSkill(id: string): Promise<boolean> {
   const col = await getCollection<SkillCategory>("skills");
   if (!col) {
-    const initialLen = memoryFallback.skills.length;
-    memoryFallback.skills = memoryFallback.skills.filter((s: SkillCategory) => s.id !== id);
-    return memoryFallback.skills.length !== initialLen;
+    if (isTestEnv) {
+      const initialLen = memoryFallback.skills.length;
+      memoryFallback.skills = memoryFallback.skills.filter((s: SkillCategory) => s.id !== id);
+      return memoryFallback.skills.length !== initialLen;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  const res = await col.deleteOne(filter as Filter<SkillCategory>);
-  return res.deletedCount > 0;
+  try {
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    const res = await col.deleteOne(filter as Filter<SkillCategory>);
+    return res.deletedCount > 0;
+  } catch (err) {
+    console.error("MongoDB deleteSkill error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 // ─── CONTACT SUBMISSIONS ───────────────────────────────────────────────────
@@ -716,7 +814,7 @@ export async function getContactSubmissions(): Promise<ContactSubmission[]> {
   try {
     await ensureIndexes();
     const docs = await col.find({}).sort({ createdAt: -1 }).toArray();
-    return normalizeDocs(docs);
+    return normalizeDocs<ContactSubmission>(docs);
   } catch (err) {
     console.error("MongoDB getContactSubmissions error:", err);
     return memoryFallback.submissions;
@@ -739,14 +837,21 @@ export async function createContactSubmission(
   };
 
   if (!col) {
+    // In memory fallback for contact form during temporary network hiccup
     memoryFallback.submissions.unshift(submission);
     return submission;
   }
 
-  const { id, ...cleanSubmission } = submission;
-  void id;
-  const result = await col.insertOne(cleanSubmission as unknown as ContactSubmission);
-  return normalizeDoc({ ...submission, _id: result.insertedId }) as ContactSubmission;
+  try {
+    const { id, ...cleanSubmission } = submission;
+    void id;
+    const result = await col.insertOne(cleanSubmission as unknown as ContactSubmission);
+    return normalizeDoc<ContactSubmission>({ ...submission, _id: result.insertedId })!;
+  } catch (err) {
+    console.error("MongoDB createContactSubmission error:", err);
+    memoryFallback.submissions.unshift(submission);
+    return submission;
+  }
 }
 
 export async function markSubmissionRead(
@@ -777,44 +882,60 @@ export async function updateContactSubmission(
   const now = new Date().toISOString();
 
   if (!col) {
-    const idx = memoryFallback.submissions.findIndex((s: ContactSubmission) => s.id === id);
-    if (idx === -1) return null;
-    memoryFallback.submissions[idx] = {
-      ...memoryFallback.submissions[idx],
-      ...updates,
-      updatedAt: now,
-    };
-    return memoryFallback.submissions[idx];
+    if (isTestEnv) {
+      const idx = memoryFallback.submissions.findIndex((s: ContactSubmission) => s.id === id);
+      if (idx === -1) return null;
+      memoryFallback.submissions[idx] = {
+        ...memoryFallback.submissions[idx],
+        ...updates,
+        updatedAt: now,
+      };
+      return memoryFallback.submissions[idx];
+    }
+    handleMutationDbUnavailable();
   }
 
-  const { _id, id: _cleanId, ...cleanUpdates } = updates as {
-    _id?: unknown;
-    id?: unknown;
-    [key: string]: unknown;
-  };
-  void _id;
-  void _cleanId;
+  try {
+    const { _id, id: _cleanId, ...cleanUpdates } = updates as {
+      _id?: unknown;
+      id?: unknown;
+      [key: string]: unknown;
+    };
+    void _id;
+    void _cleanId;
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  await col.updateOne(
-    filter as Filter<ContactSubmission>,
-    { $set: { ...cleanUpdates, updatedAt: now } },
-  );
-  const updated = await col.findOne(filter as Filter<ContactSubmission>);
-  return normalizeDoc(updated);
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    await col.updateOne(
+      filter as Filter<ContactSubmission>,
+      { $set: { ...cleanUpdates, updatedAt: now } },
+    );
+    const updated = await col.findOne(filter as Filter<ContactSubmission>);
+    return normalizeDoc<ContactSubmission>(updated);
+  } catch (err) {
+    console.error("MongoDB updateContactSubmission error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export async function deleteContactSubmission(id: string): Promise<boolean> {
   const col = await getCollection<ContactSubmission>("contact_submissions");
   if (!col) {
-    const initialLen = memoryFallback.submissions.length;
-    memoryFallback.submissions = memoryFallback.submissions.filter((s: ContactSubmission) => s.id !== id);
-    return memoryFallback.submissions.length !== initialLen;
+    if (isTestEnv) {
+      const initialLen = memoryFallback.submissions.length;
+      memoryFallback.submissions = memoryFallback.submissions.filter((s: ContactSubmission) => s.id !== id);
+      return memoryFallback.submissions.length !== initialLen;
+    }
+    handleMutationDbUnavailable();
   }
 
-  const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
-  const res = await col.deleteOne(filter as Filter<ContactSubmission>);
-  return res.deletedCount > 0;
+  try {
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id as unknown as ObjectId };
+    const res = await col.deleteOne(filter as Filter<ContactSubmission>);
+    return res.deletedCount > 0;
+  } catch (err) {
+    console.error("MongoDB deleteContactSubmission error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
 }
 
 export * from "./types";

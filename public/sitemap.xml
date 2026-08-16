@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://tensorix.me/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://tensorix.me/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://tensorix.me/services</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://tensorix.me/skills</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://tensorix.me/projects</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://tensorix.me/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://tensorix.me/contact</loc><changefreq>yearly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://tensorix.me/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/services</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/skills</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/projects</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/contact</loc><changefreq>yearly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://tensorstudio.vercel.app/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>

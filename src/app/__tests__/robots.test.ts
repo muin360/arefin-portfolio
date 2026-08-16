@@ -19,7 +19,7 @@ describe("robots()", () => {
     expect(defaultRule).toHaveProperty("allow", "/");
   });
 
-  it("disallows /studio and /api for default user agent", () => {
+  it("disallows /admin and /api for default user agent", () => {
     const defaultRule = Array.isArray(result.rules)
       ? result.rules.find(
           (r) => "userAgent" in r && r.userAgent === "*",
@@ -27,7 +27,7 @@ describe("robots()", () => {
       : null;
     expect(defaultRule).toBeDefined();
     const disallow = (defaultRule as { disallow: string[] }).disallow;
-    expect(disallow).toContain("/studio");
+    expect(disallow).toContain("/admin");
     expect(disallow).toContain("/api/");
   });
 

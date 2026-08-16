@@ -37,11 +37,10 @@ export default function PrivacyPage() {
         <div className="prose-tensor space-y-12 text-foreground/85 leading-relaxed">
           <Block num="01" title="Who this applies to">
             <p>
-              This policy covers <strong>tensorix.me</strong> and any
-              subdomains (the &quot;Site&quot;), operated by Arefin Mueen trading as
-              <strong> Tensorix</strong> (&quot;we&quot;, &quot;us&quot;). It explains what
+              This policy covers <strong>tensorstudio.vercel.app</strong> and any
+              subdomains (the &quot;Site&quot;), operated by Arefin Mueen (&quot;we&quot;, &quot;us&quot;). It explains what
               happens when you browse the Site, fill out the contact form,
-              book a call, or message us on WhatsApp.
+              book a call, or message on WhatsApp.
             </p>
             <p>
               By using the Site you agree to this policy. If you don&apos;t agree,

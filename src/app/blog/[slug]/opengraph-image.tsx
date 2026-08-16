@@ -100,7 +100,7 @@ export default async function Image({
           }}
         >
           <span>AI Automation &amp; AI Agent Developer</span>
-          <span style={{ color: "#a78bfa" }}>tensorix.me</span>
+          <span style={{ color: "#a78bfa" }}>tensorstudio.vercel.app</span>
         </div>
       </div>
     ),

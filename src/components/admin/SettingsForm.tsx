@@ -39,7 +39,7 @@ export default function SettingsForm({ initialConfig }: Props) {
         siteDescription: "Portfolio of Arefin Mueen.",
         ogTitle: "Arefin Mueen — AI Automation & AI Agent Developer",
         ogDescription: "AI automation & agent developer.",
-        canonicalUrl: "https://tensorix.me",
+        canonicalUrl: "https://tensorstudio.vercel.app",
         author: "Arefin Mueen",
       },
       live30Days: [],

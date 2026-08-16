@@ -31,7 +31,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/.well-known/", "/studio", "/studio/", "/api/"],
+        disallow: ["/.well-known/", "/admin", "/admin/", "/api/"],
       },
       ...trainingScrapers.map((bot) => ({
         userAgent: bot,

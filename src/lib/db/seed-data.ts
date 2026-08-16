@@ -28,7 +28,7 @@ export const INITIAL_DATABASE: DatabaseSchema = {
       ogTitle: "Arefin Mueen — AI Automation & AI Agent Developer",
       ogDescription:
         "Building practical AI agents, RAG pipelines, and automated business workflows using n8n, LangChain, and Python.",
-      canonicalUrl: "https://tensorix.me",
+      canonicalUrl: "https://tensorstudio.vercel.app",
       author: "Arefin Mueen",
     },
     live30Days: [

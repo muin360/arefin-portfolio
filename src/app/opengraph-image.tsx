@@ -4,9 +4,8 @@ import { ImageResponse } from "next/og";
 //
 // Renders a 1200×630 PNG at request time. The image is fetched by
 // Facebook / X / LinkedIn / iMessage / Slack when they unfurl any URL
-// on the site that doesn't override `openGraph`, which means
-// tensorix.me → home, /about, /services etc. all get this canonical
-// card unless they declare their own.
+// on the site. Every page on tensorstudio.vercel.app → home, /about, 
+// /services etc. all get this canonical card unless they declare their own.
 //
 // Uses the Node.js runtime (Next.js default) on purpose — the Edge
 // runtime bundles `next/og`'s satori + resvg deps into the function,
@@ -118,7 +117,7 @@ export default async function Image() {
             />
             <span>Open to AI automation projects</span>
           </div>
-          <div>tensorix.me</div>
+          <div>tensorstudio.vercel.app</div>
         </div>
       </div>
     ),
