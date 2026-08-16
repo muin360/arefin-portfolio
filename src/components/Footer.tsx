@@ -80,7 +80,7 @@ export default async function Footer() {
               <span className="v2-footer__wordmark">AREFIN MUIN</span>
             </div>
             <p className="v2-footer__desc">
-              AI Automation & Agent Engineer. I design and build reliable AI agents, workflow automation, and API integrations. Founder of Tensorix.
+              AI Agent & Automation Engineer based in Dhaka. I build voice agents, multi-agent systems, RAG pipelines, and automation workflows — n8n, LangChain, Python, and modern LLMs.
             </p>
             <p className="v2-footer__sub">
               Intelligence that connects the future.
@@ -246,7 +246,7 @@ export default async function Footer() {
         {/* Bottom strip */}
         <div className="v2-footer__bottom">
           <p>
-            © {year} Arefin Muin · Hand-coded with Next.js + Tailwind
+            © {year} Arefin Mueen · Hand-coded with Next.js + Tailwind
           </p>
           <p>
             <span className="opacity-50">build</span>{" "}

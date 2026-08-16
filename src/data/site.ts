@@ -14,7 +14,7 @@ import type { ComponentType, SVGProps } from "react";
 type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 
 export const site = {
-  name: "Arefin Muin",
+  name: "Arefin Mueen",
   role: "AI Automation & Agent Engineer",
   email: "arefinmuin@gmail.com",
   tagline:

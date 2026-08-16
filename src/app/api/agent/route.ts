@@ -22,7 +22,7 @@ function getFallbackResponse(userMessage: string): string {
   }
 
   if (query.includes("who") || query.includes("arefin") || query.includes("about") || query.includes("experience")) {
-    return "Arefin Muin is an AI Automation & Agent Engineer and the founder of Tensorix. He builds enterprise automation pipelines, AI agents, and custom integrations that save teams 20+ hours every week.";
+    return "Arefin Mueen is an AI Agent & Automation Engineer based in Dhaka. He builds enterprise automation pipelines, AI agents, and custom integrations that save teams 20+ hours every week.";
   }
 
   return "I'm Arefin's AI assistant. I can answer questions about AI automation workflows, n8n integrations, tech stacks, project timelines, and booking a discovery call!";

@@ -64,7 +64,7 @@ export default function HeroSectionV2({
                 AI AUTOMATION & AGENT ENGINEER
               </span>
               <span aria-hidden="true" className="v2-hero__pill-sep">·</span>
-              <span className="v2-hero__pill-meta shimmer-label">Founder, Tensorix</span>
+              <span className="v2-hero__pill-meta shimmer-label">Dhaka · GMT+6 · open to work</span>
             </span>
 
             <h1 className="v2-hero__headline">
@@ -132,7 +132,7 @@ export default function HeroSectionV2({
             <ul className="v2-hero__proof" aria-label="Trust signals">
               <li>
                 <span className="v2-hero__proof-dot" />
-                <span>Founder-led · Arefin Muin</span>
+                <span>Direct communication · Arefin Mueen</span>
               </li>
               <li>
                 <span className="v2-hero__proof-dot" />

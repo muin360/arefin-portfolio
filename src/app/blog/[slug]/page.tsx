@@ -123,7 +123,7 @@ export async function generateMetadata({
       url: `/blog/${post.slug}`,
       publishedTime: post.date,
       tags: post.tags,
-      authors: ["Arefin Muin"],
+      authors: ["Arefin Mueen"],
       images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
     },
     twitter: {
@@ -166,10 +166,10 @@ export default async function BlogPostPage({
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.date,
-    author: { "@type": "Person", name: "Arefin Muin", url: SITE_URL },
+    author: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
     publisher: {
-      "@type": "Organization",
-      name: "Tensorix",
+      "@type": "Person",
+      name: "Arefin Mueen",
       url: SITE_URL,
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/blog/${post.slug}` },

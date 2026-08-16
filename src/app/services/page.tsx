@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "Four service pillars: AI agents, workflow automation, API integrations, and RAG knowledge systems. Engagements start with a free 30-minute systems audit.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Services & Engagements — Arefin Muin",
+    title: "Services & Engagements — Arefin Mueen",
     description:
       "AI agents, workflow automation, API integrations and RAG systems for small teams.",
     url: "/services",
@@ -54,7 +54,7 @@ const engagement = [
   "Acceptance criteria written and agreed before the build starts",
   "30 days of launch support included on every engagement",
   "Fast async communication during active project milestones",
-  "Small client load so you get direct founder attention",
+  "Small client load so you get direct engineering attention",
 ];
 
 export default async function ServicesPage() {
@@ -75,7 +75,7 @@ export default async function ServicesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Arefin Muin · Services"
+        eyebrow="Arefin Mueen · Services"
         index="03"
         meta="Four pillars · Four engagements"
         title={

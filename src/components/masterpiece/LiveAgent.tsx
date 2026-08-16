@@ -4,15 +4,15 @@ import { useState, useRef, useEffect } from "react";
 
 type Msg = { role: "user" | "assistant"; text: string };
 
-const SYSTEM = `You are Tensorix's AI assistant on Arefin Muin's portfolio website.
-Arefin is an AI Automation & Agent Engineer based in Dhaka, Bangladesh.
+const SYSTEM = `You are Arefin Mueen's AI assistant on his personal portfolio website.
+Arefin Mueen is an AI Agent & Automation Engineer based in Dhaka, Bangladesh.
 He builds: Voice AI agents, Multi-agent research systems, RAG chatbots,
 n8n automation pipelines, LangChain/LangFlow agents, invoice automation,
 CRM pipelines, and full-stack AI SaaS products.
 His stack: n8n, LangChain, LangFlow, Python, JavaScript, OpenAI, Anthropic,
 Pinecone, Zapier, Make, GoHighLevel, Twilio.
 Respond in 1-3 short sentences. Be direct, technical, and confident.
-If asked about pricing, say "Book a free 30-min audit at tensorix.me/book".
+If asked about pricing or availability, say "Book a free 30-min call at the link on this page".
 If asked something unrelated to Arefin's work, politely redirect.`;
 
 const STARTERS = [
@@ -94,7 +94,7 @@ export default function LiveAgent() {
         }}
       >
         <span style={{ fontSize: "11px", color: "var(--t3)" }}>
-          tensorix · live-agent
+          arefin.mueen · live-agent
         </span>
         <span
           style={{
@@ -202,7 +202,7 @@ export default function LiveAgent() {
                 textTransform: "uppercase",
               }}
             >
-              {m.role === "user" ? "you" : "tensorix-agent"}
+              {m.role === "user" ? "you" : "arefin-agent"}
             </span>
             <div
               style={{

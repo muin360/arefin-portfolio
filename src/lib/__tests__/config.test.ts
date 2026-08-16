@@ -7,8 +7,8 @@ describe("SITE constant", () => {
   });
 
   it("exports expected brand fields", () => {
-    expect(SITE.name).toBe("Tensorix");
-    expect(SITE.author).toBe("Arefin Muin");
+    expect(SITE.name).toBe("Arefin Mueen");
+    expect(SITE.author).toBe("Arefin Mueen");
     expect(typeof SITE.tagline).toBe("string");
     expect(typeof SITE.description).toBe("string");
   });

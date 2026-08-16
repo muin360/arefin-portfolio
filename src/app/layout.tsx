@@ -87,25 +87,25 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Arefin Muin | AI Automation & Agent Engineer",
-    template: "%s — Arefin Muin",
+    default: "Arefin Mueen — AI Agent & Automation Engineer",
+    template: "%s — Arefin Mueen",
   },
   description:
-    "Arefin Muin, AI Automation & Agent Engineer, builds AI agents, workflow automation, RAG systems, API integrations, and AI-powered business systems.",
-  applicationName: "Arefin Muin Portfolio",
+    "Arefin Mueen is an AI Agent & Automation Engineer based in Dhaka. I build voice AI agents, multi-agent systems, RAG pipelines, and automation workflows with n8n, LangChain, Python, and modern LLMs.",
+  applicationName: "Arefin Mueen Portfolio",
   keywords: [
-    "Arefin Muin",
-    "AI Automation Engineer",
-    "AI Agent Engineer",
-    "AI Automation",
-    "n8n Automation",
-    "AI Workflow Automation",
-    "AI Agents",
-    "RAG Systems",
-    "Business Automation",
-    "API and systems integration",
-    "LLM engineer",
-    "LangChain agents"
+    "AI agent engineer",
+    "AI automation engineer",
+    "voice AI agent developer",
+    "multi-agent system engineer",
+    "RAG pipeline developer",
+    "n8n expert",
+    "LangChain developer",
+    "AI automation Bangladesh",
+    "AI engineer Dhaka",
+    "freelance AI engineer",
+    "automation workflow developer",
+    "Arefin Mueen",
   ],
   robots: {
     index: true,
@@ -121,24 +121,24 @@ export const metadata: Metadata = {
   },
   referrer: "strict-origin-when-cross-origin",
   formatDetection: { email: false, telephone: false, address: false },
-  authors: [{ name: "Tensorix", url: SITE_URL }, { name: "Arefin Muin", url: SITE_URL }],
-  creator: "Tensorix",
-  publisher: "Tensorix",
+  authors: [{ name: "Arefin Mueen", url: SITE_URL }],
+  creator: "Arefin Mueen",
+  publisher: "Arefin Mueen",
   openGraph: {
     type: "website",
     url: SITE_URL,
-    title: "Tensorix — AI Automation & Agent Engineering Studio",
+    title: "Arefin Mueen — AI Agent & Automation Engineer",
     description:
-      "Founder-led AI systems studio. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
-    siteName: "Tensorix",
+      "I build voice AI agents, multi-agent systems, RAG pipelines, and automation workflows. n8n · LangChain · Python · LLMs — real code, real automation.",
+    siteName: "Arefin Mueen",
     locale: "en_US",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tensorix — AI Automation & Agent Engineering Studio" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Arefin Mueen — AI Agent & Automation Engineer" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tensorix — AI Automation & Agent Engineering Studio",
+    title: "Arefin Mueen — AI Agent & Automation Engineer",
     description:
-      "Founder-led AI systems studio. Reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
+      "I build voice AI agents, multi-agent systems, RAG pipelines, and n8n automation workflows. Based in Dhaka, working globally.",
     images: ["/og.png"],
   },
   manifest: "/site.webmanifest",
@@ -154,25 +154,20 @@ export const metadata: Metadata = {
 };
 
 // JSON-LD structured data — helps Google understand the site as a Person +
-// Organization + WebSite, which improves knowledge-panel eligibility and
+// WebSite, which improves knowledge-panel eligibility and
 // rich-result rendering. Inline because the CSP allows 'unsafe-inline' for
 // scripts; nothing here is dynamic per-request.
 const jsonLd = [
   {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Arefin Muin",
+    name: "Arefin Mueen",
     url: SITE_URL,
-    jobTitle: "AI Automation & Agent Engineer",
+    jobTitle: "AI Agent & Automation Engineer",
     description:
-      "Founder of Tensorix. Independent AI engineer building reliable agents, workflow automation, API integrations and conversion-focused web systems with n8n, Make, Zapier, GoHighLevel, LangChain, LangFlow, Python and TypeScript.",
+      "Independent AI engineer building voice agents, multi-agent systems, RAG pipelines, and automation workflows with n8n, LangChain, LangFlow, Python, and modern LLMs. Based in Dhaka, working globally.",
     image: `${SITE_URL}/og.png`,
     email: "mailto:hello@tensorix.me",
-    worksFor: {
-      "@type": "Organization",
-      name: "Tensorix",
-      url: SITE_URL,
-    },
     sameAs: [
       "https://www.facebook.com/profile.php?id=61588840534814",
       "https://wa.me/8801994605717",
@@ -194,23 +189,8 @@ const jsonLd = [
   },
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Tensorix",
-    alternateName: ["Tensorix Agency", "Tensor"],
-    url: SITE_URL,
-    logo: `${SITE_URL}/tensorix-logo-256.png`,
-    description:
-      "Tensorix is a founder-led AI systems studio. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
-    founder: { "@type": "Person", name: "Arefin Muin" },
-    sameAs: [
-      "https://www.facebook.com/profile.php?id=61588840534814",
-      "https://wa.me/8801994605717",
-    ],
-  },
-  {
-    "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Tensorix",
+    name: "Arefin Mueen",
     url: SITE_URL,
     inLanguage: "en",
   },
@@ -222,7 +202,7 @@ const jsonLd = [
     "@type": "Service",
     name: "Workflow Automation",
     serviceType: "AI Workflow Automation",
-    provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
+    provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
       "Production workflow automation on n8n, Make, Zapier, and GoHighLevel — CRM updates, follow-ups, invoicing, reporting — with proper error handling, logging, and documentation built in.",
@@ -243,7 +223,7 @@ const jsonLd = [
     "@type": "Service",
     name: "AI Agent & Chatbot Systems",
     serviceType: "Conversational AI / AI Agent",
-    provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
+    provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
       "AI chat agents for web, WhatsApp, and Messenger. Trained on your real content, integrated with your existing CRM and tools, with clear human handoff for the cases that matter.",
@@ -259,7 +239,7 @@ const jsonLd = [
     "@type": "Service",
     name: "Conversion Websites with Automation",
     serviceType: "Web Development & Automation",
-    provider: { "@type": "Organization", name: "Tensorix", url: SITE_URL },
+    provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
       "Fast, mobile-first websites built as web systems — forms, WhatsApp, booking, payments, and AI chat wired into your CRM and automation stack from day one.",

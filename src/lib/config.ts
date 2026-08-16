@@ -18,18 +18,18 @@ const RAW_SITE_URL =
 export const SITE = {
   /** Canonical site URL with no trailing slash. */
   url: RAW_SITE_URL.replace(/\/+$/, ""),
-  /** Brand / company display name. */
-  name: "Tensorix",
+  /** Brand display name. */
+  name: "Arefin Mueen",
   /** One-line positioning. */
-  tagline: "AI Automation & Agent Engineering Studio",
+  tagline: "AI Agent & Automation Engineer",
   /** Long-form description used in meta + JSON-LD. */
   description:
-    "Tensorix is a founder-led AI systems studio. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
-  /** Person behind the studio. */
-  author: "Arefin Muin",
-  /** Studio contact inbox. Use this for forms / "contact us" links. */
+    "Arefin Mueen is an AI Agent & Automation Engineer based in Dhaka. I build voice AI agents, multi-agent systems, RAG pipelines, and automation workflows with n8n, LangChain, Python, and modern LLMs.",
+  /** Person behind the portfolio. */
+  author: "Arefin Mueen",
+  /** Contact inbox. Use this for forms / "contact me" links. */
   contactEmail: "hello@tensorix.me",
-  /** Founder's direct inbox — for owner-only correspondence. */
+  /** Direct inbox. */
   founderEmail: "arefinmuin@gmail.com",
   /** WhatsApp number in E.164 format (no `+`). Routed through `lib/cta`. */
   whatsapp: "8801994605717",

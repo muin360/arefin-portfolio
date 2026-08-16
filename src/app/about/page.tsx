@@ -8,10 +8,10 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Hi, I'm Arefin Muin — an AI Automation & Agent Engineer. I design and build practical AI agents, workflow automation, API integrations, and conversion-focused web systems.",
+    "Hi, I'm Arefin Mueen — an AI Agent & Automation Engineer. I design and build practical AI agents, workflow automation, API integrations, and conversion-focused web systems.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About — Arefin Muin",
+    title: "About — Arefin Mueen",
     description:
       "I design and build AI agents, workflow automation, integrations, and conversion-focused websites for small teams.",
     url: "/about",
@@ -44,7 +44,7 @@ const milestones = [
   },
   {
     period: "2024",
-    body: "Founded Tensorix. Brought LLMs into real production workflows for paying clients — lead-qualification agents, Messenger bots, RAG chatbots over internal docs.",
+    body: "Began specialized AI engineering. Brought LLMs into real production workflows for paying clients — lead-qualification agents, Messenger bots, RAG chatbots over internal docs.",
   },
   {
     period: "2025",
@@ -56,7 +56,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Arefin Muin · About"
+        eyebrow="Arefin Mueen · About"
         index="02"
         meta="AI Automation & Agent Engineer"
         title={
@@ -80,7 +80,7 @@ export default function AboutPage() {
               The operator
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-              Arefin Muin<br />AI Automation<br />Agent Engineer
+              Arefin Mueen<br />AI Agent & Automation<br />Engineer
             </p>
           </div>
           <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-white/80">

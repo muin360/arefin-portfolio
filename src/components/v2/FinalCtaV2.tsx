@@ -17,10 +17,10 @@ import { whatsappHref, WA_MESSAGES } from "@/lib/cta";
  */
 export default function FinalCtaV2() {
   return (
-    <section className="v2-finalcta" aria-label="Book the next sprint">
+    <section className="v2-finalcta" aria-label="Let's work together">
       <div className="v2-finalcta__orb" aria-hidden="true" />
       <div className="v2-finalcta__card">
-        <span className="v2-finalcta__eyebrow">[ next step ]  book the studio</span>
+        <span className="v2-finalcta__eyebrow">[ next step ]  let&rsquo;s work together</span>
         <h2 className="v2-finalcta__head">
           You don&rsquo;t need <em>more</em> tools.
           <br />
@@ -28,8 +28,8 @@ export default function FinalCtaV2() {
           that runs the work for you.
         </h2>
         <p className="v2-finalcta__sub">
-          14 days, fixed price, you own everything we build. If automation
-          doesn&rsquo;t deliver real time back to your team in 30 days, you
+          14 days, fixed price, you own everything I build. If automation
+          doesn&rsquo;t deliver real time back to you in 30 days, you
           don&rsquo;t pay the second invoice.
         </p>
 
@@ -76,7 +76,7 @@ export default function FinalCtaV2() {
               aria-hidden="true"
               className="v2-finalcta__wa-icon"
             />
-            <span>WhatsApp the studio</span>
+            <span>WhatsApp me</span>
           </a>
         </div>
       </div>

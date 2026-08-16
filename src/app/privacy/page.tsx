@@ -38,7 +38,7 @@ export default function PrivacyPage() {
           <Block num="01" title="Who this applies to">
             <p>
               This policy covers <strong>tensorix.me</strong> and any
-              subdomains (the &quot;Site&quot;), operated by Arefin Muin trading as
+              subdomains (the &quot;Site&quot;), operated by Arefin Mueen trading as
               <strong> Tensorix</strong> (&quot;we&quot;, &quot;us&quot;). It explains what
               happens when you browse the Site, fill out the contact form,
               book a call, or message us on WhatsApp.

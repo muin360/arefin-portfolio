@@ -63,7 +63,7 @@ export default function Navbar() {
           href="/"
           className="v2-nav__brand group"
           onClick={() => setOpen(false)}
-          aria-label="Tensorix home"
+          aria-label="Arefin Mueen — home"
         >
           <span className="v2-nav__diamond" aria-hidden="true">
             ◈
@@ -89,9 +89,9 @@ export default function Navbar() {
 
         {/* Right cluster */}
         <div className="v2-nav__right">
-          <span className="v2-nav__pill" aria-label="Studio status: open for sprints">
+          <span className="v2-nav__pill" aria-label="Available for projects">
             <span className="v2-nav__pill-dot" />
-            <span className="v2-nav__pill-text">live · taking sprints</span>
+            <span className="v2-nav__pill-text">available · DHK</span>
           </span>
           <Link href="/contact" className="v2-nav__cta">
             Contact me

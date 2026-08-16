@@ -24,15 +24,15 @@ import type {
 } from "@/sanity/types";
 
 export const FALLBACK_SITE_CONFIG: SiteConfig = {
-  name: "Arefin Muin",
-  role: "AI Automation Engineer & Agent Developer",
+  name: "Arefin Mueen",
+  role: "AI Agent & Automation Engineer",
   email: process.env.CONTACT_EMAIL ?? "hello@tensorix.me",
   phone: process.env.CONTACT_PHONE ?? "+880 1994-605717",
   phoneE164: process.env.CONTACT_PHONE_E164 ?? "8801994605717",
   tagline:
-    "AI systems that turn repetitive work into reliable workflows. Practical agents, automation, and web systems for small teams.",
+    "AI systems that turn repetitive work into reliable workflows. Voice agents, automation, and RAG pipelines for businesses.",
   siteDescription:
-    "Tensorix is a founder-led AI systems studio run by Arefin Muin. We design and build reliable AI agents, workflow automation, API integrations, and conversion-focused web systems for small teams.",
+    "Arefin Mueen is an AI Agent & Automation Engineer based in Dhaka. I build voice AI agents, multi-agent systems, RAG pipelines, and automation workflows with n8n, LangChain, Python, and modern LLMs.",
   availability: "Accepting new engagements",
   availabilityNote: "Limited project capacity · Free 30-min systems audit",
   social: {
