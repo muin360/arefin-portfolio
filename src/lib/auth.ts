@@ -34,13 +34,15 @@ const config = {
       },
       async authorize(credentials) {
         const password = credentials?.password as string | undefined;
-        const validPass = process.env.ADMIN_PASSWORD || process.env.ADMIN_SECRET || "admin123";
-        if (password && (password === validPass || password === "arefinmueen360@gmail.com" || password === "arefin2026")) {
+        const validPass = process.env.ADMIN_PASSWORD || process.env.ADMIN_SECRET;
+        
+        // Strict environment-driven passcode check with no hardcoded fallbacks
+        if (validPass && password && password === validPass) {
           return {
             id: "admin-user",
             name: "Arefin Mueen",
-            email: "arefinmueen360@gmail.com",
-            login: "muin360",
+            email: process.env.ADMIN_EMAILS?.split(",")[0]?.trim() || "arefinmueen360@gmail.com",
+            login: process.env.ADMIN_GITHUB_USERS?.split(",")[0]?.trim() || "muin360",
             isAdmin: true,
           };
         }
