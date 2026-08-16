@@ -13,12 +13,12 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "Services & Engagements",
   description:
-    "Four service pillars: AI agents, workflow automation, API integrations, and RAG knowledge systems. Engagements start with a free 30-minute systems audit.",
+    "Bespoke web design, full-stack web applications, autonomous AI agents, and business workflow automation. Engagements start with a free 30-minute discovery call.",
   alternates: { canonical: "/services" },
   openGraph: {
     title: "Services & Engagements — Arefin Mueen",
     description:
-      "AI agents, workflow automation, API integrations and RAG systems for small teams.",
+      "AI-powered websites, full-stack web applications, AI agents, and production automation systems.",
     url: "/services",
   },
 };
@@ -28,33 +28,33 @@ export const metadata: Metadata = {
 const process = [
   {
     step: "01",
-    title: "Audit — free 30 min",
-    body: "A focused conversation to map your current workflows, surface the highest-leverage automation opportunities, and agree on next steps in writing. No obligation — you keep the notes either way.",
+    title: "Discovery — free 30 min",
+    body: "A focused conversation to map your product roadmap or workflows, identify high-leverage full-stack/AI opportunities, and agree on next steps in writing.",
   },
   {
     step: "02",
-    title: "Blueprint",
-    body: "Architecture, integration map, deliverables, acceptance criteria and indicative scope, written down before any build starts. So both sides know exactly what 'done' looks like.",
+    title: "Blueprint & Architecture",
+    body: "UI/UX wireframes, technical architecture, database schemas, integration maps, and delivery milestones agreed before any code is written.",
   },
   {
     step: "03",
-    title: "Build & test",
-    body: "Milestone-based build with real-data testing, logging, and error handling. Fast async updates during active milestones, with regular check-ins so nothing drifts off-spec.",
+    title: "Build & Iterate",
+    body: "Milestone-based engineering with real-data testing, responsive polishing, security checks, and regular check-ins so you see continuous progress.",
   },
   {
     step: "04",
-    title: "Launch & support",
-    body: "Documentation, handover training, and source under your accounts and repos. 30 days of launch support included — I fix anything that doesn't meet the agreed acceptance criteria.",
+    title: "Launch & Support",
+    body: "Deployment, full documentation, video walkthroughs, and repository handover. 30 days of launch support included on every engagement.",
   },
 ];
 
 const engagement = [
-  "All accounts, logins, and source code in your name — you own everything",
-  "Documentation, handover, and Loom walkthroughs at launch",
+  "All accounts, logins, and source code in your name — you own 100%",
+  "Bespoke UI/UX design and modern responsive engineering",
   "Acceptance criteria written and agreed before the build starts",
-  "30 days of launch support included on every engagement",
-  "Fast async communication during active project milestones",
-  "Small client load so you get direct engineering attention",
+  "30 days of dedicated launch support included on every project",
+  "Fast async communication and milestone check-ins",
+  "Small client load so you get direct senior engineering attention",
 ];
 
 export default async function ServicesPage() {
@@ -77,14 +77,14 @@ export default async function ServicesPage() {
       <PageHeader
         eyebrow="Arefin Mueen · Services"
         index="03"
-        meta="Four pillars · Four engagements"
+        meta="Core capabilities · Four engagement tiers"
         title={
           <>
-            Four service pillars,{" "}
+            Bespoke digital products,{" "}
             <span className="serif">four ways</span> to engage.
           </>
         }
-        subtitle="I design, build, and ship reliable AI agents, workflow automation, API integrations, and RAG systems. Every engagement starts with a free 30-min audit and a written recommendation."
+        subtitle="I design, build, and ship intelligent web applications, modern conversion websites, AI agents, and production automation systems. Every project starts with a free 30-min discovery call and a written proposal."
       />
 
       {/* ENGAGEMENTS — Sprint / Build / Retainer pricing tiers */}

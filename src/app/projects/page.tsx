@@ -14,12 +14,12 @@ import TiltCard from "@/components/TiltCard";
 export const metadata: Metadata = {
   title: "Selected Work",
   description:
-    "Selected automation and AI-agent systems built by Tensorix for clients and engagements across the US, EU and APAC — lead qualification, booking bots, content pipelines, knowledge bases and outreach systems.",
+    "Selected full-stack web applications, custom websites, AI agents, and production automation systems engineered by Arefin Mueen for clients globally.",
   alternates: { canonical: "/projects" },
   openGraph: {
-    title: "Selected Work — Tensorix",
+    title: "Selected Work — Arefin Mueen",
     description:
-      "Selected automation and AI-agent systems built by Tensorix for clients across the US, EU and APAC.",
+      "Web applications, websites, AI agents, and automation systems designed and built by Arefin Mueen.",
     url: "/projects",
   },
 };
@@ -34,18 +34,17 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Selected work"
+        eyebrow="Arefin Mueen · Selected Work"
         index="05"
-        meta="Case studies · Editorial"
+        meta="Web Apps · UI/UX Design · AI Agents · Automation"
         title={
           <>
-            Systems that{" "}
-            <span className="serif">do the work,</span>
+            Intelligent digital products,
             <br />
-            so the team doesn&apos;t.
+            <span className="serif">engineered to perform.</span>
           </>
         }
-        subtitle="A selection of automations and AI agents Tensorix has put into production. Case studies are anonymized — we share specifics on a call."
+        subtitle="A selection of full-stack web applications, bespoke websites, autonomous AI agents, and production automation pipelines designed and built by Arefin Mueen."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">

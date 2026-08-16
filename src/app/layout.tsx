@@ -1,12 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import {
-  Inter,
-  Roboto,
-  JetBrains_Mono,
-  Instrument_Serif,
-  Manrope,
   Syne,
   DM_Sans,
+  JetBrains_Mono,
+  Instrument_Serif,
 } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -22,35 +19,7 @@ import { safeJsonLd } from "@/lib/json-ld";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-// Body — Inter is the variable, optically tuned, high-legibility workhorse used
-// across Vercel / Stripe / Linear-tier products. Kept as a fallback for any
-// legacy --font-inter references.
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-
-// Body accent — Roboto adds a humanist warmth to complement Inter.
-// Used as a secondary body/UI face throughout the site.
-const roboto = Roboto({
-  variable: "--font-roboto",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-  display: "swap",
-});
-// Display — Manrope adds character and slightly humanist warmth for big
-// editorial headlines without going full geometric. Retained as a fallback
-// for any --font-manrope references.
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-// Display — Syne is the primary editorial face. Sharp, slightly engineered
-// geometric serif/sans hybrid that anchors the Tensorix headline voice.
+// Display — Syne is the primary editorial & headline face.
 const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
@@ -58,16 +27,15 @@ const syne = Syne({
   display: "swap",
 });
 
-// Body — DM Sans is the production-grade reading face used for body copy,
-// nav, and UI labels. Pairs cleanly with Syne and JetBrains Mono.
+// Body & UI — DM Sans is the production reading face for body copy, UI, and navigation.
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-// Editorial accent — high-contrast didone-style serif for the studio's
-// signature italic moments.
+// Editorial Accent — Instrument Serif for signature editorial moments.
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   subsets: ["latin"],
@@ -76,8 +44,7 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
-// Mono — JetBrains Mono has stronger ligatures + character than Geist Mono,
-// reads more like real production-engineering text.
+// Mono — JetBrains Mono for code, system traces, status tags, and technical labels.
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
@@ -87,24 +54,28 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Arefin Mueen — AI Agent & Automation Engineer",
+    default: "Arefin Mueen — AI-Powered Full-Stack Developer & Web Designer",
     template: "%s — Arefin Mueen",
   },
   description:
-    "Arefin Mueen is an AI Agent & Automation Engineer based in Dhaka. I build voice AI agents, multi-agent systems, RAG pipelines, and automation workflows with n8n, LangChain, Python, and modern LLMs.",
+    "Arefin Mueen is an AI-Powered Full-Stack Developer and Web Designer based in Dhaka. I engineer intelligent websites, web applications, AI agents, and workflow automations that solve real business problems.",
   applicationName: "Arefin Mueen Portfolio",
   keywords: [
-    "AI agent engineer",
-    "AI automation engineer",
-    "voice AI agent developer",
-    "multi-agent system engineer",
-    "RAG pipeline developer",
-    "n8n expert",
-    "LangChain developer",
-    "AI automation Bangladesh",
-    "AI engineer Dhaka",
-    "freelance AI engineer",
-    "automation workflow developer",
+    "AI-Powered Full-Stack Developer",
+    "Web Designer",
+    "Full-Stack Web Developer",
+    "AI Web Development",
+    "AI Agents",
+    "Workflow Automation",
+    "Intelligent Web Applications",
+    "SaaS Development",
+    "UI UX Design",
+    "Next.js Developer",
+    "React Engineer",
+    "Python Developer",
+    "n8n Expert",
+    "LangChain Developer",
+    "RAG Systems",
     "Arefin Mueen",
   ],
   robots: {
@@ -127,18 +98,18 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: SITE_URL,
-    title: "Arefin Mueen — AI Agent & Automation Engineer",
+    title: "Arefin Mueen — AI-Powered Full-Stack Developer & Web Designer",
     description:
-      "I build voice AI agents, multi-agent systems, RAG pipelines, and automation workflows. n8n · LangChain · Python · LLMs — real code, real automation.",
+      "I design and engineer intelligent digital products — modern web applications, conversion-driven websites, AI agents, and production automation pipelines.",
     siteName: "Arefin Mueen",
     locale: "en_US",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Arefin Mueen — AI Agent & Automation Engineer" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Arefin Mueen — AI-Powered Full-Stack Developer & Web Designer" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arefin Mueen — AI Agent & Automation Engineer",
+    title: "Arefin Mueen — AI-Powered Full-Stack Developer & Web Designer",
     description:
-      "I build voice AI agents, multi-agent systems, RAG pipelines, and n8n automation workflows. Based in Dhaka, working globally.",
+      "I design and engineer intelligent digital products — modern web apps, high-converting websites, AI agents, and production automation workflows.",
     images: ["/og.png"],
   },
   manifest: "/site.webmanifest",
@@ -163,28 +134,32 @@ const jsonLd = [
     "@type": "Person",
     name: "Arefin Mueen",
     url: SITE_URL,
-    jobTitle: "AI Agent & Automation Engineer",
+    jobTitle: "AI-Powered Full-Stack Developer & Web Designer",
     description:
-      "Independent AI engineer building voice agents, multi-agent systems, RAG pipelines, and automation workflows with n8n, LangChain, LangFlow, Python, and modern LLMs. Based in Dhaka, working globally.",
+      "Product-minded full-stack developer and web designer who combines modern web engineering, AI agents, and automation to build intelligent digital systems and web products.",
     image: `${SITE_URL}/og.png`,
     email: "mailto:hello@tensorix.me",
     sameAs: [
       "https://www.facebook.com/profile.php?id=61588840534814",
       "https://wa.me/8801994605717",
+      "https://github.com/arefinmuin",
+      "https://www.linkedin.com/in/arefin-muin/",
     ],
     knowsAbout: [
-      "AI Engineering",
+      "Full-Stack Web Development",
+      "Web Design & UI/UX Engineering",
+      "AI Product Development",
       "AI Agents",
       "Workflow Automation",
-      "n8n",
-      "Zapier",
-      "Make",
-      "LangChain",
-      "LangFlow",
-      "GoHighLevel",
-      "Large Language Models",
-      "Python",
+      "Next.js",
+      "React",
       "TypeScript",
+      "Python",
+      "n8n",
+      "LangChain",
+      "RAG Systems",
+      "API Integrations",
+      "Database Architecture",
     ],
   },
   {
@@ -194,60 +169,53 @@ const jsonLd = [
     url: SITE_URL,
     inLanguage: "en",
   },
-  // Service schemas — one per productized offering. Helps Google match
-  // "AI automation for small business", "Facebook chatbot automation",
-  // and "website development for business" search intent to this site.
+  // Service schemas — productized offerings
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Workflow Automation",
-    serviceType: "AI Workflow Automation",
+    name: "AI-Powered Websites & Web Design",
+    serviceType: "Web Design & Frontend Engineering",
     provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
-      "Production workflow automation on n8n, Make, Zapier, and GoHighLevel — CRM updates, follow-ups, invoicing, reporting — with proper error handling, logging, and documentation built in.",
+      "Bespoke, high-performance web design and frontend engineering with integrated AI capabilities, CMS management, and conversion-optimized architecture.",
     offers: {
       "@type": "Offer",
       url: `${SITE_URL}/services`,
       availability: "https://schema.org/LimitedAvailability",
       priceCurrency: "USD",
-      priceSpecification: {
-        "@type": "PriceSpecification",
-        priceCurrency: "USD",
-        description: "Quoted after a free systems audit",
-      },
     },
   },
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "AI Agent & Chatbot Systems",
-    serviceType: "Conversational AI / AI Agent",
+    name: "Full-Stack Web Applications & SaaS",
+    serviceType: "Full-Stack Web Development",
     provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
-      "AI chat agents for web, WhatsApp, and Messenger. Trained on your real content, integrated with your existing CRM and tools, with clear human handoff for the cases that matter.",
+      "End-to-end web applications, dashboards, SaaS platforms, and internal tools built with Next.js, React, Node.js/Python, databases, and secure authentication.",
     offers: {
       "@type": "Offer",
       url: `${SITE_URL}/services`,
-      priceCurrency: "USD",
       availability: "https://schema.org/LimitedAvailability",
+      priceCurrency: "USD",
     },
   },
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Conversion Websites with Automation",
-    serviceType: "Web Development & Automation",
+    name: "AI Agents & Automation Systems",
+    serviceType: "AI Agent Engineering & Automation",
     provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
     areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
     description:
-      "Fast, mobile-first websites built as web systems — forms, WhatsApp, booking, payments, and AI chat wired into your CRM and automation stack from day one.",
+      "Autonomous AI agents, conversational assistants, RAG knowledge bases, and multi-app business automation pipelines with n8n, Make, LangChain, and APIs.",
     offers: {
       "@type": "Offer",
       url: `${SITE_URL}/services`,
-      priceCurrency: "USD",
       availability: "https://schema.org/LimitedAvailability",
+      priceCurrency: "USD",
     },
   },
 ];
@@ -267,7 +235,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${roboto.variable} ${manrope.variable} ${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <head>
         {/* Defense-in-depth: HTTP headers (set by host config) are the primary

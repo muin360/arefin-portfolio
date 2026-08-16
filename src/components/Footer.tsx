@@ -59,8 +59,8 @@ export default async function Footer() {
           <span aria-hidden="true"> ]</span>
         </p>
         <h2 className="v2-footer__head">
-          Have a workflow{" "}
-          <span className="v2-footer__head-italic">worth automating?</span>
+          Have a product or workflow{" "}
+          <span className="v2-footer__head-italic">ready to build?</span>
         </h2>
         <a href={`mailto:${email}`} className="v2-footer__email group">
           <span>{email}</span>
@@ -77,13 +77,13 @@ export default async function Footer() {
               <span className="v2-footer__diamond" aria-hidden="true">
                 ◈
               </span>
-              <span className="v2-footer__wordmark">AREFIN MUIN</span>
+              <span className="v2-footer__wordmark">AREFIN MUEEN</span>
             </div>
             <p className="v2-footer__desc">
-              AI Agent & Automation Engineer based in Dhaka. I build voice agents, multi-agent systems, RAG pipelines, and automation workflows — n8n, LangChain, Python, and modern LLMs.
+              AI-Powered Full-Stack Developer &amp; Web Designer based in Dhaka. I engineer intelligent websites, web applications, AI agents, and production automation systems.
             </p>
             <p className="v2-footer__sub">
-              Intelligence that connects the future.
+              Engineering intelligent digital products with AI.
             </p>
           </div>
 

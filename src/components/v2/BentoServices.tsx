@@ -182,7 +182,7 @@ function BrowserMockup() {
           className="ml-3 px-2 py-0.5 rounded text-[10px] font-mono"
           style={{ background: "rgba(255,255,255,0.04)", color: "var(--t3)" }}
         >
-          tensorix.me/start
+          arefin.mueen/app
         </span>
       </div>
       <div className="p-4 space-y-2">
@@ -198,7 +198,7 @@ function BrowserMockup() {
             className="px-2.5 py-1 rounded-full text-[10px] font-mono"
             style={{ background: "var(--a1)", color: "#fff" }}
           >
-            Book audit →
+            Launch Project →
           </span>
         </div>
       </div>
@@ -208,32 +208,32 @@ function BrowserMockup() {
 
 const CARDS: Card[] = [
   {
-    index: "01 / AGENT",
-    title: "AI Agent Systems",
-    hook: "Custom AI agents that handle complex business workflows and operational tasks.",
+    index: "01 / WEB & DESIGN",
+    title: "AI-Powered Websites & Web Design",
+    hook: "Bespoke Next.js web applications, dynamic CMS flagships, and high-converting digital products.",
+    visual: <BrowserMockup />,
+    href: "/services#conversion-websites",
+  },
+  {
+    index: "02 / FULL-STACK",
+    title: "Full-Stack Web Applications & SaaS",
+    hook: "End-to-end web apps, dashboards, and SaaS platforms built with Next.js, Node/Python, and PostgreSQL.",
+    visual: <WorkflowDiagram />,
+    href: "/services#fullstack-apps",
+  },
+  {
+    index: "03 / AI AGENTS",
+    title: "AI Agents & Autonomous Assistants",
+    hook: "Intelligent agents that reason, qualify inbound leads, schedule meetings, and automate execution.",
     visual: <AgentTabs />,
     href: "/services#agent-chatbot",
   },
   {
-    index: "02 / FLOW",
-    title: "Workflow Automation",
-    hook: "Automate repetitive processes using n8n and API-driven workflows.",
-    visual: <WorkflowDiagram />,
-    href: "/services#workflow-automation",
-  },
-  {
-    index: "03 / API",
-    title: "AI + API Integrations",
-    hook: "Connect AI systems with CRM, e-commerce, and business tools.",
+    index: "04 / AUTOMATION",
+    title: "Business Automation & n8n Systems",
+    hook: "Robust event-driven automation pipelines connecting CRMs, APIs, databases, and internal workflows.",
     visual: <ConnectionMap />,
-    href: "/services#api-integrations",
-  },
-  {
-    index: "04 / RAG",
-    title: "RAG & Knowledge Systems",
-    hook: "Build AI assistants that work with structured or unstructured business knowledge.",
-    visual: <BrowserMockup />,
-    href: "/services#rag-systems",
+    href: "/services#workflow-automation",
   },
 ];
 

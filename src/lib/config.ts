@@ -21,10 +21,10 @@ export const SITE = {
   /** Brand display name. */
   name: "Arefin Mueen",
   /** One-line positioning. */
-  tagline: "AI Agent & Automation Engineer",
+  tagline: "AI-Powered Full-Stack Developer & Web Designer",
   /** Long-form description used in meta + JSON-LD. */
   description:
-    "Arefin Mueen is an AI Agent & Automation Engineer based in Dhaka. I build voice AI agents, multi-agent systems, RAG pipelines, and automation workflows with n8n, LangChain, Python, and modern LLMs.",
+    "Arefin Mueen is an AI-Powered Full-Stack Developer and Web Designer based in Dhaka. I design and build intelligent websites, web applications, AI agents, and production automation systems.",
   /** Person behind the portfolio. */
   author: "Arefin Mueen",
   /** Contact inbox. Use this for forms / "contact me" links. */

@@ -39,16 +39,16 @@ export default function AgentDashboard() {
   }, [inView]);
 
   const lines = [
-    { time: "09:42:11", type: "info" as const,  message: "lead.created · channel=whatsapp",            status: "200 ok" },
-    { time: "09:42:11", type: "agent" as const, message: "router → agent.lead-bot · trace 8211",      status: "8 ms" },
-    { time: "09:42:12", type: "info" as const,  message: "vector.search query=onboarding k=4",        status: "284 ms" },
-    { time: "09:42:13", type: "ok" as const,    message: "tool.call crm.create_deal · $8,200",        status: "deal_8211" },
-    { time: "09:42:13", type: "agent" as const, message: "drafting reply · gpt-4o · temp=0.4",        status: "1.1 s" },
-    { time: "09:42:14", type: "ok" as const,    message: "delivery → twilio · message #2098",         status: "sent" },
+    { time: "10:14:02", type: "info" as const,  message: "app.init · route=/api/v1/workspace",          status: "200 ok" },
+    { time: "10:14:02", type: "ok" as const,    message: "auth.session · user=verified_lead",         status: "jwt_ok" },
+    { time: "10:14:03", type: "agent" as const, message: "agent.reasoning · model=claude-3.5",       status: "14 ms" },
+    { time: "10:14:03", type: "info" as const,  message: "db.query · vector_search k=4 pgvector",    status: "18 ms" },
+    { time: "10:14:04", type: "ok" as const,    message: "workflow.dispatch · n8n pipeline trigger",  status: "200 ok" },
+    { time: "10:14:05", type: "ok" as const,    message: "ui.stream · reactive client update",        status: "active" },
   ];
 
   return (
-    <div ref={ref} className="v2-dashboard w-full" aria-label="Live agent monitoring dashboard">
+    <div ref={ref} className="v2-dashboard w-full" aria-label="Live system monitoring dashboard">
       <div className="scan-line" aria-hidden="true" />
 
       <div className="v2-dashboard__inner">
@@ -59,7 +59,7 @@ export default function AgentDashboard() {
             <span className="v2-dashboard__dot" style={{ background: "var(--amber)" }} />
             <span className="v2-dashboard__dot" style={{ background: "var(--green)" }} />
           </div>
-          <span className="v2-dashboard__title">tensorix · lead-agent · v1.4</span>
+          <span className="v2-dashboard__title">arefin.mueen · system-runtime · v2.0</span>
           <span className="v2-dashboard__live">
             <span className="v2-dashboard__live-dot" />
             live

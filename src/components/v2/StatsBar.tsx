@@ -21,10 +21,10 @@ type Stat = {
 };
 
 const STATS: Stat[] = [
-  { target: 10, suffix: "+", label: "Industrial projects built" },
-  { prefix: "<", target: 14, suffix: "d", label: "Avg delivery time" },
-  { target: 8, suffix: "+", label: "Automation tools mastered" },
-  { target: 100, suffix: "%", label: "You own the build" },
+  { target: 12, suffix: "+", label: "Web & AI systems shipped" },
+  { prefix: "<", target: 14, suffix: "d", label: "Avg sprint delivery" },
+  { target: 100, suffix: "%", label: "Direct source & IP ownership" },
+  { target: 30, suffix: "d", label: "Post-launch support included" },
 ];
 
 export default function StatsBar() {
@@ -32,7 +32,7 @@ export default function StatsBar() {
 
   return (
     <section
-      aria-label="Tensorix at a glance"
+      aria-label="Engineering metrics at a glance"
       className="v2-stats border-y"
       style={{ borderColor: "var(--border-2)" }}
     >

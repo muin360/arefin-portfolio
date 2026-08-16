@@ -22,23 +22,20 @@ export default function FinalCtaV2() {
       <div className="v2-finalcta__card">
         <span className="v2-finalcta__eyebrow">[ next step ]  let&rsquo;s work together</span>
         <h2 className="v2-finalcta__head">
-          You don&rsquo;t need <em>more</em> tools.
+          Ready to build an <em>intelligent</em> product
           <br />
-          You need <span style={{ color: "var(--a2)" }}>one</span> system
-          that runs the work for you.
+          or automate your operations?
         </h2>
         <p className="v2-finalcta__sub">
-          14 days, fixed price, you own everything I build. If automation
-          doesn&rsquo;t deliver real time back to you in 30 days, you
-          don&rsquo;t pay the second invoice.
+          Full-stack web applications, modern conversion websites, and AI automation tailored to your business goals. Direct senior engineering with complete IP ownership.
         </p>
 
         <ul className="v2-finalcta__check">
           {[
-            "Free 30-min scoping call — no pitch deck",
-            "Fixed-price sprint, no surprise invoices",
-            "Production-ready in 14 days or less",
-            "You own every script, model and credential",
+            "Free 30-min discovery call — no sales pitch",
+            "Milestone-based delivery with clear acceptance criteria",
+            "Full frontend, backend, and AI integration",
+            "You own 100% of source code, schemas, and accounts",
           ].map((line) => (
             <li key={line}>
               <span className="v2-finalcta__tick" aria-hidden="true">
@@ -51,11 +48,11 @@ export default function FinalCtaV2() {
 
         <div className="v2-finalcta__row">
           <Link
-            href="/book"
+            href="/contact"
             className="v2-finalcta__primary group"
-            aria-label="Book a free 30-min audit"
+            aria-label="Start a project"
           >
-            <span>Book free audit</span>
+            <span>Start a project</span>
             <ArrowRight
               size={16}
               strokeWidth={1.75}

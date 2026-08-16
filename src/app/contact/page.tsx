@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "Contact",
   alternates: { canonical: "/contact" },
   description:
-    "Get in touch with Tensorix to discuss AI agents, automation workflows and LLM engineering work. Replies within a day, Monday to Saturday, Asia/Dhaka.",
+    "Get in touch with Arefin Mueen to discuss full-stack web applications, web design, AI agents, and business automation. Replies within 24 hours.",
 };
 
 function whatsappLink(cfg: SiteConfig): string | undefined {
@@ -45,16 +45,16 @@ export default async function ContactPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Contact"
+        eyebrow="Arefin Mueen · Contact"
         index="07"
-        meta="Replies within a day · Mon–Sat (Asia/Dhaka)"
+        meta="Replies within 24 hours · Mon–Sat (Asia/Dhaka)"
         title={
           <>
-            Tell us about the workflow you&apos;d like to{" "}
-            <span className="serif">automate.</span>
+            Let&rsquo;s discuss what you want to{" "}
+            <span className="serif">build.</span>
           </>
         }
-        subtitle="A short message is enough to start. We reply within a working day, Monday to Saturday — answering on Asia/Dhaka time."
+        subtitle="Whether you need a full-stack web application, a bespoke website, an AI agent, or custom workflow automation — share your goals and let's map out the right solution."
       />
 
       <section className="hero-dark relative overflow-hidden">
@@ -77,8 +77,8 @@ export default async function ContactPage() {
                     {email}
                   </a>
                   <p className="mt-4 text-white/65 leading-relaxed">
-                    The fastest way to reach the agency. Tell us what
-                    you&apos;re trying to automate and the tools you
+                    The fastest way to reach me directly. Tell me what
+                    you&apos;re trying to build or automate and the tools you
                     currently use.
                   </p>
                 </div>

@@ -182,7 +182,7 @@ export default function ProjectModal({
               <h3 style={{ fontSize: "16px", fontFamily: "var(--font-syne), sans-serif", fontWeight: 600,
                 color: "var(--t1)", marginBottom: "8px" }}>{project.title}</h3>
               <p style={{ fontSize: "12px", color: "var(--t2)", lineHeight: 1.6,
-                marginBottom: "16px", fontFamily: "var(--font-inter), sans-serif" }}>{project.summary}</p>
+                marginBottom: "16px", fontFamily: "var(--font-dm-sans), sans-serif" }}>{project.summary}</p>
             </div>
 
             {/* Terminal */}

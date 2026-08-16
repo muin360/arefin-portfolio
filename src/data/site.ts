@@ -15,10 +15,10 @@ type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 
 export const site = {
   name: "Arefin Mueen",
-  role: "AI Automation & Agent Engineer",
-  email: "arefinmuin@gmail.com",
+  role: "AI-Powered Full-Stack Developer & Web Designer",
+  email: "hello@tensorix.me",
   tagline:
-    "I build AI agents that replace manual work — from voice calling bots to multi-agent research systems. Python, n8n, LangChain, LangFlow — real code, real automation.",
+    "I design and build intelligent web applications, conversion-driven websites, AI agents, and production automation systems. Next.js, React, TypeScript, Python, and modern LLMs.",
 };
 
 export const services: {
@@ -27,69 +27,91 @@ export const services: {
   description: string;
 }[] = [
   {
-    Icon: IconAgent,
-    title: "AI Agents",
+    Icon: IconCode,
+    title: "AI-Powered Websites & Web Design",
     description:
-      "Custom autonomous agents — voice calling bots, multi-agent research systems, RAG assistants, lead qualifiers — built with LangChain, LangFlow, n8n and modern LLMs.",
+      "Bespoke, high-performance web design with integrated AI capabilities, CMS-editable content, fluid animations, and conversion-optimized architecture.",
+  },
+  {
+    Icon: IconLayers,
+    title: "Full-Stack Web Applications & SaaS",
+    description:
+      "End-to-end web apps, dashboards, and SaaS platforms built with Next.js, React, TypeScript, Node.js/Python, databases, and secure authentication.",
+  },
+  {
+    Icon: IconAgent,
+    title: "AI Agents & Intelligent Assistants",
+    description:
+      "Autonomous AI agents, conversational voice/chat assistants, and multi-agent workflows engineered with LangChain, Python, and leading foundation models.",
   },
   {
     Icon: IconWorkflow,
-    title: "Workflow Automation",
+    title: "Business Automation & n8n Workflows",
     description:
-      "End-to-end business automations that connect your apps, databases and APIs across n8n, Zapier and Make — CRM sync, lead routing, AI-enriched workflows and more.",
-  },
-  {
-    Icon: IconChart,
-    title: "GoHighLevel Setup",
-    description:
-      "Sub-account configuration, funnels, calendars, pipelines, SMS and email automations and AI-powered conversation flows tailored to your agency or business.",
+      "Production-grade workflow automations that connect your CRM, databases, payment gateways, and communication channels with error handling and logging.",
   },
   {
     Icon: IconBrain,
-    title: "Custom LLM Solutions",
+    title: "RAG & Knowledge Systems",
     description:
-      "Retrieval-augmented systems, knowledge-base chatbots, prompt engineering and integrating OpenAI, Anthropic and open-source models into your product.",
+      "Retrieval-augmented generation systems over company documentation, Notion workspaces, and databases with semantic vector search and source citations.",
   },
   {
-    Icon: IconCode,
-    title: "Python & JavaScript",
+    Icon: IconChart,
+    title: "E-Commerce & Digital Commerce Systems",
     description:
-      "Custom Python and JavaScript code to extend any automation — data pipelines, API integrations, web scraping, LLM chaining, or anything a no-code tool can't reach.",
-  },
-  {
-    Icon: IconCompass,
-    title: "Audit & Consultation",
-    description:
-      "Not sure what to automate first? I review your current workflow and recommend the highest-ROI automations and AI integrations.",
+      "Custom e-commerce platforms, ordering systems, and automated fulfillment pipelines wired directly to inventory, Stripe, and customer support bots.",
   },
 ];
 
 export const skills: { category: string; items: string[]; Icon: Icon }[] = [
   {
-    category: "AI",
-    Icon: IconBrain,
+    category: "Web & Frontend",
+    Icon: IconCode,
     items: [
-      "LLMs",
-      "AI Agents",
-      "RAG",
-      "Prompt Engineering",
-      "Multi-Agent Systems",
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "UI/UX Design",
+      "Framer Motion",
     ],
   },
   {
-    category: "Automation",
-    Icon: IconWorkflow,
-    items: ["n8n", "Workflow Design", "Webhooks", "Event-Driven Automation"],
-  },
-  {
-    category: "Engineering",
-    Icon: IconCode,
-    items: ["Python", "APIs", "JSON", "Authentication", "Data Processing"],
-  },
-  {
-    category: "Infrastructure",
+    category: "Full-Stack & Backend",
     Icon: IconLayers,
-    items: ["GitHub", "Vercel", "Databases", "Deployment", "Monitoring"],
+    items: [
+      "Node.js",
+      "Python",
+      "PostgreSQL",
+      "REST & Webhooks",
+      "Auth & Security",
+      "Prisma / Drizzle",
+    ],
+  },
+  {
+    category: "AI & Agents",
+    Icon: IconBrain,
+    items: [
+      "LangChain",
+      "LLM Engineering",
+      "RAG & Vector DBs",
+      "Multi-Agent Systems",
+      "Prompt Engineering",
+      "OpenAI & Claude",
+    ],
+  },
+  {
+    category: "Automation & Infrastructure",
+    Icon: IconWorkflow,
+    items: [
+      "n8n",
+      "Make & Zapier",
+      "Vercel & Supabase",
+      "Docker / Cloud VPS",
+      "CI/CD & Git",
+      "System Observability",
+    ],
   },
 ];
 
@@ -101,35 +123,51 @@ export const projects: {
   category: string;
 }[] = [
   {
-    title: "Market Research Multi-Agent System",
+    title: "Intelligent SaaS Workspace & AI Copilot",
     summary:
-      "Orchestrated system of 4 specialised agents — researcher, analyst, writer, critic — that produce a full market research report from a single keyword input.",
-    stack: ["n8n", "LangChain", "OpenAI", "Python"],
-    Icon: IconBrain,
-    category: "Multi-Agent",
+      "Modern multi-tenant web application featuring a real-time AI document copilot, vector semantic search, role-based auth, and automated background jobs.",
+    stack: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL", "LangChain", "OpenAI"],
+    Icon: IconCode,
+    category: "Full-Stack SaaS",
   },
   {
-    title: "Voice-Enabled Live Calling Agent",
+    title: "Luxury Medical Clinic Digital Platform",
     summary:
-      "A real-time AI voice agent that handles inbound calls, answers FAQs, qualifies leads and books appointments — fully autonomous, no human needed for routine calls.",
-    stack: ["n8n", "OpenAI", "Twilio", "Python"],
-    Icon: IconAgent,
-    category: "Voice AI",
+      "High-converting clinic web platform with bespoke editorial design, dynamic CMS service catalog, interactive appointment intake, and direct CRM sync.",
+    stack: ["Next.js", "React", "Tailwind CSS", "Sanity CMS", "WhatsApp API", "Framer Motion"],
+    Icon: IconCompass,
+    category: "Web Design & System",
   },
   {
-    title: "Customer Support RAG Bot",
+    title: "Autonomous Commerce & Operations Engine",
     summary:
-      "Retrieval-augmented chatbot trained on company docs, SOPs and Notion workspace. Answers staff questions with source citations and escalates unresolved queries to humans.",
-    stack: ["LangFlow", "Pinecone", "OpenAI", "Python"],
-    Icon: IconBookmark,
-    category: "RAG",
-  },
-  {
-    title: "Full-Stack Dropshipping Automation",
-    summary:
-      "Complete e-commerce backend: product research agent → listing writer → inventory sync → order routing → customer reply bot. One workflow replacing 3 manual roles.",
-    stack: ["n8n", "OpenAI", "Zapier", "Python"],
+      "End-to-end e-commerce operations backend: AI product catalog generation, real-time inventory synchronization, order routing, and automated customer support.",
+    stack: ["Shopify API", "Node.js", "n8n", "OpenAI", "Stripe API", "Python"],
     Icon: IconChart,
-    category: "E-commerce",
+    category: "E-Commerce System",
+  },
+  {
+    title: "Multi-Agent Market Intelligence System",
+    summary:
+      "Orchestrated crew of 4 specialized AI agents (Researcher, Data Extractor, Financial Analyst, Executive Summarizer) producing structured market briefs from live web data.",
+    stack: ["n8n", "LangChain", "Python", "Claude 3.5", "pgvector"],
+    Icon: IconBrain,
+    category: "AI Multi-Agent",
+  },
+  {
+    title: "Operational Analytics & Workflow Dashboard",
+    summary:
+      "Executive internal dashboard providing real-time pipeline monitoring, automated deal scoring, team task dispatching, and webhook health analytics.",
+    stack: ["React", "TypeScript", "Tailwind CSS", "FastAPI", "PostgreSQL", "n8n"],
+    Icon: IconLayers,
+    category: "Internal Tool & Dashboard",
+  },
+  {
+    title: "Enterprise Knowledge RAG Copilot",
+    summary:
+      "Retrieval-augmented conversational copilot indexed over internal documentation, technical SOPs, and Notion wikis with strict permission filtering and source citations.",
+    stack: ["Python", "LangChain", "Pinecone", "OpenAI", "Slack API"],
+    Icon: IconBookmark,
+    category: "RAG & Knowledge",
   },
 ];

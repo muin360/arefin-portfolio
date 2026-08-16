@@ -214,7 +214,7 @@ export default function SprintTimeline() {
                   className={`text-sm md:text-base font-semibold tracking-tight transition-colors ${
                     isActive ? "text-white" : "text-white/65"
                   }`}
-                  style={{ fontFamily: "var(--font-manrope), sans-serif" }}
+                  style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
                 >
                   {phase.title}
                 </span>
