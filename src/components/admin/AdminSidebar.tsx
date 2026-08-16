@@ -4,10 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home,
+  FolderOpen,
   FileText,
-  BarChart3,
-  MessageSquare,
+  Workflow,
+  Sparkles,
+  User,
+  Search,
   Settings,
+  MessageSquare,
   LogOut,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -15,9 +19,13 @@ import type { Session } from "next-auth";
 
 const menuItems = [
   { label: "Dashboard", href: "/admin", icon: Home },
-  { label: "Content", href: "/admin/content", icon: FileText },
+  { label: "Projects", href: "/admin/projects", icon: FolderOpen },
+  { label: "Blog / Notes", href: "/admin/posts", icon: FileText },
+  { label: "Services", href: "/admin/services", icon: Workflow },
+  { label: "Skills", href: "/admin/skills", icon: Sparkles },
+  { label: "About & Story", href: "/admin/about", icon: User },
+  { label: "SEO & Meta", href: "/admin/seo", icon: Search },
   { label: "Messages", href: "/admin/messages", icon: MessageSquare },
-  { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

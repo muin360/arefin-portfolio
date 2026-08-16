@@ -1,33 +1,30 @@
-import type { Metadata } from "next";
-import { Mail } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { getContactSubmissions } from "@/lib/db";
+import SubmissionsManager from "@/components/admin/SubmissionsManager";
 
-export const metadata: Metadata = {
-  title: "Contact Messages",
+export const metadata = {
+  title: "Inbox & Inquiries · Admin",
 };
 
-export default function MessagesPage() {
-  // TODO: Fetch messages from database
+export default async function AdminMessagesPage() {
+  const session = await auth();
+  if (!session?.user?.isAdmin) {
+    redirect("/admin/login");
+  }
+
+  const submissions = await getContactSubmissions();
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
+    <div className="space-y-6 max-w-6xl">
       <div>
-        <h1 className="text-4xl font-bold text-white">Contact Messages</h1>
-        <p className="text-slate-400 mt-2">
-          View and manage contact form submissions
+        <h1 className="text-3xl font-bold text-white">Inquiries &amp; Messages</h1>
+        <p className="text-sm text-slate-400 mt-1">
+          Review and respond to client inquiries sent via the website contact forms.
         </p>
       </div>
 
-      {/* Messages List */}
-      <div className="bg-slate-700 border border-slate-600 rounded-lg p-6">
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <Mail className="w-12 h-12 text-slate-500 mx-auto mb-4" />
-            <p className="text-slate-400">
-              Messages will be displayed here once received
-            </p>
-          </div>
-        </div>
-      </div>
+      <SubmissionsManager initialSubmissions={submissions} />
     </div>
   );
 }

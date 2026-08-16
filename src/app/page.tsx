@@ -1,8 +1,5 @@
 import Link from "next/link";
-import { sanityFetch } from "@/sanity/fetch";
-import { siteConfigQuery } from "@/sanity/queries";
-import type { SiteConfig } from "@/sanity/types";
-import { FALLBACK_SITE_CONFIG } from "@/data/fallbacks";
+import { getSiteSettings } from "@/lib/db";
 
 import SectionLabel from "@/components/SectionLabel";
 import SprintTimeline from "@/components/SprintTimeline";
@@ -17,36 +14,11 @@ import JournalGridV2 from "@/components/v2/JournalGridV2";
 import FaqAccordionV2 from "@/components/v2/FaqAccordionV2";
 import FinalCtaV2 from "@/components/v2/FinalCtaV2";
 
-/**
- * Homepage (v2).
- *
- * Sections fire in this order:
- *
- *   01  HERO            text + agent dashboard widget (2-col)
- *   --  TICKER          2-row scrolling tech stack
- *   02  SERVICES        bento grid of 4 productized offers
- *   03  WORK            project case studies (numbered + tag + stack)
- *   04  PROCESS         autoplay 14-day sprint timeline
- *   05  JOURNAL         magazine grid of recent notes
- *   06  FAQ             single-open accordion
- *   --  CTA             final close band (audit + WhatsApp)
- *
- * All copy, links, and brand claims unchanged. The page only ships the
- * Sanity siteConfig now so we can honor `availabilityNote` server-side
- * for the hero pill — every other section pulls from static data files
- * that ship with the bundle.
- */
 export default async function HomePage() {
-  const cfg =
-    (await sanityFetch<SiteConfig>({
-      query: siteConfigQuery,
-      tags: ["siteConfig"],
-    })) ?? FALLBACK_SITE_CONFIG;
+  const settings = await getSiteSettings();
 
   const availabilityNote =
-    cfg.availabilityNote ??
-    FALLBACK_SITE_CONFIG.availabilityNote ??
-    "Free 30-min audit";
+    settings.availabilityNote || "Open to automation & agent projects";
 
   return (
     <>
@@ -54,7 +26,7 @@ export default async function HomePage() {
       <HeroSectionV2 availabilityNote={availabilityNote} />
 
       {/* TECH TICKER */}
-      <TechTicker />
+      {settings.showLiveTicker && <TechTicker />}
 
       {/* SERVICES — bento */}
       <section
@@ -82,7 +54,7 @@ export default async function HomePage() {
       </section>
 
       {/* STATS BAR — at a glance numbers */}
-      <StatsBar />
+      {settings.showLive30Days && <StatsBar />}
 
       {/* SELECTED WORK */}
       <section className="v2-section" aria-label="Selected projects">
@@ -183,4 +155,3 @@ export default async function HomePage() {
     </>
   );
 }
-

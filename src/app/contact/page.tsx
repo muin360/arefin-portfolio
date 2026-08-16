@@ -7,15 +7,11 @@ import {
   IconGithub,
   IconLinkedin,
   IconX,
-  IconFacebook,
   IconWhatsapp,
 } from "@/components/icons";
 import BentoCard from "@/components/BentoCard";
 import StudioTime from "@/components/StudioTime";
-import { sanityFetch } from "@/sanity/fetch";
-import { siteConfigQuery } from "@/sanity/queries";
-import type { SiteConfig } from "@/sanity/types";
-import { FALLBACK_SITE_CONFIG } from "@/data/fallbacks";
+import { getSiteSettings } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -24,23 +20,10 @@ export const metadata: Metadata = {
     "Get in touch with Arefin Mueen to discuss AI automations, AI agents, RAG systems, and workflow integrations. Replies within 24 hours.",
 };
 
-function whatsappLink(cfg: SiteConfig): string | undefined {
-  if (cfg.social?.whatsapp) return cfg.social.whatsapp;
-  if (cfg.phoneE164) return `https://wa.me/${cfg.phoneE164}`;
-  return undefined;
-}
-
 export default async function ContactPage() {
-  const cfgRaw = await sanityFetch<SiteConfig>({
-    query: siteConfigQuery,
-    tags: ["siteConfig"],
-  });
-  const cfg: SiteConfig = cfgRaw ?? FALLBACK_SITE_CONFIG;
-  const social = { ...(FALLBACK_SITE_CONFIG.social ?? {}), ...(cfg.social ?? {}) };
-  const email = cfg.email ?? FALLBACK_SITE_CONFIG.email;
-  const phone = cfg.phone ?? FALLBACK_SITE_CONFIG.phone;
-  const phoneE164 = cfg.phoneE164 ?? FALLBACK_SITE_CONFIG.phoneE164;
-  const whatsapp = whatsappLink({ ...cfg, social });
+  const settings = await getSiteSettings();
+  const { email, phone, phoneE164, socialLinks } = settings;
+  const whatsapp = socialLinks.whatsapp || (phoneE164 ? `https://wa.me/${phoneE164}` : undefined);
 
   return (
     <>
@@ -155,7 +138,7 @@ export default async function ContactPage() {
                     <span className="live-dot" /> Availability
                   </p>
                   <p className="text-white/85 leading-relaxed">
-                    Currently taking on a few engagements per quarter. Free
+                    Currently taking on practical automation and agent projects. Free
                     30-minute discovery calls always available — no pitch,
                     just a real look at whether it&apos;s a fit.
                   </p>
@@ -169,10 +152,10 @@ export default async function ContactPage() {
                     Find me elsewhere
                   </p>
                   <ul className="grid grid-cols-2 gap-3">
-                    {social.github && (
+                    {socialLinks.github && (
                       <li>
                         <a
-                          href={social.github}
+                          href={socialLinks.github}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
@@ -181,10 +164,10 @@ export default async function ContactPage() {
                         </a>
                       </li>
                     )}
-                    {social.linkedin && (
+                    {socialLinks.linkedin && (
                       <li>
                         <a
-                          href={social.linkedin}
+                          href={socialLinks.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
@@ -193,27 +176,15 @@ export default async function ContactPage() {
                         </a>
                       </li>
                     )}
-                    {social.twitter && (
+                    {socialLinks.twitter && (
                       <li>
                         <a
-                          href={social.twitter}
+                          href={socialLinks.twitter}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
                         >
                           <IconX width={14} height={14} /> X / Twitter
-                        </a>
-                      </li>
-                    )}
-                    {social.facebook && (
-                      <li>
-                        <a
-                          href={social.facebook}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
-                        >
-                          <IconFacebook width={14} height={14} /> Facebook
                         </a>
                       </li>
                     )}

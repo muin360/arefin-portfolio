@@ -1,20 +1,10 @@
 import Reveal from "@/components/Reveal";
 import FaqAccordion from "@/components/FaqAccordion";
-import { sanityFetch } from "@/sanity/fetch";
-import { allFaqsQuery } from "@/sanity/queries";
-import type { FaqDoc } from "@/sanity/types";
 import { FALLBACK_FAQS } from "@/data/fallbacks";
 import { safeJsonLd } from "@/lib/json-ld";
 
 export default async function FaqSection() {
-  const faqsRaw = await sanityFetch<FaqDoc[]>({
-    query: allFaqsQuery,
-    tags: ["faq"],
-  });
-  const faqs =
-    faqsRaw && faqsRaw.length > 0
-      ? faqsRaw.map((f) => ({ q: f.question, a: f.answer }))
-      : FALLBACK_FAQS.map((f) => ({ q: f.question, a: f.answer }));
+  const faqs = FALLBACK_FAQS.map((f) => ({ q: f.question, a: f.answer }));
 
   // FAQPage JSON-LD — eligible for Google rich-result expandable answers.
   const jsonLd = {

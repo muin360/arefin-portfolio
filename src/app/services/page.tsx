@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { sanityFetch } from "@/sanity/fetch";
-import { allEngagementsQuery, allServicesQuery } from "@/sanity/queries";
-import type { EngagementDoc, ServiceDoc } from "@/sanity/types";
-import { FALLBACK_ENGAGEMENTS, FALLBACK_SERVICES } from "@/data/fallbacks";
+import { getServices } from "@/lib/db";
 import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import { IconArrow, IconCheck } from "@/components/icons";
@@ -22,6 +19,76 @@ export const metadata: Metadata = {
     url: "/services",
   },
 };
+
+const engagements = [
+  {
+    tag: "Audit",
+    name: "Discovery & Scoping",
+    cadence: "1–2 days",
+    summary:
+      "30-min call + written automation roadmap identifying bottlenecks and potential AI implementations.",
+    price: "Free",
+    deliverables: [
+      "Workflow bottleneck review",
+      "Feasibility and toolchain assessment",
+      "Architecture diagram & written scope",
+    ],
+    ideal: "For teams exploring whether a workflow can be automated.",
+    ctaLabel: "Book Free Audit",
+    featured: false,
+  },
+  {
+    tag: "Workflow Sprint",
+    name: "Single Workflow Build",
+    cadence: "1–2 weeks",
+    summary:
+      "One end-to-end automation built, tested, and handed over under your accounts.",
+    price: "Project-based",
+    deliverables: [
+      "Custom n8n / Make / Python pipeline",
+      "API connections & prompt tuning",
+      "Error handling and Slack alerts",
+      "Handover video + docs",
+    ],
+    ideal: "For a single high-priority manual process that needs automation.",
+    ctaLabel: "Discuss a Workflow",
+    featured: true,
+  },
+  {
+    tag: "Custom System",
+    name: "AI Agent / RAG System",
+    cadence: "2–4 weeks",
+    summary:
+      "Custom tool-calling agent, RAG knowledge retrieval pipeline, or multi-agent system.",
+    price: "Custom quote",
+    deliverables: [
+      "Full agent / RAG architecture",
+      "Vector indexing & chunking logic",
+      "Evaluation against test queries",
+      "Complete deployment & ownership",
+    ],
+    ideal: "For businesses wanting an intelligent assistant over internal knowledge.",
+    ctaLabel: "Explore Agent Build",
+    featured: false,
+  },
+  {
+    tag: "Ongoing Support",
+    name: "Maintenance & Iteration",
+    cadence: "Monthly",
+    summary:
+      "Ongoing monitoring, edge-case fixes, and incremental workflow updates.",
+    price: "Custom quote",
+    deliverables: [
+      "Workflow health monitoring",
+      "Prompt tweaks & LLM updates",
+      "Direct async developer access",
+      "Monthly performance review",
+    ],
+    ideal: "For businesses wanting ongoing support as workflows expand.",
+    ctaLabel: "Inquire on Support",
+    featured: false,
+  },
+];
 
 const process = [
   {
@@ -56,19 +123,7 @@ const engagement = [
 ];
 
 export default async function ServicesPage() {
-  const [servicesRaw, engagementsRaw] = await Promise.all([
-    sanityFetch<ServiceDoc[]>({
-      query: allServicesQuery,
-      tags: ["service"],
-    }),
-    sanityFetch<EngagementDoc[]>({
-      query: allEngagementsQuery,
-      tags: ["engagement"],
-    }),
-  ]);
-  const services = servicesRaw && servicesRaw.length > 0 ? servicesRaw : FALLBACK_SERVICES;
-  const engagements =
-    engagementsRaw && engagementsRaw.length > 0 ? engagementsRaw : FALLBACK_ENGAGEMENTS;
+  const services = await getServices({ publishedOnly: true });
 
   return (
     <>
@@ -86,7 +141,7 @@ export default async function ServicesPage() {
         subtitle="I design and build AI-powered workflows, autonomous agents, RAG knowledge assistants, and custom integrations using n8n, LangChain, Langflow, and LLM APIs."
       />
 
-      {/* ENGAGEMENTS — Sprint / Build / Retainer pricing tiers */}
+      {/* ENGAGEMENTS */}
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-cyan" aria-hidden="true" />
@@ -112,7 +167,7 @@ export default async function ServicesPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {engagements.map((e, i) => (
-              <Reveal key={e._id ?? e.tag} delay={i * 90}>
+              <Reveal key={e.name} delay={i * 90}>
                 <BentoCard className={`h-full ${e.featured ? "bento-spin" : ""}`}>
                   <div className="h-full flex flex-col">
                     <div className="flex items-start justify-between">
@@ -149,7 +204,7 @@ export default async function ServicesPage() {
                     </div>
 
                     <ul className="mt-6 space-y-2.5 text-sm text-white/75 flex-1">
-                      {(e.deliverables ?? []).map((d) => (
+                      {e.deliverables.map((d) => (
                         <li key={d} className="flex items-start gap-2.5">
                           <IconCheck width={16} height={16} className="text-white/55 mt-1 shrink-0" />
                           <span>{d}</span>
@@ -175,7 +230,7 @@ export default async function ServicesPage() {
                           : "border border-white/20 text-white hover:bg-white/10"
                       }`}
                     >
-                      {e.ctaLabel ?? (e.featured ? "Talk on WhatsApp" : "Discuss on WhatsApp")}
+                      {e.ctaLabel}
                       <IconArrow width={14} height={14} />
                     </a>
                   </div>
@@ -186,136 +241,78 @@ export default async function ServicesPage() {
         </div>
       </section>
 
-      {/* PRICING ANCHOR — transparent starting points */}
-      <section id="pricing" className="hero-dark relative overflow-hidden border-b border-white/5">
-        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 section relative">
-          <Reveal>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-5">
-                  [ pricing ] Transparent starting points
-                </p>
-                <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                  What it{" "}
-                  <span className="serif iridescent">costs.</span>
-                </h2>
-              </div>
-              <p className="text-white/60 max-w-sm leading-relaxed">
-                Every project is scoped and quoted after the free audit.
-                These are typical starting ranges, not fixed packages.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              {
-                tier: "Discovery scoping",
-                price: "Free",
-                timeline: "30 min",
-                desc: "A focused conversation to map your workflows, surface the highest-leverage automation opportunities, and share a written recommendation. No obligation.",
-                note: "No commitment required",
-              },
-              {
-                tier: "Focused automation sprint",
-                price: "Project-based",
-                timeline: "~1–2 weeks",
-                desc: "One well-scoped workflow or integration — email triage, CRM webhook routing, RAG Q&A bot, or lead capture automation.",
-                note: "One workflow, end to end",
-              },
-              {
-                tier: "AI automation & agent system",
-                price: "Custom quote",
-                timeline: "Milestone-based",
-                desc: "Multi-workflow builds: AI agent + tool calling, multi-agent research flows, or cross-platform data integration suites.",
-                note: "Multi-step system with testing",
-              },
-              {
-                tier: "Automation support",
-                price: "Custom quote",
-                timeline: "Monthly",
-                desc: "Ongoing capacity for teams that need workflow maintenance, new tool integrations, and continuous improvements.",
-                note: "Ongoing support",
-              },
-            ].map((t, i) => (
-              <Reveal key={t.tier} delay={i * 80}>
-                <BentoCard className="h-full">
-                  <div className="h-full flex flex-col">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
-                      {t.tier}
-                    </span>
-                    <p className="mt-4 display text-3xl text-white tracking-tight">
-                      {t.price}
-                    </p>
-                    <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
-                      {t.timeline}
-                    </p>
-                    <p className="mt-4 text-sm text-white/65 leading-relaxed flex-1">
-                      {t.desc}
-                    </p>
-                    <p className="mt-4 pt-4 border-t border-white/10 text-xs text-white/45 italic">
-                      {t.note}
-                    </p>
-                  </div>
-                </BentoCard>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CAPABILITIES — what Arefin builds */}
+      {/* CORE CAPABILITIES (FROM DB) */}
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
-        <div className="orb orb-violet" aria-hidden="true" />
-        <div className="orb orb-pink" aria-hidden="true" />
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 section relative">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
           <Reveal>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-5">
-                  [ 02 ] Capabilities
-                </p>
-                <h2 className="display text-3xl md:text-5xl text-white max-w-2xl">
-                  What I{" "}
-                  <span className="serif iridescent">build.</span>
-                </h2>
-              </div>
-              <p className="text-white/60 max-w-sm leading-relaxed">
-                Four service pillars that combine inside any engagement.
+            <div className="mb-12">
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-3">
+                [ 02 ] Core Capabilities
               </p>
+              <h2 className="display text-3xl md:text-5xl text-white">
+                What I <span className="serif iridescent">build.</span>
+              </h2>
             </div>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {services.map(({ iconName, title, description }, i) => {
-              const Icon = iconFor(iconName);
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {services.map((svc, i) => {
+              const Icon = iconFor(svc.iconName);
               return (
-              <Reveal key={title} delay={i * 60}>
-                <BentoCard className="h-full">
-                  <div className="h-full flex flex-col group">
-                    <div className="flex items-start justify-between">
-                      <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 border border-white/10 transition-all duration-500 group-hover:scale-110 group-hover:border-white/30">
-                        <Icon width={24} height={24} className="text-white" />
-                      </span>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
-                        / {(i + 1).toString().padStart(2, "0")}
+                <Reveal key={svc.id} delay={i * 80}>
+                  <BentoCard className="h-full">
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white">
+                        <Icon width={24} height={24} />
+                      </div>
+                      <span className="font-mono text-xs text-white/40">
+                        0{i + 1}
                       </span>
                     </div>
-                    <h3 className="mt-7 text-2xl tracking-tight font-medium text-white">
-                      {title}
-                    </h3>
-                    <p className="mt-3 text-white/65 leading-relaxed flex-1">
-                      {description}
-                    </p>
-                  </div>
-                </BentoCard>
-              </Reveal>
+                    <h3 className="text-2xl font-bold text-white mb-2">{svc.title}</h3>
+                    <p className="text-white/70 text-sm mb-4 leading-relaxed">{svc.hook}</p>
+                    
+                    <div className="text-xs text-white/60 space-y-2 pt-4 border-t border-white/10">
+                      <p>
+                        <strong className="text-white/80">Problem:</strong> {svc.problem}
+                      </p>
+                      <p>
+                        <strong className="text-white/80">Solution:</strong> {svc.solution}
+                      </p>
+                      <p>
+                        <strong className="text-white/80">Outcome:</strong> {svc.outcome}
+                      </p>
+                    </div>
+
+                    <ul className="mt-4 space-y-1.5 text-xs text-white/70">
+                      {svc.bullets.map((b) => (
+                        <li key={b} className="flex items-start gap-2">
+                          <span className="text-violet-400">✓</span> {b}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-6 pt-4 border-t border-white/10">
+                      <a
+                        href={`https://wa.me/8801994605717?text=${encodeURIComponent(
+                          svc.ctaPrefill || `Hi Arefin! I'd like to discuss ${svc.title}: `,
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-xs font-mono text-violet-400 hover:text-violet-300"
+                      >
+                        {svc.ctaLabel || "Let's build an automation"} →
+                      </a>
+                    </div>
+                  </BentoCard>
+                </Reveal>
               );
             })}
           </div>
         </div>
       </section>
 
+      {/* PROCESS */}
       <section className="hero-dark border-y border-white/5 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
         <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10 relative">
@@ -329,7 +326,7 @@ export default async function ServicesPage() {
             </h2>
             <p className="mt-5 text-white/60 leading-relaxed">
               The same four-step loop on every engagement. Acceptance
-              criteria up-front and 30 days of launch support after go-live.
+              criteria up-front and launch support after go-live.
             </p>
           </div>
           <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -354,6 +351,7 @@ export default async function ServicesPage() {
         </div>
       </section>
 
+      {/* WHAT YOU GET */}
       <section className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10">
         <div className="md:col-span-4">
           <p className="eyebrow mb-5">What you get</p>
@@ -381,20 +379,12 @@ export default async function ServicesPage() {
         </div>
       </section>
 
+      {/* FINAL CTA */}
       <section className="hero-dark relative overflow-hidden">
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-pink" aria-hidden="true" />
         <div className="max-w-6xl mx-auto px-6 sm:px-8 py-24 relative">
           <div className="relative rounded-3xl overflow-hidden p-10 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-6 border border-white/10 bg-white/[0.03] backdrop-blur-md">
-            <div className="absolute inset-0 pointer-events-none opacity-60" aria-hidden="true">
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(800px circle at 30% 20%, rgba(139,92,246,0.35), transparent 60%), radial-gradient(700px circle at 80% 80%, rgba(236,72,153,0.30), transparent 60%)",
-                }}
-              />
-            </div>
             <div className="relative">
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
                 Get started

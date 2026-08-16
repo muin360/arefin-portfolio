@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import type { Live30DayStat } from "@/sanity/types";
+import type { LiveStatCard as Live30DayStat } from "@/lib/db/types";
 
 type Stat = Live30DayStat;
 

@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { sanityFetch } from "@/sanity/fetch";
-import { allProjectsQuery } from "@/sanity/queries";
-import type { ProjectDoc } from "@/sanity/types";
-import { FALLBACK_PROJECTS } from "@/data/fallbacks";
+import { getProjects } from "@/lib/db";
 import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import Reveal from "@/components/Reveal";
@@ -25,11 +22,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
-  const raw = await sanityFetch<ProjectDoc[]>({
-    query: allProjectsQuery,
-    tags: ["project"],
-  });
-  const projects = raw && raw.length > 0 ? raw : FALLBACK_PROJECTS;
+  const projects = await getProjects({ publishedOnly: true });
 
   return (
     <>

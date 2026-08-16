@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import Reveal from "@/components/Reveal";
 import { iconFor } from "@/components/IconRegistry";
-import type { IconName } from "@/sanity/schemaTypes/shared";
+import type { IconName } from "@/lib/db/types";
 import { whatsappHref, WA_MESSAGES } from "@/lib/cta";
 
 export type ServiceCardLargeProps = {

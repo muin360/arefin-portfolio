@@ -12,15 +12,13 @@ import {
   IconSpark,
 } from "./icons";
 import type { ComponentType, SVGProps } from "react";
-import type { IconName } from "@/sanity/schemaTypes/shared";
+import type { IconName } from "@/lib/db/types";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
-// Maps the iconName string stored in Sanity → the actual React icon
-// component. Keep this in sync with ICON_OPTIONS in
-// src/sanity/schemaTypes/shared.ts.
-const REGISTRY: Record<IconName, IconComponent> = {
+const REGISTRY: Record<string, IconComponent> = {
   agent: IconAgent,
+  bot: IconAgent,
   workflow: IconWorkflow,
   chart: IconChart,
   brain: IconBrain,
@@ -31,6 +29,9 @@ const REGISTRY: Record<IconName, IconComponent> = {
   terminal: IconTerminal,
   bookmark: IconBookmark,
   spark: IconSpark,
+  lock: IconCode,
+  zap: IconSpark,
+  globe: IconCompass,
 };
 
 export function iconFor(name: string | undefined): IconComponent {

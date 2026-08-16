@@ -4,46 +4,20 @@ import {
   IconGithub,
   IconLinkedin,
   IconX,
-  IconFacebook,
   IconWhatsapp,
   IconArrow,
 } from "./icons";
-import { sanityFetch } from "@/sanity/fetch";
-import { siteConfigQuery } from "@/sanity/queries";
-import type { SiteConfig } from "@/sanity/types";
-import { FALLBACK_SITE_CONFIG } from "@/data/fallbacks";
+import { getSiteSettings } from "@/lib/db";
 import FooterReveal from "@/components/transitions/FooterReveal";
 
-/**
- * Footer (v2).
- *
- * Three editorial columns:
- *
- *   1. Brand + tagline + the giant email CTA (display-font headline,
- *      mailto with hover ring)
- *   2. Sitemap (two stacks: primary nav + meta)
- *   3. Status card — live availability dot, location, response time, and
- *      a horizontal row of social icons
- *
- * The bottom bar is a mono terminal-style strip with the year, the
- * studio identifier and a build version. Inherits the v2 grain texture
- * from globals.css and a top accent hairline that mirrors the navbar.
- */
 export default async function Footer() {
   const year = new Date().getFullYear();
-  const cfg =
-    (await sanityFetch<SiteConfig>({
-      query: siteConfigQuery,
-      tags: ["siteConfig"],
-    })) ?? FALLBACK_SITE_CONFIG;
+  const settings = await getSiteSettings();
 
-  const social = { ...(FALLBACK_SITE_CONFIG.social ?? {}), ...(cfg.social ?? {}) };
-  const email = cfg.email ?? FALLBACK_SITE_CONFIG.email;
-  const availability =
-    cfg.availability ?? FALLBACK_SITE_CONFIG.availability ?? "";
+  const { email, availability, availabilityNote, socialLinks, phoneE164 } = settings;
   const whatsapp =
-    social.whatsapp ??
-    (cfg.phoneE164 ? `https://wa.me/${cfg.phoneE164}` : undefined);
+    socialLinks.whatsapp ||
+    (phoneE164 ? `https://wa.me/${phoneE164}` : undefined);
 
   return (
     <footer className="v2-footer" data-reveal="footer" aria-label="Site footer">
@@ -143,12 +117,10 @@ export default async function Footer() {
           <div className="v2-footer__col v2-footer__col--status">
             <div className="v2-footer__status-card">
               <p className="v2-footer__col-title">Availability</p>
-              {availability && (
-                <p className="v2-footer__status-line">
-                  <span className="v2-footer__status-dot" aria-hidden="true" />
-                  <span>{availability}</span>
-                </p>
-              )}
+              <p className="v2-footer__status-line">
+                <span className="v2-footer__status-dot" aria-hidden="true" />
+                <span>{availabilityNote || availability}</span>
+              </p>
               <p className="v2-footer__status-sub">
                 Booking 1–2 new sprints per month · replies within a day.
               </p>
@@ -165,10 +137,10 @@ export default async function Footer() {
             </div>
 
             <ul className="v2-footer__social">
-              {social.github && (
+              {socialLinks.github && (
                 <li>
                   <a
-                    href={social.github}
+                    href={socialLinks.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="GitHub"
@@ -178,10 +150,10 @@ export default async function Footer() {
                   </a>
                 </li>
               )}
-              {social.linkedin && (
+              {socialLinks.linkedin && (
                 <li>
                   <a
-                    href={social.linkedin}
+                    href={socialLinks.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="LinkedIn"
@@ -191,29 +163,16 @@ export default async function Footer() {
                   </a>
                 </li>
               )}
-              {social.twitter && (
+              {socialLinks.twitter && (
                 <li>
                   <a
-                    href={social.twitter}
+                    href={socialLinks.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="X / Twitter"
                     className="v2-footer__social-link"
                   >
                     <IconX width={16} height={16} />
-                  </a>
-                </li>
-              )}
-              {social.facebook && (
-                <li>
-                  <a
-                    href={social.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Facebook"
-                    className="v2-footer__social-link"
-                  >
-                    <IconFacebook width={16} height={16} />
                   </a>
                 </li>
               )}

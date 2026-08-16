@@ -3,9 +3,7 @@ import Reveal from "./Reveal";
 import DarkHero from "./DarkHero";
 import LiveClock from "./LiveClock";
 import LiveTicker from "./LiveTicker";
-import { sanityFetch } from "@/sanity/fetch";
-import { siteConfigQuery } from "@/sanity/queries";
-import type { SiteConfig } from "@/sanity/types";
+import { getSiteSettings } from "@/lib/db";
 
 export async function PageHeader({
   eyebrow,
@@ -20,12 +18,7 @@ export async function PageHeader({
   meta?: string;
   index?: string;
 }) {
-  const cfg = await sanityFetch<SiteConfig>({
-    query: siteConfigQuery,
-    tags: ["siteConfig"],
-  });
-  // Defaults to off — the ticker is decorative; only show it once an editor
-  // explicitly opts in from /studio.
+  const cfg = await getSiteSettings();
   const showLiveTicker = cfg?.showLiveTicker ?? false;
 
   return (

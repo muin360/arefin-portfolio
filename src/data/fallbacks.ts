@@ -11,17 +11,131 @@
  * only displayed as a safety net.
  */
 
-import type {
-  EngagementDoc,
-  FaqDoc,
-  HeroDoc,
-  PostListItem,
-  ProjectDoc,
-  ServiceDoc,
-  SiteConfig,
-  SkillCategoryDoc,
-  TestimonialDoc,
-} from "@/sanity/types";
+export type SiteConfig = {
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+  phoneE164: string;
+  tagline: string;
+  siteDescription: string;
+  availability: string;
+  availabilityNote: string;
+  social?: {
+    facebook?: string;
+    whatsapp?: string;
+    email?: string;
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+  };
+  heroTiles?: unknown[];
+  live30Days?: unknown[];
+  showLiveTicker?: boolean;
+  showHeroTiles?: boolean;
+  showLive30Days?: boolean;
+};
+
+export type EngagementDoc = {
+  _id: string;
+  tag: string;
+  name: string;
+  price: string;
+  cadence: string;
+  summary: string;
+  deliverables: string[];
+  ideal?: string;
+  ctaLabel?: string;
+  featured?: boolean;
+  order?: number;
+};
+
+export type FaqDoc = {
+  _id: string;
+  question: string;
+  answer: string;
+  order?: number;
+};
+
+export type ServiceDoc = {
+  _id: string;
+  title: string;
+  iconName: string;
+  hook?: string;
+  problem?: string;
+  solution?: string;
+  outcome?: string;
+  bullets?: string[];
+  description?: string;
+  ctaLabel?: string;
+  ctaPrefill?: string;
+  isFeatured?: boolean;
+  order?: number;
+  badge?: string;
+};
+
+export type TestimonialDoc = {
+  _id: string;
+  name: string;
+  role: string;
+  quote: string;
+  avatar?: string;
+};
+
+export type HeroDoc = {
+  _id: string;
+  title?: string;
+  headline?: string;
+  subheadline?: string;
+  subtitle?: string;
+  eyebrow?: string;
+  trustLine?: string;
+  [key: string]: unknown;
+};
+
+export type SkillCategoryDoc = {
+  _id: string;
+  category: string;
+  iconName: string;
+  items: string[];
+  order?: number;
+};
+
+export type ProjectDoc = {
+  _id: string;
+  title: string;
+  slug: string;
+  category: string;
+  summary: string;
+  problem?: string;
+  goal?: string;
+  workflowSteps?: { step: string; name: string; desc: string }[];
+  aiRole?: string;
+  automationLogic?: string;
+  learningOutcome?: string;
+  outcome?: string;
+  iconName: string;
+  stack: string[];
+  integrations?: string[];
+  featured?: boolean;
+  projectType?: string;
+  repoUrl?: string;
+  demoUrl?: string;
+  thumbnail?: unknown;
+};
+
+export type PostListItem = {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  date: string;
+  readingTime?: string;
+  category?: string;
+  tags?: string[];
+  featured?: boolean;
+  coverImage?: unknown;
+};
 
 export const FALLBACK_SITE_CONFIG: SiteConfig = {
   name: "Arefin Mueen",

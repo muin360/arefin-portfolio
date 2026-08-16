@@ -1,11 +1,6 @@
-import { sanityFetch } from "@/sanity/fetch";
-import { allPostsQuery } from "@/sanity/queries";
-import type { PostListItem } from "@/sanity/types";
+import { getBlogPosts } from "@/lib/db";
 import { SITE_URL } from "@/lib/site-url";
 
-// RSS 2.0 feed for the journal. Submitted to readers like Feedbin, Reeder,
-// NetNewsWire and discoverable via the <link rel="alternate"> tag in <head>.
-// Tag-based revalidation ensures it updates when posts change.
 export const revalidate = 3600;
 
 function escapeXml(s: string): string {
@@ -17,15 +12,8 @@ function escapeXml(s: string): string {
     .replace(/'/g, "&apos;");
 }
 
-import { FALLBACK_POSTS } from "@/data/fallbacks";
-
 export async function GET() {
-  const raw = await sanityFetch<PostListItem[]>({
-    query: allPostsQuery,
-    tags: ["post"],
-  });
-  const posts = raw && raw.length > 0 ? raw : FALLBACK_POSTS;
-
+  const posts = await getBlogPosts({ publishedOnly: true });
   const updated = posts[0]?.date ?? new Date().toISOString();
 
   const items = posts
@@ -58,7 +46,7 @@ ${items}
   return new Response(xml, {
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8",
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400",
     },
   });
 }

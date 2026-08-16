@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import { sanityFetch } from "@/sanity/fetch";
-import { allPostsQuery } from "@/sanity/queries";
-import type { PostListItem } from "@/sanity/types";
-import { FALLBACK_POSTS } from "@/data/fallbacks";
+import { getBlogPosts } from "@/lib/db";
 import { PageHeader } from "@/components/Section";
 import BlogList from "./BlogList";
 
@@ -20,17 +17,14 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const raw = await sanityFetch<PostListItem[]>({
-    query: allPostsQuery,
-    tags: ["post"],
-  });
-  const sorted = raw && raw.length > 0 ? raw : FALLBACK_POSTS;
+  const posts = await getBlogPosts({ publishedOnly: true });
+
   return (
     <>
       <PageHeader
         eyebrow="Arefin Mueen · Journal & Build Notes"
         index="06"
-        meta={`${sorted.length} entries · Practical insights`}
+        meta={`${posts.length} entries · Practical insights`}
         title={
           <>
             Notes on building{" "}
@@ -44,7 +38,7 @@ export default async function BlogPage() {
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-pink" aria-hidden="true" />
         <div className="max-w-6xl mx-auto px-6 sm:px-8 section relative">
-          <BlogList posts={sorted} />
+          <BlogList posts={posts} />
         </div>
       </section>
     </>

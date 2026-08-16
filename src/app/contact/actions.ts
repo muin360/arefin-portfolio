@@ -230,22 +230,18 @@ export async function sendContact(
       };
     }
 
-    // Persist submission to Sanity if write token is configured
-    if (process.env.SANITY_API_WRITE_TOKEN) {
-      try {
-        const { writeClient } = await import("@/sanity/client");
-        const client = writeClient();
-        await client.create({
-          _type: "contactSubmission",
-          name,
-          email,
-          subject,
-          message,
-          read: false,
-        });
-      } catch (sanityErr) {
-        Sentry.captureException(sanityErr);
-      }
+    // Persist submission to database
+    try {
+      const { createContactSubmission } = await import("@/lib/db");
+      await createContactSubmission({
+        name,
+        email,
+        subject,
+        message,
+        ip,
+      });
+    } catch (dbErr) {
+      Sentry.captureException(dbErr);
     }
 
     return { ok: true };

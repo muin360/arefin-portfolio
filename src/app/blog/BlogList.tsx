@@ -2,11 +2,11 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import type { PostListItem } from "@/sanity/types";
+import type { BlogPost } from "@/lib/db/types";
 import Reveal from "@/components/Reveal";
 import BentoCard from "@/components/BentoCard";
 
-export default function BlogList({ posts }: { posts: PostListItem[] }) {
+export default function BlogList({ posts }: { posts: BlogPost[] }) {
   const [q, setQ] = useState("");
 
   const filtered = useMemo(() => {
@@ -58,7 +58,7 @@ export default function BlogList({ posts }: { posts: PostListItem[] }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
           {filtered.map((post, i) => {
-            const featured = !q && i === 0;
+            const featured = !q && (post.featured || i === 0);
             const span = featured ? "md:col-span-12" : "md:col-span-6";
             return (
               <Reveal key={post.slug} delay={i * 70} className={span}>
@@ -98,14 +98,8 @@ export default function BlogList({ posts }: { posts: PostListItem[] }) {
                     <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-mono text-white/45">
                       {post.readingTime ? <span>{post.readingTime}</span> : null}
                       {post.tags?.map((t) => (
-                        <span key={t}>· {t}</span>
+                        <span key={t}>· #{t}</span>
                       ))}
-                      <span className="ml-auto inline-flex items-center gap-1.5 text-white/85 group-hover:text-white">
-                        <span>Read</span>
-                        <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
-                          →
-                        </span>
-                      </span>
                     </div>
                   </Link>
                 </BentoCard>

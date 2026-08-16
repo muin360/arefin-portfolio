@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import { sanityFetch } from "@/sanity/fetch";
-import { allSkillCategoriesQuery } from "@/sanity/queries";
-import type { SkillCategoryDoc } from "@/sanity/types";
-import { FALLBACK_SKILLS } from "@/data/fallbacks";
+import { getSkills } from "@/lib/db";
 import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import { IconCheck } from "@/components/icons";
@@ -98,131 +95,137 @@ const focusAreas = [
     body: "Adding AI reasoning to classify incoming requests, draft replies, and extract structured data from unstructured text.",
   },
   {
-    title: "Retrieval-Augmented Generation (RAG)",
-    body: "Indexing internal documentation and knowledge bases into vector databases for citation-backed question answering.",
+    title: "RAG & Knowledge Retrieval",
+    body: "Building vector search flows so AI models can cite real company knowledge bases accurately.",
   },
   {
-    title: "Custom Python & API Glue",
-    body: "Writing clean Python and JavaScript integration logic when pre-built connectors need custom transformations.",
+    title: "Tool-Calling Agents",
+    body: "Configuring agents that can query external APIs, execute searches, and update CRM records automatically.",
   },
 ];
 
 export default async function SkillsPage() {
-  const raw = await sanityFetch<SkillCategoryDoc[]>({
-    query: allSkillCategoriesQuery,
-    tags: ["skillCategory"],
-  });
-  const skills = raw && raw.length > 0 ? raw : FALLBACK_SKILLS;
+  const categories = await getSkills({ publishedOnly: true });
 
   return (
     <>
       <PageHeader
-        eyebrow="Arefin Mueen · Stack & Tools"
+        eyebrow="Arefin Mueen · Capabilities & Stack"
         index="04"
-        meta="AI Automation · AI Agents · RAG · APIs"
+        meta="n8n · LangChain · Langflow · APIs · Python"
         title={
           <>
-            The toolkit behind{" "}
-            <span className="serif">the automations.</span>
+            The tools and stack,
+            <br />
+            <span className="serif">I build with daily.</span>
           </>
         }
-        subtitle="A focused set of automation platforms, AI frameworks, and development tools I use to build practical workflows, agents, and integrations."
+        subtitle="The platforms, libraries, APIs, and languages I use to build robust AI automations and autonomous agents."
       />
 
-      {/* Auto-running marquee strip — like sponsor logos, never stops */}
-      <section className="hero-dark relative overflow-hidden border-y border-white/5">
-        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
-        <div className="aurora opacity-50" aria-hidden="true" />
-
-        <div className="relative py-10 md:py-14 space-y-6">
-          <Marquee duration={40}>
-            {skillsRow1.map((t) => (
-              <SkillPill key={t} label={t} variant="violet" />
-            ))}
-          </Marquee>
-          <Marquee duration={50} reverse>
-            {skillsRow2.map((t) => (
-              <SkillPill key={t} label={t} variant="pink" />
-            ))}
-          </Marquee>
-          <Marquee duration={36}>
-            {skillsRow3.map((t) => (
-              <SkillPill key={t} label={t} variant="cyan" />
-            ))}
-          </Marquee>
-        </div>
+      {/* Marquee bands */}
+      <section className="hero-dark py-14 overflow-hidden border-b border-white/5 space-y-4">
+        <Marquee duration={32}>
+          {skillsRow1.map((s) => (
+            <SkillPill key={s} label={s} variant="violet" />
+          ))}
+        </Marquee>
+        <Marquee duration={28} reverse>
+          {skillsRow2.map((s) => (
+            <SkillPill key={s} label={s} variant="pink" />
+          ))}
+        </Marquee>
+        <Marquee duration={36}>
+          {skillsRow3.map((s) => (
+            <SkillPill key={s} label={s} variant="cyan" />
+          ))}
+        </Marquee>
       </section>
 
-      <section className="max-w-6xl mx-auto px-6 sm:px-8 pt-16 pb-6">
-        <Reveal>
-          <p className="eyebrow mb-5">[ A ] Tools, ranked by use</p>
-        </Reveal>
-        <Reveal delay={100}>
+      {/* Interactive 3D Orbit Constellation */}
+      <section className="hero-dark relative overflow-hidden border-b border-white/5 py-24">
+        <div className="orb orb-violet" aria-hidden="true" />
+        <div className="orb orb-cyan" aria-hidden="true" />
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 relative">
+          <Reveal>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-3">
+                [ Interactive ] System Architecture
+              </p>
+              <h2 className="display text-3xl md:text-5xl text-white">
+                The Automation &amp; Agent{" "}
+                <span className="serif text-[1.04em] iridescent">Ecosystem.</span>
+              </h2>
+            </div>
+          </Reveal>
           <SkillsConstellation />
-        </Reveal>
-      </section>
-
-      <section className="max-w-6xl mx-auto px-6 sm:px-8 section pt-16">
-        <Reveal>
-          <p className="eyebrow mb-5">[ B ] Stack, by category</p>
-        </Reveal>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line rounded-2xl overflow-hidden">
-          {skills.map(({ iconName, category, items }, i) => { const Icon = iconFor(iconName); return (
-            <Reveal key={category} delay={i * 80} className="bg-surface p-8 md:p-10">
-              <div className="flex items-center gap-3">
-                <Icon width={22} height={22} className="text-foreground" />
-                <p className="text-xs uppercase tracking-[0.14em] text-muted">
-                  {category}
-                </p>
-              </div>
-              <ul className="mt-6 grid grid-cols-1 gap-4">
-                {items.map((it) => {
-                  const desc = TOOL_DESCRIPTIONS[it];
-                  return (
-                    <li
-                      key={it}
-                      className="flex items-start gap-3 text-foreground/85"
-                    >
-                      <span className="mt-2 w-1.5 h-1.5 rounded-full bg-foreground/60 shrink-0" />
-                      <div className="min-w-0">
-                        <p className="font-medium leading-tight">{it}</p>
-                        {desc && (
-                          <p className="mt-1 text-xs text-muted leading-relaxed">
-                            {desc}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </Reveal>
-          ); })}
         </div>
       </section>
 
-      <section className="border-y border-line bg-paper">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10">
-          <div className="md:col-span-4">
-            <p className="eyebrow mb-5">Focus areas</p>
+      {/* Categorized Skills Grid (FROM DB) */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 section">
+        <Reveal>
+          <div className="max-w-2xl mb-12">
+            <p className="eyebrow mb-3">Detailed breakdown</p>
             <h2 className="display text-3xl md:text-5xl">
-              What I&apos;m{" "}
-              <span className="serif text-[1.04em]">deepest in.</span>
+              Categorized{" "}
+              <span className="serif text-[1.04em]">technical tools.</span>
             </h2>
           </div>
-          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {focusAreas.map((f) => (
+        </Reveal>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {categories.map((cat, i) => {
+            const Icon = iconFor(cat.iconName);
+            return (
+              <Reveal key={cat.id} delay={i * 80}>
+                <div className="rounded-3xl border border-line bg-surface p-8 h-full flex flex-col">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="p-3 rounded-2xl bg-foreground/[0.04] border border-line">
+                      <Icon width={24} height={24} className="text-foreground" />
+                    </div>
+                    <span className="font-mono text-xs text-muted">0{i + 1}</span>
+                  </div>
+                  <h3 className="text-2xl font-bold tracking-tight mb-6">{cat.category}</h3>
+                  <div className="space-y-4 flex-1">
+                    {cat.items.map((item) => {
+                      const desc = TOOL_DESCRIPTIONS[item];
+                      return (
+                        <div key={item} className="pt-3 border-t border-line/60 first:pt-0 first:border-0">
+                          <div className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent-1" />
+                            <h4 className="font-medium text-sm text-foreground">{item}</h4>
+                          </div>
+                          {desc && (
+                            <p className="mt-1 text-xs text-muted leading-relaxed pl-3.5">
+                              {desc}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Focus Areas */}
+      <section className="hero-dark border-t border-white/5 py-20">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {focusAreas.map((f, idx) => (
               <div
-                key={f.title}
-                className="border border-line bg-surface rounded-2xl p-7"
+                key={idx}
+                className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2"
               >
-                <IconCheck width={20} height={20} className="text-foreground" />
-                <h3 className="mt-4 text-lg font-medium tracking-tight">
-                  {f.title}
-                </h3>
-                <p className="mt-2 text-sm text-muted leading-relaxed">
-                  {f.body}
-                </p>
+                <div className="flex items-center gap-2">
+                  <IconCheck width={16} height={16} className="text-violet-400" />
+                  <h3 className="text-base font-semibold text-white">{f.title}</h3>
+                </div>
+                <p className="text-xs text-white/60 leading-relaxed">{f.body}</p>
               </div>
             ))}
           </div>

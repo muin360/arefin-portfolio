@@ -1,87 +1,112 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { sanityFetch } from "@/sanity/fetch";
-import { allPostsQuery, allProjectsQuery } from "@/sanity/queries";
-import type { PostListItem, ProjectDoc } from "@/sanity/types";
+import { getProjects, getBlogPosts, getServices, getSkills } from "@/lib/db";
+import { FolderOpen, FileText, Workflow, Sparkles, User, Search, Settings } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Content Management",
+  title: "Content Management · Admin",
 };
 
-const ContentCard = ({
-  title,
-  description,
-  items,
-  href,
-}: {
-  title: string;
-  description: string;
-  items: number;
-  href: string;
-}) => (
-  <Link
-    href={href}
-    className="bg-slate-700 border border-slate-600 rounded-lg p-6 hover:border-violet-500 transition-all hover:shadow-lg"
-  >
-    <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-    <p className="text-slate-400 text-sm mb-4">{description}</p>
-    <div className="flex items-center justify-between">
-      <span className="text-slate-400 text-sm">{items} items</span>
-      <span className="text-violet-400 font-medium">Manage →</span>
-    </div>
-  </Link>
-);
-
 export default async function ContentPage() {
-  const [posts, projects] = await Promise.all([
-    sanityFetch<PostListItem[]>({
-      query: allPostsQuery,
-      tags: ["post"],
-    }),
-    sanityFetch<ProjectDoc[]>({
-      query: allProjectsQuery,
-      tags: ["project"],
-    }),
+  const [posts, projects, services, skills] = await Promise.all([
+    getBlogPosts(),
+    getProjects(),
+    getServices(),
+    getSkills(),
   ]);
 
+  const cards = [
+    {
+      title: "Projects & Case Studies",
+      description: "Manage project details, workflow diagrams, tech stack, and demos.",
+      count: `${projects.length} projects`,
+      href: "/admin/projects",
+      icon: FolderOpen,
+    },
+    {
+      title: "Journal & Build Notes",
+      description: "Write articles, technical logs, prompt teardowns, and learnings.",
+      count: `${posts.length} entries`,
+      href: "/admin/posts",
+      icon: FileText,
+    },
+    {
+      title: "Services & Capabilities",
+      description: "Define automation offerings, problem/solution pairs, and CTAs.",
+      count: `${services.length} services`,
+      href: "/admin/services",
+      icon: Workflow,
+    },
+    {
+      title: "Skills & Toolchains",
+      description: "Organize categorized skills, Python libraries, APIs, and frameworks.",
+      count: `${skills.length} categories`,
+      href: "/admin/skills",
+      icon: Sparkles,
+    },
+    {
+      title: "About & Story",
+      description: "Edit bio, story narrative, mindset, and experience milestones.",
+      count: "Bio & Principles",
+      href: "/admin/about",
+      icon: User,
+    },
+    {
+      title: "SEO & Social Metadata",
+      description: "Configure site titles, meta descriptions, and OpenGraph tags.",
+      count: "Global SEO",
+      href: "/admin/seo",
+      icon: Search,
+    },
+    {
+      title: "Settings & Availability",
+      description: "Manage contact channels, availability note, and feature flags.",
+      count: "Config",
+      href: "/admin/settings",
+      icon: Settings,
+    },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-bold text-white">Content Management</h1>
-          <p className="text-slate-400 mt-2">
-            Manage all your portfolio content
-          </p>
-        </div>
+    <div className="space-y-6 max-w-6xl">
+      <div>
+        <h1 className="text-3xl font-bold text-white">Content Management</h1>
+        <p className="text-sm text-slate-400 mt-1">
+          Select a content category to manage, create, or update website data.
+        </p>
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ContentCard
-          title="Blog Posts"
-          description="Create, edit, and manage your blog articles"
-          items={posts?.length || 0}
-          href="/admin/content/posts"
-        />
-        <ContentCard
-          title="Projects"
-          description="Showcase your best work and case studies"
-          items={projects?.length || 0}
-          href="/admin/content/projects"
-        />
-        <ContentCard
-          title="Services"
-          description="Update your service offerings and pricing"
-          items={0}
-          href="/admin/content/services"
-        />
-        <ContentCard
-          title="Skills"
-          description="Manage your skills and expertise areas"
-          items={0}
-          href="/admin/content/skills"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {cards.map((c) => {
+          const Icon = c.icon;
+          return (
+            <Link
+              key={c.title}
+              href={c.href}
+              className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-violet-500/50 transition-all flex flex-col justify-between group space-y-4 shadow-lg"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-slate-800 text-violet-400">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs font-mono text-slate-500">{c.count}</span>
+                </div>
+                <h3 className="text-lg font-bold text-white group-hover:text-violet-300 transition-colors">
+                  {c.title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {c.description}
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-medium text-violet-400">
+                <span>Open Editor</span>
+                <span>→</span>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

@@ -1,53 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sanityFetch } from "@/sanity/fetch";
-import {
-  allProjectsQuery,
-  projectBySlugQuery,
-  projectSlugsQuery,
-} from "@/sanity/queries";
-import type { ProjectDoc } from "@/sanity/types";
-import { FALLBACK_PROJECTS } from "@/data/fallbacks";
+import { getProjects, getProjectBySlug } from "@/lib/db";
+import type { IconName } from "@/lib/db/types";
 import { createElement } from "react";
 import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import Reveal from "@/components/Reveal";
 import BentoCard from "@/components/BentoCard";
 import { IconArrow } from "@/components/icons";
-import type { IconName } from "@/sanity/schemaTypes/shared";
 
-// Render an icon by name without ever binding the looked-up component to
-// a local variable — `react-hooks/static-components` flags variable
-// assignment, but `createElement` is fine here because we never alias the
-// component itself.
 function renderIcon(name: IconName, size: number, className?: string) {
   return createElement(iconFor(name), { width: size, height: size, className });
 }
 
-// Pre-render every project at build time, then revalidate on webhook.
 export async function generateStaticParams() {
-  const slugs = await sanityFetch<string[]>({
-    query: projectSlugsQuery,
-    tags: ["project"],
-  });
-  const live = slugs ?? [];
-  const fallback = FALLBACK_PROJECTS.map((p) => p.slug);
-  // Union so the fallback projects also pre-render at build time when
-  // Sanity is empty / not configured. Dedup keeps the array tight.
-  const all = Array.from(new Set([...live, ...fallback]));
-  return all.map((slug) => ({ slug }));
-}
-
-async function getProject(slug: string): Promise<ProjectDoc | null> {
-  const live = await sanityFetch<ProjectDoc | null>({
-    query: projectBySlugQuery,
-    params: { slug },
-    tags: ["project", `project:${slug}`],
-  });
-  if (live) return live;
-  // Fallback to in-repo data so /projects/<slug> always renders.
-  return FALLBACK_PROJECTS.find((p) => p.slug === slug) ?? null;
+  const projects = await getProjects({ publishedOnly: true });
+  return projects.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -56,7 +25,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProject(slug);
+  const project = await getProjectBySlug(slug, { publishedOnly: true });
   if (!project) return { title: "Project not found" };
   return {
     title: project.title,
@@ -77,20 +46,11 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [project, allProjectsLive] = await Promise.all([
-    getProject(slug),
-    sanityFetch<ProjectDoc[]>({
-      query: allProjectsQuery,
-      tags: ["project"],
-    }),
-  ]);
+  const project = await getProjectBySlug(slug, { publishedOnly: true });
   if (!project) notFound();
 
-  const all =
-    allProjectsLive && allProjectsLive.length > 0
-      ? allProjectsLive
-      : FALLBACK_PROJECTS;
-  const related = all
+  const allProjects = await getProjects({ publishedOnly: true });
+  const related = allProjects
     .filter((p) => p.slug !== project.slug)
     .slice(0, 3);
 
@@ -103,9 +63,10 @@ export default async function ProjectDetailPage({
     { step: "06", name: "Output / Handoff", desc: "Notification dispatch or human-in-the-loop review" },
   ];
 
-  const workflow = project.workflowSteps && project.workflowSteps.length > 0
-    ? project.workflowSteps
-    : defaultWorkflowSteps;
+  const workflow =
+    project.workflowSteps && project.workflowSteps.length > 0
+      ? project.workflowSteps
+      : defaultWorkflowSteps;
 
   return (
     <>
@@ -133,7 +94,7 @@ export default async function ProjectDetailPage({
                   </p>
                 </div>
                 <p className="text-white/85 leading-relaxed">
-                  {project.problem ??
+                  {project.problem ||
                     "Repetitive manual tasks, delayed responses, or fragmented data across tools causing operational friction."}
                 </p>
               </BentoCard>
@@ -148,7 +109,7 @@ export default async function ProjectDetailPage({
                   </p>
                 </div>
                 <p className="text-white/85 leading-relaxed">
-                  {project.goal ??
+                  {project.goal ||
                     "Build a reliable, automated pipeline to handle data transformations, reasoning, and tool execution automatically."}
                 </p>
               </BentoCard>
@@ -204,7 +165,7 @@ export default async function ProjectDetailPage({
                   AI Role &amp; Processing
                 </p>
                 <p className="text-white/80 leading-relaxed text-sm">
-                  {project.aiRole ??
+                  {project.aiRole ||
                     "LLM handles intent parsing, unstructured context extraction, and dynamic output formatting with structured schema guardrails."}
                 </p>
               </BentoCard>
@@ -216,7 +177,7 @@ export default async function ProjectDetailPage({
                   Automation Logic &amp; Connectors
                 </p>
                 <p className="text-white/80 leading-relaxed text-sm">
-                  {project.automationLogic ?? project.summary}
+                  {project.automationLogic || project.summary}
                 </p>
               </BentoCard>
             </Reveal>
@@ -232,8 +193,8 @@ export default async function ProjectDetailPage({
                   </p>
                   <p className="display text-xl md:text-2xl text-white leading-snug">
                     <span className="serif text-white/90">
-                      {project.learningOutcome ??
-                        project.outcome ??
+                      {project.learningOutcome ||
+                        project.outcome ||
                         "Mastered end-to-end workflow debugging, edge case management, and API error resilience."}
                     </span>
                   </p>
@@ -305,27 +266,25 @@ export default async function ProjectDetailPage({
               </div>
             </Reveal>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {related.map((p) => {
-                return (
-                  <Reveal key={p._id}>
-                    <Link
-                      href={`/projects/${p.slug}`}
-                      className="block h-full rounded-3xl border border-line bg-surface p-8 transition-all duration-300 hover:border-foreground/30"
-                    >
-                      <div className="flex items-start justify-between">
-                        {renderIcon(p.iconName, 28, "text-foreground")}
-                        <span className="chip">{p.category}</span>
-                      </div>
-                      <h3 className="mt-8 text-xl md:text-2xl tracking-tight font-medium">
-                        {p.title}
-                      </h3>
-                      <p className="mt-3 text-sm text-muted leading-relaxed line-clamp-3">
-                        {p.summary}
-                      </p>
-                    </Link>
-                  </Reveal>
-                );
-              })}
+              {related.map((p) => (
+                <Reveal key={p.id}>
+                  <Link
+                    href={`/projects/${p.slug}`}
+                    className="block h-full rounded-3xl border border-line bg-surface p-8 transition-all duration-300 hover:border-foreground/30"
+                  >
+                    <div className="flex items-start justify-between">
+                      {renderIcon(p.iconName, 28, "text-foreground")}
+                      <span className="chip">{p.category}</span>
+                    </div>
+                    <h3 className="mt-8 text-xl md:text-2xl tracking-tight font-medium">
+                      {p.title}
+                    </h3>
+                    <p className="mt-3 text-sm text-muted leading-relaxed line-clamp-3">
+                      {p.summary}
+                    </p>
+                  </Link>
+                </Reveal>
+              ))}
             </div>
           </div>
         </section>
@@ -340,7 +299,7 @@ export default async function ProjectDetailPage({
             <span className="serif iridescent">you&rsquo;d like to automate?</span>
           </h2>
           <p className="mt-5 text-white/65 max-w-2xl mx-auto leading-relaxed">
-            Free 30-min scoping conversation — let&rsquo;s explore what we can automate.
+            Free discovery scoping conversation — let&rsquo;s explore what we can automate.
           </p>
           <div className="mt-8">
             <Link href="/contact" className="btn-primary shimmer">
