@@ -131,6 +131,9 @@ export default function ProjectModal({
             exit={{ opacity: 0, scale: 0.95, y: 16 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label={project.title}
             style={{
               width: "100%",
               maxWidth: "680px",
@@ -151,7 +154,12 @@ export default function ProjectModal({
               background: "rgba(255,255,255,0.02)",
             }}>
               <div style={{ display: "flex", gap: "6px" }}>
-                <button onClick={onClose} style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#f43f5e", border: "none", cursor: "pointer" }} />
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Close modal"
+                  style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#f43f5e", border: "none", cursor: "pointer" }}
+                />
                 <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#f59e0b" }} />
                 <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#22d3a5" }} />
               </div>
@@ -190,8 +198,8 @@ export default function ProjectModal({
             }}>
               {[
                 { label: "Status", value: "LIVE", color: "var(--green)" },
-                { label: "Latency", value: `${10 + Math.floor(Math.random() * 8)}ms`, color: "var(--accent-bright)" },
-                { label: "Tasks", value: `${800 + Math.floor(Math.random() * 200)}`, color: "var(--t1)" },
+                { label: "Latency", value: `${12 + (project.title.length % 7)}ms`, color: "var(--accent-bright)" },
+                { label: "Tasks", value: `${840 + (project.title.length * 17) % 150}`, color: "var(--t1)" },
               ].map((m) => (
                 <div key={m.label} style={{
                   padding: "12px", background: "#0a0a12",

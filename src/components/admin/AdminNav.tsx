@@ -1,11 +1,10 @@
 import { signOut } from "@/lib/auth";
-import { User, LogOut, Menu } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import type { Session } from "next-auth";
 
-type Session = any;
-
-export default function AdminNav({ user }: { user: Session }) {
+export default function AdminNav({ user }: { user?: Session["user"] }) {
   return (
     <nav className="sticky top-0 z-40 bg-slate-800/50 border-b border-slate-700/50 backdrop-blur-xl">
       <div className="flex items-center justify-between px-6 py-4">
@@ -42,6 +41,7 @@ export default function AdminNav({ user }: { user: Session }) {
               type="submit"
               className="p-2 rounded-lg hover:bg-red-600/20 text-slate-400 hover:text-red-400 transition-colors"
               title="Sign out"
+              aria-label="Sign out"
             >
               <LogOut className="w-5 h-5" />
             </button>

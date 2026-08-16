@@ -25,8 +25,8 @@ const ContentSecurityPolicy = [
   "frame-ancestors 'none'",
   "form-action 'self'",
   // Images — self, data: for inline SVGs, blob: for runtime canvases,
-  // Sanity CDN for editor uploads.
-  "img-src 'self' data: blob: https://cdn.sanity.io",
+  // Sanity CDN for editor uploads + OAuth avatars.
+  "img-src 'self' data: blob: https://cdn.sanity.io https://avatars.githubusercontent.com https://lh3.googleusercontent.com",
   // Fonts — self + Google Fonts CDN.
   "font-src 'self' data: https://fonts.gstatic.com",
   // Styles — self + inline (required by Next.js + Tailwind 4) + Google Fonts.
@@ -35,8 +35,8 @@ const ContentSecurityPolicy = [
   "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
   // Workers — self + blob (Sanity Studio uses blob workers).
   "worker-src 'self' blob:",
-  // Network — Sanity API + Vercel insights + self.
-  "connect-src 'self' https://*.api.sanity.io https://cdn.sanity.io https://api.sanity.io wss://*.api.sanity.io https://vitals.vercel-insights.com",
+  // Network — Sanity API + Vercel insights + self + Anthropic API.
+  "connect-src 'self' https://*.api.sanity.io https://cdn.sanity.io https://api.sanity.io wss://*.api.sanity.io https://vitals.vercel-insights.com https://api.anthropic.com",
   // Iframes — self (Sanity Studio embeds) + Cal.com booking widget.
   "frame-src 'self' https://cal.com https://*.cal.com",
   // Manifest.
@@ -99,6 +99,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.sanity.io",
         pathname: "/images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
       },
     ],
     formats: ["image/avif", "image/webp"],

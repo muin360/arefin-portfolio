@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import AgentDashboard from "./AgentDashboard";
 import AutomateWidget from "./AutomateWidget";
@@ -137,7 +136,7 @@ export default function HeroSectionV2({
               </li>
               <li>
                 <span className="v2-hero__proof-dot" />
-                <span>Working across SE Asia, EU, North America</span>
+                <span>{availabilityNote}</span>
               </li>
               <li>
                 <span className="v2-hero__proof-dot" />

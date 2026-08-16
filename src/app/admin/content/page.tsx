@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 import { sanityFetch } from "@/sanity/fetch";
 import { allPostsQuery, allProjectsQuery } from "@/sanity/queries";
 import type { PostListItem, ProjectDoc } from "@/sanity/types";

@@ -17,11 +17,35 @@ import ReadingProgress from "@/components/ReadingProgress";
 import { PortableText } from "@/components/PortableText";
 import BreadcrumbsJsonLd from "@/components/BreadcrumbsJsonLd";
 
+import { FALLBACK_POSTS } from "@/data/fallbacks";
+import { getPostBySlug, posts as staticPosts } from "@/data/posts";
+import type { PortableTextBlock } from "@portabletext/types";
+
 // Slug validation regex — prevent directory traversal and invalid formats
 const VALID_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,100}$/i;
 
 function validateSlug(slug: string): boolean {
   return VALID_SLUG_PATTERN.test(slug);
+}
+
+function markdownToPortableText(content: string): PortableTextBlock[] {
+  const paragraphs = content.split("\n\n").map((s) => s.trim()).filter(Boolean);
+  return paragraphs.map((p, i) => {
+    if (p.startsWith("## ")) {
+      return {
+        _key: `h2-${i}`,
+        _type: "block",
+        style: "h2",
+        children: [{ _key: `span-${i}`, _type: "span", text: p.replace(/^## /, "") }],
+      };
+    }
+    return {
+      _key: `p-${i}`,
+      _type: "block",
+      style: "normal",
+      children: [{ _key: `span-${i}`, _type: "span", text: p }],
+    };
+  }) as PortableTextBlock[];
 }
 
 // Pre-render every post at build time, then revalidate on webhook.
@@ -30,20 +54,43 @@ export async function generateStaticParams() {
     query: postSlugsQuery,
     tags: ["post"],
   });
-  return (slugs ?? []).map((slug) => ({ slug }));
+  const live = slugs ?? [];
+  const fallback = staticPosts.map((p) => p.slug);
+  const all = Array.from(new Set([...live, ...fallback]));
+  return all.map((slug) => ({ slug }));
 }
 
-async function getPost(slug: string) {
+async function getPost(slug: string): Promise<PostDetail | null> {
   // Validate slug format before querying to prevent injection attacks
   if (!validateSlug(slug)) {
     return null;
   }
 
-  return sanityFetch<PostDetail | null>({
+  const live = await sanityFetch<PostDetail | null>({
     query: postBySlugQuery,
     params: { slug },
     tags: ["post", `post:${slug}`],
   });
+  if (live) return live;
+
+  // Fallback to in-repo post data
+  const staticPost = getPostBySlug(slug);
+  if (staticPost) {
+    return {
+      _id: `post.${staticPost.slug}`,
+      title: staticPost.title,
+      slug: staticPost.slug,
+      excerpt: staticPost.excerpt,
+      date: staticPost.date,
+      readingTime: staticPost.readingTime,
+      category: staticPost.category,
+      tags: staticPost.tags,
+      coverImage: null,
+      body: markdownToPortableText(staticPost.content),
+    };
+  }
+
+  return null;
 }
 
 export async function generateMetadata({
@@ -100,13 +147,14 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const [post, allPosts] = await Promise.all([
+  const [post, rawPosts] = await Promise.all([
     getPost(slug),
     sanityFetch<PostListItem[]>({ query: allPostsQuery, tags: ["post"] }),
   ]);
   if (!post) notFound();
 
-  const others = (allPosts ?? [])
+  const allPosts = rawPosts && rawPosts.length > 0 ? rawPosts : FALLBACK_POSTS;
+  const others = allPosts
     .filter((p) => p.slug !== post.slug)
     .slice(0, 2);
 

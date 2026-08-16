@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
+import { writeClient } from "@/sanity/client";
+import { revalidateTag } from "next/cache";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,18 +21,35 @@ export async function POST(req: NextRequest) {
     // Validate the input
     const { email, phone, phoneE164, availability, availabilityNote } = body;
 
-    if (!email) {
+    if (!email || typeof email !== "string" || !email.includes("@")) {
       return NextResponse.json(
-        { error: "Email is required" },
+        { error: "A valid email is required" },
         { status: 400 },
       );
     }
 
-    // TODO: Update Sanity document with new settings
-    // This would require calling the Sanity write client
+    // Persist settings if Sanity write token is configured
+    if (process.env.SANITY_API_WRITE_TOKEN) {
+      try {
+        const client = writeClient();
+        await client
+          .patch("siteConfig")
+          .set({
+            email,
+            phone: phone || "",
+            phoneE164: phoneE164 || "",
+            availability: availability || "available",
+            availabilityNote: availabilityNote || "",
+          })
+          .commit();
+        revalidateTag("siteConfig", "default");
+      } catch (sanityErr) {
+        Sentry.captureException(sanityErr);
+      }
+    }
 
     Sentry.captureMessage(
-      `Settings updated by ${session.user.email}`,
+      `Settings updated by ${session.user.email ?? "admin"}: ${JSON.stringify({ email, phone, phoneE164, availability, availabilityNote })}`,
       "info",
     );
 

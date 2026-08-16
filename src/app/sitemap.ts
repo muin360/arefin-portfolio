@@ -33,7 +33,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/terms`,    changeFrequency: "yearly",  priority: 0.3, lastModified: now },
   ];
 
-  const postRoutes: MetadataRoute.Sitemap = posts.map((p) => ({
+  const { FALLBACK_PROJECTS, FALLBACK_POSTS } = await import("@/data/fallbacks");
+
+  const postList = posts.length > 0 ? posts : FALLBACK_POSTS;
+  const postRoutes: MetadataRoute.Sitemap = postList.map((p) => ({
     url: `${SITE_URL}/blog/${p.slug}`,
     changeFrequency: "yearly",
     priority: 0.6,
@@ -43,7 +46,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Include built-in fallback projects so /projects/<slug> URLs surface
   // even when Sanity is empty or not configured (matches the static-params
   // behavior in the dynamic route).
-  const { FALLBACK_PROJECTS } = await import("@/data/fallbacks");
   const slugs = Array.from(
     new Set([
       ...liveProjects.map((p) => p.slug),
@@ -59,3 +61,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [...staticRoutes, ...postRoutes, ...projectRoutes];
 }
+

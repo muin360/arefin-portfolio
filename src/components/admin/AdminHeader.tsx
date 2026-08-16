@@ -32,15 +32,26 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
             <input
               type="text"
               placeholder="Search..."
+              aria-label="Search admin dashboard"
               className="bg-transparent ml-2 outline-none text-white placeholder-slate-400 text-sm w-48"
             />
           </div>
 
           {/* Notifications */}
-          <button className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors">
+          <button
+            type="button"
+            aria-label="Notifications"
+            className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+          >
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
+
+          {user?.name && (
+            <span className="hidden sm:inline-block text-xs text-slate-400 font-medium">
+              {user.name}
+            </span>
+          )}
         </div>
       </div>
     </header>

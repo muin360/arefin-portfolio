@@ -178,21 +178,19 @@ export default function ParticleNetwork({
       { threshold: 0 }
     );
 
-    resize();
-    seed();
-    observer.observe(canvas);
-    raf = requestAnimationFrame(draw);
-
-    window.addEventListener("resize", () => {
+    const handleResize = () => {
       resize();
       seed();
-    });
+    };
+
+    window.addEventListener("resize", handleResize);
     window.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mouseleave", onMouseLeave);
 
     return () => {
       cancelAnimationFrame(raf);
       observer.disconnect();
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", onMouseMove);
       canvas.removeEventListener("mouseleave", onMouseLeave);
     };

@@ -51,7 +51,7 @@ export default function SettingsForm({ initialConfig }: Props) {
           text: "Failed to save settings. Please try again.",
         });
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: "error",
         text: "An error occurred while saving settings.",

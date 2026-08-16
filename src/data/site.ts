@@ -6,12 +6,10 @@ import {
   IconCode,
   IconCompass,
   IconLayers,
-  IconRocket,
-  IconTerminal,
   IconBookmark,
-  IconSpark,
 } from "@/components/icons";
 import type { ComponentType, SVGProps } from "react";
+
 
 type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 

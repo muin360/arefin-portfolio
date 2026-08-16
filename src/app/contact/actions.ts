@@ -222,12 +222,32 @@ export async function sendContact(
       `.trim(),
     });
     if (result.error) {
-      Sentry.captureException(new Error(`Resend error: ${result.error}`));
+      const errorMsg = result.error.message || JSON.stringify(result.error);
+      Sentry.captureException(new Error(`Resend error: ${errorMsg}`));
       return {
         ok: false,
         error: "Couldn't send right now. Try again or email directly.",
       };
     }
+
+    // Persist submission to Sanity if write token is configured
+    if (process.env.SANITY_API_WRITE_TOKEN) {
+      try {
+        const { writeClient } = await import("@/sanity/client");
+        const client = writeClient();
+        await client.create({
+          _type: "contactSubmission",
+          name,
+          email,
+          subject,
+          message,
+          read: false,
+        });
+      } catch (sanityErr) {
+        Sentry.captureException(sanityErr);
+      }
+    }
+
     return { ok: true };
   } catch (err) {
     Sentry.captureException(err);

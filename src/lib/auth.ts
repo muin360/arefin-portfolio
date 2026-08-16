@@ -2,10 +2,15 @@ import NextAuth, { type NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 
-const adminGithubUsers = (process.env.ADMIN_GITHUB_USERS || "").split(",").filter(Boolean);
-const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").filter(Boolean);
+interface AuthProfile {
+  login?: string;
+  email?: string;
+}
 
-function isAdmin(email?: string | null, githubLogin?: string | null): boolean {
+export function isAdmin(email?: string | null, githubLogin?: string | null): boolean {
+  const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const adminGithubUsers = (process.env.ADMIN_GITHUB_USERS || "").split(",").map((s) => s.trim()).filter(Boolean);
+
   if (email && adminEmails.includes(email)) return true;
   if (githubLogin && adminGithubUsers.includes(githubLogin)) return true;
   return false;
@@ -35,7 +40,7 @@ const config = {
 
       if (isAdminPath && auth) {
         const user = auth.user;
-        const isUserAdmin = isAdmin(user?.email, (user as any)?.login);
+        const isUserAdmin = isAdmin(user?.email, user?.login);
         return isUserAdmin;
       }
 
@@ -43,15 +48,16 @@ const config = {
     },
     jwt({ token, profile }) {
       if (profile) {
-        token.login = (profile as any).login;
-        token.isAdmin = isAdmin((profile as any)?.email, (profile as any)?.login);
+        const p = profile as AuthProfile;
+        token.login = p.login ?? null;
+        token.isAdmin = isAdmin(p.email, p.login);
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
-        (session.user as any).login = token.login;
-        (session.user as any).isAdmin = token.isAdmin;
+        session.user.login = typeof token.login === "string" ? token.login : null;
+        session.user.isAdmin = Boolean(token.isAdmin);
       }
       return session;
     },
@@ -59,3 +65,4 @@ const config = {
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
+

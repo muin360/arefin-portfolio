@@ -17,12 +17,14 @@ function escapeXml(s: string): string {
     .replace(/'/g, "&apos;");
 }
 
+import { FALLBACK_POSTS } from "@/data/fallbacks";
+
 export async function GET() {
-  const posts =
-    (await sanityFetch<PostListItem[]>({
-      query: allPostsQuery,
-      tags: ["post"],
-    })) ?? [];
+  const raw = await sanityFetch<PostListItem[]>({
+    query: allPostsQuery,
+    tags: ["post"],
+  });
+  const posts = raw && raw.length > 0 ? raw : FALLBACK_POSTS;
 
   const updated = posts[0]?.date ?? new Date().toISOString();
 

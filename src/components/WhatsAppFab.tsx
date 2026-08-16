@@ -30,7 +30,7 @@ export default function WhatsAppFab({
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with Arefin on WhatsApp"
-      className={`fixed z-[60] bottom-5 right-5 md:bottom-7 md:right-7 transition-all duration-300 ${
+      className={`fixed z-[55] bottom-18 md:bottom-7 right-4 md:right-7 transition-all duration-300 ${
         visible
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 translate-y-3 pointer-events-none"

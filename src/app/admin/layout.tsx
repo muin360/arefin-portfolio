@@ -21,7 +21,7 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
-  const isAdmin = (session.user as any)?.isAdmin;
+  const isAdmin = session.user?.isAdmin;
   if (!isAdmin) {
     redirect("/admin/login");
   }

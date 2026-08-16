@@ -33,8 +33,9 @@ export default function AutomateWidget() {
 
   return (
     <div className="v2-automate-widget">
-      <p className="v2-automate-widget__header">// what do you want to automate?</p>
+      <p className="v2-automate-widget__header">{"// what do you want to automate?"}</p>
       <div className="v2-automate-widget__grid">
+
         {OPTIONS.map((opt) => (
           <button
             key={opt.id}

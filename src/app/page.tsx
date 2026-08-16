@@ -80,6 +80,9 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* STATS BAR — at a glance numbers */}
+      <StatsBar />
+
       {/* SELECTED WORK */}
       <section className="v2-section" aria-label="Selected work">
         <div className="v2-container">

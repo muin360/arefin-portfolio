@@ -140,7 +140,7 @@ export default function LiveAgent() {
                 marginBottom: "8px",
               }}
             >
-              // ask the agent anything
+              {"// ask the agent anything"}
             </p>
             <div
               style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}
@@ -148,6 +148,7 @@ export default function LiveAgent() {
               {STARTERS.map((s) => (
                 <button
                   key={s}
+                  type="button"
                   onClick={() => send(s)}
                   style={{
                     fontSize: "10px",
@@ -252,6 +253,7 @@ export default function LiveAgent() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send(input)}
           placeholder="ask about my work..."
+          aria-label="Ask the AI agent a question"
           disabled={loading}
           style={{
             flex: 1,
@@ -264,8 +266,10 @@ export default function LiveAgent() {
           }}
         />
         <button
+          type="button"
           onClick={() => send(input)}
           disabled={loading || !input.trim()}
+          aria-label="Send message to AI agent"
           style={{
             fontSize: "10px",
             padding: "4px 10px",
