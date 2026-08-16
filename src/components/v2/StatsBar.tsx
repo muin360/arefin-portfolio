@@ -21,10 +21,10 @@ type Stat = {
 };
 
 const STATS: Stat[] = [
-  { target: 12, suffix: "+", label: "Web & AI systems shipped" },
-  { prefix: "<", target: 14, suffix: "d", label: "Avg sprint delivery" },
-  { target: 100, suffix: "%", label: "Direct source & IP ownership" },
-  { target: 30, suffix: "d", label: "Post-launch support included" },
+  { target: 10, suffix: "+", label: "Practical AI projects built" },
+  { target: 100, suffix: "%", label: "Code & workflow ownership" },
+  { prefix: "0", target: 4, suffix: " Areas", label: "Automation · Agents · RAG · Voice" },
+  { target: 6, suffix: "+", label: "Core tools: n8n, LangChain, APIs, Python" },
 ];
 
 export default function StatsBar() {

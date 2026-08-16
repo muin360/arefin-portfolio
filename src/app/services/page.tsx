@@ -11,50 +11,48 @@ import BentoCard from "@/components/BentoCard";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "Services & Engagements",
+  title: "Services & Capabilities",
   description:
-    "Bespoke web design, full-stack web applications, autonomous AI agents, and business workflow automation. Engagements start with a free 30-minute discovery call.",
+    "AI automation, autonomous agents, RAG knowledge retrieval, and multi-agent workflows built with n8n, LangChain, Langflow, and APIs.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Services & Engagements — Arefin Mueen",
+    title: "Services & Capabilities — Arefin Mueen",
     description:
-      "AI-powered websites, full-stack web applications, AI agents, and production automation systems.",
+      "AI automation, autonomous agents, RAG systems, and multi-agent workflows.",
     url: "/services",
   },
 };
 
-
-
 const process = [
   {
     step: "01",
-    title: "Discovery — free 30 min",
-    body: "A focused conversation to map your product roadmap or workflows, identify high-leverage full-stack/AI opportunities, and agree on next steps in writing.",
+    title: "Discovery & Scoping — free 30 min",
+    body: "A focused conversation to understand your workflow, map repetitive tasks, and identify what can be automated.",
   },
   {
     step: "02",
-    title: "Blueprint & Architecture",
-    body: "UI/UX wireframes, technical architecture, database schemas, integration maps, and delivery milestones agreed before any code is written.",
+    title: "Workflow Blueprint",
+    body: "Architecture, trigger events, LLM prompts, and tool connections written down clearly before building.",
   },
   {
     step: "03",
-    title: "Build & Iterate",
-    body: "Milestone-based engineering with real-data testing, responsive polishing, security checks, and regular check-ins so you see continuous progress.",
+    title: "Build & Test",
+    body: "Configuring workflows in n8n/LangChain, setting up prompts and error handlers, and running test payloads.",
   },
   {
     step: "04",
-    title: "Launch & Support",
-    body: "Deployment, full documentation, video walkthroughs, and repository handover. 30 days of launch support included on every engagement.",
+    title: "Handover & Walkthrough",
+    body: "Full video walkthrough, documentation, and handover under your own accounts so you own 100% of the setup.",
   },
 ];
 
 const engagement = [
-  "All accounts, logins, and source code in your name — you own 100%",
-  "Bespoke UI/UX design and modern responsive engineering",
-  "Acceptance criteria written and agreed before the build starts",
-  "30 days of dedicated launch support included on every project",
-  "Fast async communication and milestone check-ins",
-  "Small client load so you get direct senior engineering attention",
+  "All workflows, scripts, and accounts hosted in your name — you own 100%",
+  "Clear workflow logic and error handling configured",
+  "Documented setup instructions and walkthrough video included",
+  "Post-launch testing and verification",
+  "Direct, responsive communication throughout the build",
+  "Practical focus on solving real operational bottlenecks",
 ];
 
 export default async function ServicesPage() {
@@ -75,16 +73,17 @@ export default async function ServicesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Arefin Mueen · Services"
+        eyebrow="Arefin Mueen · Capabilities"
         index="03"
-        meta="Core capabilities · Four engagement tiers"
+        meta="AI Automation · AI Agents · RAG · Workflows"
         title={
           <>
-            Bespoke digital products,{" "}
-            <span className="serif">four ways</span> to engage.
+            Practical AI automations,
+            <br />
+            <span className="serif">built to solve real work.</span>
           </>
         }
-        subtitle="I design, build, and ship intelligent web applications, modern conversion websites, AI agents, and production automation systems. Every project starts with a free 30-min discovery call and a written proposal."
+        subtitle="I design and build AI-powered workflows, autonomous agents, RAG knowledge assistants, and custom integrations using n8n, LangChain, Langflow, and LLM APIs."
       />
 
       {/* ENGAGEMENTS — Sprint / Build / Retainer pricing tiers */}
@@ -230,7 +229,7 @@ export default async function ServicesPage() {
                 price: "From $6,000",
                 timeline: "4–8 weeks",
                 desc: "Multi-workflow builds: AI agent + CRM + notification stack, full website with booking and automation, or cross-platform integration suites.",
-                note: "Multi-workflow, production-grade",
+                note: "Multi-workflow system with testing",
               },
               {
                 tier: "Retainer",

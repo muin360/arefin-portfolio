@@ -6,14 +6,14 @@ import { IconArrow } from "@/components/icons";
 import { whatsappHref, WA_MESSAGES, PHONE_DISPLAY } from "@/lib/cta";
 
 export const metadata: Metadata = {
-  title: "Book a free 30-min audit",
+  title: "Book a free 30-min scoping call",
   description:
-    "Book a free 30-minute audit call with Arefin. We'll review your workflow, Messenger inbox or current website live and tell you exactly what to fix first. No pitch, no obligation.",
+    "Book a free 30-minute scoping call with Arefin. We'll review your manual workflow steps and identify practical automation opportunities.",
   alternates: { canonical: "/book" },
   openGraph: {
-    title: "Book a free 30-min audit — Tensorix",
+    title: "Book a free 30-min scoping call — Arefin Mueen",
     description:
-      "30 minutes. I'll tell you exactly what to fix first. No pitch.",
+      "30 minutes. Let's map your workflow and explore what we can automate.",
     url: "/book",
   },
 };
@@ -28,17 +28,17 @@ export default function BookPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Book a call · Free"
+        eyebrow="Scoping Call · Free"
         index="06"
-        meta="30 minutes · No pitch · Live audit on the call"
+        meta="30 minutes · Explore automation opportunities · No obligation"
         title={
           <>
             Pick a time.{" "}
-            <span className="serif">I&rsquo;ll review</span> your workflow,
-            inbox or website live with you.
+            <span className="serif">Let&rsquo;s review</span> your workflow
+            and explore what we can automate.
           </>
         }
-        subtitle="Free 30-minute audit. I'll tell you exactly what to automate first for the biggest ROI. If you'd rather just chat, WhatsApp me — I reply within an hour."
+        subtitle="Free 30-minute scoping call. We'll map your repetitive tasks and outline practical AI automation or agent solutions."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">

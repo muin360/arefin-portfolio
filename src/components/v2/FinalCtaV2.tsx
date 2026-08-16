@@ -22,20 +22,20 @@ export default function FinalCtaV2() {
       <div className="v2-finalcta__card">
         <span className="v2-finalcta__eyebrow">[ next step ]  let&rsquo;s work together</span>
         <h2 className="v2-finalcta__head">
-          Ready to build an <em>intelligent</em> product
+          Have a workflow or repetitive task
           <br />
-          or automate your operations?
+          you want to <em>automate?</em>
         </h2>
         <p className="v2-finalcta__sub">
-          Full-stack web applications, modern conversion websites, and AI automation tailored to your business goals. Direct senior engineering with complete IP ownership.
+          Let&rsquo;s map out your process and build practical AI agents, automated workflows, or RAG assistants to handle the work for you.
         </p>
 
         <ul className="v2-finalcta__check">
           {[
-            "Free 30-min discovery call — no sales pitch",
-            "Milestone-based delivery with clear acceptance criteria",
-            "Full frontend, backend, and AI integration",
-            "You own 100% of source code, schemas, and accounts",
+            "Free 30-min scoping call — explore what's possible",
+            "Clear workflow architecture and step-by-step logic",
+            "Built with n8n, LangChain, Langflow, or custom Python",
+            "You own 100% of workflows, credentials, and code",
           ].map((line) => (
             <li key={line}>
               <span className="v2-finalcta__tick" aria-hidden="true">
@@ -50,9 +50,9 @@ export default function FinalCtaV2() {
           <Link
             href="/contact"
             className="v2-finalcta__primary group"
-            aria-label="Start a project"
+            aria-label="Let's build an automation"
           >
-            <span>Start a project</span>
+            <span>Let&rsquo;s build an automation</span>
             <ArrowRight
               size={16}
               strokeWidth={1.75}

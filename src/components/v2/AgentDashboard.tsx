@@ -39,12 +39,12 @@ export default function AgentDashboard() {
   }, [inView]);
 
   const lines = [
-    { time: "10:14:02", type: "info" as const,  message: "app.init · route=/api/v1/workspace",          status: "200 ok" },
-    { time: "10:14:02", type: "ok" as const,    message: "auth.session · user=verified_lead",         status: "jwt_ok" },
-    { time: "10:14:03", type: "agent" as const, message: "agent.reasoning · model=claude-3.5",       status: "14 ms" },
-    { time: "10:14:03", type: "info" as const,  message: "db.query · vector_search k=4 pgvector",    status: "18 ms" },
-    { time: "10:14:04", type: "ok" as const,    message: "workflow.dispatch · n8n pipeline trigger",  status: "200 ok" },
-    { time: "10:14:05", type: "ok" as const,    message: "ui.stream · reactive client update",        status: "active" },
+    { time: "10:14:02", type: "info" as const,  message: "trigger.webhook · incoming inquiry payload",    status: "200 ok" },
+    { time: "10:14:02", type: "ok" as const,    message: "rag.retrieve · vector_search k=3 embeddings",  status: "16 ms" },
+    { time: "10:14:03", type: "agent" as const, message: "agent.reason · prompt_chain + tool_select",   status: "24 ms" },
+    { time: "10:14:03", type: "info" as const,  message: "tool.call · gmail_api draft_reply",           status: "ready" },
+    { time: "10:14:04", type: "ok" as const,    message: "n8n.workflow · dispatch slack notification",   status: "200 ok" },
+    { time: "10:14:05", type: "ok" as const,    message: "pipeline.complete · execution time=1.2s",      status: "success" },
   ];
 
   return (
@@ -59,7 +59,7 @@ export default function AgentDashboard() {
             <span className="v2-dashboard__dot" style={{ background: "var(--amber)" }} />
             <span className="v2-dashboard__dot" style={{ background: "var(--green)" }} />
           </div>
-          <span className="v2-dashboard__title">arefin.mueen · system-runtime · v2.0</span>
+          <span className="v2-dashboard__title">arefin.mueen · automation-lab · runtime</span>
           <span className="v2-dashboard__live">
             <span className="v2-dashboard__live-dot" />
             live

@@ -6,26 +6,26 @@ function getFallbackResponse(userMessage: string): string {
   const query = userMessage.toLowerCase();
 
   if (query.includes("pricing") || query.includes("cost") || query.includes("rate") || query.includes("charge")) {
-    return "Projects typically start with a free 30-min discovery audit. Fixed-scope automation sprints range from $1.5k–$5k with 14-day turnaround and 30-day post-launch support.";
+    return "Projects are scoped based on the specific workflow requirements. We can explore your needs during a free 30-minute scoping conversation.";
   }
 
   if (query.includes("stack") || query.includes("tech") || query.includes("tool") || query.includes("language") || query.includes("python")) {
-    return "Arefin specializes in n8n, Python (FastAPI, LangChain, LlamaIndex), TypeScript/Next.js, vector databases (Pinecone, pgvector), and multi-agent systems with Claude 3.5 & GPT-4o.";
+    return "Arefin specializes in n8n, Zapier, Langflow, LangChain, OpenAI & Claude APIs, vector search (Pinecone), webhooks, REST APIs, and Python/JavaScript fundamentals.";
   }
 
   if (query.includes("book") || query.includes("contact") || query.includes("call") || query.includes("hire") || query.includes("schedule")) {
-    return "You can book a free 30-min automation audit directly at /book or send a message via /contact or WhatsApp.";
+    return "You can get in touch directly via the contact form at /contact or via WhatsApp.";
   }
 
   if (query.includes("project") || query.includes("case study") || query.includes("portfolio") || query.includes("work")) {
-    return "Recent shipped projects include an Autonomous CRM Lead Qualifier (n8n + GPT-4o), a Multi-Tenant RAG Knowledge Base, and automated billing reconciliation workflows. Check /projects for live demos.";
+    return "Arefin has built practical projects including Email Triage Automation (n8n + OpenAI), Customer Support Q&A Bots (Langflow), and Market Research Multi-Agent systems. Check /projects for details.";
   }
 
   if (query.includes("who") || query.includes("arefin") || query.includes("about") || query.includes("experience")) {
-    return "Arefin Mueen is an AI Agent & Automation Engineer based in Dhaka. He builds enterprise automation pipelines, AI agents, and custom integrations that save teams 20+ hours every week.";
+    return "Arefin Mueen is an AI Automation & AI Agent Developer based in Dhaka. He builds practical AI workflows, autonomous agents, RAG systems, and custom webhook integrations.";
   }
 
-  return "I'm Arefin's AI assistant. I can answer questions about AI automation workflows, n8n integrations, tech stacks, project timelines, and booking a discovery call!";
+  return "I'm Arefin's AI assistant. I can answer questions about AI automation workflows, n8n integrations, tech stacks, and how to get in touch!";
 }
 
 export async function POST(req: NextRequest) {

@@ -29,7 +29,7 @@ const TERMINAL_MAP: Record<string, TerminalLogLine[]> = {
     { time: "10:31:09", type: "ok",    message: "agent[critic] · review.pass · score=91", status: "done" },
     { time: "10:31:10", type: "ok",    message: "report.delivered · PDF + Notion sync", status: "sent" },
   ],
-  "Multilingual Full-Stack AI Assistant": [
+  "Multilingual AI Support Bot": [
     { time: "14:02:11", type: "info",  message: "message.in · lang=Arabic · channel=web", status: "ok" },
     { time: "14:02:11", type: "agent", message: "lang.detect → ar · translate.to_en", status: "120ms" },
     { time: "14:02:12", type: "agent", message: "intent.classify → billing_query", status: "8ms" },
@@ -45,7 +45,7 @@ const TERMINAL_MAP: Record<string, TerminalLogLine[]> = {
     { time: "11:05:04", type: "ok",    message: "approval.sent · slack · #finance", status: "done" },
     { time: "11:05:04", type: "ok",    message: "audit.logged · zero_touch=true", status: "done" },
   ],
-  "Website Lead Generation SaaS (n8n)": [
+  "Website Lead Generation Bot (n8n)": [
     { time: "16:44:01", type: "info",  message: "visitor.event · time_on_page=142s", status: "ok" },
     { time: "16:44:01", type: "agent", message: "intent.score · model=gpt-4o-mini · 87/100", status: "340ms" },
     { time: "16:44:02", type: "agent", message: "enrichment.run · apollo · found company", status: "1.1s" },
@@ -61,7 +61,7 @@ const TERMINAL_MAP: Record<string, TerminalLogLine[]> = {
     { time: "13:22:07", type: "agent", message: "answer.generate · citations=2", status: "1.3s" },
     { time: "13:22:07", type: "ok",    message: "reply.sent · confidence=0.94", status: "done" },
   ],
-  "Full-Stack Dropshipping Automation": [
+  "E-Commerce Automation Workflow": [
     { time: "08:00:00", type: "info",  message: "schedule.trigger · daily-product-sync", status: "ok" },
     { time: "08:00:01", type: "agent", message: "research.agent · trending=42 products", status: "8.2s" },
     { time: "08:00:10", type: "agent", message: "listing.writer · 42 descriptions gen", status: "14s" },

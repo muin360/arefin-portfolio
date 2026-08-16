@@ -60,20 +60,18 @@ export default async function HomePage() {
       <section
         id="services"
         className="v2-section"
-        aria-label="Services"
+        aria-label="Capabilities"
       >
         <div className="v2-container">
-          <SectionLabel index="02" hint="four ways i build with you">
-            Services
+          <SectionLabel index="02" hint="what i build and automate">
+            Capabilities
           </SectionLabel>
           <h2 className="v2-section__head">
-            Four ways I{" "}
-            <em className="v2-section__head-em">build with you.</em>
+            Core capabilities,{" "}
+            <em className="v2-section__head-em">focused on real work.</em>
           </h2>
           <p className="v2-section__sub">
-            Productized offers, scoped after a 30-minute audit, with
-            acceptance criteria signed in writing before I touch
-            anything in production.
+            Practical AI automation workflows, autonomous agents, RAG knowledge bases, and multi-agent systems designed to solve real business bottlenecks.
           </p>
           <div className="v2-section__body">
             <Reveal delay={120}>
@@ -87,15 +85,15 @@ export default async function HomePage() {
       <StatsBar />
 
       {/* SELECTED WORK */}
-      <section className="v2-section" aria-label="Selected work">
+      <section className="v2-section" aria-label="Selected projects">
         <div className="v2-container">
           <div className="v2-section__top">
             <div>
-              <SectionLabel index="03" hint="case studies">
-                Selected work
+              <SectionLabel index="03" hint="practical builds">
+                Selected projects
               </SectionLabel>
               <h2 className="v2-section__head">
-                Systems that{" "}
+                AI automations that{" "}
                 <em className="v2-section__head-em">do the work,</em>
                 <br />
                 so you don&rsquo;t.
@@ -117,18 +115,16 @@ export default async function HomePage() {
       {/* SPRINT TIMELINE — process */}
       <section className="v2-section v2-section--dark" aria-label="How it works">
         <div className="v2-container">
-          <SectionLabel index="04" hint="14 days from first call to live system">
+          <SectionLabel index="04" hint="from workflow map to working automation">
             How I work
           </SectionLabel>
           <h2 className="v2-section__head">
             From first message
             <br />
-            <em className="v2-section__head-em">to live system in 14 days.</em>
+            <em className="v2-section__head-em">to working automation.</em>
           </h2>
           <p className="v2-section__sub">
-            Six steps. You always know what&rsquo;s happening, what&rsquo;s
-            next, and what you&rsquo;ll have at the end of each phase —
-            starting with a free 30-minute audit call.
+            A transparent step-by-step process: mapping the workflow, designing the automation architecture, connecting APIs and prompts, testing edge cases, and handover.
           </p>
           <div className="v2-section__body">
             <Reveal delay={100} y={24}>
@@ -143,12 +139,12 @@ export default async function HomePage() {
         <div className="v2-container">
           <div className="v2-section__top">
             <div>
-              <SectionLabel index="05" hint="recent notes">
+              <SectionLabel index="05" hint="recent notes & experiments">
                 Journal
               </SectionLabel>
               <h2 className="v2-section__head">
-                Notes on shipping{" "}
-                <em className="v2-section__head-em">AI in production.</em>
+                Notes on building{" "}
+                <em className="v2-section__head-em">AI automations &amp; agents.</em>
               </h2>
             </div>
             <Link href="/blog" className="v2-section__more">
@@ -167,12 +163,12 @@ export default async function HomePage() {
       {/* FAQ */}
       <section className="v2-section" aria-label="FAQ">
         <div className="v2-container v2-container--narrow">
-          <SectionLabel index="06" hint="the six i get asked most">
+          <SectionLabel index="06" hint="common questions">
             FAQ
           </SectionLabel>
           <h2 className="v2-section__head">
-            The honest answers{" "}
-            <em className="v2-section__head-em">to the questions every SMB asks.</em>
+            Direct answers{" "}
+            <em className="v2-section__head-em">to common questions.</em>
           </h2>
           <div className="v2-section__body">
             <Reveal delay={80} y={16}>

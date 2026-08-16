@@ -69,8 +69,8 @@ export default function Navbar() {
             ◈
           </span>
           <span className="v2-nav__wordmark">
-            AREFIN MUIN
-            <span className="v2-nav__wordmark-sub">engineer · DHK</span>
+            AREFIN MUEEN
+            <span className="v2-nav__wordmark-sub">automation · DHK</span>
           </span>
         </Link>
 

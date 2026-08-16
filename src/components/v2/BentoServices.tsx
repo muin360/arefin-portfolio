@@ -208,32 +208,32 @@ function BrowserMockup() {
 
 const CARDS: Card[] = [
   {
-    index: "01 / WEB & DESIGN",
-    title: "AI-Powered Websites & Web Design",
-    hook: "Bespoke Next.js web applications, dynamic CMS flagships, and high-converting digital products.",
-    visual: <BrowserMockup />,
-    href: "/services#conversion-websites",
-  },
-  {
-    index: "02 / FULL-STACK",
-    title: "Full-Stack Web Applications & SaaS",
-    hook: "End-to-end web apps, dashboards, and SaaS platforms built with Next.js, Node/Python, and PostgreSQL.",
+    index: "01 / AUTOMATION",
+    title: "AI Workflow Automation",
+    hook: "Event-driven automation pipelines connecting business apps, email inboxes, spreadsheets, and webhooks.",
     visual: <WorkflowDiagram />,
-    href: "/services#fullstack-apps",
+    href: "/services#workflow-automation",
   },
   {
-    index: "03 / AI AGENTS",
+    index: "02 / AGENTS",
     title: "AI Agents & Autonomous Assistants",
-    hook: "Intelligent agents that reason, qualify inbound leads, schedule meetings, and automate execution.",
+    hook: "Intelligent agents that reason, call tools, query data, and execute real tasks with human handoff.",
     visual: <AgentTabs />,
     href: "/services#agent-chatbot",
   },
   {
-    index: "04 / AUTOMATION",
-    title: "Business Automation & n8n Systems",
-    hook: "Robust event-driven automation pipelines connecting CRMs, APIs, databases, and internal workflows.",
+    index: "03 / RAG SYSTEMS",
+    title: "RAG & Knowledge Retrieval",
+    hook: "Context-aware AI assistants that accurately answer questions using your verified company documents.",
     visual: <ConnectionMap />,
-    href: "/services#workflow-automation",
+    href: "/services#rag-systems",
+  },
+  {
+    index: "04 / MULTI-AGENT",
+    title: "Multi-Agent & Chatbot Workflows",
+    hook: "Specialized crews of AI agents collaborating on complex research, content generation, and customer Q&A.",
+    visual: <BrowserMockup />,
+    href: "/services#multi-agent",
   },
 ];
 

@@ -15,10 +15,10 @@ type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 
 export const site = {
   name: "Arefin Mueen",
-  role: "AI-Powered Full-Stack Developer & Web Designer",
+  role: "AI Automation & AI Agent Developer",
   email: "hello@tensorix.me",
   tagline:
-    "I design and build intelligent web applications, conversion-driven websites, AI agents, and production automation systems. Next.js, React, TypeScript, Python, and modern LLMs.",
+    "I build practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
 };
 
 export const services: {
@@ -27,90 +27,78 @@ export const services: {
   description: string;
 }[] = [
   {
-    Icon: IconCode,
-    title: "AI-Powered Websites & Web Design",
+    Icon: IconWorkflow,
+    title: "AI Workflow Automation",
     description:
-      "Bespoke, high-performance web design with integrated AI capabilities, CMS-editable content, fluid animations, and conversion-optimized architecture.",
-  },
-  {
-    Icon: IconLayers,
-    title: "Full-Stack Web Applications & SaaS",
-    description:
-      "End-to-end web apps, dashboards, and SaaS platforms built with Next.js, React, TypeScript, Node.js/Python, databases, and secure authentication.",
+      "Automate repetitive operational tasks by connecting business apps, databases, and APIs using n8n, Zapier, and LLMs.",
   },
   {
     Icon: IconAgent,
-    title: "AI Agents & Intelligent Assistants",
+    title: "AI Agents & Assistants",
     description:
-      "Autonomous AI agents, conversational voice/chat assistants, and multi-agent workflows engineered with LangChain, Python, and leading foundation models.",
-  },
-  {
-    Icon: IconWorkflow,
-    title: "Business Automation & n8n Workflows",
-    description:
-      "Production-grade workflow automations that connect your CRM, databases, payment gateways, and communication channels with error handling and logging.",
+      "Autonomous agents that reason through multi-step tasks, call tools, query data, and execute real actions.",
   },
   {
     Icon: IconBrain,
-    title: "RAG & Knowledge Systems",
+    title: "RAG & Knowledge Retrieval",
     description:
-      "Retrieval-augmented generation systems over company documentation, Notion workspaces, and databases with semantic vector search and source citations.",
+      "Context-aware AI assistants that answer questions accurately by retrieving information from documents, SOPs, and knowledge bases.",
   },
   {
-    Icon: IconChart,
-    title: "E-Commerce & Digital Commerce Systems",
+    Icon: IconLayers,
+    title: "Multi-Agent Systems",
     description:
-      "Custom e-commerce platforms, ordering systems, and automated fulfillment pipelines wired directly to inventory, Stripe, and customer support bots.",
+      "Coordinated networks of specialized AI agents working together on complex research, data synthesis, and analysis workflows.",
+  },
+  {
+    Icon: IconBookmark,
+    title: "AI Chatbots & Lead Capture",
+    description:
+      "Website, WhatsApp, and Messenger conversational bots for instant FAQ responses, lead qualification, and human handoff.",
+  },
+  {
+    Icon: IconCode,
+    title: "API & Webhook Integrations",
+    description:
+      "Connecting third-party services, writing custom Python/JavaScript integration glue, and building event-driven webhooks.",
   },
 ];
 
 export const skills: { category: string; items: string[]; Icon: Icon }[] = [
   {
-    category: "Web & Frontend",
-    Icon: IconCode,
-    items: [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Tailwind CSS",
-      "UI/UX Design",
-      "Framer Motion",
-    ],
-  },
-  {
-    category: "Full-Stack & Backend",
-    Icon: IconLayers,
-    items: [
-      "Node.js",
-      "Python",
-      "PostgreSQL",
-      "REST & Webhooks",
-      "Auth & Security",
-      "Prisma / Drizzle",
-    ],
-  },
-  {
     category: "AI & Agents",
     Icon: IconBrain,
     items: [
-      "LangChain",
-      "LLM Engineering",
-      "RAG & Vector DBs",
+      "AI Agents",
+      "RAG Systems",
       "Multi-Agent Systems",
       "Prompt Engineering",
-      "OpenAI & Claude",
+      "OpenAI & Claude APIs",
+      "LangChain",
     ],
   },
   {
-    category: "Automation & Infrastructure",
+    category: "Automation & Workflows",
     Icon: IconWorkflow,
     items: [
       "n8n",
-      "Make & Zapier",
-      "Vercel & Supabase",
-      "Docker / Cloud VPS",
-      "CI/CD & Git",
-      "System Observability",
+      "Zapier",
+      "Langflow",
+      "Workflow Design",
+      "Webhooks",
+      "API Integrations",
+    ],
+  },
+  {
+    category: "Development Fundamentals",
+    Icon: IconCode,
+    items: [
+      "Python",
+      "JavaScript",
+      "JSON",
+      "Git & GitHub",
+      "REST APIs",
+      "Web Fundamentals",
     ],
   },
 ];
@@ -121,53 +109,96 @@ export const projects: {
   stack: string[];
   Icon: Icon;
   category: string;
+  projectType: string;
 }[] = [
   {
-    title: "Intelligent SaaS Workspace & AI Copilot",
+    title: "Email Automation & Smart Triage",
     summary:
-      "Modern multi-tenant web application featuring a real-time AI document copilot, vector semantic search, role-based auth, and automated background jobs.",
-    stack: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL", "LangChain", "OpenAI"],
-    Icon: IconCode,
-    category: "Full-Stack SaaS",
+      "Automated inbox triage workflow built with n8n and OpenAI that categorizes incoming emails, drafts context-aware replies, and routes priority notifications.",
+    stack: ["n8n", "OpenAI", "Gmail API", "Webhooks"],
+    Icon: IconWorkflow,
+    category: "AI Automation",
+    projectType: "Automation Project",
   },
   {
-    title: "Luxury Medical Clinic Digital Platform",
+    title: "Social Media Content Generator",
     summary:
-      "High-converting clinic web platform with bespoke editorial design, dynamic CMS service catalog, interactive appointment intake, and direct CRM sync.",
-    stack: ["Next.js", "React", "Tailwind CSS", "Sanity CMS", "WhatsApp API", "Framer Motion"],
-    Icon: IconCompass,
-    category: "Web Design & System",
-  },
-  {
-    title: "Autonomous Commerce & Operations Engine",
-    summary:
-      "End-to-end e-commerce operations backend: AI product catalog generation, real-time inventory synchronization, order routing, and automated customer support.",
-    stack: ["Shopify API", "Node.js", "n8n", "OpenAI", "Stripe API", "Python"],
-    Icon: IconChart,
-    category: "E-Commerce System",
-  },
-  {
-    title: "Multi-Agent Market Intelligence System",
-    summary:
-      "Orchestrated crew of 4 specialized AI agents (Researcher, Data Extractor, Financial Analyst, Executive Summarizer) producing structured market briefs from live web data.",
-    stack: ["n8n", "LangChain", "Python", "Claude 3.5", "pgvector"],
-    Icon: IconBrain,
-    category: "AI Multi-Agent",
-  },
-  {
-    title: "Operational Analytics & Workflow Dashboard",
-    summary:
-      "Executive internal dashboard providing real-time pipeline monitoring, automated deal scoring, team task dispatching, and webhook health analytics.",
-    stack: ["React", "TypeScript", "Tailwind CSS", "FastAPI", "PostgreSQL", "n8n"],
+      "Automated pipeline that takes a core article or topic, generates tailored cross-platform posts via LLMs, and organizes draft schedules in Google Sheets.",
+    stack: ["Make", "OpenAI", "Google Sheets", "Webhooks"],
     Icon: IconLayers,
-    category: "Internal Tool & Dashboard",
+    category: "AI Workflow",
+    projectType: "Learning Project",
   },
   {
-    title: "Enterprise Knowledge RAG Copilot",
+    title: "Customer Support Q&A Bot",
     summary:
-      "Retrieval-augmented conversational copilot indexed over internal documentation, technical SOPs, and Notion wikis with strict permission filtering and source citations.",
-    stack: ["Python", "LangChain", "Pinecone", "OpenAI", "Slack API"],
+      "Conversational support assistant built in Langflow that parses customer questions against product knowledge data with structured human escalation.",
+    stack: ["Langflow", "OpenAI", "Webhooks", "JSON"],
     Icon: IconBookmark,
-    category: "RAG & Knowledge",
+    category: "AI Chatbot",
+    projectType: "AI Agent Project",
+  },
+  {
+    title: "Market Research Multi-Agent System",
+    summary:
+      "Orchestrated crew of 4 specialized agents (Researcher, Data Analyst, Writer, Critic) that collaborate to generate structured market research briefs from keyword inputs.",
+    stack: ["n8n", "LangChain", "Python", "Claude API"],
+    Icon: IconBrain,
+    category: "Multi-Agent",
+    projectType: "AI Agent Project",
+  },
+  {
+    title: "Stock Analysis & Research Agent",
+    summary:
+      "Financial research agent built in Python with LangChain that queries live stock data, evaluates quarterly earnings metrics, and outputs structured summaries.",
+    stack: ["Python", "LangChain", "Yahoo Finance API", "OpenAI"],
+    Icon: IconChart,
+    category: "AI Agent",
+    projectType: "Personal Project",
+  },
+  {
+    title: "Multilingual Customer Support Bot",
+    summary:
+      "Real-time multilingual chat workflow that automatically detects incoming language, translates inquiries, and provides localized responses from standard FAQs.",
+    stack: ["Langflow", "OpenAI", "Webhooks", "Translation API"],
+    Icon: IconAgent,
+    category: "AI Chatbot",
+    projectType: "Learning Project",
+  },
+  {
+    title: "Website Lead Generation Bot",
+    summary:
+      "Interactive lead qualification workflow connecting website forms, AI scoring logic, and instant notifications to Slack and spreadsheets.",
+    stack: ["n8n", "OpenAI", "Typeform", "Slack API"],
+    Icon: IconCompass,
+    category: "AI Automation",
+    projectType: "Automation Project",
+  },
+  {
+    title: "E-Commerce Chatbot Integration",
+    summary:
+      "E-commerce assistant integrating Shopify order lookups and OpenAI to resolve tracking queries and draft customer service responses automatically.",
+    stack: ["Zapier", "OpenAI", "Shopify Webhooks", "Gmail API"],
+    Icon: IconChart,
+    category: "E-Commerce Bot",
+    projectType: "Automation Project",
+  },
+  {
+    title: "Mobile App FAQ & Documentation Bot",
+    summary:
+      "RAG assistant indexed over mobile application documentation, enabling fast search and citation-backed troubleshooting for common user questions.",
+    stack: ["LangChain", "Pinecone", "Python", "OpenAI"],
+    Icon: IconBookmark,
+    category: "RAG Assistant",
+    projectType: "RAG Project",
+  },
+  {
+    title: "Voice-Enabled Appointment Scheduler",
+    summary:
+      "Conversational voice agent integrating Twilio Voice and OpenAI to handle incoming call inquiries, verify calendar availability, and confirm bookings.",
+    stack: ["n8n", "OpenAI", "Twilio Voice", "Google Calendar"],
+    Icon: IconAgent,
+    category: "Voice AI",
+    projectType: "Voice AI Project",
   },
 ];

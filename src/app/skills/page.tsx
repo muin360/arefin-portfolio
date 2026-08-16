@@ -13,27 +13,27 @@ import Marquee from "@/components/Marquee";
 export const metadata: Metadata = {
   title: "Stack & Tools",
   description:
-    "The platforms, languages and AI tooling Tensorix uses to build production automations and agents — n8n, Zapier, Make, LangChain, LangFlow, GoHighLevel, OpenAI, Claude, Python, TypeScript and more.",
+    "The platforms, tools, and libraries Arefin Mueen uses to build AI automations and agents — n8n, Zapier, Langflow, LangChain, OpenAI, Claude, APIs, and Python.",
   alternates: { canonical: "/skills" },
   openGraph: {
-    title: "Stack & Tools — Tensorix",
+    title: "Stack & Tools — Arefin Mueen",
     description:
-      "Platforms, languages and AI tooling used to build production automations and agents.",
+      "Platforms, tools, and AI libraries used by Arefin Mueen to build practical automations and agents.",
     url: "/skills",
   },
 };
 
 const skillsRow1 = [
-  "n8n", "Zapier", "Make", "GoHighLevel", "Airtable", "Notion", "Slack",
-  "Twilio", "HubSpot", "Postmark", "Webhooks", "Apify",
+  "n8n", "Zapier", "Make", "Langflow", "LangChain", "OpenAI API",
+  "Claude API", "Pinecone", "Webhooks", "REST APIs", "Python", "JavaScript",
 ];
 const skillsRow2 = [
-  "OpenAI", "Anthropic Claude", "LangChain", "LangFlow", "Pinecone",
-  "Supabase Vector", "OpenRouter", "Groq", "LlamaIndex", "Haystack", "Cohere",
+  "Prompt Engineering", "RAG Systems", "Multi-Agent Crews", "JSON", "Git",
+  "GitHub", "Airtable", "Google Sheets", "Slack API", "Gmail API", "Twilio", "Typeform",
 ];
 const skillsRow3 = [
-  "Python", "TypeScript", "Node.js", "Next.js", "FastAPI", "Postgres",
-  "Redis", "Docker", "Vercel", "Cloudflare", "GitHub Actions", "Playwright",
+  "AI Agents", "Tool Calling", "Vector Embeddings", "Workflow Design",
+  "Event Triggers", "Error Handling", "Semantic Search", "LangChain Python", "Postman",
 ];
 
 function SkillPill({
@@ -63,68 +63,47 @@ function SkillPill({
   );
 }
 
-// Per-tool capability blurbs (audit fix Phase 5.2).
-//
-// The /skills page lists categorised tools. Logos / names alone don't tell
-// a visitor what each tool is _used for_ — these short descriptions make
-// the list scannable and useful for buyers comparing vendors. Keyed by
-// the same string used in FALLBACK_SKILLS.items and the Sanity item
-// strings, so a Sanity-managed tool only needs a matching key here to
-// pick up a description. Tools without a description still render
-// gracefully (the description line is hidden when absent).
 const TOOL_DESCRIPTIONS: Record<string, string> = {
   // Automation platforms
-  n8n: "Self-hosted workflow automation. Preferred for complex, high-volume pipelines.",
-  Zapier: "Rapid prototyping and simple integrations. 5,000+ app connectors.",
-  Make: "Visual automation for moderate complexity. Great for content and CRM workflows.",
-  "Make (Integromat)":
-    "Visual automation for moderate complexity. Great for content and CRM workflows.",
-  GoHighLevel:
-    "All-in-one CRM + automation for service businesses and agencies.",
+  n8n: "Self-hosted workflow automation. Core platform for complex, multi-step integrations.",
+  Zapier: "Quick triggers and integrations across thousands of third-party apps.",
+  Make: "Visual automation for multi-step content and CRM workflows.",
+  "Make (Integromat)": "Visual automation for multi-step content and CRM workflows.",
+  Langflow: "Visual builder for rapid prototyping of LLM flows and agent logic.",
 
   // AI / LLM tools
-  LangChain: "Agent orchestration, tool use, and multi-step reasoning pipelines.",
-  LangFlow: "Visual LLM flow builder for RAG and retrieval systems.",
-  "OpenAI API": "Primary LLM for production agents. Reliable, fast, capable.",
-  "Anthropic Claude":
-    "Used for long-context document analysis and nuanced instruction-following.",
-  "Prompt Engineering":
-    "Stable, testable prompts with eval harnesses — not vibes.",
-  "RAG / Vector DBs":
-    "Retrieval-augmented systems with Pinecone, pgvector, or Supabase Vector.",
+  LangChain: "Python framework for agent tool calling, document loaders, and RAG pipelines.",
+  "OpenAI & Claude APIs": "Foundation models used for classification, reasoning, and text synthesis.",
+  "Prompt Engineering": "Clear, structured prompt templates with robust validation.",
+  "RAG Systems": "Retrieval-augmented generation over company docs and vector databases.",
+  "AI Agents": "Autonomous agents configured with tools to take actions on external APIs.",
+  "Multi-Agent Systems": "Collaborative crews of specialized agents for research and reporting.",
 
-  // Programming
-  Python: "Scripting, data wrangling, ML, and FastAPI services in production.",
-  JavaScript: "ES2024+ across the stack — browser, Node.js, and edge runtimes.",
-  TypeScript: "Strict typing across all projects. No untyped JS in production.",
-  "Node.js": "Server-side JS for APIs, automation runners, and webhooks.",
-  "REST APIs": "Designing and consuming pragmatic REST — auth, versioning, errors.",
-
-  // Currently learning
-  "LLM Engineering":
-    "Production-grade agent design — tools, memory, evals, observability.",
-  "Fine-tuning":
-    "Domain-specific fine-tunes when prompting and retrieval aren't enough.",
-  "Evaluation & Observability":
-    "LangSmith / Helicone-grade tracing, evals, and prompt versioning.",
+  // Programming & Dev
+  Python: "Custom automation scripts, API glue, data wrangling, and LangChain agents.",
+  JavaScript: "Node.js scripts, webhook transformation functions, and API consumption.",
+  JSON: "Parsing, formatting, and transforming structured payload schemas.",
+  "Git & GitHub": "Version control, workflow repository backup, and project tracking.",
+  "REST APIs": "Consuming third-party endpoints, managing headers, tokens, and webhooks.",
+  "Web Fundamentals": "Understanding HTTP methods, status codes, JSON payloads, and headers.",
 };
 
 const focusAreas = [
   {
-    title: "Multi-tool orchestration",
-    body: "Stitching together CRMs, databases, messaging, vector stores and bespoke APIs into reliable end-to-end pipelines.",
+    title: "Workflow Automation & n8n",
+    body: "Connecting business applications, webhooks, and databases into clean, automated event-driven pipelines.",
   },
   {
-    title: "LLM-in-the-loop workflows",
-    body: "Replacing brittle if/else with model-graded decisions — and knowing when not to.",
+    title: "LLM-in-the-Loop Decisions",
+    body: "Adding AI reasoning to classify incoming requests, draft replies, and extract structured data from unstructured text.",
   },
   {
-    title: "Retrieval-augmented systems",
-    body: "Knowledge-base chatbots, internal search, document Q&A — chunking, retrievers and rerankers tuned for the use case.",
+    title: "Retrieval-Augmented Generation (RAG)",
+    body: "Indexing internal documentation and knowledge bases into vector databases for citation-backed question answering.",
   },
   {
-    title: "Production hygiene",
-    body: "Monitoring, retries, dead-letter queues, observability, prompt versioning, and evaluation harnesses.",
+    title: "Custom Python & API Glue",
+    body: "Writing clean Python and JavaScript integration logic when pre-built connectors need custom transformations.",
   },
 ];
 
@@ -138,16 +117,16 @@ export default async function SkillsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Stack"
+        eyebrow="Arefin Mueen · Stack & Tools"
         index="04"
-        meta="Toolkit · Opinions held"
+        meta="AI Automation · AI Agents · RAG · APIs"
         title={
           <>
             The toolkit behind{" "}
-            <span className="serif">every project.</span>
+            <span className="serif">the automations.</span>
           </>
         }
-        subtitle="A focused, opinionated stack — chosen because each piece earns its place in production."
+        subtitle="A focused set of automation platforms, AI frameworks, and development tools I use to build practical workflows, agents, and integrations."
       />
 
       {/* Auto-running marquee strip — like sponsor logos, never stops */}

@@ -72,7 +72,7 @@ Most of my clients end up running **n8n + a couple of Zapier connectors** for th
   },
   {
     slug: "from-automation-to-llm-engineering",
-    title: "From automation expert to LLM engineer",
+    title: "From workflow automation to LLM & agent engineering",
     date: "2025-04-20",
     excerpt:
       "Why I'm spending the next phase of my career going deeper on the engineering side of LLMs — evaluation, observability and retrieval quality.",

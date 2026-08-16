@@ -61,7 +61,7 @@ function Card({
           className="font-mono text-[10px] uppercase tracking-[0.18em]"
           style={{ color: "var(--t3)" }}
         >
-          case · 2024–2025
+          {project.projectType ?? "Automation Project"}
         </span>
       </div>
 
@@ -79,10 +79,10 @@ function Card({
       <Link
         href="/projects"
         className="v2-project__link"
-        aria-label={`Read full case study: ${project.title}`}
+        aria-label={`View project details: ${project.title}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <span>Read case study</span>
+        <span>View project details</span>
         <span aria-hidden="true">→</span>
       </Link>
       

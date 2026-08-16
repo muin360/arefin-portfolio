@@ -9,11 +9,12 @@ const MAX_EMAIL = 120;
 const MAX_MESSAGE = 4000;
 
 const TOPICS = [
-  "AI automation project",
-  "AI agent build",
-  "GoHighLevel setup",
-  "Workflow audit",
-  "Just saying hi",
+  "AI workflow automation",
+  "AI agent / assistant build",
+  "RAG knowledge base setup",
+  "Multi-agent research system",
+  "API / Webhook integration",
+  "General inquiry",
 ] as const;
 
 const initialState: ContactState = { ok: false };
@@ -124,7 +125,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="message" className="text-sm text-white/65">
-          The brief
+          The workflow
         </label>
         <textarea
           id="message"
@@ -134,7 +135,7 @@ export default function ContactForm() {
           maxLength={MAX_MESSAGE}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="What are you trying to automate or build?"
+          placeholder="Tell me about the repetitive task or workflow you'd like to automate, and the tools you currently use..."
           className={inputCls + " resize-y"}
         />
         <p className="mt-1.5 text-[11px] text-white/40 font-mono">
@@ -159,7 +160,7 @@ export default function ContactForm() {
           role="status"
           className="text-sm text-white border border-emerald-400/40 rounded-xl p-3 bg-emerald-500/10"
         >
-          Message sent. We&apos;ll get back to you within a day.
+          Message sent. I&apos;ll get back to you within 24 hours.
         </p>
       )}
 
@@ -173,8 +174,7 @@ export default function ContactForm() {
       </button>
 
       <p className="text-xs text-white/45 text-center">
-        Submissions are emailed directly to the agency. We don&apos;t store them
-        anywhere else.
+        Submissions are emailed directly to Arefin. Your details are kept strictly confidential.
       </p>
     </form>
   );

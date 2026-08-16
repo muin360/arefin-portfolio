@@ -8,47 +8,47 @@ import Reveal from "@/components/Reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Hi, I'm Arefin Mueen — an AI-Powered Full-Stack Developer and Web Designer. I build intelligent web applications, conversion-driven websites, AI agents, and production automation systems.",
+    "Hi, I'm Arefin Mueen — an AI Automation & AI Agent Developer. I build practical AI agents, RAG systems, multi-agent workflows, and business automations.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About — Arefin Mueen",
     description:
-      "I design and engineer intelligent digital products — modern web applications, AI agents, and automation workflows.",
+      "I build practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
     url: "/about",
   },
 };
 
 const principles = [
   {
-    title: "Outcomes, not features.",
-    body: "Every system I ship has to solve a real problem or move a real metric. If it doesn't save measurable hours, generate revenue, or streamline operations, I won't build it.",
+    title: "Practical value over complexity.",
+    body: "If a clean 4-node n8n workflow solves the problem reliably, I won't over-engineer a brittle 10-agent crew. The right solution is the simplest one that works every time.",
   },
   {
-    title: "You own everything.",
-    body: "All source code, design files, database schemas, and API accounts live in your name with full documentation and handover. You retain 100% intellectual property.",
+    title: "You own all workflows and code.",
+    body: "All workflows, API keys, scripts, and documentation live in your accounts. You retain 100% control and ownership with clear walkthroughs provided.",
   },
   {
-    title: "Direct senior engineering.",
-    body: "I work with a small client load so each project gets direct, dedicated engineering attention. No project managers, no junior handoffs, no agency overhead.",
+    title: "Continuous hands-on building.",
+    body: "I learn by building real projects. Every agent, RAG pipeline, and webhook workflow is tested against practical business scenarios and edge cases.",
   },
 ];
 
 const milestones = [
   {
-    period: "2022",
-    body: "Started with full-stack web fundamentals and operations automation — building web interfaces, funnels, and CRM integrations for growing businesses.",
+    period: "Phase 1: Foundations",
+    body: "Started with webhooks, REST APIs, JSON data structures, and no-code automation on Zapier and Make — learning how business tools communicate.",
   },
   {
-    period: "2023",
-    body: "Expanded into production web systems — Next.js, React, Node.js, self-hosted n8n, and custom API backends for clinics, SaaS tools, and agencies.",
+    period: "Phase 2: Advanced n8n",
+    body: "Moved deep into self-hosted n8n — designing complex multi-step workflows, conditional branching, error handlers, and custom webhook triggers.",
   },
   {
-    period: "2024",
-    body: "Pioneered specialized AI integration — autonomous agents, RAG knowledge bases over internal docs, LLM tool-calling, and custom web applications.",
+    period: "Phase 3: AI Agents & RAG",
+    body: "Integrated modern LLMs, prompt engineering, Langflow visual prototypes, and retrieval-augmented generation (RAG) over documents with vector embeddings.",
   },
   {
-    period: "2025+",
-    body: "Now: Full-stack web apps, conversion-driven websites, multi-agent AI systems, and production automation pipelines for founders across North America, the GCC, and Asia.",
+    period: "Phase 4: Multi-Agent & Code",
+    body: "Currently building: Multi-agent research crews with LangChain, voice AI appointment workflows, and custom Python/JavaScript integration scripts.",
   },
 ];
 
@@ -58,15 +58,15 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="Arefin Mueen · About"
         index="02"
-        meta="AI-Powered Full-Stack Developer & Web Designer"
+        meta="AI Automation & AI Agent Developer"
         title={
           <>
             Hi, I&rsquo;m Arefin.
             <br />
-            I build <span className="serif">intelligent digital products</span> with AI.
+            I build <span className="serif">AI systems</span> that automate real work.
           </>
         }
-        subtitle="I combine modern web development, bespoke UI design, autonomous AI agents, and workflow automation to build software systems that solve real business problems — with clean architecture, documentation, and launch support."
+        subtitle="I am an independent developer specializing in AI automation, autonomous agents, RAG systems, and workflow integrations using n8n, LangChain, Langflow, LLM APIs, and Python."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
@@ -75,39 +75,37 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 md:grid-cols-12 gap-10 relative">
           <div className="md:col-span-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
-              The engineer &amp; designer
+              The developer
             </p>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-              Arefin Mueen<br />AI-Powered Full-Stack<br />Developer &amp; Designer
+              Arefin Mueen<br />AI Automation &amp; AI Agent<br />Developer
             </p>
           </div>
           <div className="md:col-span-8 space-y-6 text-lg leading-relaxed text-white/80">
             <p>
-              I am a product-minded full-stack developer and web designer who uses
-              modern web technologies and artificial intelligence to build intelligent
-              websites, web applications, business systems, and digital products.
+              I am an AI automation and agent developer based in{" "}
+              <strong className="text-white">Dhaka, Bangladesh</strong>. I focus on
+              designing and building practical AI-powered workflows, conversational assistants,
+              and automated systems that take repetitive manual tasks off people&rsquo;s plates.
             </p>
             <p>
-              Most projects suffer from a disconnect: designers who don&rsquo;t understand
-              backend architecture, or developers who don&rsquo;t care about conversion
-              and aesthetics. I bridge that gap by handling the full lifecycle — from
-              bespoke UI/UX design to robust Next.js/React frontends, scalable API backends,
-              and intelligent AI agent automation.
+              My path started with understanding how modern business tools talk to each other —
+              working through webhooks, REST APIs, and automation platforms like Zapier and Make.
+              As language models evolved, I focused heavily on self-hosted{" "}
+              <strong className="text-white">n8n</strong>, visual agent design in{" "}
+              <strong className="text-white">Langflow</strong>, vector retrieval with{" "}
+              <strong className="text-white">RAG</strong>, and multi-agent coordination with{" "}
+              <strong className="text-white">LangChain</strong>.
             </p>
             <p>
-              Based in <strong className="text-white">Dhaka, Bangladesh</strong>, I work
-              with founders, startups, and established businesses globally — from Toronto
-              and Dubai to London and Singapore.
+              I learn by building hands-on projects: from email triage agents and customer support bots
+              to market research crews and voice-enabled schedulers. Along the way, I continuously
+              develop my Python and JavaScript fundamentals to write custom data transformations and API glue.
             </p>
             <p>
-              I work with a <strong className="text-white">small client load on purpose</strong>.
-              You work directly with the engineer designing and writing your codebase,
-              with zero agency overhead.
-            </p>
-            <p>
-              Whether you need a high-converting web platform, a custom SaaS product, or
-              an autonomous AI agent system —{" "}
-              <strong className="text-white">let&rsquo;s talk for 30 minutes. Free. No obligation.</strong>
+              If you have a workflow you&rsquo;d like to automate or want to explore what an AI agent
+              could do for your daily operations —{" "}
+              <strong className="text-white">let&rsquo;s talk for 30 minutes. Free and straightforward.</strong>
             </p>
           </div>
         </div>

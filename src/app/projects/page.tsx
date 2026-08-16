@@ -12,14 +12,14 @@ import BentoCard from "@/components/BentoCard";
 import TiltCard from "@/components/TiltCard";
 
 export const metadata: Metadata = {
-  title: "Selected Work",
+  title: "Selected Projects",
   description:
-    "Selected full-stack web applications, custom websites, AI agents, and production automation systems engineered by Arefin Mueen for clients globally.",
+    "Practical AI automations, autonomous agents, RAG systems, and multi-agent workflows built by Arefin Mueen.",
   alternates: { canonical: "/projects" },
   openGraph: {
-    title: "Selected Work — Arefin Mueen",
+    title: "Selected Projects — Arefin Mueen",
     description:
-      "Web applications, websites, AI agents, and automation systems designed and built by Arefin Mueen.",
+      "Hands-on AI automation projects, autonomous agents, RAG assistants, and multi-agent workflows built by Arefin Mueen.",
     url: "/projects",
   },
 };
@@ -34,17 +34,17 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Arefin Mueen · Selected Work"
+        eyebrow="Arefin Mueen · Selected Projects"
         index="05"
-        meta="Web Apps · UI/UX Design · AI Agents · Automation"
+        meta="AI Automation · AI Agents · RAG · Multi-Agent"
         title={
           <>
-            Intelligent digital products,
+            Practical AI systems,
             <br />
-            <span className="serif">engineered to perform.</span>
+            <span className="serif">built to automate real work.</span>
           </>
         }
-        subtitle="A selection of full-stack web applications, bespoke websites, autonomous AI agents, and production automation pipelines designed and built by Arefin Mueen."
+        subtitle="A selection of hands-on AI automation workflows, autonomous agents, RAG assistants, and multi-agent systems built by Arefin Mueen."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
@@ -131,7 +131,7 @@ export default async function ProjectsPage() {
                 </h2>
               </div>
               <Link href="/contact" className="btn-primary shimmer relative z-10 bg-white text-[#04040a] border-white">
-                Book a free systems audit
+                Let&rsquo;s build an automation
                 <IconArrow width={16} height={16} />
               </Link>
             </div>

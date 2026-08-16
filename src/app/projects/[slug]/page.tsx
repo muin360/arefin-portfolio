@@ -63,7 +63,7 @@ export async function generateMetadata({
     description: project.summary,
     alternates: { canonical: `/projects/${project.slug}` },
     openGraph: {
-      title: `${project.title} — Tensorix`,
+      title: `${project.title} — Arefin Mueen`,
       description: project.summary,
       url: `/projects/${project.slug}`,
       type: "article",
@@ -97,7 +97,7 @@ export default async function ProjectDetailPage({
   return (
     <>
       <PageHeader
-        eyebrow={`Case study · ${project.category}`}
+        eyebrow={`Project Breakdown · ${project.category}`}
         index="05"
         meta={project.stack.join(" · ")}
         title={<>{project.title}</>}
@@ -112,7 +112,7 @@ export default async function ProjectDetailPage({
             <Reveal>
               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 md:p-10 mb-12">
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-3">
-                  Outcome
+                  Project Goal &amp; Learning Focus
                 </p>
                 <p className="display text-2xl md:text-4xl text-white leading-tight">
                   <span className="serif iridescent">{project.outcome}</span>
@@ -125,18 +125,17 @@ export default async function ProjectDetailPage({
             <Reveal>
               <BentoCard className="h-full">
                 <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                  Problem
+                  Use Case &amp; Problem
                 </p>
                 <p className="text-white/80 leading-relaxed">
-                  The team was losing hours every week to repetitive,
-                  low-leverage work that was bottlenecking growth.
+                  Repetitive manual tasks, delayed responses, or fragmented data across tools causing operational friction.
                 </p>
               </BentoCard>
             </Reveal>
             <Reveal delay={80}>
               <BentoCard className="h-full">
                 <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                  Solution
+                  Automation Logic
                 </p>
                 <p className="text-white/80 leading-relaxed">{project.summary}</p>
               </BentoCard>
@@ -144,11 +143,11 @@ export default async function ProjectDetailPage({
             <Reveal delay={160}>
               <BentoCard className="h-full">
                 <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                  Result
+                  Key Takeaway
                 </p>
                 <p className="text-white/80 leading-relaxed">
                   {project.outcome ??
-                    "Live in production. Measurable hours saved every week."}
+                    "Tested and verified workflow logic with error handling."}
                 </p>
               </BentoCard>
             </Reveal>
@@ -159,7 +158,7 @@ export default async function ProjectDetailPage({
               <div className="flex items-start justify-between gap-6">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                    Stack
+                    Technologies Used
                   </p>
                   <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-mono text-white/65">
                     {project.stack.map((s) => (
@@ -180,7 +179,7 @@ export default async function ProjectDetailPage({
             <Reveal>
               <div className="flex items-end justify-between gap-6 mb-10">
                 <h2 className="display text-3xl md:text-4xl">
-                  More <span className="serif">selected work.</span>
+                  More <span className="serif">practical projects.</span>
                 </h2>
                 <Link
                   href="/projects"
@@ -222,15 +221,15 @@ export default async function ProjectDetailPage({
         <div className="orb orb-pink" aria-hidden="true" />
         <div className="max-w-5xl mx-auto px-6 sm:px-8 py-20 relative text-center">
           <h2 className="display text-3xl md:text-5xl text-white">
-            Want something{" "}
-            <span className="serif iridescent">like this for your team?</span>
+            Have a workflow{" "}
+            <span className="serif iridescent">you&rsquo;d like to automate?</span>
           </h2>
           <p className="mt-5 text-white/65 max-w-2xl mx-auto leading-relaxed">
-            Free 30-min audit — we&rsquo;ll tell you exactly what to build first.
+            Free 30-min scoping conversation — let&rsquo;s explore what we can automate.
           </p>
           <div className="mt-8">
-            <Link href="/book" className="btn-primary shimmer">
-              Book my free audit
+            <Link href="/contact" className="btn-primary shimmer">
+              Let&rsquo;s build an automation
               <IconArrow width={16} height={16} />
             </Link>
           </div>

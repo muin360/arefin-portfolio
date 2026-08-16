@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "Contact",
   alternates: { canonical: "/contact" },
   description:
-    "Get in touch with Arefin Mueen to discuss full-stack web applications, web design, AI agents, and business automation. Replies within 24 hours.",
+    "Get in touch with Arefin Mueen to discuss AI automations, AI agents, RAG systems, and workflow integrations. Replies within 24 hours.",
 };
 
 function whatsappLink(cfg: SiteConfig): string | undefined {
@@ -50,11 +50,11 @@ export default async function ContactPage() {
         meta="Replies within 24 hours · Mon–Sat (Asia/Dhaka)"
         title={
           <>
-            Let&rsquo;s discuss what you want to{" "}
-            <span className="serif">build.</span>
+            Tell me about the workflow you want to{" "}
+            <span className="serif">automate.</span>
           </>
         }
-        subtitle="Whether you need a full-stack web application, a bespoke website, an AI agent, or custom workflow automation — share your goals and let's map out the right solution."
+        subtitle="Whether you want to connect business apps with n8n, build an autonomous agent, or set up a RAG knowledge assistant — share what you're trying to accomplish and the tools you use."
       />
 
       <section className="hero-dark relative overflow-hidden">

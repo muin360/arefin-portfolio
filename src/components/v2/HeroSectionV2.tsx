@@ -30,13 +30,13 @@ import LiveAgent from "@/components/masterpiece/LiveAgent";
  *   D — challenger:        "The tools exist. / Most teams never use them."
  */
 export default function HeroSectionV2({
-  availabilityNote = "Free 30-min discovery call",
+  availabilityNote = "Open to automation projects",
 }: {
   availabilityNote?: string;
 }) {
-  const line1 = "I build intelligent".split(" ");
-  const line2Pre = ["digital", "products", "with"];
-  const line2Accent = "AI.";
+  const line1 = "I build AI systems".split(" ");
+  const line2Pre = ["that", "automate"];
+  const line2Accent = "real work.";
   const line2Post: string[] = [];
 
   // Compute word delays continuously across both lines so the
@@ -61,7 +61,7 @@ export default function HeroSectionV2({
             <span className="v2-hero__pill">
               <span className="v2-hero__pill-dot" aria-hidden="true" />
               <span className="v2-hero__pill-text">
-                AI-POWERED FULL-STACK DEVELOPER &amp; WEB DESIGNER
+                AI AUTOMATION &amp; AI AGENT DEVELOPER
               </span>
               <span aria-hidden="true" className="v2-hero__pill-sep">·</span>
               <span className="v2-hero__pill-meta shimmer-label">Dhaka · GMT+6 · open to work</span>
@@ -110,13 +110,13 @@ export default function HeroSectionV2({
             </h1>
 
             <p className="v2-hero__sub">
-              Websites, web apps, AI agents, and automated systems designed and engineered to solve real business problems.
-              <span className="v2-hero__sub-em"> Next.js · React · TypeScript · Python · n8n · LangChain · LLMs</span>
+              I build AI agents, RAG assistants, multi-agent workflows, and business automations.
+              <span className="v2-hero__sub-em"> n8n · LangChain · Langflow · LLMs · APIs · Python</span>
             </p>
 
             <div className="v2-hero__cta">
               <MagneticButton href="/contact" className="v2-hero__btn v2-hero__btn--primary group">
-                <span>Start a Project</span>
+                <span>Let&rsquo;s Build an Automation</span>
                 <ArrowRight
                   size={16}
                   strokeWidth={1.75}
@@ -125,14 +125,14 @@ export default function HeroSectionV2({
                 />
               </MagneticButton>
               <MagneticButton href="/projects" className="v2-hero__btn v2-hero__btn--ghost">
-                <span>View Selected Work</span>
+                <span>View My Projects</span>
               </MagneticButton>
             </div>
 
             <ul className="v2-hero__proof" aria-label="Trust signals">
               <li>
                 <span className="v2-hero__proof-dot" />
-                <span>Full-Stack Web Apps · UI/UX Design</span>
+                <span>AI Agents · RAG · Multi-Agent Workflows</span>
               </li>
               <li>
                 <span className="v2-hero__proof-dot" />
@@ -140,7 +140,7 @@ export default function HeroSectionV2({
               </li>
               <li>
                 <span className="v2-hero__proof-dot" />
-                <span>Direct Engineering · Zero Agency Overhead</span>
+                <span>Independent AI Automation Developer</span>
               </li>
             </ul>
           </div>
