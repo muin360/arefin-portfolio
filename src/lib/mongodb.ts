@@ -10,6 +10,13 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
+const MONGO_CLIENT_OPTIONS = {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  connectTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+};
+
 /**
  * Returns a cached MongoClient instance.
  * Fails gracefully and returns null if MONGODB_URI is not configured.
@@ -23,28 +30,25 @@ export async function getMongoClient(): Promise<MongoClient | null> {
     // In development mode, use a global variable so the MongoClient
     // instance is preserved across HMR (hot module reloading).
     if (!global._mongoClientPromise) {
-      client = new MongoClient(uri, {
-        maxPoolSize: 10,
-        serverSelectionTimeoutMS: 5000,
-      });
+      client = new MongoClient(uri, MONGO_CLIENT_OPTIONS);
       global._mongoClientPromise = client.connect();
     }
     clientPromise = global._mongoClientPromise;
   } else {
     // In production, use a module-scoped variable for serverless connection pooling.
     if (!clientPromise) {
-      client = new MongoClient(uri, {
-        maxPoolSize: 10,
-        serverSelectionTimeoutMS: 5000,
-      });
+      client = new MongoClient(uri, MONGO_CLIENT_OPTIONS);
       clientPromise = client.connect();
     }
   }
 
   try {
     return await clientPromise;
-  } catch (err) {
-    console.error("MongoDB Atlas connection error:", err);
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    // Sanitize any accidental credentials from log messages
+    const sanitized = errorMsg.replace(/\/\/[^@]+@/, "//***:***@");
+    console.warn("MongoDB Atlas connection notice:", sanitized);
     return null;
   }
 }
@@ -101,7 +105,7 @@ export async function ensureIndexes(): Promise<void> {
     await submissions.createIndex({ archived: 1 });
 
     indexesEnsured = true;
-  } catch (err) {
-    console.warn("Could not ensure MongoDB indexes (may already exist):", err);
+  } catch {
+    // Non-blocking index creation failure
   }
 }

@@ -6,15 +6,7 @@ import {
   Instrument_Serif,
 } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import WhatsAppFab from "@/components/WhatsAppFab";
-import ScrollToTop from "@/components/ScrollToTop";
-import CursorRing from "@/components/CursorRing";
-import PageLoader from "@/components/PageLoader";
-import PageTransition from "@/components/transitions/PageTransition";
-import MobileStickyBar from "@/components/MobileStickyBar";
-import { SITE_URL, GOOGLE_SITE_VERIFICATION } from "@/lib/site-url";
+import { SITE_URL } from "@/lib/site-url";
 import { safeJsonLd } from "@/lib/json-ld";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -101,32 +93,44 @@ export const metadata: Metadata = {
       "I build practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
     siteName: "Arefin Mueen",
     locale: "en_US",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Arefin Mueen — AI Automation & AI Agent Developer" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Arefin Mueen — AI Automation & AI Agent Developer",
     description:
       "I build practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
-    images: ["/og.png"],
+    creator: "@arefin_muin",
+    site: "@arefin_muin",
   },
-  manifest: "/site.webmanifest",
   alternates: {
-    canonical: "/",
+    canonical: SITE_URL,
     types: {
-      "application/rss+xml": "/feed.xml",
+      "application/rss+xml": `${SITE_URL}/feed.xml`,
     },
   },
-  ...(GOOGLE_SITE_VERIFICATION
-    ? { verification: { google: GOOGLE_SITE_VERIFICATION } }
-    : {}),
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
-// JSON-LD structured data — helps Google understand the site as a Person +
-// WebSite, which improves knowledge-panel eligibility and
-// rich-result rendering. Inline because the CSP allows 'unsafe-inline' for
-// scripts; nothing here is dynamic per-request.
 const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Arefin Mueen",
+    url: SITE_URL,
+    description:
+      "Arefin Mueen — AI Automation & AI Agent Developer. Practical AI agents, RAG systems, and workflow automation.",
+    author: {
+      "@type": "Person",
+      name: "Arefin Mueen",
+    },
+    inLanguage: "en-US",
+  },
   {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -153,66 +157,7 @@ const jsonLd = [
       "Multi-Agent Systems",
       "APIs & Webhooks",
       "Python",
-      "JavaScript",
-      "JSON",
-      "LLM Integrations",
     ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Arefin Mueen",
-    url: SITE_URL,
-    inLanguage: "en",
-  },
-  // Service schemas — productized capabilities
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "AI Workflow Automation",
-    serviceType: "Workflow Automation & Webhook Integration",
-    provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
-    areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
-    description:
-      "Automating manual business processes and connecting disparate apps using n8n, Zapier, APIs, and LLMs.",
-    offers: {
-      "@type": "Offer",
-      url: `${SITE_URL}/services`,
-      availability: "https://schema.org/InStock",
-      priceCurrency: "USD",
-    },
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "AI Agents & Autonomous Assistants",
-    serviceType: "AI Agent Development",
-    provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
-    areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
-    description:
-      "Custom tool-calling AI agents and conversational assistants built with LangChain, Langflow, and leading LLM APIs.",
-    offers: {
-      "@type": "Offer",
-      url: `${SITE_URL}/services`,
-      availability: "https://schema.org/InStock",
-      priceCurrency: "USD",
-    },
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "RAG & Knowledge Systems",
-    serviceType: "Retrieval-Augmented Generation",
-    provider: { "@type": "Person", name: "Arefin Mueen", url: SITE_URL },
-    areaServed: ["BD", "AE", "SA", "QA", "KW", "OM", "BH", "US", "CA", "GB"],
-    description:
-      "Document ingestion, vector search, and context-grounded AI knowledge assistants.",
-    offers: {
-      "@type": "Offer",
-      url: `${SITE_URL}/services`,
-      availability: "https://schema.org/InStock",
-      priceCurrency: "USD",
-    },
   },
 ];
 
@@ -234,9 +179,6 @@ export default function RootLayout({
       className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <head>
-        {/* Defense-in-depth: HTTP headers (set by host config) are the primary
-            controls. These meta tags add an extra layer for browsers that
-            respect them and for hosts where headers aren't configurable. */}
         <meta
           httpEquiv="Content-Security-Policy"
           content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https://avatars.githubusercontent.com https://lh3.googleusercontent.com; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; worker-src 'self' blob:; connect-src 'self' https://vitals.vercel-insights.com https://api.anthropic.com; frame-src 'self' https://cal.com https://*.cal.com; manifest-src 'self'; upgrade-insecure-requests"
@@ -249,22 +191,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col">
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-foreground focus:text-background focus:px-3 focus:py-2 focus:rounded"
-        >
-          Skip to content
-        </a>
-        <PageLoader />
-        <PageTransition />
-        <CursorRing />
-        <Navbar />
-        <main id="main" className="flex-1">{children}</main>
-        <Footer />
-        <WhatsAppFab />
-        <MobileStickyBar />
-        <ScrollToTop />
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        {children}
         <Analytics />
         <SpeedInsights />
       </body>
