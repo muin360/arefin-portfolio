@@ -1,14 +1,7 @@
 /**
- * Built-in fallback content. Used when Sanity is not configured (no
- * NEXT_PUBLIC_SANITY_PROJECT_ID / NEXT_PUBLIC_SANITY_DATASET) or when a
- * fetch fails.
- *
- * This keeps the site renderable out of the box and gives `/studio` editors
- * a reference for what shape the data should take. Once Sanity is wired
- * up and seeded, these values are silently superseded by the live content.
- *
- * The site owner edits the live values from `/studio` — these defaults are
- * only displayed as a safety net.
+ * Built-in initial content definitions and fallback structures.
+ * The Admin Panel and application database (`data/db.json`) serve as
+ * the single source of truth for all live website content.
  */
 
 export type SiteConfig = {

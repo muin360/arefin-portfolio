@@ -169,20 +169,9 @@ export default function PrivacyPage() {
             </p>
           </Block>
 
-          <Block num="07" title="Sanity CMS (content only — not your data)">
+          <Block num="07" title="Content Storage & Database">
             <p>
-              Site copy, services, FAQs, and case studies are stored in{" "}
-              <a
-                href="https://www.sanity.io/legal/privacy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link-underline text-foreground"
-              >
-                Sanity
-              </a>
-              , a headless CMS. Sanity stores our content — not your personal
-              data. Your visit to the Site does not result in any data being
-              written to Sanity.
+              Site copy, services, FAQs, and case studies are managed directly via our secure Personal Admin Panel and stored in a local application database. Your visit to the Site does not track personal data or write analytics profiles.
             </p>
           </Block>
 
@@ -240,7 +229,7 @@ export default function PrivacyPage() {
               strict Content Security Policy, frames are denied
               (clickjacking-protected), and no secrets are exposed to the
               browser. We use industry-standard transport encryption with
-              every third-party service we connect to (Resend, Sanity,
+              every third-party service we connect to (Resend,
               Cal.com, Vercel).
             </p>
             <p>

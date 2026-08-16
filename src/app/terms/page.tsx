@@ -181,7 +181,7 @@ export default function TermsPage() {
                 Apache, etc.).
               </li>
               <li>
-                Third-party tools (n8n, Zapier, Make, Resend, Cal.com, Sanity,
+                Third-party tools (n8n, Zapier, Make, Resend, Cal.com,
                 OpenAI, Anthropic, Meta Cloud API) remain governed by their
                 own terms — your account, your billing relationship.
               </li>
@@ -320,7 +320,7 @@ export default function TermsPage() {
           <Block num="13" title="Third-party services & links">
             <p>
               The Site links to and integrates with third-party services
-              (Cal.com, WhatsApp, Resend, Sanity, Vercel, social platforms).
+              (Cal.com, WhatsApp, Resend, Vercel, social platforms).
               We are not responsible for the content, policies, availability,
               or practices of those services. Use them under their own terms.
             </p>

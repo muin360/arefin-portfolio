@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   getProjects,
   getProjectBySlug,
@@ -82,6 +82,11 @@ describe("Application Database & Content Store", () => {
     expect(newPost.id).toBeDefined();
     const found = await getBlogPostBySlug("testing-db-post-temp");
     expect(found?.title).toBe("Testing Database Post");
+
+    const updated = await updateBlogPost(newPost.id, {
+      title: "Updated Testing Database Post",
+    });
+    expect(updated?.title).toBe("Updated Testing Database Post");
 
     await deleteBlogPost(newPost.id);
     const checkGone = await getBlogPostBySlug("testing-db-post-temp");

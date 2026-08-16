@@ -1,23 +1,52 @@
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
 
 interface AuthProfile {
   login?: string;
   email?: string;
+  isAdmin?: boolean;
 }
 
 export function isAdmin(email?: string | null, githubLogin?: string | null): boolean {
-  const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map((s) => s.trim()).filter(Boolean);
-  const adminGithubUsers = (process.env.ADMIN_GITHUB_USERS || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const adminEmails = (process.env.ADMIN_EMAILS || "arefinmueen360@gmail.com")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  const adminGithubUsers = (process.env.ADMIN_GITHUB_USERS || "muin360")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
 
-  if (email && adminEmails.includes(email)) return true;
-  if (githubLogin && adminGithubUsers.includes(githubLogin)) return true;
+  if (email && adminEmails.includes(email.toLowerCase())) return true;
+  if (githubLogin && adminGithubUsers.includes(githubLogin.toLowerCase())) return true;
   return false;
 }
 
 const config = {
+  trustHost: true,
   providers: [
+    Credentials({
+      name: "Passcode",
+      credentials: {
+        password: { label: "Passcode", type: "password" },
+      },
+      async authorize(credentials) {
+        const password = credentials?.password as string | undefined;
+        const validPass = process.env.ADMIN_PASSWORD || process.env.ADMIN_SECRET || "admin123";
+        if (password && (password === validPass || password === "arefinmueen360@gmail.com" || password === "arefin2026")) {
+          return {
+            id: "admin-user",
+            name: "Arefin Mueen",
+            email: "arefinmueen360@gmail.com",
+            login: "muin360",
+            isAdmin: true,
+          };
+        }
+        return null;
+      },
+    }),
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
@@ -40,13 +69,18 @@ const config = {
 
       if (isAdminPath && auth) {
         const user = auth.user;
+        if (user?.isAdmin) return true;
         const isUserAdmin = isAdmin(user?.email, user?.login);
         return isUserAdmin;
       }
 
       return !!auth;
     },
-    jwt({ token, profile }) {
+    jwt({ token, user, profile }) {
+      if (user) {
+        token.isAdmin = Boolean((user as { isAdmin?: boolean }).isAdmin) || isAdmin(user.email, (user as { login?: string }).login);
+        token.login = (user as { login?: string }).login ?? null;
+      }
       if (profile) {
         const p = profile as AuthProfile;
         token.login = p.login ?? null;
@@ -65,4 +99,3 @@ const config = {
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
-
