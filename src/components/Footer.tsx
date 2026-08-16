@@ -12,6 +12,7 @@ import { sanityFetch } from "@/sanity/fetch";
 import { siteConfigQuery } from "@/sanity/queries";
 import type { SiteConfig } from "@/sanity/types";
 import { FALLBACK_SITE_CONFIG } from "@/data/fallbacks";
+import FooterReveal from "@/components/transitions/FooterReveal";
 
 /**
  * Footer (v2).
@@ -45,7 +46,8 @@ export default async function Footer() {
     (cfg.phoneE164 ? `https://wa.me/${cfg.phoneE164}` : undefined);
 
   return (
-    <footer className="v2-footer" aria-label="Site footer">
+    <footer className="v2-footer" data-reveal="footer" aria-label="Site footer">
+      <FooterReveal />
       {/* Top accent hairline */}
       <span className="v2-footer__top-rule" aria-hidden="true" />
 

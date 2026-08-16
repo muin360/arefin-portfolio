@@ -24,7 +24,7 @@ export default function SectionLabel({
   className = "",
 }: SectionLabelProps) {
   return (
-    <div className={`v2-section-label ${className}`}>
+    <div className={`v2-section-label section-label transition-reveal ${className}`}>
       <span aria-hidden="true">[</span>
       <span className="v2-section-label__index">{index}</span>
       <span aria-hidden="true">]</span>

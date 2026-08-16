@@ -15,6 +15,7 @@ import WhatsAppFab from "@/components/WhatsAppFab";
 import ScrollToTop from "@/components/ScrollToTop";
 import CursorRing from "@/components/CursorRing";
 import PageLoader from "@/components/PageLoader";
+import PageTransition from "@/components/transitions/PageTransition";
 import MobileStickyBar from "@/components/MobileStickyBar";
 import { SITE_URL, GOOGLE_SITE_VERIFICATION } from "@/lib/site-url";
 import { safeJsonLd } from "@/lib/json-ld";
@@ -312,6 +313,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <PageLoader />
+        <PageTransition />
         <CursorRing />
         <Navbar />
         <main id="main" className="flex-1">{children}</main>
