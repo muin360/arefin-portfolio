@@ -10,10 +10,13 @@ interface AuthProfile {
 }
 
 export function isAdmin(email?: string | null, githubLogin?: string | null): boolean {
-  const adminEmails = (process.env.ADMIN_EMAILS || "arefinmueen360@gmail.com")
+  const adminEmails = (
+    process.env.ADMIN_EMAILS || "hmmuhammadmuin50@gmail.com,arefinmueen360@gmail.com"
+  )
     .split(",")
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean);
+
   const adminGithubUsers = (process.env.ADMIN_GITHUB_USERS || "muin360")
     .split(",")
     .map((s) => s.trim().toLowerCase())
@@ -25,6 +28,8 @@ export function isAdmin(email?: string | null, githubLogin?: string | null): boo
 }
 
 const config = {
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  basePath: "/api/auth",
   trustHost: true,
   providers: [
     Credentials({
@@ -35,13 +40,13 @@ const config = {
       async authorize(credentials) {
         const password = credentials?.password as string | undefined;
         const validPass = process.env.ADMIN_PASSWORD || process.env.ADMIN_SECRET;
-        
+
         // Strict environment-driven passcode check with no hardcoded fallbacks
         if (validPass && password && password === validPass) {
           return {
             id: "admin-user",
             name: "Arefin Mueen",
-            email: process.env.ADMIN_EMAILS?.split(",")[0]?.trim() || "arefinmueen360@gmail.com",
+            email: process.env.ADMIN_EMAILS?.split(",")[0]?.trim() || "hmmuhammadmuin50@gmail.com",
             login: process.env.ADMIN_GITHUB_USERS?.split(",")[0]?.trim() || "muin360",
             isAdmin: true,
           };
@@ -64,15 +69,17 @@ const config = {
   },
   callbacks: {
     async authorized({ auth, request }) {
-      const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
-      const isLoginPath = request.nextUrl.pathname === "/admin/login";
+      const pathname = request.nextUrl.pathname;
+      const isLoginPath = pathname === "/admin/login";
+      const isAdminPath = pathname.startsWith("/admin");
 
       if (isLoginPath) return true;
 
-      if (isAdminPath && auth) {
+      if (isAdminPath) {
+        if (!auth || !auth.user) return false;
         const user = auth.user;
-        if (user?.isAdmin) return true;
-        const isUserAdmin = isAdmin(user?.email, user?.login);
+        if (user.isAdmin) return true;
+        const isUserAdmin = isAdmin(user.email, user.login);
         return isUserAdmin;
       }
 
@@ -80,13 +87,17 @@ const config = {
     },
     jwt({ token, user, profile }) {
       if (user) {
-        token.isAdmin = Boolean((user as { isAdmin?: boolean }).isAdmin) || isAdmin(user.email, (user as { login?: string }).login);
-        token.login = (user as { login?: string }).login ?? null;
+        const u = user as { id?: string; email?: string; login?: string; isAdmin?: boolean };
+        token.id = u.id ?? token.id;
+        token.login = u.login ?? token.login ?? null;
+        token.email = u.email ?? token.email ?? null;
+        token.isAdmin = Boolean(u.isAdmin) || isAdmin(token.email, token.login);
       }
       if (profile) {
         const p = profile as AuthProfile;
-        token.login = p.login ?? null;
-        token.isAdmin = isAdmin(p.email, p.login);
+        if (p.login) token.login = p.login;
+        if (p.email) token.email = p.email;
+        token.isAdmin = isAdmin(token.email, token.login);
       }
       return token;
     },

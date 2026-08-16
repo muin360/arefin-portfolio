@@ -28,7 +28,23 @@ export default async function LoginPage({
   searchParams?: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
-  const hasError = Boolean(params?.error);
+
+  let errorMessage: string | null = null;
+  if (params?.error) {
+    const err = params.error.toLowerCase();
+    if (err.includes("github") || err === "oauthcallback" || err === "oauthsignin") {
+      errorMessage = "GitHub sign-in is unavailable right now. Use the admin passcode.";
+    } else if (err.includes("google") || err === "accessdenied") {
+      errorMessage = "Google sign-in is unavailable right now. Use the admin passcode.";
+    } else if (err === "credentialssignin") {
+      errorMessage = "Invalid admin passcode. Please try again.";
+    } else {
+      errorMessage = "Invalid credentials or unauthorized access. Please verify your passcode.";
+    }
+  }
+
+  const hasGithub = Boolean(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET);
+  const hasGoogle = Boolean(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black px-4 py-12">
@@ -48,9 +64,9 @@ export default async function LoginPage({
             </p>
           </div>
 
-          {hasError && (
+          {errorMessage && (
             <div className="mb-6 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center font-medium">
-              Invalid credentials or unauthorized access. Please verify your passcode.
+              {errorMessage}
             </div>
           )}
 
@@ -95,53 +111,62 @@ export default async function LoginPage({
             </Button>
           </form>
 
-          {/* Divider */}
-          <div className="relative flex py-3 items-center mb-6">
-            <div className="flex-grow border-t border-slate-800"></div>
-            <span className="flex-shrink mx-4 text-xs font-mono uppercase text-slate-500">
-              Or sign in with OAuth
-            </span>
-            <div className="flex-grow border-t border-slate-800"></div>
-          </div>
+          {/* OAuth Section (if configured) */}
+          {(hasGithub || hasGoogle) && (
+            <>
+              {/* Divider */}
+              <div className="relative flex py-3 items-center mb-6">
+                <div className="flex-grow border-t border-slate-800"></div>
+                <span className="flex-shrink mx-4 text-xs font-mono uppercase text-slate-500">
+                  Or sign in with OAuth
+                </span>
+                <div className="flex-grow border-t border-slate-800"></div>
+              </div>
 
-          {/* OAuth Buttons */}
-          <div className="space-y-3">
-            {/* GitHub Login */}
-            <form
-              action={async () => {
-                "use server";
-                await signIn("github", { redirectTo: "/admin" });
-              }}
-            >
-              <Button
-                type="submit"
-                className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-xl border border-slate-700/60 transition-colors flex items-center justify-center gap-2 text-sm"
-              >
-                <GitHubSVG className="w-4 h-4" />
-                Sign in with GitHub
-              </Button>
-            </form>
+              {/* OAuth Buttons */}
+              <div className="space-y-3">
+                {/* GitHub Login */}
+                {hasGithub && (
+                  <form
+                    action={async () => {
+                      "use server";
+                      await signIn("github", { redirectTo: "/admin" });
+                    }}
+                  >
+                    <Button
+                      type="submit"
+                      className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-xl border border-slate-700/60 transition-colors flex items-center justify-center gap-2 text-sm"
+                    >
+                      <GitHubSVG className="w-4 h-4" />
+                      Sign in with GitHub
+                    </Button>
+                  </form>
+                )}
 
-            {/* Google Login */}
-            <form
-              action={async () => {
-                "use server";
-                await signIn("google", { redirectTo: "/admin" });
-              }}
-            >
-              <Button
-                type="submit"
-                className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-xl border border-slate-700/60 transition-colors flex items-center justify-center gap-2 text-sm"
-              >
-                <Mail className="w-4 h-4 text-blue-400" />
-                Sign in with Google
-              </Button>
-            </form>
-          </div>
+                {/* Google Login */}
+                {hasGoogle && (
+                  <form
+                    action={async () => {
+                      "use server";
+                      await signIn("google", { redirectTo: "/admin" });
+                    }}
+                  >
+                    <Button
+                      type="submit"
+                      className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-xl border border-slate-700/60 transition-colors flex items-center justify-center gap-2 text-sm"
+                    >
+                      <Mail className="w-4 h-4 text-blue-400" />
+                      Sign in with Google
+                    </Button>
+                  </form>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Footer note */}
           <p className="text-slate-500 text-[11px] text-center mt-6">
-            Works across local development and any deployment domain.
+            Protected personal admin console for Arefin Mueen.
           </p>
         </div>
       </div>

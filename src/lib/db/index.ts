@@ -179,12 +179,20 @@ export async function getProjects(options?: {
     await ensureIndexes();
     const count = await col.countDocuments({});
     if (count === 0) {
-      await col.insertMany(
+      // Use upsert so concurrent cold-starts and re-deployments never throw duplicate key errors
+      await col.bulkWrite(
         INITIAL_DATABASE.projects.map((p) => {
           const { id, ...rest } = p;
           void id;
-          return rest as unknown as Project;
+          return {
+            updateOne: {
+              filter: { slug: rest.slug },
+              update: { $setOnInsert: rest as unknown as Project },
+              upsert: true,
+            },
+          };
         }),
+        { ordered: false },
       );
     }
 
@@ -357,12 +365,20 @@ export async function getBlogPosts(options?: {
     await ensureIndexes();
     const count = await col.countDocuments({});
     if (count === 0) {
-      await col.insertMany(
+      // Use upsert so concurrent cold-starts and re-deployments never throw duplicate key errors
+      await col.bulkWrite(
         INITIAL_DATABASE.posts.map((p) => {
           const { id, ...rest } = p;
           void id;
-          return rest as unknown as BlogPost;
+          return {
+            updateOne: {
+              filter: { slug: rest.slug },
+              update: { $setOnInsert: rest as unknown as BlogPost },
+              upsert: true,
+            },
+          };
         }),
+        { ordered: false },
       );
     }
 
@@ -528,12 +544,19 @@ export async function getServices(options?: {
     await ensureIndexes();
     const count = await col.countDocuments({});
     if (count === 0) {
-      await col.insertMany(
+      await col.bulkWrite(
         INITIAL_DATABASE.services.map((s) => {
           const { id, ...rest } = s;
           void id;
-          return rest as unknown as Service;
+          return {
+            updateOne: {
+              filter: { order: rest.order, title: rest.title },
+              update: { $setOnInsert: rest as unknown as Service },
+              upsert: true,
+            },
+          };
         }),
+        { ordered: false },
       );
     }
 
@@ -672,12 +695,19 @@ export async function getSkills(options?: {
     await ensureIndexes();
     const count = await col.countDocuments({});
     if (count === 0) {
-      await col.insertMany(
+      await col.bulkWrite(
         INITIAL_DATABASE.skills.map((s) => {
           const { id, ...rest } = s;
           void id;
-          return rest as unknown as SkillCategory;
+          return {
+            updateOne: {
+              filter: { category: rest.category },
+              update: { $setOnInsert: rest as unknown as SkillCategory },
+              upsert: true,
+            },
+          };
         }),
+        { ordered: false },
       );
     }
 
