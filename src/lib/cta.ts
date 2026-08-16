@@ -21,42 +21,34 @@ export function whatsappHref(message: string, phoneE164: string = PHONE_E164) {
 // ── Pre-filled WhatsApp messages, indexed by intent ────────────────────────
 export const WA_MESSAGES = {
   generic:
-    "Hi Tensorix team, I saw your site. I'd like to talk about AI automation or agent systems for my business.",
+    "Hi Arefin! I saw your portfolio. I'd like to discuss an AI automation or agent project.",
   audit:
-    "Hi Tensorix team, I'd like to book a free 30-min systems audit. Best time for me is …",
+    "Hi Arefin! I'd like to discuss an AI automation scoping call. Best time for me is …",
   aiAutomation:
-    "Hi Tensorix team, I'd like to look at a workflow automation for my team. Here's what we do manually today: ",
+    "Hi Arefin! I'd like to look at a workflow automation for my team. Here's what we do manually today: ",
   messengerBot:
-    "Hi Tensorix team, I'd like to talk about an AI chat agent for my business. The channels and the kinds of questions it would handle: ",
+    "Hi Arefin! I'd like to talk about an AI assistant or chatbot for my workflow. The kinds of questions it would handle: ",
   websiteTeardown:
-    "Hi Tensorix team, I'd like to talk about a conversion-focused website wired into our automations. Here's our current site (or what we're starting from): ",
+    "Hi Arefin! I'd like to talk about connecting automations and APIs to my website: ",
   engagement: (name: string) =>
-    `Hi Tensorix team, I'd like to discuss the "${name}" engagement. Here's a quick overview of my situation: `,
+    `Hi Arefin! I'd like to discuss the "${name}" project. Here's a quick overview of what I'm looking for: `,
 } as const;
 
 // ── 5 CTA button variations (A/B-able from a single constant) ─────────────
-// `primary` = the headline button on hero / final-cta. Pick the one that's
-// converting best in your analytics and rename `active` below.
 export const CTA_VARIANTS = {
-  freeAudit: "Book a free systems audit",
-  bookAudit: "Book a free 30-min audit",
+  buildAutomation: "Let's build an automation",
+  bookAudit: "Book a free 30-min scoping call",
   whatsappNow: "Message on WhatsApp",
-  freeBotDemo: "Talk about an AI chat agent",
-  websiteTeardown: "Talk about a conversion website",
+  viewProjects: "View my projects",
+  contactMe: "Contact me",
 } as const;
 
 export const CTA = {
-  primary: CTA_VARIANTS.freeAudit,
+  primary: CTA_VARIANTS.buildAutomation,
   secondary: CTA_VARIANTS.whatsappNow,
 };
 
 // ── 3 hero variations (toggleable) ────────────────────────────────────────
-// Switch `ACTIVE_HERO` below to swap the headline + sub across the site.
-//
-// • A — outcome-led, default (best for cold traffic + paid ads)
-// • B — pain-led (best for retargeting people who've visited before)
-// • C — proof-led / authority (best for warm referral traffic)
-//
 export type HeroVariant = {
   eyebrow: string;
   headline: { line1: string; line2: string; line3: string; line4: string };
@@ -66,51 +58,51 @@ export type HeroVariant = {
 
 export const HERO_VARIANTS: Record<"A" | "B" | "C", HeroVariant> = {
   A: {
-    eyebrow: "Tensorix · AI Automation & Agent Engineering",
+    eyebrow: "Arefin Mueen · AI Automation & AI Agent Developer",
     headline: {
-      line1: "AI systems",
-      line2: "that turn repetitive",
-      line3: "work into reliable",
-      line4: "workflows.",
+      line1: "I build AI",
+      line2: "systems that",
+      line3: "automate real",
+      line4: "work.",
     },
     sub:
-      "I help small teams automate lead handling, customer replies, CRM updates, reporting, and internal operations with practical AI agents, workflow automation, and integrated web systems.",
+      "I build practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
     trust: [
-      "Founder-led · n8n / Make / GoHighLevel",
-      "APIs · LLM agents · Websites",
-      "Dhaka → Global",
+      "AI Agents · RAG · Multi-Agent",
+      "n8n · LangChain · Langflow",
+      "Dhaka · Open to projects",
     ],
   },
   B: {
-    eyebrow: "Tensorix · Practical AI for small teams",
+    eyebrow: "Arefin Mueen · Practical AI & Automation",
     headline: {
       line1: "Practical AI agents,",
       line2: "workflow automation,",
-      line3: "and web systems —",
-      line4: "built around your work.",
+      line3: "and webhook systems —",
+      line4: "built for real work.",
     },
     sub:
-      "Reliable agents and automations that capture qualified leads, sync your tools, and remove the operations work that doesn't need a human.",
+      "Reliable agents and automations that connect your tools, handle repetitive steps, and remove manual friction.",
     trust: [
-      "Acceptance criteria up-front",
-      "30-day launch support",
-      "You own accounts and source code",
+      "Clear scoping before build",
+      "Documented handoff",
+      "You own 100% of the workflows",
     ],
   },
   C: {
-    eyebrow: "Tensorix · Founder-led AI systems studio",
+    eyebrow: "Arefin Mueen · AI Automation Developer",
     headline: {
-      line1: "Founder-led",
-      line2: "AI systems studio.",
-      line3: "Engineering-first,",
-      line4: "not tool-reseller.",
+      line1: "Practical",
+      line2: "AI automation &",
+      line3: "agent developer.",
+      line4: "Hands-on builder.",
     },
     sub:
-      "Small client load for direct founder attention. Documentation, handover, and 30-day launch support included on every engagement.",
+      "Direct communication, practical architecture, and complete documentation on every project.",
     trust: [
-      "Engineering-first, not hype",
-      "You own everything we build",
-      "Docs and handover included",
+      "Practical solutions",
+      "You own accounts and code",
+      "Video walkthroughs included",
     ],
   },
 };

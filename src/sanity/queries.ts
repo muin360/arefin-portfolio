@@ -80,11 +80,19 @@ export const allProjectsQuery = groq`
     title,
     "slug": slug.current,
     summary,
+    projectType,
+    problem,
+    goal,
+    aiRole,
+    automationLogic,
+    learningOutcome,
     outcome,
     stack,
     iconName,
     category,
     featured,
+    demoUrl,
+    repoUrl,
     "thumbnail": thumbnail{ "url": asset->url, alt, "lqip": asset->metadata.lqip, "dimensions": asset->metadata.dimensions }
   }
 `;
@@ -99,11 +107,19 @@ export const projectBySlugQuery = groq`
     title,
     "slug": slug.current,
     summary,
+    projectType,
+    problem,
+    goal,
+    aiRole,
+    automationLogic,
+    learningOutcome,
     outcome,
     stack,
     iconName,
     category,
     featured,
+    demoUrl,
+    repoUrl,
     "thumbnail": thumbnail{ "url": asset->url, alt, "lqip": asset->metadata.lqip, "dimensions": asset->metadata.dimensions }
   }
 `;

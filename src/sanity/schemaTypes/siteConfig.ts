@@ -128,16 +128,16 @@ export const siteConfig = defineType({
       name: "live30Days",
       title: "Last 30 days · stat cards",
       description:
-        "The big stat cards in the \"Last 30 days at Tensorix\" section. Leave empty to hide the section entirely.",
+        "The big stat cards in the \"Activity & Stats\" section. Leave empty to hide the section entirely.",
       type: "array",
       group: "stats",
       of: [
         {
           type: "object",
           fields: [
-            { name: "label", type: "string", title: "Label (small caps, e.g. \"workflows shipped\")", validation: (r) => r.required() },
-            { name: "value", type: "string", title: "Value (display, e.g. \"27\", \"1.24\", \"99.97\")", validation: (r) => r.required() },
-            { name: "suffix", type: "string", title: "Suffix (optional, e.g. \"k+\", \"M\", \"%\", \"m\")" },
+            { name: "label", type: "string", title: "Label (small caps, e.g. \"workflows built\")", validation: (r) => r.required() },
+            { name: "value", type: "string", title: "Value (display, e.g. \"10\", \"100\", \"99.9\")", validation: (r) => r.required() },
+            { name: "suffix", type: "string", title: "Suffix (optional, e.g. \"+\", \"%\", \"m\")" },
             { name: "hint", type: "string", title: "Hint (small caption under sparkline)" },
             {
               name: "delta",
@@ -171,7 +171,7 @@ export const siteConfig = defineType({
     }),
     defineField({
       name: "showLive30Days",
-      title: "Show \"Last 30 days at Tensorix\" section",
+      title: "Show Activity & Stats section",
       description: "Auto-hides if no stat cards are configured.",
       type: "boolean",
       group: "toggles",

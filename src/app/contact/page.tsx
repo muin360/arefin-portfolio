@@ -166,7 +166,7 @@ export default async function ContactPage() {
               <BentoCard className="h-full">
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-4">
-                    Find Tensorix elsewhere
+                    Find me elsewhere
                   </p>
                   <ul className="grid grid-cols-2 gap-3">
                     {social.github && (

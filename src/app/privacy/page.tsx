@@ -5,17 +5,17 @@ import { PageHeader } from "@/components/Section";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How Tensorix handles your data, what we collect, what we don't, and the rights you have. Plain English. No dark patterns.",
+    "How Arefin Mueen handles your data, what is collected, what is not, and the rights you have. Plain English.",
   openGraph: {
-    title: "Privacy Policy — Tensorix",
-    description: "How Tensorix handles your data.",
+    title: "Privacy Policy — Arefin Mueen",
+    description: "How Arefin Mueen handles your data.",
     url: "/privacy",
   },
   alternates: { canonical: "/privacy" },
 };
 
 const LAST_UPDATED = "April 2026";
-const CONTACT_EMAIL = "hello@tensorix.me";
+const CONTACT_EMAIL = "arefinmueen360@gmail.com";
 
 export default function PrivacyPage() {
   return (
@@ -27,10 +27,10 @@ export default function PrivacyPage() {
         title={
           <>
             Your data, treated{" "}
-            <span className="serif">the way you&apos;d treat your own.</span>
+            <span className="serif">with respect and care.</span>
           </>
         }
-        subtitle="Plain-English account of what Tensorix collects, what it doesn't, and the controls you have. No legalese, no dark patterns."
+        subtitle="Plain-English account of what Arefin Mueen collects, what is not collected, and the controls you have. No dark patterns."
       />
 
       <section className="max-w-3xl mx-auto px-6 sm:px-8 section">

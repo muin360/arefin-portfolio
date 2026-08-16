@@ -201,7 +201,7 @@ export async function sendContact(
   // sends from `onboarding@resend.dev`. After verifying your domain
   // set CONTACT_FROM_EMAIL to "Tensorix <hi@your.dev>".
   const from =
-    process.env.CONTACT_FROM_EMAIL || "Tensorix <onboarding@resend.dev>";
+    process.env.CONTACT_FROM_EMAIL || "Arefin Mueen <onboarding@resend.dev>";
   const to = CONTACT_TO_EMAIL;
 
   try {
@@ -209,7 +209,7 @@ export async function sendContact(
       from,
       to,
       replyTo: email,
-      subject: `[Tensorix] ${subject} — ${name}`,
+      subject: `[Portfolio Inquiry] ${subject} — ${name}`,
       text: `From: ${name} <${email}>\nTopic: ${subject}\n\n${message}\n`,
       html: `
         <div style="font-family: -apple-system, system-ui, sans-serif; max-width: 600px;">

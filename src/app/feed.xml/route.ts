@@ -45,9 +45,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tensorix — Journal</title>
+    <title>Arefin Mueen — Journal &amp; Build Notes</title>
     <link>${SITE_URL}/blog</link>
-    <description>Notes from Tensorix on AI automation, agents and the engineering side of LLMs.</description>
+    <description>Build notes, automation experiments, and technical lessons on AI agents, n8n workflows, RAG, and LLMs by Arefin Mueen.</description>
     <language>en-us</language>
     <lastBuildDate>${new Date(updated).toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />

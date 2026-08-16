@@ -128,17 +128,33 @@ export type SkillCategoryDoc = {
   order?: number;
 };
 
+export type WorkflowStep = {
+  step: string;
+  name: string;
+  desc: string;
+};
+
 export type ProjectDoc = {
   _id: string;
   title: string;
   slug: string;
   summary: string;
-  outcome?: string;
-  stack: string[];
-  iconName: IconName;
+  projectType?: string;
   category: string;
+  stack: string[];
+  problem?: string;
+  goal?: string;
+  workflowSteps?: WorkflowStep[];
+  aiRole?: string;
+  automationLogic?: string;
+  integrations?: string[];
+  learningOutcome?: string;
+  outcome?: string;
+  iconName: IconName;
   featured?: boolean;
-  thumbnail: SanityImage;
+  thumbnail?: SanityImage;
+  demoUrl?: string;
+  repoUrl?: string;
 };
 
 export type PostListItem = {

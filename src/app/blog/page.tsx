@@ -7,14 +7,14 @@ import { PageHeader } from "@/components/Section";
 import BlogList from "./BlogList";
 
 export const metadata: Metadata = {
-  title: "Journal",
+  title: "Journal & Build Notes",
   description:
-    "Notes from Tensorix on AI automation, agents and the engineering side of LLMs — lessons from real client work, opinions on the toolchain, and what I'm learning in production.",
+    "Build notes, automation experiments, and technical lessons on AI agents, n8n workflows, RAG, and LLMs by Arefin Mueen.",
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: "Journal — Tensorix",
+    title: "Journal & Build Notes — Arefin Mueen",
     description:
-      "Notes from Tensorix on AI automation, agents and the engineering side of LLMs.",
+      "Build notes and experiments on AI automations and agents by Arefin Mueen.",
     url: "/blog",
   },
 };
@@ -28,16 +28,16 @@ export default async function BlogPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Journal"
+        eyebrow="Arefin Mueen · Journal & Build Notes"
         index="06"
-        meta={`${sorted.length} entries · Updated regularly`}
+        meta={`${sorted.length} entries · Practical insights`}
         title={
           <>
-            Notes on shipping{" "}
-            <span className="serif">AI in production.</span>
+            Notes on building{" "}
+            <span className="serif">AI automations &amp; agents.</span>
           </>
         }
-        subtitle="Lessons from real client work, opinions on the toolchain, and what I'm learning as I go deeper into LLM engineering."
+        subtitle="Hands-on build notes, opinions on the toolchain, and lessons learned from building practical workflows and agents."
       />
 
       <section className="hero-dark relative overflow-hidden border-b border-white/5">

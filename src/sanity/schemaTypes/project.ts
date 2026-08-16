@@ -52,9 +52,55 @@ export const project = defineType({
       validation: (r) => r.required().max(400),
     }),
     defineField({
+      name: "projectType",
+      title: "Project Type",
+      type: "string",
+      description: "e.g., Personal Project, AI Agent Project, Learning Project, Automation Project",
+    }),
+    defineField({
+      name: "problem",
+      title: "Problem Statement",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
+      name: "goal",
+      title: "Project Goal",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
+      name: "aiRole",
+      title: "AI Role & Capabilities",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
+      name: "automationLogic",
+      title: "Automation Logic & Workflow",
+      type: "text",
+      rows: 4,
+    }),
+    defineField({
+      name: "learningOutcome",
+      title: "What I Learned",
+      type: "text",
+      rows: 3,
+    }),
+    defineField({
+      name: "demoUrl",
+      title: "Live Demo URL (Optional)",
+      type: "url",
+    }),
+    defineField({
+      name: "repoUrl",
+      title: "GitHub Repository URL (Optional)",
+      type: "url",
+    }),
+    defineField({
       name: "outcome",
-      title: "Outcome / metric",
-      description: "One-line, high-signal result. Shown on the projects page.",
+      title: "Outcome / Key Takeaway",
+      description: "One-line high-signal takeaway. Shown on cards.",
       type: "string",
     }),
     defineField({

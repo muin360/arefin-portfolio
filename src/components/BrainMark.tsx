@@ -30,7 +30,7 @@ export default function BrainMark({
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       role="img"
-      aria-label="Tensorix"
+      aria-label="Arefin Mueen"
     >
       <defs>
         <linearGradient id={grad} x1="2" y1="6" x2="30" y2="26" gradientUnits="userSpaceOnUse">

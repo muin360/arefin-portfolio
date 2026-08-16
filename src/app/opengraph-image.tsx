@@ -19,7 +19,7 @@ import { ImageResponse } from "next/og";
 // doesn't follow the Next.js convention path; this file is the
 // preferred, dynamically-generated source.
 
-export const alt = "Tensorix — AI Automation & Agent Engineering Studio";
+export const alt = "Arefin Mueen — AI Automation & AI Agent Developer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -55,7 +55,7 @@ export default async function Image() {
           }}
         >
           <span style={{ fontSize: 26 }}>◈</span>
-          <span>TENSORIX</span>
+          <span>AREFIN MUEEN</span>
         </div>
 
         {/* middle — headline */}
@@ -86,8 +86,8 @@ export default async function Image() {
               maxWidth: 820,
             }}
           >
-            Founder-led AI engineering studio · Dhaka → Global. Agents,
-            workflow automation, integrations and conversion web systems.
+            AI Automation &amp; AI Agent Developer · Dhaka → Global. AI agents,
+            n8n workflows, LangChain, RAG systems, and API integrations.
           </div>
         </div>
 
@@ -116,9 +116,9 @@ export default async function Image() {
                 display: "block",
               }}
             />
-            <span>Accepting new engagements</span>
+            <span>Open to AI automation projects</span>
           </div>
-          <div>Tensorix.ai</div>
+          <div>tensorix.me</div>
         </div>
       </div>
     ),

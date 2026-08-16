@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "404 — Off the map · Tensorix",
+  title: "404 — Page Not Found · Arefin Mueen",
   description: "That page doesn't exist (or it never did).",
 };
 
@@ -31,7 +31,7 @@ export default function NotFound() {
             Back to home
           </Link>
           <Link href="/projects" className="btn-secondary">
-            Selected work
+            View projects
           </Link>
           <Link href="/contact" className="btn-secondary">
             Contact

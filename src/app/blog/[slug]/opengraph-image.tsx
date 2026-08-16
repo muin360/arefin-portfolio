@@ -7,7 +7,7 @@ import type { PostDetail } from "@/sanity/types";
 // 1200×630 is the standard for Twitter/X large card and Open Graph.
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Tensorix — Journal";
+export const alt = "Arefin Mueen — Journal & Build Notes";
 
 export async function generateStaticParams() {
   const slugs = await sanityFetch<string[]>({
@@ -29,7 +29,7 @@ export default async function Image({
     tags: ["post", `post:${slug}`],
   });
 
-  const title = post?.title ?? "Tensorix";
+  const title = post?.title ?? "Arefin Mueen";
   const category = post?.category ?? "Journal";
   const date = post?.date
     ? new Date(post.date).toLocaleDateString("en-US", {
@@ -109,7 +109,7 @@ export default async function Image({
             fontSize: 22,
           }}
         >
-          <span style={{ color: "rgba(255,255,255,0.85)" }}>Tensorix</span>
+          <span style={{ color: "rgba(255,255,255,0.85)" }}>Arefin Mueen</span>
           <span style={{ color: "rgba(255,255,255,0.45)" }}>tensorix.me</span>
         </div>
       </div>

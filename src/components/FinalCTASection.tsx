@@ -4,7 +4,7 @@ import { IconArrow } from "@/components/icons";
 
 const PHONE_E164 = "8801994605717";
 const PREFILL =
-  "Hi Tensorix team, I'd like to book a free 30-min systems audit. Best time for me is …";
+  "Hi Arefin! I'd like to book a free 30-min scoping call to discuss an AI automation workflow. Best time for me is …";
 const WA_HREF = `https://wa.me/${PHONE_E164}?text=${encodeURIComponent(PREFILL)}`;
 
 export default function FinalCTASection() {
@@ -20,16 +20,14 @@ export default function FinalCTASection() {
           <div className="text-center">
             <p className="inline-flex items-center gap-2 mb-6 text-[11px] font-mono uppercase tracking-[0.2em] text-white/70 rounded-full border border-white/15 bg-white/5 px-3 py-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Limited project capacity · Free 30-min audit
+              Open to automation &amp; agent projects · Free 30-min scoping call
             </p>
             <h2 className="display text-4xl md:text-6xl lg:text-7xl text-white leading-[1.05] max-w-3xl mx-auto">
-              Capture and respond to{" "}
-              <span className="serif iridescent">more qualified leads.</span>
+              Automate repetitive tasks with{" "}
+              <span className="serif iridescent">intelligent AI workflows.</span>
             </h2>
             <p className="mt-7 text-white/70 max-w-2xl mx-auto text-lg leading-relaxed">
-              30 free minutes. We&rsquo;ll map your current workflows, surface the
-              highest-leverage automation opportunities, and send you a
-              written recommendation — no obligation either way.
+              30 free minutes. We&rsquo;ll map your current workflow, discuss practical automation solutions, and outline how to build it.
             </p>
           </div>
         </Reveal>
@@ -37,8 +35,8 @@ export default function FinalCTASection() {
         <Reveal delay={100}>
           <ul className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 max-w-3xl mx-auto text-sm text-white/80">
             {[
-              { num: "01", label: "Live workflow audit on the call — no slides" },
-              { num: "02", label: "Written recommendation + indicative scope" },
+              { num: "01", label: "Workflow walkthrough on the call — no pitch" },
+              { num: "02", label: "Clear architecture recommendation + timeline" },
               { num: "03", label: "No obligation. You keep the notes either way." },
             ].map((b) => (
               <li
@@ -60,7 +58,7 @@ export default function FinalCTASection() {
               href="/book"
               className="btn-primary shimmer bg-white text-foreground border-white hover:bg-white/90 w-full sm:w-auto justify-center"
             >
-              Book a free systems audit
+              Book a free 30-min scoping call
               <IconArrow width={16} height={16} />
             </Link>
             <a

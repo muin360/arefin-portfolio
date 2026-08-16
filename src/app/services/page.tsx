@@ -165,7 +165,7 @@ export default async function ServicesPage() {
 
                     <a
                       href={`https://wa.me/8801994605717?text=${encodeURIComponent(
-                        `Hi Tensorix team! I'd like to discuss the "${e.name}" engagement. Here's a quick overview of my situation: `,
+                        `Hi Arefin! I'd like to discuss the "${e.name}" workflow. Here's a quick overview of what I need: `,
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -211,32 +211,32 @@ export default async function ServicesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
               {
-                tier: "Systems audit",
+                tier: "Discovery scoping",
                 price: "Free",
                 timeline: "30 min",
                 desc: "A focused conversation to map your workflows, surface the highest-leverage automation opportunities, and share a written recommendation. No obligation.",
                 note: "No commitment required",
               },
               {
-                tier: "Focused sprint",
-                price: "From $2,400",
-                timeline: "~2 weeks",
-                desc: "One well-scoped workflow or integration — CRM automation, lead routing, chatbot MVP, or a conversion landing page with forms wired in.",
+                tier: "Focused automation sprint",
+                price: "Project-based",
+                timeline: "~1–2 weeks",
+                desc: "One well-scoped workflow or integration — email triage, CRM webhook routing, RAG Q&A bot, or lead capture automation.",
                 note: "One workflow, end to end",
               },
               {
-                tier: "AI systems build",
-                price: "From $6,000",
-                timeline: "4–8 weeks",
-                desc: "Multi-workflow builds: AI agent + CRM + notification stack, full website with booking and automation, or cross-platform integration suites.",
-                note: "Multi-workflow system with testing",
+                tier: "AI automation & agent system",
+                price: "Custom quote",
+                timeline: "Milestone-based",
+                desc: "Multi-workflow builds: AI agent + tool calling, multi-agent research flows, or cross-platform data integration suites.",
+                note: "Multi-step system with testing",
               },
               {
-                tier: "Retainer",
-                price: "Custom",
+                tier: "Automation support",
+                price: "Custom quote",
                 timeline: "Monthly",
-                desc: "Ongoing capacity for teams that need continuous automation improvements, new integrations, monitoring, and priority support.",
-                note: "Ongoing partnership",
+                desc: "Ongoing capacity for teams that need workflow maintenance, new tool integrations, and continuous improvements.",
+                note: "Ongoing support",
               },
             ].map((t, i) => (
               <Reveal key={t.tier} delay={i * 80}>
@@ -265,7 +265,7 @@ export default async function ServicesPage() {
         </div>
       </section>
 
-      {/* CAPABILITIES — what Tensorix builds */}
+      {/* CAPABILITIES — what Arefin builds */}
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-pink" aria-hidden="true" />

@@ -94,10 +94,23 @@ export default async function ProjectDetailPage({
     .filter((p) => p.slug !== project.slug)
     .slice(0, 3);
 
+  const defaultWorkflowSteps = [
+    { step: "01", name: "Trigger", desc: "Webhook or scheduled event initiates the pipeline" },
+    { step: "02", name: "Data Input", desc: "Payload parsing, schema validation, and normalization" },
+    { step: "03", name: "AI Processing", desc: "LLM reasoning, classification, or context vector retrieval" },
+    { step: "04", name: "Agent Decision", desc: "Confidence check and conditional routing logic" },
+    { step: "05", name: "Tool / API", desc: "External service execution and structured data update" },
+    { step: "06", name: "Output / Handoff", desc: "Notification dispatch or human-in-the-loop review" },
+  ];
+
+  const workflow = project.workflowSteps && project.workflowSteps.length > 0
+    ? project.workflowSteps
+    : defaultWorkflowSteps;
+
   return (
     <>
       <PageHeader
-        eyebrow={`Project Breakdown · ${project.category}`}
+        eyebrow={`${project.projectType ?? "Personal AI Automation Project"} · ${project.category}`}
         index="05"
         meta={project.stack.join(" · ")}
         title={<>{project.title}</>}
@@ -107,72 +120,173 @@ export default async function ProjectDetailPage({
       <section className="hero-dark relative overflow-hidden border-b border-white/5">
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-cyan" aria-hidden="true" />
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 section relative">
-          {project.outcome && (
-            <Reveal>
-              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 md:p-10 mb-12">
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-3">
-                  Project Goal &amp; Learning Focus
-                </p>
-                <p className="display text-2xl md:text-4xl text-white leading-tight">
-                  <span className="serif iridescent">{project.outcome}</span>
-                </p>
-              </div>
-            </Reveal>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 section relative space-y-12">
+          
+          {/* PROBLEM & GOAL OVERVIEW */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Reveal>
               <BentoCard className="h-full">
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                  Use Case &amp; Problem
-                </p>
-                <p className="text-white/80 leading-relaxed">
-                  Repetitive manual tasks, delayed responses, or fragmented data across tools causing operational friction.
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 rounded-full bg-pink-400" />
+                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/60">
+                    The Problem
+                  </p>
+                </div>
+                <p className="text-white/85 leading-relaxed">
+                  {project.problem ??
+                    "Repetitive manual tasks, delayed responses, or fragmented data across tools causing operational friction."}
                 </p>
               </BentoCard>
             </Reveal>
+
             <Reveal delay={80}>
               <BentoCard className="h-full">
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                  Automation Logic
-                </p>
-                <p className="text-white/80 leading-relaxed">{project.summary}</p>
-              </BentoCard>
-            </Reveal>
-            <Reveal delay={160}>
-              <BentoCard className="h-full">
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                  Key Takeaway
-                </p>
-                <p className="text-white/80 leading-relaxed">
-                  {project.outcome ??
-                    "Tested and verified workflow logic with error handling."}
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/60">
+                    Project Goal
+                  </p>
+                </div>
+                <p className="text-white/85 leading-relaxed">
+                  {project.goal ??
+                    "Build a reliable, automated pipeline to handle data transformations, reasoning, and tool execution automatically."}
                 </p>
               </BentoCard>
             </Reveal>
           </div>
 
-          <Reveal delay={240}>
-            <div className="mt-12 rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10">
-              <div className="flex items-start justify-between gap-6">
+          {/* SIGNATURE WORKFLOW ARCHITECTURE */}
+          <Reveal delay={120}>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10 backdrop-blur-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10 mb-8">
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                    Technologies Used
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50 mb-1">
+                    System Architecture
                   </p>
-                  <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-mono text-white/65">
-                    {project.stack.map((s) => (
-                      <span key={s}>· {s}</span>
-                    ))}
-                  </div>
+                  <h3 className="display text-xl md:text-2xl text-white">
+                    Workflow Execution Flow
+                  </h3>
                 </div>
-                {renderIcon(project.iconName, 48, "text-white/70 shrink-0")}
+                <span className="font-mono text-[11px] text-white/40 tracking-wider">
+                  TRIGGER → AI → TOOLS → DECISION → OUTPUT
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {workflow.map((st, idx) => (
+                  <div
+                    key={st.step}
+                    className="p-5 rounded-2xl border border-white/5 bg-white/[0.02] relative group hover:border-violet-400/30 transition-colors"
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-violet-300/80">
+                        Step {st.step}
+                      </span>
+                      {idx < workflow.length - 1 && (
+                        <span className="text-white/20 text-xs hidden lg:inline" aria-hidden="true">
+                          →
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="text-white font-medium text-sm mb-1.5">{st.name}</h4>
+                    <p className="text-white/60 text-xs leading-relaxed">{st.desc}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </Reveal>
+
+          {/* AI ROLE & AUTOMATION LOGIC */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Reveal delay={160}>
+              <BentoCard className="h-full">
+                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
+                  AI Role &amp; Processing
+                </p>
+                <p className="text-white/80 leading-relaxed text-sm">
+                  {project.aiRole ??
+                    "LLM handles intent parsing, unstructured context extraction, and dynamic output formatting with structured schema guardrails."}
+                </p>
+              </BentoCard>
+            </Reveal>
+
+            <Reveal delay={200}>
+              <BentoCard className="h-full">
+                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
+                  Automation Logic &amp; Connectors
+                </p>
+                <p className="text-white/80 leading-relaxed text-sm">
+                  {project.automationLogic ?? project.summary}
+                </p>
+              </BentoCard>
+            </Reveal>
+          </div>
+
+          {/* LEARNING OUTCOME */}
+          <Reveal delay={240}>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 md:p-10">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-3">
+                    What I Learned
+                  </p>
+                  <p className="display text-xl md:text-2xl text-white leading-snug">
+                    <span className="serif text-white/90">
+                      {project.learningOutcome ??
+                        project.outcome ??
+                        "Mastered end-to-end workflow debugging, edge case management, and API error resilience."}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40 mb-2">
+                    Technologies Used
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.stack.map((s) => (
+                      <span
+                        key={s}
+                        className="px-3 py-1 rounded-full text-xs font-mono bg-white/5 border border-white/10 text-white/70"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {project.repoUrl && (
+                    <a
+                      href={project.repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono bg-white/10 hover:bg-white/20 text-white transition-colors"
+                    >
+                      View GitHub Repo →
+                    </a>
+                  )}
+                  {project.demoUrl && (
+                    <a
+                      href={project.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono bg-violet-600/30 hover:bg-violet-600/50 border border-violet-400/40 text-white transition-colors"
+                    >
+                      Live Demo →
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
         </div>
       </section>
 
+      {/* RELATED PROJECTS */}
       {related.length > 0 && (
         <section className="border-b border-line">
           <div className="max-w-7xl mx-auto px-6 sm:px-8 section">
@@ -217,6 +331,7 @@ export default async function ProjectDetailPage({
         </section>
       )}
 
+      {/* BOTTOM CTA */}
       <section className="hero-dark relative overflow-hidden">
         <div className="orb orb-pink" aria-hidden="true" />
         <div className="max-w-5xl mx-auto px-6 sm:px-8 py-20 relative text-center">

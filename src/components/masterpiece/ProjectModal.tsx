@@ -164,7 +164,7 @@ export default function ProjectModal({
                 <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#22d3a5" }} />
               </div>
               <span style={{ fontSize: "11px", color: "var(--t3)", marginLeft: "8px" }}>
-                tensorix · {project.category.toLowerCase()}-agent · live
+                arefin · {project.category.toLowerCase()}-agent · live
               </span>
               <span style={{ marginLeft: "auto", fontSize: "9px", color: "var(--green)",
                 display: "flex", alignItems: "center", gap: "4px" }}>

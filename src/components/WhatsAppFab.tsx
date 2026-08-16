@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 
 const PHONE_E164 = "8801994605717";
-const DEFAULT_MSG =
-  "Hi Tensorix team! I saw your website and I'd like to know if AI automation, a Messenger bot, or a new website is right for my business.";
+const DEFAULT_PREFILL =
+  "Hi Arefin! I saw your portfolio and I'd like to discuss an AI automation or agent project.";
 
 export default function WhatsAppFab({
   phoneE164 = PHONE_E164,
-  message = DEFAULT_MSG,
+  message = DEFAULT_PREFILL,
 }: {
   phoneE164?: string;
   message?: string;

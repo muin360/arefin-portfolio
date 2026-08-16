@@ -21,28 +21,28 @@ type Item = { q: string; a: string };
 
 const ITEMS: Item[] = [
   {
-    q: "What does a typical engagement look like?",
-    a: "We start with a 30–60 min scoping call. If there's a clear automation worth building, I scope it as a 1- to 4-week fixed-price sprint. Most projects ship a working v1 in under 14 days, with a 30-day support window included.",
+    q: "What tools and platforms do you specialize in?",
+    a: "I specialize in n8n, Zapier, Make, Langflow, LangChain, OpenAI & Claude APIs, vector databases (Pinecone), webhooks, and REST APIs. I also write custom Python and JavaScript scripts for API glue and data transformations.",
   },
   {
-    q: "Do you charge hourly or fixed?",
-    a: "Fixed price by default. I quote a single number for the sprint so you know exactly what it costs before we start. Ongoing retainers for evolving systems are billed monthly.",
+    q: "What type of automations and agents do you build?",
+    a: "I build event-driven workflow automations (email triage, CRM syncing, lead qualification), RAG knowledge assistants over company documentation, multi-agent research crews, and conversational chatbots.",
   },
   {
-    q: "Will I actually own the system?",
-    a: "Yes. I deliver everything inside your accounts (n8n, GoHighLevel, OpenAI, etc.) and give your team a written runbook plus a video walkthrough. No agency lock-in, no recurring SaaS to me.",
+    q: "Can you connect with my existing business tools?",
+    a: "Yes. Any platform that provides an API, webhook triggers, or an n8n/Zapier connector (such as Gmail, Slack, Google Sheets, Airtable, Notion, Shopify, Typeform, or CRMs) can be integrated into automated pipelines.",
   },
   {
-    q: "What if the automation breaks?",
-    a: "Every project ships with a 30-day support window where I fix anything that misbehaves at no extra cost. After that, you can either operate it yourself with the runbook or keep me on a light retainer.",
+    q: "Can you build RAG assistants or multi-agent workflows?",
+    a: "Yes. I build RAG assistants that index documentation into vector stores for citation-backed answers, and multi-agent systems with LangChain where specialized agents research, synthesize, and review outputs.",
   },
   {
-    q: "Can you work with my existing tools?",
-    a: "Almost always. I've shipped automations against Salesforce, HubSpot, GoHighLevel, Notion, Airtable, Stripe, Twilio, Slack, Gmail and dozens more. If a tool has an API or a Zapier/n8n connector, I can wire it in.",
+    q: "How do you approach a new project?",
+    a: "We start by mapping the manual workflow steps from trigger to output. I then design the automation blueprint, configure the API and prompt logic, test with realistic payloads, and provide full video and written documentation upon handover.",
   },
   {
-    q: "Where are you based, and how do you communicate?",
-    a: "I'm in Dhaka, Bangladesh and work async with clients across SE Asia, Europe and North America. Weekly written updates inside a shared Slack channel, plus a 30-min call at the start and end of each sprint.",
+    q: "Who owns the workflows and accounts after handover?",
+    a: "You own 100% of everything. All workflows, scripts, and API credentials are built directly under your accounts and repository with full runbooks and walkthrough instructions.",
   },
 ];
 

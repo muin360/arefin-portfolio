@@ -34,9 +34,9 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
       <div className="p-6 border-b border-slate-700">
         <Link href="/admin" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">T</span>
+            <span className="text-white font-bold text-sm">A</span>
           </div>
-          <span className="text-white font-bold text-lg">Tensorix</span>
+          <span className="text-white font-bold text-lg">Arefin Admin</span>
         </Link>
       </div>
 

@@ -15,26 +15,28 @@ export const posts: Post[] = [
     title: "AI automation is no longer optional",
     date: "2025-04-12",
     excerpt:
-      "The companies winning right now aren't the ones with the most headcount. They're the ones whose teams stopped doing repetitive work years ago.",
+      "Teams that remove repetitive work free up their time to focus on creative and high-leverage tasks.",
     readingTime: "5 min read",
     category: "Strategy",
-    tags: ["AI", "Automation", "Business"],
+    tags: ["AI", "Automation", "Workflows"],
     content: `
-The biggest misconception about automation is that it replaces people. In practice, the businesses I work with use automation to remove the work nobody should be doing — repetitive data entry, copy-pasting between tools, sending the same five emails a hundred times — so the team can spend their hours on the work that actually moves revenue.
+The biggest misconception about automation is that it replaces people. In practice, workflow automation is about removing the work nobody should be doing manually — repetitive data entry, copy-pasting between tools, and sending standard confirmation emails.
 
-## What "AI automation" actually means
+## What AI automation adds
 
-Plain automation moves data between systems. **AI automation** adds judgement. Instead of "if X then Y", you can now say "if X, figure out the right Y, draft it in our voice, and only ping a human if you're not sure." Three examples I've shipped recently:
+Plain automation moves data between systems when fixed triggers happen. **AI automation** adds reasoning. Instead of rigid "if X then Y", you can classify unstructured text, extract key entities, summarize context, and make dynamic routing decisions.
 
-- A workflow that triages inbound support tickets, decides if they're urgent, drafts a reply in the brand's tone of voice and queues it for human review.
-- An agent that researches each prospect's website, summarizes what they do, and writes a personalized cold-email opener — at scale.
-- A system that watches Stripe for new customers and runs a tailored 30-day onboarding sequence based on the plan they purchased.
+Three practical examples:
+
+- A workflow that triages inbound emails, classifies urgency, drafts a contextual reply, and notifies Slack.
+- An agent that searches documents in a vector store and answers technical questions with citations.
+- A multi-agent crew that researches a topic, synthesizes key points, and drafts a formatted brief.
 
 ## Where to start
 
-Don't try to automate everything at once. Pick **one** repetitive task that takes your team more than an hour a week and start there. The compounding ROI is what matters, not the size of the first build.
+Pick **one** repetitive task that takes more than an hour a week and start there. Solving small bottlenecks reliably is where compounding value begins.
 
-If you'd like an honest audit of your current workflow, [reach out](/contact). No pitch — I'll tell you what's worth automating and what isn't.
+If you have a workflow you'd like to automate, [let's connect](/contact).
     `.trim(),
   },
   {
@@ -42,32 +44,30 @@ If you'd like an honest audit of your current workflow, [reach out](/contact). N
     title: "n8n vs Zapier vs Make: an honest comparison",
     date: "2025-03-28",
     excerpt:
-      "I've shipped production workflows on all three. The right choice depends on three variables — complexity, volume, and who's going to maintain it.",
+      "Hands-on comparison of the three major automation platforms based on complexity, control, and maintenance.",
     readingTime: "7 min read",
     category: "Tools",
     tags: ["n8n", "Zapier", "Make"],
     content: `
-After shipping production automations across Zapier, Make and n8n, I've stopped recommending a single "best" platform. The right choice depends on three variables: **complexity**, **volume**, and **who maintains it day-to-day**.
+After building automations across Zapier, Make, and n8n, each platform has clear trade-offs based on three variables: **complexity**, **volume**, and **who maintains it day-to-day**.
 
-## Zapier — best for non-technical teams
+## Zapier — best for quick, simple integrations
 
-Zapier is the easiest to learn. If your operations manager needs to wire up Typeform → Google Sheets → Gmail in fifteen minutes, nothing beats it. The trade-off is pricing — task-based billing gets expensive at scale, and complex branching logic is genuinely painful to build.
+Zapier is the easiest to learn. If you need to wire up Typeform → Google Sheets → Gmail in fifteen minutes, nothing beats it. The trade-off is pricing — task-based billing gets expensive at scale, and complex branching logic is harder to manage.
 
-## Make — best for visual, multi-step flows
+## Make — best for visual, multi-step scenarios
 
-Make's scenario editor is a pleasure to use for visualizing data flow. It handles arrays and iteration far more elegantly than Zapier. Operation-based pricing is usually cheaper than Zapier for high-volume workflows.
+Make's scenario editor is intuitive for visualizing data flow. It handles arrays and iteration cleanly, with operation-based pricing that is generally cost-effective for medium volumes.
 
-## n8n — best when you want power and ownership
+## n8n — best for developer control and custom logic
 
-n8n is open-source. You can self-host it for unlimited runs, drop into JavaScript whenever you need to, and integrate with anything that exposes an API. Steeper learning curve, but for technical teams it's a no-brainer for anything mission-critical.
+n8n is open-source, supports self-hosting, and lets you drop into custom JavaScript and Python nodes whenever needed. For developers and complex AI agent workflows, it offers unmatched flexibility and ownership.
 
-## TL;DR
+## Summary
 
-- **Non-technical team, low volume** → Zapier
-- **Visual workflow lover, medium volume** → Make
-- **Technical team, full control, high volume** → n8n
-
-Most of my clients end up running **n8n + a couple of Zapier connectors** for the long-tail apps n8n hasn't integrated yet.
+- **Quick simple integrations** → Zapier
+- **Visual multi-step branching** → Make
+- **Developer control, custom logic & self-hosting** → n8n
     `.trim(),
   },
   {
@@ -75,25 +75,23 @@ Most of my clients end up running **n8n + a couple of Zapier connectors** for th
     title: "From workflow automation to LLM & agent engineering",
     date: "2025-04-20",
     excerpt:
-      "Why I'm spending the next phase of my career going deeper on the engineering side of LLMs — evaluation, observability and retrieval quality.",
+      "Why I'm focusing on the engineering side of LLMs — evaluation, observability, and retrieval quality.",
     readingTime: "4 min read",
-    category: "Notebook",
+    category: "Notes",
     tags: ["Career", "LLM", "Personal"],
     content: `
-For years, the limiting factor in automation was the "decide" step. You had to hard-code every branch, anticipate every edge case, and accept that anything truly judgement-based had to stay manual.
+For years, traditional automation was bounded by rigid rules. You had to account for every branch manually.
 
-LLMs collapsed that limitation overnight. Suddenly the decision step in a workflow could be a paragraph of natural language, and the system could reason about it. I started weaving model calls into n8n flows, then graduated to **LangChain** for more structured agent logic and **LangFlow** for visualizing complex chains.
+LLMs made it possible to reason over unstructured inputs, extract parameters dynamically, and draft intelligent outputs. I started adding model calls into n8n workflows, then expanded to **LangChain** for structured agent logic and **Langflow** for building retrieval flows.
 
-## Where I'm headed next
+## Where I'm focusing next
 
-The next phase for me is going deeper on the engineering side of LLMs:
+- **Evaluation** — testing prompts and outputs against structured test sets.
+- **Observability** — tracing agent reasoning steps, tool calls, and latency.
+- **Retrieval quality** — optimizing chunking, embeddings, and vector search in RAG.
+- **Multi-agent collaboration** — orchestrating specialized agent roles with clear boundaries.
 
-- **Evaluation** — how do you actually measure if an agent is good?
-- **Observability** — tracing what an agent did, and why.
-- **Retrieval quality** — chunking, retrievers, rerankers, hybrid search.
-- **Fine-tuning** — when it's worth the cost vs. simply better prompting.
-
-The bar for "production-ready agent" keeps rising. I want to be on the right side of that line.
+I learn best by building real workflows and testing their edge cases hands-on.
 
 If you're on the same path, [let's connect](/contact).
     `.trim(),

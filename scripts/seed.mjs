@@ -1,9 +1,8 @@
 /**
  * One-time content seeder for Sanity.
  *
- * Migrates the contents of src/data/site.ts and src/data/posts.ts into
- * matching Sanity documents. Idempotent — re-running it updates existing
- * documents (matched by their deterministic _id) instead of duplicating.
+ * Migrates truthful personal portfolio content into Sanity documents.
+ * Idempotent — re-running it updates existing documents (matched by deterministic _id).
  *
  * Run with:
  *   npx dotenv -e .env.local -- node scripts/seed.mjs
@@ -35,56 +34,54 @@ const client = createClient({
   useCdn: false,
 });
 
-// ---------- Source data (mirrors src/data/site.ts and src/data/posts.ts) ----------
+// ---------- Source data (truthful personal portfolio) ----------
 
 const siteConfig = {
   _id: "siteConfig",
   _type: "siteConfig",
-  name: "Tensorix",
-  role: "AI Automation & Agent Engineering Agency",
+  name: "Arefin Mueen",
+  role: "AI Automation & AI Agent Developer",
   email: "arefinmueen360@gmail.com",
   phone: "+880 1994-605717",
   phoneE164: "8801994605717",
   tagline:
-    "Tensorix is a small AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems for ambitious teams.",
+    "I build practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
   siteDescription:
-    "Tensorix is an AI engineering agency. We design, ship and maintain AI agents, automation workflows and LLM-powered systems with n8n, LangChain, LangGraph, GoHighLevel, Python and TypeScript — quietly, reliably, in production.",
-  availability: "Available · accepting new engagements",
+    "Arefin Mueen is an AI Automation & AI Agent Developer based in Dhaka. He builds practical AI agents, RAG systems, multi-agent workflows, and business automations.",
+  availability: "Open to selected AI automation & agent projects",
+  availabilityNote: "Free 30-min scoping call",
   social: {
+    github: "https://github.com/muin360",
+    linkedin: "https://www.linkedin.com/in/arefin-muin",
+    twitter: "https://x.com/ArefinMuin",
     facebook: "https://www.facebook.com/profile.php?id=61588840534814",
     whatsapp: "https://wa.me/8801994605717",
     email: "mailto:arefinmueen360@gmail.com",
   },
-  // Hero status tiles — leave empty by default. Edit in /studio when you
-  // have real numbers to show; until then the row is hidden.
   heroTiles: [],
-  // "Last 30 days" stat cards — leave empty by default. Editable in /studio.
   live30Days: [],
   showLiveTicker: false,
   showHeroTiles: false,
   showLive30Days: false,
 };
 
-// Engagement / pricing tiers shown on /services. All prices default to
-// "Custom quote" so the live site never advertises numbers the studio
-// hasn't actually committed to.
 const engagements = [
   {
     _id: "engagement.sprint",
     _type: "engagement",
     tag: "Sprint",
-    name: "Two-week sprint",
-    price: "Custom quote",
-    cadence: "2 weeks · fixed scope",
+    name: "Focused Automation Sprint",
+    price: "Project-based",
+    cadence: "Fixed scope · milestone delivery",
     summary:
-      "A focused, time-boxed build for a single workflow or one tightly-scoped agent.",
+      "A focused build for a single workflow, webhook integration, or tightly-scoped AI agent.",
     deliverables: [
-      "Discovery + scoped proposal",
-      "One workflow or one agent shipped",
-      "Loom walkthrough + written handoff",
-      "30-day reliability guarantee",
+      "Discovery & workflow mapping",
+      "One end-to-end automation or AI agent built",
+      "Loom walkthrough + documented setup",
+      "Testing & verification before handoff",
     ],
-    ideal: "When you know exactly what you want and need it live this month.",
+    ideal: "When you have a specific bottleneck or manual task to automate.",
     featured: false,
     order: 0,
   },
@@ -92,38 +89,38 @@ const engagements = [
     _id: "engagement.build",
     _type: "engagement",
     tag: "Build",
-    name: "Engineering engagement",
+    name: "AI Automation & Agent System",
     price: "Custom quote",
-    cadence: "4–8 weeks · milestone-based",
+    cadence: "Milestone-based",
     summary:
-      "End-to-end design and build of a multi-step automation or production-grade agent system.",
+      "End-to-end design and build of an AI automation workflow, RAG knowledge system, or multi-agent research pipeline.",
     deliverables: [
-      "Architecture + integration map",
-      "Custom code where it matters",
-      "Real-data testing + observability",
-      "Documentation, training, source under your repo",
+      "Workflow architecture & data model",
+      "Custom Python/JavaScript logic & webhooks",
+      "Real-payload testing & error handling",
+      "Documentation, video walkthrough & full repository handover",
     ],
-    ideal: "For teams replacing brittle tools with one durable system.",
+    ideal: "For teams connecting multiple tools into one reliable automated system.",
     featured: true,
-    ctaLabel: "Start an engagement",
+    ctaLabel: "Let's build an automation",
     order: 1,
   },
   {
     _id: "engagement.retainer",
     _type: "engagement",
     tag: "Retainer",
-    name: "On-call studio",
+    name: "Automation Support & Improvements",
     price: "Custom quote",
     cadence: "Monthly · ongoing capacity",
     summary:
-      "Ongoing engineering capacity for your existing AI stack — improvements, monitoring, new agents.",
+      "Ongoing capacity for maintaining workflows, integrating new tools, and building new AI agent capabilities.",
     deliverables: [
-      "Same-day response on incidents",
-      "Bi-weekly roadmap + reporting",
-      "Continuous improvements + new flows",
-      "Direct WhatsApp / email channel",
+      "Ongoing workflow monitoring & fixes",
+      "Regular check-ins & roadmap updates",
+      "Continuous automation additions",
+      "Direct WhatsApp / email communication",
     ],
-    ideal: "When AI is a real part of your operation, not a side project.",
+    ideal: "When you need continuous iteration on your automations.",
     featured: false,
     order: 2,
   },
@@ -131,127 +128,174 @@ const engagements = [
 
 const services = [
   {
-    iconName: "agent",
-    title: "AI Agents",
-    description:
-      "Custom autonomous and semi-autonomous agents that research, write, summarize, qualify leads or operate other tools — built with LangChain, LangFlow and modern LLMs.",
-  },
-  {
     iconName: "workflow",
-    title: "Workflow Automation",
+    title: "AI Workflow Automation",
     description:
-      "End-to-end business automations that connect your apps, databases and APIs across n8n, Zapier and Make — CRM sync, lead routing, AI-enriched workflows and more.",
+      "Connecting business applications, webhooks, and databases into automated event-driven pipelines using n8n, Zapier, and Make.",
   },
   {
-    iconName: "chart",
-    title: "GoHighLevel Setup",
+    iconName: "agent",
+    title: "AI Agents & Autonomous Assistants",
     description:
-      "Sub-account configuration, funnels, calendars, pipelines, SMS and email automations and AI-powered conversation flows tailored to your agency or business.",
+      "Autonomous agents equipped with custom tools to summarize, research, categorize leads, or interact with external REST APIs.",
   },
   {
     iconName: "brain",
-    title: "Custom LLM Solutions",
+    title: "RAG & Knowledge Retrieval",
     description:
-      "Retrieval-augmented systems, knowledge-base chatbots, prompt engineering and integrating OpenAI, Anthropic and open-source models into your product.",
+      "Retrieval-augmented generation systems over company documentation, SOPs, and knowledge bases using vector databases.",
+  },
+  {
+    iconName: "layers",
+    title: "Multi-Agent Systems",
+    description:
+      "Collaborative multi-agent workflows where specialized agents research, synthesize, and format reports.",
+  },
+  {
+    iconName: "chart",
+    title: "AI Chatbots & Lead Capture",
+    description:
+      "Conversational bots for websites and Messenger that capture lead details, answer FAQs, and route conversations.",
   },
   {
     iconName: "code",
-    title: "Python & JavaScript",
+    title: "API & Webhook Integrations",
     description:
-      "Custom scripts and small services to glue systems together, scrape data, batch-process content or extend a no-code workflow with real code.",
-  },
-  {
-    iconName: "compass",
-    title: "Audit & Consultation",
-    description:
-      "Not sure what to automate first? I review your current workflow and recommend the highest-ROI automations and AI integrations.",
+      "Custom Python scripts and JavaScript functions to transform payloads, handle authentication, and glue APIs together.",
   },
 ];
 
 const skillCategories = [
   {
-    iconName: "workflow",
-    category: "Automation Platforms",
-    items: ["n8n", "Zapier", "Make (Integromat)", "GoHighLevel"],
+    iconName: "brain",
+    category: "AI & Agents",
+    items: [
+      "AI Agents",
+      "LangChain",
+      "Langflow",
+      "OpenAI API",
+      "Claude API",
+      "Prompt Engineering",
+      "RAG Systems",
+      "Multi-Agent Systems",
+    ],
   },
   {
-    iconName: "brain",
-    category: "AI / LLM Tools",
+    iconName: "workflow",
+    category: "Automation & Workflows",
     items: [
-      "LangChain",
-      "LangFlow",
-      "OpenAI API",
-      "Anthropic Claude",
-      "Prompt Engineering",
-      "RAG / Vector DBs",
+      "n8n",
+      "Zapier",
+      "Make",
+      "Webhooks",
+      "REST APIs",
+      "JSON",
     ],
   },
   {
     iconName: "terminal",
-    category: "Programming",
-    items: ["Python", "JavaScript", "TypeScript", "Node.js", "REST APIs"],
-  },
-  {
-    iconName: "rocket",
-    category: "Currently Learning",
-    items: ["LLM Engineering", "Fine-tuning", "Evaluation & Observability"],
+    category: "Dev Fundamentals",
+    items: [
+      "Python",
+      "JavaScript",
+      "Git",
+      "GitHub",
+      "REST APIs",
+      "Web Fundamentals",
+    ],
   },
 ];
 
 const projects = [
   {
-    title: "AI Lead Qualification Agent",
+    title: "Email Automation & Smart Triage",
     summary:
-      "An LLM-powered agent that ingests inbound leads, enriches them with public data, scores them, and routes hot ones to the sales team via Slack.",
-    outcome: "Cut response time 4h → 6 min, lifted lead-to-meeting 45%.",
-    stack: ["LangChain", "n8n", "OpenAI", "Slack API"],
+      "An automated workflow that monitors inbound emails, classifies urgency and topic using LLMs, drafts replies, and routes high-priority messages to Slack.",
+    outcome: "Classified and drafted responses for inbound emails with human review.",
+    stack: ["n8n", "OpenAI API", "Gmail API", "Slack Webhooks"],
     iconName: "agent",
-    category: "Agent",
+    category: "Automation",
   },
   {
-    title: "GoHighLevel Booking Bot",
+    title: "Social Media Content Generator",
     summary:
-      "Conversational SMS and email bot built on GoHighLevel that books appointments, answers FAQs, and hands off to a human when the conversation requires it.",
-    outcome: "Booked 60% of qualified inbound conversations with no human in the loop.",
-    stack: ["GoHighLevel", "OpenAI", "Twilio"],
-    iconName: "chart",
-    category: "Bot",
-  },
-  {
-    title: "Content Repurposing Pipeline",
-    summary:
-      "A Make.com workflow that turns one long-form video into 10+ pieces of social content using LLM summarization and templated rendering.",
-    outcome: "1 hour of video → 12 ready-to-post pieces in under 15 minutes.",
-    stack: ["Make", "OpenAI", "FFmpeg"],
+      "A content generation pipeline that takes core topics, structures multi-platform drafts via Claude, and organizes scheduled posts in Airtable.",
+    outcome: "Automated topic ideation, draft generation, and content calendar syncing.",
+    stack: ["LangChain", "Claude API", "Airtable API", "Python"],
     iconName: "layers",
-    category: "Pipeline",
+    category: "Content AI",
   },
   {
-    title: "Internal Knowledge-Base Chatbot",
+    title: "Customer Support Q&A Bot",
     summary:
-      "A retrieval-augmented chatbot over a company's docs, SOPs and Notion workspace — answers staff questions in seconds with source citations.",
-    outcome: "Reduced internal SOP questions by ~70% in the first month.",
-    stack: ["LangFlow", "Pinecone", "OpenAI", "Python"],
+      "A retrieval-augmented Q&A assistant built with Langflow that answers customer questions using documentation embeddings in Pinecone.",
+    outcome: "Accurate citation-backed answers retrieved from indexed product docs.",
+    stack: ["Langflow", "Pinecone", "OpenAI Embeddings", "FastAPI"],
     iconName: "bookmark",
     category: "RAG",
   },
   {
-    title: "E-commerce Auto-Reply Agent",
+    title: "Market Research Multi-Agent System",
     summary:
-      "Zapier and OpenAI automation that drafts and sends personalized customer support replies, escalating complex tickets to humans.",
-    outcome: "Auto-resolved ~55% of Tier-1 tickets with brand-tone replies.",
-    stack: ["Zapier", "OpenAI", "Gmail API"],
+      "A crew of specialized agents where a researcher queries public web data, an analyst synthesizes findings, and a writer formats an executive summary.",
+    outcome: "Structured multi-agent synthesis from web data into markdown reports.",
+    stack: ["LangChain", "Python", "Tavily Search API", "OpenAI"],
     iconName: "spark",
-    category: "Agent",
+    category: "Multi-Agent",
   },
   {
-    title: "AI Cold-Outreach System",
+    title: "Stock Analysis & Research Agent",
     summary:
-      "Multi-step sequence that researches each prospect, generates a personalized opener, and sends through a warmed-up inbox at scale.",
-    outcome: "350+ personalized openers per day per sender, 11% reply rate.",
-    stack: ["n8n", "OpenAI", "Apollo", "SMTP"],
-    iconName: "rocket",
-    category: "Outreach",
+      "An autonomous financial research agent that fetches market data via financial APIs, extracts sentiment from news articles, and drafts comparative summaries.",
+    outcome: "Automated data retrieval and sentiment extraction for tracked stocks.",
+    stack: ["Python", "Financial APIs", "Claude API", "Pandas"],
+    iconName: "chart",
+    category: "AI Agent",
+  },
+  {
+    title: "Multilingual Customer Support Bot",
+    summary:
+      "A customer support assistant capable of detecting incoming languages, translating queries, fetching policy answers, and responding in the user's native tongue.",
+    outcome: "Multi-language intent detection and translated response generation.",
+    stack: ["n8n", "OpenAI API", "Webhooks", "Translation API"],
+    iconName: "agent",
+    category: "Support Bot",
+  },
+  {
+    title: "Website Lead Generation Bot",
+    summary:
+      "An interactive web chatbot that qualifies visitor intent through structured questions and pushes qualified contact info directly into CRM systems.",
+    outcome: "Structured lead qualification flow with automated CRM webhook syncing.",
+    stack: ["JavaScript", "n8n", "HubSpot API", "OpenAI"],
+    iconName: "spark",
+    category: "Lead Gen",
+  },
+  {
+    title: "E-Commerce Chatbot Integration",
+    summary:
+      "An automated bot integrated into an online store that looks up order tracking numbers, answers return policy FAQs, and handles order status queries.",
+    outcome: "Order status lookup via API and automated FAQ handling.",
+    stack: ["n8n", "Shopify API", "OpenAI", "Webhooks"],
+    iconName: "workflow",
+    category: "E-Commerce",
+  },
+  {
+    title: "Mobile App FAQ & Documentation Bot",
+    summary:
+      "An in-app conversational assistant that indexes mobile app user guides and provides instant troubleshooting steps for common error messages.",
+    outcome: "Indexed markdown documentation for semantic query matching.",
+    stack: ["Langflow", "Pinecone", "OpenAI", "React"],
+    iconName: "bookmark",
+    category: "RAG",
+  },
+  {
+    title: "Voice-Enabled Appointment Scheduler",
+    summary:
+      "A voice-enabled booking agent prototype using speech-to-text, LLM slot extraction, and Google Calendar API integration to schedule appointments.",
+    outcome: "Working voice transcription, calendar slot checking, and meeting booking.",
+    stack: ["Python", "Whisper API", "Google Calendar API", "Twilio"],
+    iconName: "agent",
+    category: "Voice AI",
   },
 ];
 
@@ -261,279 +305,76 @@ const posts = [
     title: "AI automation is no longer optional",
     date: "2025-04-12",
     excerpt:
-      "The companies winning right now aren't the ones with the most headcount. They're the ones whose teams stopped doing repetitive work years ago.",
+      "Teams that remove repetitive work free up their time to focus on creative and high-leverage tasks.",
     readingTime: "5 min read",
     category: "Strategy",
-    tags: ["AI", "Automation", "Business"],
-    content: `The biggest misconception about automation is that it replaces people. In practice, the businesses I work with use automation to remove the work nobody should be doing — repetitive data entry, copy-pasting between tools, sending the same five emails a hundred times — so the team can spend their hours on the work that actually moves revenue.
+    tags: ["AI", "Automation", "Workflows"],
+    content: `The biggest misconception about automation is that it replaces people. In practice, workflow automation is about removing the work nobody should be doing manually — repetitive data entry, copy-pasting between tools, and sending standard confirmation emails.
 
-## What "AI automation" actually means
+## What AI automation adds
 
-Plain automation moves data between systems. **AI automation** adds judgement. Instead of "if X then Y", you can now say "if X, figure out the right Y, draft it in our voice, and only ping a human if you're not sure." Three examples I've shipped recently:
+Plain automation moves data between systems when fixed triggers happen. **AI automation** adds reasoning. Instead of rigid "if X then Y", you can classify unstructured text, extract key entities, summarize context, and make dynamic routing decisions.
 
-- A workflow that triages inbound support tickets, decides if they're urgent, drafts a reply in the brand's tone of voice and queues it for human review.
-- An agent that researches each prospect's website, summarizes what they do, and writes a personalized cold-email opener — at scale.
-- A system that watches Stripe for new customers and runs a tailored 30-day onboarding sequence based on the plan they purchased.
+Three practical examples:
+
+- A workflow that triages inbound emails, classifies urgency, drafts a contextual reply, and notifies Slack.
+- An agent that searches documents in a vector store and answers technical questions with citations.
+- A multi-agent crew that researches a topic, synthesizes key points, and drafts a formatted brief.
 
 ## Where to start
 
-Don't try to automate everything at once. Pick **one** repetitive task that takes your team more than an hour a week and start there. The compounding ROI is what matters, not the size of the first build.
-
-If you'd like an honest audit of your current workflow, [reach out](/contact). No pitch — I'll tell you what's worth automating and what isn't.`,
+Pick **one** repetitive task that takes more than an hour a week and start there. Solving small bottlenecks reliably is where compounding value begins.`,
   },
   {
     slug: "n8n-vs-zapier-vs-make",
     title: "n8n vs Zapier vs Make: an honest comparison",
     date: "2025-03-28",
     excerpt:
-      "I've shipped production workflows on all three. The right choice depends on three variables — complexity, volume, and who's going to maintain it.",
+      "Hands-on comparison of the three major automation platforms based on complexity, control, and maintenance.",
     readingTime: "7 min read",
     category: "Tools",
     tags: ["n8n", "Zapier", "Make"],
-    content: `After shipping production automations across Zapier, Make and n8n, I've stopped recommending a single "best" platform. The right choice depends on three variables: **complexity**, **volume**, and **who maintains it day-to-day**.
+    content: `After building automations across Zapier, Make, and n8n, each tool has clear strengths depending on the use case:
 
-## Zapier — best for non-technical teams
+## Zapier — fastest setup for simple connections
 
-Zapier is the easiest to learn. If your operations manager needs to wire up Typeform → Google Sheets → Gmail in fifteen minutes, nothing beats it. The trade-off is pricing — task-based billing gets expensive at scale, and complex branching logic is genuinely painful to build.
+Zapier is great for quick setups and non-technical teams. Connecting Typeform → Google Sheets → Gmail takes minutes. However, advanced logic and high task volumes can become costly.
 
-## Make — best for visual, multi-step flows
+## Make — visual, multi-step scenarios
 
-Make's scenario editor is a pleasure to use for visualizing data flow. It handles arrays and iteration far more elegantly than Zapier. Operation-based pricing is usually cheaper than Zapier for high-volume workflows.
+Make provides a clear visual canvas for data flow and handles complex array manipulation and iteration cleanly.
 
-## n8n — best when you want power and ownership
+## n8n — maximum control and custom logic
 
-n8n is open-source. You can self-host it for unlimited runs, drop into JavaScript whenever you need to, and integrate with anything that exposes an API. Steeper learning curve, but for technical teams it's a no-brainer for anything mission-critical.
+n8n is open-source, supports self-hosting, and lets you drop into custom JavaScript and Python nodes whenever needed. For developers and complex AI agent workflows, it offers unmatched flexibility.
 
-## TL;DR
+## Summary
 
-- **Non-technical team, low volume** → Zapier
-- **Visual workflow lover, medium volume** → Make
-- **Technical team, full control, high volume** → n8n
-
-Most of my clients end up running **n8n + a couple of Zapier connectors** for the long-tail apps n8n hasn't integrated yet.`,
+- **Quick simple integrations** → Zapier
+- **Visual multi-step branching** → Make
+- **Developer control, custom logic & self-hosting** → n8n`,
   },
   {
     slug: "from-automation-to-llm-engineering",
-    title: "From automation expert to LLM engineer",
+    title: "From workflow automation to LLM & agent engineering",
     date: "2025-04-20",
     excerpt:
-      "Why I'm spending the next phase of my career going deeper on the engineering side of LLMs — evaluation, observability and retrieval quality.",
+      "Why I'm focusing on the engineering side of LLMs — evaluation, observability, and retrieval quality.",
     readingTime: "4 min read",
     category: "Notes",
     tags: ["Career", "LLM", "Personal"],
-    content: `For years, the limiting factor in automation was the "decide" step. You had to hard-code every branch, anticipate every edge case, and accept that anything truly judgement-based had to stay manual.
+    content: `For years, traditional automation was bounded by rigid rules. You had to account for every branch manually.
 
-LLMs collapsed that limitation overnight. Suddenly the decision step in a workflow could be a paragraph of natural language, and the system could reason about it. I started weaving model calls into n8n flows, then graduated to **LangChain** for more structured agent logic and **LangFlow** for visualizing complex chains.
+LLMs made it possible to reason over unstructured inputs, extract parameters dynamically, and draft intelligent outputs.
 
-## Where I'm headed next
+## Where I'm focusing next
 
-The next phase for me is going deeper on the engineering side of LLMs:
+- **Evaluation** — testing prompts and outputs against structured test sets.
+- **Observability** — tracing agent reasoning steps, tool calls, and latency.
+- **Retrieval quality** — optimizing chunking, embeddings, and vector search in RAG.
+- **Multi-agent collaboration** — orchestrating specialized agent roles with clear boundaries.
 
-- **Evaluation** — how do you actually measure if an agent is good?
-- **Observability** — tracing what an agent did, and why.
-- **Retrieval quality** — chunking, retrievers, rerankers, hybrid search.
-- **Fine-tuning** — when it's worth the cost vs. simply better prompting.
-
-The bar for "production-ready agent" keeps rising. I want to be on the right side of that line.
-
-If you're on the same path, [let's connect](/contact).`,
-  },
-  {
-    slug: "how-we-evaluate-llms-before-shipping",
-    title: "How we evaluate LLMs before shipping them to clients",
-    date: "2025-04-26",
-    excerpt:
-      "Vibes-driven prompt engineering is fine for a demo. Production needs an evaluation harness — here's the one we run at Tensorix.",
-    readingTime: "8 min read",
-    category: "Engineering",
-    tags: ["LLM", "Evaluation", "Production"],
-    content: `Most agents look great in the demo and fall apart in week two. The reason is almost always the same — there was no evaluation. The team built a prompt that worked on five examples, shipped it, and discovered the long tail of inputs the hard way.
-
-At Tensorix we won't ship an agent without a basic eval harness. Here's the one we use.
-
-## Step 1 — write the eval set before the prompt
-
-This sounds backwards. It isn't. Before I touch a prompt, I write 30–50 input/output pairs by hand. Real inputs from the client's data, with the output I'd want a human to produce. The eval set is the spec.
-
-If you can't write 30 examples of what "good" looks like, **you don't understand the task well enough to ship it.**
-
-## Step 2 — pick three metrics, not thirty
-
-Not every task needs a custom metric. We default to three:
-
-- **Exact match** — for tasks where there's a right answer (classification, extraction).
-- **LLM-as-judge** — for open-ended outputs (summaries, drafts). A separate, stronger model grades the output against a rubric.
-- **Latency p95** — measured under realistic concurrency.
-
-Anything more sophisticated than this should be earned. If you start with **DeepEval** + **Phoenix** + **LangSmith** + a custom metric, you'll spend two weeks on infrastructure before you've shipped a single eval.
-
-## Step 3 — run it on every change
-
-The eval suite runs on every prompt edit, every model swap, every retrieval change. We commit the results to git so we can see regressions over time. \`pytest\` works fine for this.
-
-The most underrated benefit: **regressions stop being a vibe.** When a stakeholder says "the new version is worse", you can show them the score on the same eval set as last week.
-
-## Step 4 — separate the eval set from the training set
-
-If you're tuning prompts based on the eval set, you're overfitting. Keep a held-out set you only look at right before shipping.
-
-## What this catches in practice
-
-In the last six months, our eval harness has caught:
-- A model upgrade (3.5 → 4o) that improved most outputs but regressed on long inputs because of context-window pricing changes.
-- A retrieval change that made answers prettier but factually worse.
-- A prompt edit that fixed one edge case and broke seven others.
-
-None of these would have been caught by manual testing.
-
-## TL;DR
-
-Ship an eval harness with the agent. It doesn't need to be fancy — 30 hand-written examples + LLM-as-judge + a CI script. The discipline of always running it is more valuable than the metric itself.`,
-  },
-  {
-    slug: "the-tensor-agent-stack",
-    title: "The agent stack we use at Tensorix",
-    date: "2025-04-22",
-    excerpt:
-      "After two years building agents in production, we've converged on a stack that's small, observable and cheap to run. Here's what's in it.",
-    readingTime: "9 min read",
-    category: "Engineering",
-    tags: ["Agents", "Stack", "LangGraph"],
-    content: `Every six months I rebuild the same parts of the agent stack from scratch. Each iteration gets shorter as the ecosystem matures. Here's what's in our current setup at Tensorix and **why** — because the why ages better than the libraries.
-
-## The stack, top to bottom
-
-- **Orchestration:** LangGraph (Python) for stateful, branching agents. n8n for stateless workflow glue.
-- **Models:** Claude 3.5 Sonnet for reasoning. GPT-4o-mini for cheap classification. Together AI for self-hosted fallbacks.
-- **Retrieval:** PostgreSQL + pgvector. Hybrid search (BM25 + vector) via \`pg_search\`.
-- **Storage:** PostgreSQL for everything. Redis for ephemeral state.
-- **Observability:** LangSmith for traces. Sentry for errors. Plain SQL for analytics.
-- **Deployment:** Vercel for the UI. Fly.io for the agent runtime. Cloudflare for routing.
-- **Eval:** Custom \`pytest\` harness (see [how we evaluate LLMs](/blog/how-we-evaluate-llms-before-shipping)).
-
-## Why LangGraph over LangChain
-
-LangChain is excellent for prototyping. The chain abstraction breaks down for anything stateful, branching or long-running. LangGraph models agents as state machines — explicit nodes, explicit edges, explicit checkpoints. It is dramatically easier to debug.
-
-For workflows that don't need agent state (an LLM call wrapped in retries, a triage step inside an n8n flow), I skip LangGraph entirely and call the model directly. Not every problem is an agent.
-
-## Why two models, not one
-
-Cost. A typical Tensorix agent does 80% of its work with GPT-4o-mini at $0.15/1M tokens, then escalates to Sonnet for the hard 20%. The cost difference is 30×, the quality difference (for the right tasks) is invisible.
-
-The trick is teaching the agent **when to escalate**. We use a confidence-scoring step: the cheap model decides if it's sure, and only routes to Sonnet when it isn't.
-
-## Why pgvector, not Pinecone
-
-For 95% of clients, pgvector inside Postgres is faster, cheaper and operationally simpler than running a separate vector database. You only need a dedicated vector DB once you're past ~10M embeddings or you need very high concurrent throughput. We've never hit that bar.
-
-## What I removed
-
-Things I was using a year ago and stopped:
-
-- **Auto-GPT-style fully autonomous loops.** Too unpredictable. We use bounded multi-step agents with explicit supervisor checks.
-- **OpenAI's Assistants API.** Vendor lock-in for features you can replicate in 50 lines.
-- **Vector-only retrieval.** Hybrid search with BM25 reranking is consistently better.
-
-## TL;DR
-
-The boring stack wins. Postgres, two models, LangGraph, LangSmith, eval harness. Less abstraction, more observability.`,
-  },
-  {
-    slug: "gohighlevel-vs-build-from-scratch",
-    title: "GoHighLevel vs build-from-scratch: when each makes sense",
-    date: "2025-04-18",
-    excerpt:
-      "GoHighLevel is the right answer 70% of the time. The other 30% it's a trap. Here's how to tell.",
-    readingTime: "6 min read",
-    category: "Strategy",
-    tags: ["GoHighLevel", "SaaS", "Build vs Buy"],
-    content: `Most agencies and service businesses I work with are choosing between **GoHighLevel** (or HubSpot, Close, Active Campaign — same shape) and **building a custom system**. The right answer is GoHighLevel about 70% of the time. Here's how to tell which side of the line you're on.
-
-## When GoHighLevel is right
-
-You should use GoHighLevel if **all** of these are true:
-
-- Your sales process is reasonably standard (lead → qualify → book → close).
-- You'll have <10 power users editing the system.
-- You don't need anything that the platform doesn't already do.
-- Time-to-value matters more than total-cost-of-ownership over 3 years.
-
-In this scenario, GHL gives you funnels, pipelines, calendars, SMS/email automations, AI conversation flows and a customer portal in roughly a week. Building that from scratch is a six-month project that costs more than the platform fee will over the lifetime of the business.
-
-## When custom makes sense
-
-You should build custom if **any** of these are true:
-
-- Your business model has a non-standard piece (multi-leg booking, complex pricing, an unusual handoff).
-- You need integrations the platform doesn't have, and the workarounds are ugly.
-- The platform's data model fights you (you're constantly using "custom fields" to fake what should be a first-class concept).
-- You're at scale where the per-seat / per-contact pricing crosses build-it-yourself economics.
-
-The trap most teams fall into: they pick GHL because it's faster, then bend the platform until it groans. Eventually they're paying SaaS fees to maintain a half-working custom build inside someone else's CRM.
-
-## The "configure first, code second" rule
-
-Whenever I take on a new client, I configure GoHighLevel first — even if I think we'll need custom. The configuration is the spec. Two outcomes:
-
-1. The configuration solves the problem. Great — we're done.
-2. The configuration hits a wall. Now we know exactly which piece we need to replace, and we keep GHL for the parts it does well.
-
-This **hybrid stack** ends up being most of our long-running engagements: GHL for CRM + funnels, our custom code for the one thing it can't do.
-
-## What I avoid
-
-Two failure modes I've seen repeatedly:
-
-- **Replacing GHL with a from-scratch custom CRM.** Almost always a mistake. The features you don't think you need (deliverability infra, calendar sync, SMS compliance) take months to rebuild.
-- **Forcing custom logic through Zapier into GHL.** Works for a while, becomes unmaintainable past a few flows.
-
-## TL;DR
-
-Configure first. Code second. The hybrid stack is the boring, unglamorous, correct answer for most service businesses.`,
-  },
-  {
-    slug: "what-production-grade-ai-means",
-    title: "What 'production-grade AI' actually means in 2025",
-    date: "2025-04-15",
-    excerpt:
-      "The term gets thrown around a lot. Here's the checklist we use at Tensorix to decide if a system is actually production-ready.",
-    readingTime: "5 min read",
-    category: "Engineering",
-    tags: ["Production", "Reliability", "Operations"],
-    content: `Everyone in the AI ecosystem says they ship "production-grade" systems. Most of them ship demos that happen to live on the internet. Production means something specific. Here's the checklist we use.
-
-## A system is production-grade if it has:
-
-**1. An eval suite that runs in CI.** If you can't show me the score from the last commit, you don't have an eval suite, you have wishful thinking.
-
-**2. Observability for every model call.** Inputs, outputs, latency, cost, error rate. Logged. Searchable. We use LangSmith for this; you can build it yourself in two days if you want.
-
-**3. Graceful degradation.** What happens when OpenAI returns a 503? When Anthropic rate-limits you? When the user types nonsense? Each of these has been a 2am incident at some point — design for it from day one.
-
-**4. A cost ceiling.** Token-based pricing means a runaway agent can rack up four-figure bills overnight. We hard-cap every agent at a per-request and per-day spend. The cap is in code, not configuration.
-
-**5. PII handling.** What data is going into the prompt? What's coming back? Where is it logged? Most teams haven't thought about this. Auditors will.
-
-**6. A rollback plan.** Prompts, model versions and retrieval data are all things you might need to roll back instantly. Treat them like database migrations — versioned, reviewable, reversible.
-
-**7. Human-in-the-loop where it matters.** The agent should be confident about its uncertainty. Anywhere it isn't sure, escalate to a human. The metric is "% of cases auto-resolved", not "% of cases the agent attempted".
-
-## What's *not* on the list
-
-- **Fancy architecture.** Most production agents we ship are 200 lines of Python.
-- **The latest model.** We default to one major version behind to avoid breakage.
-- **Custom UI.** We use plain HTML email and Slack until the workflow proves it deserves more.
-
-## How long does this take to build?
-
-For a real agent: **six to eight weeks**. The first two weeks are scoping + eval set. The next two are the agent. The last four are everything on the list above. The agent itself is the easy part.
-
-If a vendor tells you a production agent takes a week, what they mean is **a demo**. Demos are easy. Production is what we get paid for.
-
-## TL;DR
-
-Production = eval + observability + degradation + cost cap + PII + rollback + human-in-the-loop. The agent is the smallest part of the work.`,
+I learn best by building real workflows and testing their edge cases hands-on.`,
   },
 ];
 
@@ -543,7 +384,6 @@ function makeKey(prefix, i) {
   return `${prefix}-${i.toString(36)}`;
 }
 
-// Parses inline **bold** and [text](href) into a list of Portable Text spans.
 function parseInline(text, baseKey) {
   const parts = [];
   let i = 0;
@@ -562,7 +402,6 @@ function parseInline(text, baseKey) {
     buf = "";
   }
 
-  // Tokenize sequentially.
   let mIdx = 0;
   const markDefs = [];
 
@@ -668,7 +507,6 @@ function markdownToPortableText(md) {
       continue;
     }
     flushList();
-    // Combine consecutive non-empty lines into one paragraph.
     let para = line;
     while (i + 1 < lines.length && lines[i + 1].trim() && !lines[i + 1].startsWith("## ") && !lines[i + 1].startsWith("- ")) {
       i++;
@@ -686,17 +524,17 @@ function markdownToPortableText(md) {
 async function run() {
   console.log("Seeding Sanity dataset:", dataset);
 
-  // Use a transaction so everything either succeeds or rolls back.
   const tx = client.transaction();
 
-  // Site config — singleton, deterministic _id.
+  // Site config
   tx.createOrReplace(siteConfig);
 
-  // Engagement / pricing tiers — deterministic _ids.
+  // Engagement tiers
   engagements.forEach((e) => {
     tx.createOrReplace(e);
   });
 
+  // Services
   services.forEach((s, i) => {
     tx.createOrReplace({
       _id: `service.${slugify(s.title)}`,
@@ -706,6 +544,7 @@ async function run() {
     });
   });
 
+  // Skill categories
   skillCategories.forEach((s, i) => {
     tx.createOrReplace({
       _id: `skill.${slugify(s.category)}`,
@@ -715,6 +554,7 @@ async function run() {
     });
   });
 
+  // Projects
   projects.forEach((p, i) => {
     tx.createOrReplace({
       _id: `project.${slugify(p.title)}`,
@@ -726,11 +566,12 @@ async function run() {
       stack: p.stack,
       iconName: p.iconName,
       category: p.category,
-      featured: i < 3,
+      featured: i < 4,
       order: i,
     });
   });
 
+  // Posts
   posts.forEach((post) => {
     tx.createOrReplace({
       _id: `post.${post.slug}`,

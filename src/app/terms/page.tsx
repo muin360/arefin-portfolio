@@ -5,12 +5,12 @@ import { PageHeader } from "@/components/Section";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "The terms that govern use of tensorix.me and any engagement with Tensorix for AI automation, Messenger bots, or website development.",
+    "The terms that govern use of this website and any project engagement with Arefin Mueen for AI automations or agent workflows.",
   alternates: { canonical: "/terms" },
 };
 
 const LAST_UPDATED = "April 2026";
-const CONTACT_EMAIL = "hello@tensorix.me";
+const CONTACT_EMAIL = "arefinmueen360@gmail.com";
 
 export default function TermsPage() {
   return (
@@ -25,7 +25,7 @@ export default function TermsPage() {
             <span className="serif">in plain English.</span>
           </>
         }
-        subtitle="What you can expect from Tensorix, what we expect from you, and how we handle the boring-but-important parts. Written to be read, not skimmed past."
+        subtitle="What you can expect from working with Arefin Mueen, what is expected from you, and how project communications are handled. Written to be clear and transparent."
       />
 
       <section className="max-w-3xl mx-auto px-6 sm:px-8 section">
