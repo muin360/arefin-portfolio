@@ -30,7 +30,9 @@ export default function LiveAgent() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Only scroll when there are actual messages — not on initial mount
+    if (msgs.length === 0) return;
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [msgs, loading]);
 
   async function send(text: string) {

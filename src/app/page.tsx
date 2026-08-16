@@ -63,26 +63,20 @@ export default async function HomePage() {
         aria-label="Services"
       >
         <div className="v2-container">
-          <Reveal>
-            <SectionLabel index="02" hint="four ways i build with you">
-              Services
-            </SectionLabel>
-          </Reveal>
-          <Reveal delay={80}>
-            <h2 className="v2-section__head">
-              Four ways I{" "}
-              <em className="v2-section__head-em">build with you.</em>
-            </h2>
-          </Reveal>
-          <Reveal delay={120}>
-            <p className="v2-section__sub">
-              Productized offers, scoped after a 30-minute audit, with
-              acceptance criteria signed in writing before I touch
-              anything in production.
-            </p>
-          </Reveal>
+          <SectionLabel index="02" hint="four ways i build with you">
+            Services
+          </SectionLabel>
+          <h2 className="v2-section__head">
+            Four ways I{" "}
+            <em className="v2-section__head-em">build with you.</em>
+          </h2>
+          <p className="v2-section__sub">
+            Productized offers, scoped after a 30-minute audit, with
+            acceptance criteria signed in writing before I touch
+            anything in production.
+          </p>
           <div className="v2-section__body">
-            <Reveal delay={100}>
+            <Reveal delay={120}>
               <BentoServices />
             </Reveal>
           </div>
@@ -90,36 +84,30 @@ export default async function HomePage() {
       </section>
 
       {/* STATS BAR — at a glance numbers */}
-      <Reveal>
-        <StatsBar />
-      </Reveal>
+      <StatsBar />
 
       {/* SELECTED WORK */}
       <section className="v2-section" aria-label="Selected work">
         <div className="v2-container">
           <div className="v2-section__top">
-            <Reveal>
-              <div>
-                <SectionLabel index="03" hint="case studies">
-                  Selected work
-                </SectionLabel>
-                <h2 className="v2-section__head">
-                  Systems that{" "}
-                  <em className="v2-section__head-em">do the work,</em>
-                  <br />
-                  so you don&rsquo;t.
-                </h2>
-              </div>
-            </Reveal>
-            <Reveal delay={200}>
-              <Link href="/projects" className="v2-section__more">
-                <span>View all</span>
-                <span aria-hidden="true">→</span>
-              </Link>
-            </Reveal>
+            <div>
+              <SectionLabel index="03" hint="case studies">
+                Selected work
+              </SectionLabel>
+              <h2 className="v2-section__head">
+                Systems that{" "}
+                <em className="v2-section__head-em">do the work,</em>
+                <br />
+                so you don&rsquo;t.
+              </h2>
+            </div>
+            <Link href="/projects" className="v2-section__more">
+              <span>View all</span>
+              <span aria-hidden="true">→</span>
+            </Link>
           </div>
           <div className="v2-section__body">
-            <Reveal delay={150} y={16}>
+            <Reveal delay={100} y={20}>
               <ProjectsGridV2 limit={4} />
             </Reveal>
           </div>
@@ -129,27 +117,21 @@ export default async function HomePage() {
       {/* SPRINT TIMELINE — process */}
       <section className="v2-section v2-section--dark" aria-label="How it works">
         <div className="v2-container">
-          <Reveal>
-            <SectionLabel index="04" hint="14 days from first call to live system">
-              How I work
-            </SectionLabel>
-          </Reveal>
-          <Reveal delay={80}>
-            <h2 className="v2-section__head">
-              From first message
-              <br />
-              <em className="v2-section__head-em">to live system in 14 days.</em>
-            </h2>
-          </Reveal>
-          <Reveal delay={120}>
-            <p className="v2-section__sub">
-              Six steps. You always know what&rsquo;s happening, what&rsquo;s
-              next, and what you&rsquo;ll have at the end of each phase —
-              starting with a free 30-minute audit call.
-            </p>
-          </Reveal>
+          <SectionLabel index="04" hint="14 days from first call to live system">
+            How I work
+          </SectionLabel>
+          <h2 className="v2-section__head">
+            From first message
+            <br />
+            <em className="v2-section__head-em">to live system in 14 days.</em>
+          </h2>
+          <p className="v2-section__sub">
+            Six steps. You always know what&rsquo;s happening, what&rsquo;s
+            next, and what you&rsquo;ll have at the end of each phase —
+            starting with a free 30-minute audit call.
+          </p>
           <div className="v2-section__body">
-            <Reveal delay={100} y={20}>
+            <Reveal delay={100} y={24}>
               <SprintTimeline />
             </Reveal>
           </div>
@@ -160,23 +142,19 @@ export default async function HomePage() {
       <section className="v2-section" aria-label="Journal">
         <div className="v2-container">
           <div className="v2-section__top">
-            <Reveal>
-              <div>
-                <SectionLabel index="05" hint="recent notes">
-                  Journal
-                </SectionLabel>
-                <h2 className="v2-section__head">
-                  Notes on shipping{" "}
-                  <em className="v2-section__head-em">AI in production.</em>
-                </h2>
-              </div>
-            </Reveal>
-            <Reveal delay={200}>
-              <Link href="/blog" className="v2-section__more">
-                <span>All entries</span>
-                <span aria-hidden="true">→</span>
-              </Link>
-            </Reveal>
+            <div>
+              <SectionLabel index="05" hint="recent notes">
+                Journal
+              </SectionLabel>
+              <h2 className="v2-section__head">
+                Notes on shipping{" "}
+                <em className="v2-section__head-em">AI in production.</em>
+              </h2>
+            </div>
+            <Link href="/blog" className="v2-section__more">
+              <span>All entries</span>
+              <span aria-hidden="true">→</span>
+            </Link>
           </div>
           <div className="v2-section__body">
             <Reveal delay={100}>
@@ -189,19 +167,15 @@ export default async function HomePage() {
       {/* FAQ */}
       <section className="v2-section" aria-label="FAQ">
         <div className="v2-container v2-container--narrow">
-          <Reveal>
-            <SectionLabel index="06" hint="the six i get asked most">
-              FAQ
-            </SectionLabel>
-          </Reveal>
-          <Reveal delay={80}>
-            <h2 className="v2-section__head">
-              The honest answers{" "}
-              <em className="v2-section__head-em">to the questions every SMB asks.</em>
-            </h2>
-          </Reveal>
+          <SectionLabel index="06" hint="the six i get asked most">
+            FAQ
+          </SectionLabel>
+          <h2 className="v2-section__head">
+            The honest answers{" "}
+            <em className="v2-section__head-em">to the questions every SMB asks.</em>
+          </h2>
           <div className="v2-section__body">
-            <Reveal delay={80}>
+            <Reveal delay={80} y={16}>
               <FaqAccordionV2 />
             </Reveal>
           </div>
@@ -209,9 +183,7 @@ export default async function HomePage() {
       </section>
 
       {/* FINAL CTA */}
-      <Reveal>
-        <FinalCtaV2 />
-      </Reveal>
+      <FinalCtaV2 />
     </>
   );
 }

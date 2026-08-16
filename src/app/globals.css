@@ -2092,6 +2092,9 @@ body.is-loaded main {
   background: var(--elevated);
   border-top: 1px solid var(--border-2);
   border-bottom: 1px solid var(--border-2);
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
 }
 .v2-stat__value {
   font-family: var(--f-display);
@@ -3987,6 +3990,28 @@ body.is-loaded main {
 
 .v2-project__card:hover .card-demo-hint { opacity: 1; }
 
+/* Tech ticker v2 base */
+.v2-ticker {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  z-index: 1;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
 /* === TRANSITIONS === */
 
 /* Page entrance */
@@ -4022,20 +4047,14 @@ body.is-loaded main {
   }
   to {
     opacity: 0;
-    transform: translateY(-8px);
-    filter: blur(2px);
+    transform: translateY(-10px);
+    filter: blur(3px);
   }
 }
 
 main.page-exiting {
-  animation: page-exit 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+  animation: page-exit 0.24s cubic-bezier(0.4, 0, 1, 1) both;
   pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  main.page-exiting {
-    animation: none;
-  }
 }
 
 /* Navbar active link — smooth underline slide */
@@ -4091,12 +4110,6 @@ main.page-exiting {
   animation-play-state: running;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .section-label {
-    animation: none;
-  }
-}
-
 /* Universal card hover — subtle lift + shadow deepen */
 .v2-project,
 .v2-bento__card,
@@ -4110,14 +4123,9 @@ main.page-exiting {
 .v2-project:hover,
 .v2-bento__card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 60px -20px rgba(91, 110, 245, 0.2);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .v2-project:hover,
-  .v2-bento__card:hover {
-    transform: none;
-  }
+  box-shadow: 0 20px 60px -20px rgba(91, 110, 245, 0.18);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease !important;
 }
 
 /* Footer — fade up on scroll */
@@ -4134,7 +4142,37 @@ footer[data-reveal="footer"].is-visible {
   transform: translateY(0);
 }
 
+/* Smooth scroll — applies to anchor links like #services */
+html {
+  scroll-behavior: smooth;
+}
+
+/* TechTicker edge fade — already handled by mask-image in v2-ticker,
+   ensure no double-fade conflict */
+.v2-ticker::before,
+.v2-ticker::after {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  main.page-exiting {
+    animation: none;
+  }
+
+  .section-label {
+    animation: none;
+  }
+
+  .v2-project:hover,
+  .v2-bento__card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
   footer[data-reveal="footer"] {
     opacity: 1;
     transform: none;
@@ -4142,40 +4180,4 @@ footer[data-reveal="footer"].is-visible {
   }
 }
 
-/* Smooth scroll — applies to anchor links like #services */
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-/* TechTicker — fade in/out at left and right edges for smooth feel */
-.v2-ticker {
-  position: relative;
-}
-
-.v2-ticker::before,
-.v2-ticker::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.v2-ticker::before {
-  left: 0;
-  background: linear-gradient(to right, var(--void, #04040a), transparent);
-}
-
-.v2-ticker::after {
-  right: 0;
-  background: linear-gradient(to left, var(--void, #04040a), transparent);
-}
 

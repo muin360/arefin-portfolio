@@ -6,13 +6,13 @@ import { useEffect, useRef } from "react";
 /**
  * PageTransition
  *
- * Listens to route changes via usePathname. On each change:
- * 1. Adds `page-leaving` to <body> → triggers exit animation (fade out + blur)
- * 2. After exit completes, removes `page-leaving`
- * 3. Adds `is-loaded` to re-trigger the entrance animation on <main>
+ * Detects route changes via usePathname and applies a smooth
+ * fade-out → fade-in transition between pages.
  *
- * This gives a smooth fade-out → fade-in on every navigation.
- * Works with Next.js App Router without any wrapper component.
+ * Exit: main slides up + fades (240ms)
+ * Enter: main slides up from below + fades in (650ms)
+ *
+ * Respects prefers-reduced-motion — skips animation entirely if set.
  */
 export default function PageTransition() {
   const pathname = usePathname();
@@ -20,36 +20,35 @@ export default function PageTransition() {
   const isFirst = useRef(true);
 
   useEffect(() => {
-    // Skip the very first render — PageLoader handles the initial entrance
     if (isFirst.current) {
       isFirst.current = false;
       return;
     }
 
-    // Same page — no transition needed
     if (prevPathname.current === pathname) return;
     prevPathname.current = pathname;
+
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const main = document.querySelector("main");
     if (!main) return;
 
-    // Check reduced motion preference
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    // Exit: quick fade out
+    // Step 1: Exit animation
     main.classList.add("page-exiting");
+    document.body.classList.remove("is-loaded");
 
     const t = window.setTimeout(() => {
+      // Step 2: Remove exit, trigger entrance
       main.classList.remove("page-exiting");
 
-      // Entrance: remove is-loaded momentarily then re-add to retrigger animation
-      document.body.classList.remove("is-loaded");
+      // Double rAF ensures the class removal is painted before re-adding is-loaded
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           document.body.classList.add("is-loaded");
         });
       });
-    }, 220); // matches the exit animation duration
+    }, 240);
 
     return () => window.clearTimeout(t);
   }, [pathname]);
