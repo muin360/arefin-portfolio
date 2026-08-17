@@ -882,6 +882,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
                     />
                     {editingProject.coverImage && (
                       <div className="relative w-full h-44 rounded-xl overflow-hidden border border-white/10 bg-black">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={editingProject.coverImage}
                           alt="Cover preview"
@@ -906,6 +907,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
                       />
                       {editingProject.workflowImage && (
                         <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10 bg-black mt-2">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={editingProject.workflowImage}
                             alt="Workflow diagram preview"
@@ -928,6 +930,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
                       />
                       {editingProject.architectureImage && (
                         <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10 bg-black mt-2">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={editingProject.architectureImage}
                             alt="Architecture preview"
@@ -964,6 +967,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {(editingProject.gallery || []).map((img, idx) => (
                         <div key={idx} className="relative rounded-xl overflow-hidden border border-white/10 bg-black group h-24">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={img} alt={`Gallery item ${idx + 1}`} className="w-full h-full object-cover" />
                           <button
                             type="button"

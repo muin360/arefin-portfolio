@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { Project } from "@/lib/db/types";
 import { ArrowRight, Workflow } from "lucide-react";
 import SectionPlate from "@/components/SectionPlate";
@@ -217,10 +218,12 @@ function FlagshipCard({ project }: { project: Project }) {
         {/* Cover Media */}
         <div className="lg:col-span-5 relative w-full h-52 sm:h-64 rounded-xl overflow-hidden border border-white/10 bg-[#060810] shrink-0">
           {coverImage ? (
-            <img
+            <Image
               src={coverImage}
               alt={project.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              fill
+              unoptimized
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-[#121622] to-[#07090e]">
@@ -302,10 +305,12 @@ function SecondaryCard({
       <div>
         {coverImage && (
           <div className="relative w-full h-40 rounded-xl overflow-hidden border border-white/10 bg-[#060810] mb-4">
-            <img
+            <Image
               src={coverImage}
               alt={project.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              fill
+              unoptimized
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
             />
           </div>
         )}

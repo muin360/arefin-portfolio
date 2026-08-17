@@ -189,6 +189,7 @@ export default function SettingsForm({ initialConfig }: Props) {
             {/* Live circular preview */}
             <div className="w-20 h-20 rounded-full border-2 border-violet-500/30 bg-[#141a29] flex items-center justify-center overflow-hidden shrink-0 shadow-lg relative">
               {formData.profileImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={formData.profileImage}
                   alt="Profile preview"
