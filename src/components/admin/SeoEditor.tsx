@@ -126,7 +126,7 @@ export default function SeoEditor({ initialSeo }: Props) {
                 <label className="text-xs font-mono uppercase text-[#9ca3af] font-semibold">
                   Global Site Title *
                 </label>
-                <span className={`text-[10px] font-mono ${titleLength > 60 ? "text-rose-400" : "text-[#6b7280]"}`}>
+                <span className={`text-[10px] font-mono font-semibold ${titleLength > 60 ? "text-rose-400" : titleLength >= 30 ? "text-emerald-400" : "text-amber-400"}`}>
                   {titleLength}/60 chars
                 </span>
               </div>
@@ -144,7 +144,7 @@ export default function SeoEditor({ initialSeo }: Props) {
                 <label className="text-xs font-mono uppercase text-[#9ca3af] font-semibold">
                   Meta Description *
                 </label>
-                <span className={`text-[10px] font-mono ${descLength > 160 ? "text-rose-400" : "text-[#6b7280]"}`}>
+                <span className={`text-[10px] font-mono font-semibold ${descLength > 160 ? "text-rose-400" : descLength >= 100 ? "text-emerald-400" : "text-amber-400"}`}>
                   {descLength}/160 chars
                 </span>
               </div>

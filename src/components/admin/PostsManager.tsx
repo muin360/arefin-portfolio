@@ -513,9 +513,87 @@ export default function PostsManager({ initialPosts }: Props) {
                     Article Body (Markdown)
                   </label>
                   <span className="text-[10px] font-mono text-[#6b7280]">
-                    {editingPost.content?.split(/\s+/).filter(Boolean).length || 0} words
+                    {editingPost.content?.split(/\s+/).filter(Boolean).length || 0} words · {editingPost.readingTime || "1 min read"}
                   </span>
                 </div>
+
+                {/* Markdown Formatting Quick Toolbar */}
+                {!previewMode && (
+                  <div className="flex items-center gap-1.5 p-1.5 bg-[#141a29] border border-[#1e2433] rounded-t-xl overflow-x-auto text-[11px] font-mono text-[#9ca3af]">
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + "\n## ")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded transition-colors"
+                      title="Heading 2"
+                    >
+                      H2
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + "\n### ")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded transition-colors"
+                      title="Heading 3"
+                    >
+                      H3
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + " **bold** ")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded font-bold transition-colors"
+                      title="Bold Text"
+                    >
+                      B
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + " *italic* ")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded italic transition-colors"
+                      title="Italic Text"
+                    >
+                      I
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + " `code` ")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded transition-colors"
+                      title="Inline Code"
+                    >
+                      &lt;/&gt;
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + "\n```json\n{\n  \n}\n```\n")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded transition-colors"
+                      title="Code Block"
+                    >
+                      Code Block
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + "\n> Quote\n")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded transition-colors"
+                      title="Blockquote"
+                    >
+                      Quote
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + "\n- List item\n")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded transition-colors"
+                      title="Bullet List"
+                    >
+                      • List
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContentChange((editingPost.content || "") + " [Link Title](https://example.com) ")}
+                      className="px-2 py-1 hover:text-white hover:bg-[#1e2433] rounded transition-colors"
+                      title="Link"
+                    >
+                      Link
+                    </button>
+                  </div>
+                )}
 
                 {previewMode ? (
                   <div className="w-full p-4 bg-[#141a29] border border-[#1e2433] rounded-xl text-slate-200 text-sm prose prose-invert max-w-none min-h-[260px] whitespace-pre-wrap">
@@ -527,7 +605,7 @@ export default function PostsManager({ initialPosts }: Props) {
                     value={editingPost.content || ""}
                     onChange={(e) => handleContentChange(e.target.value)}
                     placeholder="## Introduction&#10;&#10;Write your deep dive in standard Markdown..."
-                    className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm font-mono leading-relaxed focus:outline-none focus:border-violet-500"
+                    className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-b-xl border-t-0 text-white text-sm font-mono leading-relaxed focus:outline-none focus:border-violet-500"
                   />
                 )}
               </div>

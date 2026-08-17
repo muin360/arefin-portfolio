@@ -9,6 +9,27 @@ interface AuthProfile {
   isAdmin?: boolean;
 }
 
+/**
+ * Constant-time passcode comparison to eliminate timing attacks.
+ * Pure implementation compatible with both Node.js and Next.js Edge Runtime.
+ */
+export function timingSafePasscodeCheck(provided?: string, expected?: string): boolean {
+  if (!provided || !expected) return false;
+  if (typeof provided !== "string" || typeof expected !== "string") return false;
+
+  const a = provided;
+  const b = expected;
+  let mismatch = a.length === b.length ? 0 : 1;
+
+  for (let i = 0; i < a.length; i++) {
+    const charA = a.charCodeAt(i);
+    const charB = b.charCodeAt(i % b.length);
+    mismatch |= charA ^ charB;
+  }
+
+  return mismatch === 0 && a.length === b.length;
+}
+
 export function isAdmin(email?: string | null, githubLogin?: string | null): boolean {
   const adminEmails = (
     process.env.ADMIN_EMAILS || "hmmuhammadmuin50@gmail.com,arefinmueen360@gmail.com"
@@ -41,8 +62,8 @@ const config = {
         const password = credentials?.password as string | undefined;
         const validPass = process.env.ADMIN_PASSWORD || process.env.ADMIN_SECRET;
 
-        // Strict environment-driven passcode check with no hardcoded fallbacks
-        if (validPass && password && password === validPass) {
+        // Strict constant-time passcode check
+        if (validPass && password && timingSafePasscodeCheck(password, validPass)) {
           return {
             id: "admin-user",
             name: "Arefin Mueen",

@@ -814,6 +814,55 @@ export async function getBrowserBreakdown(days = 30): Promise<BrowserBreakdown[]
   }
 }
 
+// ─── SESSION ENGAGEMENT & BOUNCE RATE ────────────────────────────────────────
+
+export type SessionEngagement = {
+  totalSessions: number;
+  bounceRate: number;
+  avgPagesPerSession: number;
+};
+
+export async function getSessionEngagementMetrics(days = 30): Promise<SessionEngagement> {
+  const col = await getCollection<AnalyticsEvent>("analytics_events");
+  if (!col) return { totalSessions: 0, bounceRate: 0, avgPagesPerSession: 0 };
+
+  try {
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const sessionAgg = await col
+      .aggregate<{ _id: string; totalEvents: number; pageViews: number; ctaClicks: number }>([
+        { $match: { timestamp: { $gte: since }, sessionId: { $exists: true, $ne: null } } },
+        {
+          $group: {
+            _id: "$sessionId",
+            totalEvents: { $sum: 1 },
+            pageViews: { $sum: { $cond: [{ $eq: ["$event", "page_view"] }, 1, 0] } },
+            ctaClicks: { $sum: { $cond: [{ $in: ["$event", ["cta_click", "whatsapp_click", "email_click"]] }, 1, 0] } },
+          },
+        },
+      ])
+      .toArray();
+
+    if (sessionAgg.length === 0) {
+      return { totalSessions: 0, bounceRate: 0, avgPagesPerSession: 0 };
+    }
+
+    const totalSessions = sessionAgg.length;
+    const bounced = sessionAgg.filter((s) => s.pageViews <= 1 && s.ctaClicks === 0).length;
+    const totalPageViews = sessionAgg.reduce((acc, s) => acc + s.pageViews, 0);
+
+    const bounceRate = Math.round((bounced / totalSessions) * 1000) / 10;
+    const avgPagesPerSession = Math.round((totalPageViews / totalSessions) * 10) / 10;
+
+    return {
+      totalSessions,
+      bounceRate,
+      avgPagesPerSession,
+    };
+  } catch {
+    return { totalSessions: 0, bounceRate: 0, avgPagesPerSession: 0 };
+  }
+}
+
 // ─── RECENT EVENT STREAM ─────────────────────────────────────────────────────
 
 export async function getRecentEvents(limit = 20): Promise<AnalyticsEvent[]> {

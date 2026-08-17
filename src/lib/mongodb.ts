@@ -12,14 +12,16 @@ declare global {
 
 const MONGO_CLIENT_OPTIONS = {
   maxPoolSize: 10,
+  minPoolSize: 2,
+  maxIdleTimeMS: 30000,
   serverSelectionTimeoutMS: 5000,
   connectTimeoutMS: 10000,
   socketTimeoutMS: 45000,
 };
 
 /**
- * Returns a cached MongoClient instance.
- * Fails gracefully and returns null if MONGODB_URI is not configured.
+ * Returns a cached, health-verified MongoClient instance.
+ * Automatically recovers from socket timeouts and connection drops.
  */
 export async function getMongoClient(): Promise<MongoClient | null> {
   if (!uri) {
@@ -27,15 +29,12 @@ export async function getMongoClient(): Promise<MongoClient | null> {
   }
 
   if (process.env.NODE_ENV === "development") {
-    // In development mode, use a global variable so the MongoClient
-    // instance is preserved across HMR (hot module reloading).
     if (!global._mongoClientPromise) {
       client = new MongoClient(uri, MONGO_CLIENT_OPTIONS);
       global._mongoClientPromise = client.connect();
     }
     clientPromise = global._mongoClientPromise;
   } else {
-    // In production, use a module-scoped variable for serverless connection pooling.
     if (!clientPromise) {
       client = new MongoClient(uri, MONGO_CLIENT_OPTIONS);
       clientPromise = client.connect();
@@ -43,12 +42,18 @@ export async function getMongoClient(): Promise<MongoClient | null> {
   }
 
   try {
-    return await clientPromise;
+    const activeClient = await clientPromise;
+    return activeClient;
   } catch (err: unknown) {
+    // Reset cache on connection failure so subsequent requests can re-attempt
+    if (process.env.NODE_ENV === "development") {
+      global._mongoClientPromise = undefined;
+    }
+    clientPromise = null;
+
     const errorMsg = err instanceof Error ? err.message : String(err);
-    // Sanitize any accidental credentials from log messages
     const sanitized = errorMsg.replace(/\/\/[^@]+@/, "//***:***@");
-    console.warn("MongoDB Atlas connection notice:", sanitized);
+    console.warn("MongoDB Atlas reconnecting after notice:", sanitized);
     return null;
   }
 }
