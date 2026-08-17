@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { getSiteSettings, updateSiteSettings } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { recordAdminActivity } from "@/lib/analytics-db";
 
 export async function GET() {
   const session = await auth();
@@ -21,7 +22,20 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+
+    // Sanitize phone numbers
+    if (body.phoneE164) {
+      body.phoneE164 = String(body.phoneE164).replace(/[^\d]/g, "");
+    }
+
     const updated = await updateSiteSettings(body);
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "settings_updated",
+      description: `Updated site configuration and availability status (${updated.availability})`,
+      actor,
+    });
 
     revalidatePath("/", "layout");
 

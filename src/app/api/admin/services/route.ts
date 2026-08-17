@@ -7,6 +7,7 @@ import {
   deleteService,
 } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { recordAdminActivity } from "@/lib/analytics-db";
 
 export async function GET() {
   const session = await auth();
@@ -37,12 +38,21 @@ export async function POST(req: NextRequest) {
       problem: body.problem || "",
       solution: body.solution || "",
       outcome: body.outcome || "",
-      bullets: body.bullets || [],
+      bullets: (body.bullets || []).filter((b: string) => Boolean(b.trim())),
       ctaLabel: body.ctaLabel || "Let's build an automation",
       ctaPrefill: body.ctaPrefill || "",
       isFeatured: Boolean(body.isFeatured),
       published: body.published !== false,
       order: Number(body.order ?? 99),
+    });
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "service_updated",
+      description: `Created service "${service.title}"`,
+      targetId: service.id,
+      targetTitle: service.title,
+      actor,
     });
 
     revalidatePath("/services");
@@ -68,10 +78,23 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Service ID is required" }, { status: 400 });
     }
 
+    if (updates.bullets && Array.isArray(updates.bullets)) {
+      updates.bullets = updates.bullets.filter((b: string) => Boolean(b.trim()));
+    }
+
     const updated = await updateService(id, updates);
     if (!updated) {
       return NextResponse.json({ error: "Service not found" }, { status: 404 });
     }
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "service_updated",
+      description: `Updated service "${updated.title}"`,
+      targetId: updated.id,
+      targetTitle: updated.title,
+      actor,
+    });
 
     revalidatePath("/services");
     revalidatePath("/");
@@ -100,6 +123,14 @@ export async function DELETE(req: NextRequest) {
     if (!deleted) {
       return NextResponse.json({ error: "Service not found" }, { status: 404 });
     }
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "service_updated",
+      description: `Deleted service ${id}`,
+      targetId: id,
+      actor,
+    });
 
     revalidatePath("/services");
     revalidatePath("/");

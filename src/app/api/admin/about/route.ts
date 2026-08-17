@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { getAboutData, updateAboutData } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { recordAdminActivity } from "@/lib/analytics-db";
 
 export async function GET() {
   const session = await auth();
@@ -22,6 +23,14 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const updated = await updateAboutData(body);
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "about_updated",
+      description: `Updated about story, technical philosophy, and principles`,
+      actor,
+    });
+
     revalidatePath("/about");
     revalidatePath("/");
 

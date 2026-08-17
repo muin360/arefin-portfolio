@@ -336,11 +336,23 @@ export async function getTrafficOverTime(
   }
 }
 
+// ─── CSV SANITIZATION HELPER ────────────────────────────────────────────────
+
+export { sanitizeCsvField } from "@/lib/csv-sanitizer";
+
 // ─── TRAFFIC SOURCES ─────────────────────────────────────────────────────────
 
 function classifyReferrer(ref?: string): string {
   if (!ref || ref === "" || ref === "direct") return "Direct";
   const r = ref.toLowerCase();
+  if (
+    r.includes("tensorstudio.vercel.app") ||
+    r.includes("localhost") ||
+    r.includes("127.0.0.1") ||
+    r.includes("arefin-portfolio")
+  ) {
+    return "Direct";
+  }
   if (r.includes("google.")) return "Google";
   if (r.includes("github.")) return "GitHub";
   if (r.includes("linkedin.")) return "LinkedIn";
@@ -350,7 +362,11 @@ function classifyReferrer(ref?: string): string {
   if (r.includes("bing.") || r.includes("duckduckgo.")) return "Search Engines";
   try {
     const url = new URL(ref.startsWith("http") ? ref : `https://${ref}`);
-    return url.hostname.replace(/^www\./, "");
+    const host = url.hostname.replace(/^www\./, "");
+    if (host === "tensorstudio.vercel.app" || host === "localhost" || host === "127.0.0.1") {
+      return "Direct";
+    }
+    return host;
   } catch {
     return "Referral";
   }

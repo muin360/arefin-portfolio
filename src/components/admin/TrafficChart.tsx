@@ -10,6 +10,7 @@ interface Props {
 
 export default function TrafficChart({ data, hasData }: Props) {
   const [metric, setMetric] = useState<"pageViews" | "visitors" | "ctaClicks">("pageViews");
+  const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; date: string; val: number } | null>(null);
 
   if (!hasData || data.length === 0) {
     return (
@@ -27,26 +28,26 @@ export default function TrafficChart({ data, hasData }: Props) {
     );
   }
 
-  const values = data.map((d) => d[metric]);
+  const values = data.map((d) => d[metric] || 0);
   const max = Math.max(...values, 1);
   const total = values.reduce((a, b) => a + b, 0);
-  const avg = Math.round(total / values.length);
+  const avg = Math.round(total / Math.max(values.length, 1));
 
   const w = 1000;
   const h = 260;
-  const padding = 20;
+  const padding = 24;
   const chartW = w - padding * 2;
   const chartH = h - padding * 2;
-  const step = chartW / Math.max(data.length - 1, 1);
+  const step = data.length > 1 ? chartW / (data.length - 1) : chartW;
 
   const points = data.map((d, i) => {
-    const x = padding + i * step;
-    const y = h - padding - (d[metric] / max) * chartH;
-    return { x, y, date: d.date, val: d[metric] };
+    const x = padding + (data.length > 1 ? i * step : chartW / 2);
+    const y = h - padding - ((d[metric] || 0) / max) * chartH;
+    return { x, y, date: d.date, val: d[metric] || 0 };
   });
 
   const polylineStr = points.map((p) => `${p.x},${p.y}`).join(" ");
-  const polygonStr = `${padding},${h - padding} ` + polylineStr + ` ${w - padding},${h - padding}`;
+  const polygonStr = `${points[0]?.x ?? padding},${h - padding} ` + polylineStr + ` ${points[points.length - 1]?.x ?? w - padding},${h - padding}`;
 
   const metricLabels = {
     pageViews: "Page Views",
@@ -92,7 +93,20 @@ export default function TrafficChart({ data, hasData }: Props) {
       </div>
 
       {/* SVG Chart */}
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full overflow-hidden" onMouseLeave={() => setHoveredPoint(null)}>
+        {hoveredPoint && (
+          <div
+            className="absolute z-10 pointer-events-none bg-[#161d2d] border border-violet-500/40 text-white px-3 py-1.5 rounded-lg shadow-xl text-xs font-mono -translate-x-1/2 -translate-y-full mb-2"
+            style={{
+              left: `${(hoveredPoint.x / w) * 100}%`,
+              top: `${(hoveredPoint.y / h) * 100}%`,
+            }}
+          >
+            <p className="text-white font-bold">{hoveredPoint.val.toLocaleString()} {metricLabels[metric]}</p>
+            <p className="text-[10px] text-slate-400">{hoveredPoint.date}</p>
+          </div>
+        )}
+
         <svg
           viewBox={`0 0 ${w} ${h}`}
           className="w-full h-48 md:h-60 overflow-visible"
@@ -131,19 +145,19 @@ export default function TrafficChart({ data, hasData }: Props) {
             strokeLinejoin="round"
           />
 
-          {/* Dots */}
+          {/* Interactive Dots */}
           {points.map((p, i) => (
-            <g key={i} className="group">
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r="3.5"
-                fill="#0f111a"
-                stroke={color.stroke}
-                strokeWidth="2"
-                className="transition-all hover:r-6"
-              />
-            </g>
+            <circle
+              key={i}
+              cx={p.x}
+              cy={p.y}
+              r="4"
+              fill="#0f111a"
+              stroke={color.stroke}
+              strokeWidth="2"
+              className="cursor-pointer transition-all hover:r-6"
+              onMouseEnter={() => setHoveredPoint(p)}
+            />
           ))}
         </svg>
 

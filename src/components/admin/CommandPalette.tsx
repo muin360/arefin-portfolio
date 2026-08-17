@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -36,11 +36,12 @@ export default function CommandPalette() {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   // Listen for ⌘K or Ctrl+K or Esc
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
         setOpen((v) => !v);
         setQuery("");
@@ -184,6 +185,15 @@ export default function CommandPalette() {
     );
   }, [items, query]);
 
+  useEffect(() => {
+    if (itemRefs.current[selectedIndex]) {
+      itemRefs.current[selectedIndex]?.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }, [selectedIndex]);
+
   const handleSelect = (item: CommandItem) => {
     setOpen(false);
     item.action();
@@ -196,7 +206,7 @@ export default function CommandPalette() {
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedIndex((prev) =>
-        prev === 0 ? filtered.length - 1 : prev - 1,
+        prev === 0 ? Math.max(filtered.length - 1, 0) : prev - 1,
       );
     } else if (e.key === "Enter" && filtered[selectedIndex]) {
       e.preventDefault();
@@ -238,7 +248,7 @@ export default function CommandPalette() {
         </div>
 
         {/* Results List */}
-        <div className="max-h-80 overflow-y-auto py-2 px-2 space-y-1">
+        <div className="max-h-80 overflow-y-auto py-2 px-2 space-y-1 custom-scrollbar">
           {filtered.length === 0 ? (
             <div className="py-8 text-center text-xs text-[#6b7280] font-mono">
               No matching commands or pages found.
@@ -250,13 +260,16 @@ export default function CommandPalette() {
               return (
                 <button
                   key={item.id}
+                  ref={(el) => {
+                    itemRefs.current[idx] = el;
+                  }}
                   type="button"
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-xs text-left transition-colors ${
                     isSelected
                       ? "bg-violet-600/20 text-white border border-violet-500/30"
-                      : "text-[#9ca3af] hover:text-white hover:bg-[#1a202c]"
+                      : "text-[#9ca3af] hover:text-white hover:bg-[#141a29]"
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">

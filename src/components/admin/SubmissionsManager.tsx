@@ -120,24 +120,44 @@ export default function SubmissionsManager({ initialSubmissions }: Props) {
     }
   };
 
-  const copyMessage = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    showToast("Message text copied to clipboard");
+  const copyMessage = async (text: string) => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      showToast("Message text copied to clipboard");
+    } catch {
+      showToast("Could not copy automatically. Please select text manually.");
+    }
   };
 
   const exportCsv = () => {
+    const sanitize = (val: unknown) => {
+      if (val === null || val === undefined) return '""';
+      let str = String(val);
+      if (/^[=+\-@\t\r]/.test(str)) str = "'" + str;
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
     const rows = [
       ["Date", "Name", "Email", "Subject", "Status", "Message", "IP"],
       ...submissions.map((s) => [
-        s.createdAt,
-        s.name,
-        s.email,
-        s.subject,
-        s.status,
-        `"${s.message.replace(/"/g, '""')}"`,
-        s.ip || "",
+        sanitize(s.createdAt),
+        sanitize(s.name),
+        sanitize(s.email),
+        sanitize(s.subject),
+        sanitize(s.status),
+        sanitize(s.message),
+        sanitize(s.ip || ""),
       ]),
     ];
     const csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");

@@ -22,8 +22,19 @@ const rateLimitStore = new Map<string, { count: number; window: number }>();
 const RATE_LIMIT = 60;
 const RATE_WINDOW_MS = 60_000;
 
+function cleanupRateLimitStore(now: number) {
+  if (rateLimitStore.size > 200) {
+    for (const [key, val] of rateLimitStore.entries()) {
+      if (now - val.window > RATE_WINDOW_MS) {
+        rateLimitStore.delete(key);
+      }
+    }
+  }
+}
+
 function isRateLimited(key: string): boolean {
   const now = Date.now();
+  cleanupRateLimitStore(now);
   const record = rateLimitStore.get(key);
   if (!record || now - record.window > RATE_WINDOW_MS) {
     rateLimitStore.set(key, { count: 1, window: now });

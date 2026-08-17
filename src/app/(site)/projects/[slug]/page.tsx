@@ -68,8 +68,34 @@ export default async function ProjectDetailPage({
       ? project.workflowSteps
       : defaultWorkflowSteps;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: project.title,
+    description: project.summary,
+    author: {
+      "@type": "Person",
+      name: "Arefin Mueen",
+      url: "https://tensorstudio.vercel.app",
+    },
+    publisher: {
+      "@type": "Person",
+      name: "Arefin Mueen",
+    },
+    about: {
+      "@type": "SoftwareApplication",
+      name: project.title,
+      applicationCategory: project.category,
+      operatingSystem: "Cloud / Node.js",
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PageHeader
         eyebrow={`${project.projectType ?? "Personal AI Automation Project"} · ${project.category}`}
         index="05"

@@ -7,6 +7,7 @@ import {
   deleteSkill,
 } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { recordAdminActivity } from "@/lib/analytics-db";
 
 export async function GET() {
   const session = await auth();
@@ -30,12 +31,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Category name is required" }, { status: 400 });
     }
 
+    const items = (body.items || [])
+      .map((i: string) => i.trim())
+      .filter(Boolean);
+
     const skill = await createSkill({
-      category: body.category,
+      category: body.category.trim(),
       iconName: body.iconName || "terminal",
-      items: body.items || [],
+      items,
       order: Number(body.order ?? 99),
       published: body.published !== false,
+    });
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "skill_updated",
+      description: `Created skill category "${skill.category}"`,
+      targetId: skill.id,
+      targetTitle: skill.category,
+      actor,
     });
 
     revalidatePath("/skills");
@@ -61,10 +75,23 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Skill ID is required" }, { status: 400 });
     }
 
+    if (updates.items && Array.isArray(updates.items)) {
+      updates.items = updates.items.map((i: string) => i.trim()).filter(Boolean);
+    }
+
     const updated = await updateSkill(id, updates);
     if (!updated) {
       return NextResponse.json({ error: "Skill category not found" }, { status: 404 });
     }
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "skill_updated",
+      description: `Updated skill category "${updated.category}"`,
+      targetId: updated.id,
+      targetTitle: updated.category,
+      actor,
+    });
 
     revalidatePath("/skills");
     revalidatePath("/");
@@ -93,6 +120,14 @@ export async function DELETE(req: NextRequest) {
     if (!deleted) {
       return NextResponse.json({ error: "Skill category not found" }, { status: 404 });
     }
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "skill_updated",
+      description: `Deleted skill category ${id}`,
+      targetId: id,
+      actor,
+    });
 
     revalidatePath("/skills");
     revalidatePath("/");

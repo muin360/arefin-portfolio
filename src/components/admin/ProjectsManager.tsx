@@ -21,6 +21,7 @@ import {
   Link as LinkIcon,
   X,
   ChevronDown,
+  ChevronUp,
   Workflow,
   GripVertical,
 } from "lucide-react";
@@ -244,7 +245,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
     }
   };
 
-  // Workflow steps helpers
   const handleStepChange = (index: number, field: keyof WorkflowStep, value: string) => {
     if (!editingProject?.workflowSteps) return;
     const steps = [...editingProject.workflowSteps];
@@ -264,8 +264,22 @@ export default function ProjectsManager({ initialProjects }: Props) {
 
   const handleRemoveStep = (index: number) => {
     if (!editingProject?.workflowSteps) return;
-    const steps = editingProject.workflowSteps.filter((_, i) => i !== index);
+    const steps = editingProject.workflowSteps
+      .filter((_, i) => i !== index)
+      .map((s, idx) => ({ ...s, step: (idx + 1).toString().padStart(2, "0") }));
     setEditingProject({ ...editingProject, workflowSteps: steps });
+  };
+
+  const handleMoveStep = (index: number, direction: "up" | "down") => {
+    if (!editingProject?.workflowSteps) return;
+    const target = direction === "up" ? index - 1 : index + 1;
+    if (target < 0 || target >= editingProject.workflowSteps.length) return;
+    const steps = [...editingProject.workflowSteps];
+    const temp = steps[index];
+    steps[index] = steps[target];
+    steps[target] = temp;
+    const reindexed = steps.map((s, idx) => ({ ...s, step: (idx + 1).toString().padStart(2, "0") }));
+    setEditingProject({ ...editingProject, workflowSteps: reindexed });
   };
 
   // Tag helpers
@@ -797,13 +811,34 @@ export default function ProjectsManager({ initialProjects }: Props) {
                           />
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveStep(i)}
-                          className="p-1 text-[#6b7280] hover:text-rose-400 bg-[#0f111a] hover:bg-rose-500/10 rounded-lg transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex flex-col gap-1 shrink-0">
+                          <button
+                            type="button"
+                            disabled={i === 0}
+                            onClick={() => handleMoveStep(i, "up")}
+                            className="p-1 text-[#6b7280] hover:text-white bg-[#0f111a] hover:bg-[#1a202c] disabled:opacity-30 rounded transition-colors"
+                            title="Move Up"
+                          >
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={i === (editingProject.workflowSteps?.length || 1) - 1}
+                            onClick={() => handleMoveStep(i, "down")}
+                            className="p-1 text-[#6b7280] hover:text-white bg-[#0f111a] hover:bg-[#1a202c] disabled:opacity-30 rounded transition-colors"
+                            title="Move Down"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveStep(i)}
+                            className="p-1 text-[#6b7280] hover:text-rose-400 bg-[#0f111a] hover:bg-rose-500/10 rounded transition-colors mt-0.5"
+                            title="Remove Step"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

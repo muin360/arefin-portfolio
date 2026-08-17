@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { getSiteSettings, updateSiteSettings } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { recordAdminActivity } from "@/lib/analytics-db";
 
 export async function GET() {
   const session = await auth();
@@ -22,11 +23,24 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const current = await getSiteSettings();
+
+    // Strip trailing slashes on canonical URL for SEO consistency
+    if (body.canonicalUrl && typeof body.canonicalUrl === "string") {
+      body.canonicalUrl = body.canonicalUrl.replace(/\/+$/, "");
+    }
+
     const updated = await updateSiteSettings({
       seo: {
         ...current.seo,
         ...body,
       },
+    });
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "seo_updated",
+      description: `Updated global SEO title, meta descriptions, and OpenGraph tags`,
+      actor,
     });
 
     revalidatePath("/", "layout");
