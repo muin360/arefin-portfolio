@@ -12,13 +12,16 @@ interface ProfilePortraitProps {
 }
 
 export default function ProfilePortrait({
-  profileImage,
+  profileImage = "/pp.png",
   name = "Arefin Mueen",
   role = "AI Automation & AI Agent Developer",
   availabilityNote = "Available for projects",
   className = "",
 }: ProfilePortraitProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const showImage = Boolean(profileImage && !imgError);
 
   return (
     <div
@@ -62,14 +65,15 @@ export default function ProfilePortrait({
               : "shadow-black/80"
           }`}
         >
-          {profileImage ? (
+          {showImage ? (
             <Image
-              src={profileImage}
+              src={profileImage!}
               alt={`${name} — ${role}`}
               width={240}
               height={240}
               priority
-              className="w-full h-full object-cover rounded-full transition-transform duration-700 hover:scale-105"
+              onError={() => setImgError(true)}
+              className="w-full h-full object-cover object-center rounded-full transition-transform duration-700 hover:scale-105"
             />
           ) : (
             <div className="w-full h-full rounded-full bg-gradient-to-br from-[#14182a] via-[#0b0e1a] to-[#060810] flex flex-col items-center justify-center text-center p-4 relative overflow-hidden">
@@ -78,7 +82,7 @@ export default function ProfilePortrait({
                 <div className="w-7 h-7 rounded-full bg-violet-400/20 border border-violet-400/30 animate-pulse" />
               </div>
               <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest mt-2">
-                Arefin Mueen
+                {name}
               </span>
             </div>
           )}

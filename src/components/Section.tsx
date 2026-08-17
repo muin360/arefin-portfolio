@@ -1,11 +1,8 @@
 import { ReactNode } from "react";
 import Reveal from "./Reveal";
-import DarkHero from "./DarkHero";
 import LiveClock from "./LiveClock";
-import LiveTicker from "./LiveTicker";
-import { getSiteSettings } from "@/lib/db";
 
-export async function PageHeader({
+export function PageHeader({
   eyebrow,
   title,
   subtitle,
@@ -18,51 +15,57 @@ export async function PageHeader({
   meta?: string;
   index?: string;
 }) {
-  const cfg = await getSiteSettings();
-  const showLiveTicker = cfg?.showLiveTicker ?? false;
-
   return (
-    <DarkHero density={45}>
-      {showLiveTicker && <LiveTicker />}
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-20 pb-20 md:pt-28 md:pb-24 relative">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-10 md:mb-14">
+    <section className="relative overflow-hidden pt-12 pb-16 sm:py-20 lg:py-24 border-b border-white/[0.08]" aria-label="Page Header">
+      {/* Ambient background glow */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-violet-600/10 rounded-full blur-3xl pointer-events-none"
+        aria-hidden="true"
+      />
+
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8 sm:mb-10">
           {eyebrow && (
-            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/60">
+            <p className="font-mono text-xs font-semibold tracking-wider text-violet-400 uppercase">
               {index ? `[ ${index} ] ` : ""}
               {eyebrow}
             </p>
           )}
           <div className="flex items-center gap-3 text-xs">
             {meta && (
-              <span className="tag-pill hidden md:inline-flex">{meta}</span>
+              <span className="hidden sm:inline-flex px-2.5 py-1 rounded-lg bg-[#0c0f18] border border-white/10 font-mono text-[11px] text-white/60">
+                {meta}
+              </span>
             )}
-            <span className="tag-pill inline-flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#0c0f18] border border-white/10 font-mono text-[11px] text-white/70">
               <LiveClock />
-              <span className="text-white/40">·</span>
-              <span>GMT+6</span>
             </span>
           </div>
         </div>
+
         <Reveal>
-          <h1 className="display text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] max-w-5xl text-white">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.14] max-w-4xl">
             {title}
           </h1>
         </Reveal>
+
         {subtitle && (
           <Reveal delay={120}>
-            <p className="mt-8 text-lg md:text-xl text-white/65 max-w-2xl leading-relaxed">
+            <p className="mt-5 text-sm sm:text-base md:text-lg text-white/70 max-w-3xl leading-relaxed font-sans">
               {subtitle}
             </p>
           </Reveal>
         )}
       </div>
-    </DarkHero>
+    </section>
   );
 }
 
 export function Container({ children }: { children: ReactNode }) {
   return (
-    <div className="max-w-7xl mx-auto px-6 sm:px-8 section">{children}</div>
+    <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      {children}
+    </div>
   );
 }
 
@@ -78,22 +81,22 @@ export function SectionHeader({
   invert?: boolean;
 }) {
   return (
-    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
+    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 sm:mb-14">
       <div>
-        <p className={`eyebrow mb-5 ${invert ? "text-white/60" : ""}`}>
+        <p className={`font-mono text-xs font-semibold uppercase tracking-wider mb-2 ${invert ? "text-violet-300" : "text-violet-400"}`}>
           {eyebrow}
         </p>
-        <h2 className="display text-3xl md:text-5xl max-w-2xl">{title}</h2>
+        <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight leading-tight max-w-2xl">
+          {title}
+        </h2>
       </div>
       {link && (
         <a
           href={link.href}
-          className={`text-sm hover-arrow ${
-            invert ? "text-white/80" : "text-muted hover:text-foreground"
-          }`}
+          className="inline-flex items-center gap-1.5 font-mono text-xs text-violet-300 hover:text-white transition-colors shrink-0 group"
         >
-          <span className="link-underline">{link.label}</span>
-          <span aria-hidden="true">→</span>
+          <span>{link.label}</span>
+          <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
         </a>
       )}
     </div>

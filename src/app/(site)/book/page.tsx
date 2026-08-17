@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { PageHeader } from "@/components/Section";
-import Reveal from "@/components/Reveal";
-import { IconArrow } from "@/components/icons";
+import SectionPlate from "@/components/SectionPlate";
+import Button from "@/components/Button";
 import { whatsappHref, WA_MESSAGES, PHONE_DISPLAY } from "@/lib/cta";
+import { MessageSquare, ArrowRight, Calendar, CheckCircle2, Clock, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Book a free 30-min scoping call",
+  title: "Book a 30-Min Scoping Call",
   description:
-    "Book a free 30-minute scoping call with Arefin. We'll review your manual workflow steps and identify practical automation opportunities.",
+    "Schedule a 30-minute scoping session with Arefin Mueen to review manual bottlenecks and map out practical automation opportunities.",
   alternates: { canonical: "/book" },
-  openGraph: {
-    title: "Book a free 30-min scoping call — Arefin Mueen",
-    description:
-      "30 minutes. Let's map your workflow and explore what we can automate.",
-    url: "/book",
-  },
 };
 
 const CAL_USERNAME = process.env.NEXT_PUBLIC_CAL_USERNAME ?? "";
@@ -28,116 +22,113 @@ export default function BookPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Scoping Call · Free"
+        eyebrow="Workflow Scoping Call"
         index="06"
-        meta="30 minutes · Explore automation opportunities · No obligation"
+        meta="30 minutes · Free technical consultation"
         title={
           <>
             Pick a time.{" "}
-            <span className="serif">Let&rsquo;s review</span> your workflow
-            and explore what we can automate.
+            <span className="serif italic text-violet-300">Let&rsquo;s review</span> your workflow
+            and explore what to automate.
           </>
         }
-        subtitle="Free 30-minute scoping call. We'll map your repetitive tasks and outline practical AI automation or agent solutions."
+        subtitle="A direct 30-minute scoping call. We'll map your repetitive tasks on screen and outline practical AI automation or agent solutions under your 100% ownership."
       />
 
-      <section className="hero-dark relative overflow-hidden border-b border-white/5">
-        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
-        <div className="orb orb-violet hidden md:block" aria-hidden="true" />
-        <div className="orb orb-cyan hidden md:block" aria-hidden="true" />
+      <section className="py-16 sm:py-20" aria-label="Booking Options">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <SectionPlate
+            index="01"
+            title="CALENDAR & DIRECT BOOKING"
+            sectionId="calendar"
+            meta="live calendar · fast scheduling"
+          />
 
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 section relative">
-          <Reveal>
-            <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-6 sm:p-8 md:p-10 min-h-[520px] flex flex-col">
-              {CAL_LINK ? (
-                // Cal.com / Calendly drop-in. Set NEXT_PUBLIC_CAL_USERNAME (and
-                // optionally NEXT_PUBLIC_CAL_EVENT) in your env to wire this up.
-                <iframe
-                  title="Book a free audit call"
-                  src={CAL_LINK}
-                  className="w-full flex-1 rounded-2xl border-0 min-h-[600px]"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="flex-1 grid place-items-center text-center py-10">
-                  <div className="max-w-lg">
-                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-5">
-                      Booking link · Coming soon
-                    </p>
-                    <h2 className="display text-3xl md:text-4xl text-white">
-                      Cal.com embed{" "}
-                      <span className="serif iridescent">drops in here.</span>
-                    </h2>
-                    <p className="mt-5 text-white/65 leading-relaxed">
-                      The fastest way to talk right now is WhatsApp.
-                      I&rsquo;ll book the audit on the same chat and send a
-                      Google Meet link.
-                    </p>
-
-                    <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-                      <a
-                        href={whatsappHref(WA_MESSAGES.audit)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] hover:bg-[#1ebe57] text-white px-6 py-3.5 text-sm font-medium w-full sm:w-auto"
-                      >
-                        <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true" fill="currentColor">
-                          <path d="M19.11 17.21c-.31-.16-1.83-.9-2.11-1-.28-.1-.49-.16-.7.16s-.81 1-.99 1.21c-.18.21-.36.23-.67.08-.31-.16-1.31-.48-2.5-1.54-.92-.83-1.55-1.84-1.73-2.15-.18-.31-.02-.48.13-.63.13-.13.31-.36.46-.54.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.7-1.69-.95-2.32-.25-.6-.51-.52-.7-.53l-.59-.01c-.21 0-.55.08-.84.39-.29.31-1.1 1.07-1.1 2.61 0 1.54 1.13 3.03 1.29 3.24.16.21 2.22 3.39 5.39 4.75.75.32 1.34.51 1.8.66.75.24 1.44.21 1.98.13.6-.09 1.83-.75 2.09-1.47.26-.72.26-1.34.18-1.47-.08-.13-.29-.21-.6-.36zM16 4C9.37 4 4 9.37 4 16c0 2.12.55 4.11 1.5 5.84L4 28l6.32-1.45A11.93 11.93 0 0 0 16 28c6.63 0 12-5.37 12-12S22.63 4 16 4z" />
-                        </svg>
-                        Book on WhatsApp ({PHONE_DISPLAY})
-                      </a>
-                      <Link
-                        href="/contact"
-                        className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 hover:bg-white/10 text-white px-6 py-3.5 text-sm font-medium w-full sm:w-auto"
-                      >
-                        Use the contact form
-                        <IconArrow width={14} height={14} />
-                      </Link>
-                    </div>
-
-                    <p className="mt-10 text-xs font-mono uppercase tracking-[0.22em] text-white/45">
-                      Fast async communication during active projects
-                    </p>
-                  </div>
+          <div className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-6 sm:p-10 shadow-2xl">
+            {CAL_LINK ? (
+              <iframe
+                title="Book a free audit call"
+                src={CAL_LINK}
+                className="w-full rounded-xl border border-white/10 min-h-[620px] bg-[#07090e]"
+                loading="lazy"
+              />
+            ) : (
+              <div className="py-10 text-center max-w-xl mx-auto space-y-6">
+                <div className="w-12 h-12 rounded-2xl bg-violet-600/10 border border-violet-500/20 text-violet-400 mx-auto flex items-center justify-center">
+                  <Calendar className="w-6 h-6" />
                 </div>
-              )}
-            </div>
-          </Reveal>
 
-          <Reveal delay={120}>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-white/65">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/45 mb-2">
-                  / 01 What you get
-                </p>
-                <p>
-                  A free 30-minute call where I map your current workflows
-                  on screen with you and share where automation will give
-                  the highest leverage — in writing afterwards.
+                <div className="space-y-2">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    Instant Scheduling via <span className="serif italic text-violet-300">WhatsApp &amp; Email</span>
+                  </h2>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed font-sans">
+                    Drop a message directly on WhatsApp. I will share a direct calendar slot or Google Meet link matching your timezone.
+                  </p>
+                </div>
+
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <Button
+                    href={whatsappHref(WA_MESSAGES.audit)}
+                    variant="primary"
+                    size="lg"
+                    icon={<MessageSquare className="w-4 h-4 text-emerald-600" />}
+                    iconPosition="left"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Chat on WhatsApp ({PHONE_DISPLAY})
+                  </Button>
+
+                  <Button
+                    href="/contact"
+                    variant="secondary"
+                    size="lg"
+                    icon={<ArrowRight className="w-4 h-4" />}
+                  >
+                    Use Contact Form
+                  </Button>
+                </div>
+
+                <p className="text-xs font-mono text-white/40 tracking-wider">
+                  Fast async communication · Replies within 24 hours
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/45 mb-2">
-                  / 02 What I&rsquo;ll ask
-                </p>
-                <p>
-                  What does your team do manually? Which tools aren&rsquo;t
-                  talking to each other? What outcome would make this
-                  engagement worth your time?
-                </p>
+            )}
+          </div>
+
+          {/* 3 Step Consultation Process */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-3">
+              <div className="flex items-center gap-2 font-mono text-xs text-violet-400 font-semibold">
+                <Sparkles className="w-4 h-4" />
+                <span className="uppercase tracking-wider">01 · What You Get</span>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/45 mb-2">
-                  / 03 What happens after
-                </p>
-                <p>
-                  A written recommendation with the highest-leverage
-                  automations, an indicative scope, and clear next steps.
-                  No obligation either way.
-                </p>
-              </div>
+              <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-sans">
+                A focused 30-minute session where we analyze your workflow bottlenecks and identify high-ROI automation targets.
+              </p>
             </div>
-          </Reveal>
+
+            <div className="p-6 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-3">
+              <div className="flex items-center gap-2 font-mono text-xs text-violet-400 font-semibold">
+                <Clock className="w-4 h-4" />
+                <span className="uppercase tracking-wider">02 · What We Discuss</span>
+              </div>
+              <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-sans">
+                Which repetitive tasks your team spends time on, which APIs aren&apos;t connected, and your desired target outcome.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-3">
+              <div className="flex items-center gap-2 font-mono text-xs text-violet-400 font-semibold">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="uppercase tracking-wider">03 · Clear Next Steps</span>
+              </div>
+              <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-sans">
+                A written architectural summary with recommended tools (n8n, LangChain, APIs), timeline, and transparent estimate.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </>

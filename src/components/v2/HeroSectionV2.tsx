@@ -18,7 +18,7 @@ interface HeroSectionProps {
 
 export default function HeroSectionV2({
   availabilityNote = "Available for projects",
-  profileImage,
+  profileImage = "/pp.png",
   name = "Arefin Mueen",
   role = "AI Automation & AI Agent Developer",
   labTitle,

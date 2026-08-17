@@ -209,10 +209,10 @@ export default function SettingsForm({ initialConfig }: Props) {
               </label>
               <div className="flex items-center gap-2">
                 <input
-                  type="url"
+                  type="text"
                   value={formData.profileImage || ""}
                   onChange={(e) => setFormData({ ...formData, profileImage: e.target.value })}
-                  placeholder="https://example.com/arefin-portrait.jpg"
+                  placeholder="/pp.png or https://example.com/portrait.jpg"
                   className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm focus:outline-none focus:border-violet-500 font-mono"
                 />
                 {formData.profileImage && (

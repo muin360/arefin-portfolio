@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { IconArrow } from "@/components/icons";
+import Button from "@/components/Button";
+import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { sendContact, type ContactState } from "./actions";
 
 const MAX_NAME = 80;
@@ -9,12 +10,12 @@ const MAX_EMAIL = 120;
 const MAX_MESSAGE = 4000;
 
 const TOPICS = [
-  "AI workflow automation",
-  "AI agent / assistant build",
-  "RAG knowledge base setup",
-  "Multi-agent research system",
-  "API / Webhook integration",
-  "General inquiry",
+  "AI Workflow Automation (n8n, Make)",
+  "Autonomous AI Agent Build (LangChain, Langflow)",
+  "RAG Knowledge Base & Document Retrieval",
+  "Multi-Agent Research & Synthesis Crew",
+  "Custom API / Webhook Integration",
+  "General Consultation & Feasibility",
 ] as const;
 
 const initialState: ContactState = { ok: false };
@@ -26,8 +27,6 @@ export default function ContactForm() {
   const mountedAt = useRef<number>(0);
 
   useEffect(() => {
-    // Set mount time after the component mounts to avoid impure-function
-    // warning during render.
     mountedAt.current = Date.now();
   }, []);
 
@@ -40,7 +39,7 @@ export default function ContactForm() {
   }, [state.ok]);
 
   const inputCls =
-    "mt-2 w-full rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-white/30 px-4 py-3 text-sm focus:outline-none focus:border-violet-400/60 focus:bg-white/[0.06] transition-colors";
+    "w-full rounded-xl border border-white/10 bg-[#121622] text-white placeholder:text-white/30 px-4 py-3 text-sm focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/50 transition-all font-sans";
 
   const fieldErr = (k: string) => state.fieldErrors?.[k as never];
 
@@ -48,19 +47,21 @@ export default function ContactForm() {
     <form
       ref={formRef}
       action={(fd) => {
-        // elapsed = ms since the form was mounted; bots usually fire instantly.
         fd.set("elapsed", String(Date.now() - mountedAt.current));
         formAction(fd);
       }}
       noValidate
       autoComplete="off"
-      className="space-y-5"
+      className="space-y-6"
     >
-      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55">
-        Message form
-      </p>
+      <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+        <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+          Project Inquiry Form
+        </h3>
+        <span className="text-[11px] font-mono text-white/40">Encrypted</span>
+      </div>
 
-      {/* Honeypot — hidden from real users, irresistible to bots. */}
+      {/* Honeypot for bots */}
       <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", height: 0, width: 0, overflow: "hidden" }}>
         <label>
           Website (leave empty)
@@ -75,9 +76,9 @@ export default function ContactForm() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div>
-          <label htmlFor="name" className="text-sm text-white/65">
-            Name
+        <div className="space-y-2">
+          <label htmlFor="name" className="block text-xs font-mono font-semibold uppercase tracking-wider text-white/70">
+            Your Name <span className="text-violet-400">*</span>
           </label>
           <input
             id="name"
@@ -88,12 +89,16 @@ export default function ContactForm() {
             className={inputCls}
           />
           {fieldErr("name") && (
-            <p className="mt-1 text-xs text-pink-300">{fieldErr("name")}</p>
+            <p className="flex items-center gap-1 text-xs text-rose-400 font-mono">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>{fieldErr("name")}</span>
+            </p>
           )}
         </div>
-        <div>
-          <label htmlFor="email" className="text-sm text-white/65">
-            Email
+
+        <div className="space-y-2">
+          <label htmlFor="email" className="block text-xs font-mono font-semibold uppercase tracking-wider text-white/70">
+            Email Address <span className="text-violet-400">*</span>
           </label>
           <input
             id="email"
@@ -101,80 +106,94 @@ export default function ContactForm() {
             type="email"
             required
             maxLength={MAX_EMAIL}
-            placeholder="you@company.com"
+            placeholder="jane@company.com"
             className={inputCls}
           />
           {fieldErr("email") && (
-            <p className="mt-1 text-xs text-pink-300">{fieldErr("email")}</p>
+            <p className="flex items-center gap-1 text-xs text-rose-400 font-mono">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>{fieldErr("email")}</span>
+            </p>
           )}
         </div>
       </div>
 
-      <div>
-        <label htmlFor="subject" className="text-sm text-white/65">
-          Topic
+      <div className="space-y-2">
+        <label htmlFor="subject" className="block text-xs font-mono font-semibold uppercase tracking-wider text-white/70">
+          Target Focus Area
         </label>
         <select id="subject" name="subject" defaultValue={TOPICS[0]} className={inputCls}>
           {TOPICS.map((t) => (
-            <option key={t} className="bg-[#0c0c14] text-white">
+            <option key={t} value={t} className="bg-[#0c0f18] text-white py-1">
               {t}
             </option>
           ))}
         </select>
       </div>
 
-      <div>
-        <label htmlFor="message" className="text-sm text-white/65">
-          The workflow
-        </label>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label htmlFor="message" className="block text-xs font-mono font-semibold uppercase tracking-wider text-white/70">
+            Workflow Description <span className="text-violet-400">*</span>
+          </label>
+          <span className="text-[10px] font-mono text-white/40">
+            {message.length}/{MAX_MESSAGE}
+          </span>
+        </div>
         <textarea
           id="message"
           name="message"
           required
-          rows={6}
+          rows={5}
           maxLength={MAX_MESSAGE}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Tell me about the repetitive task or workflow you'd like to automate, and the tools you currently use..."
-          className={inputCls + " resize-y"}
+          placeholder="Describe the operational process, current tools, manual pain points, and what success looks like..."
+          className={`${inputCls} resize-y leading-relaxed`}
         />
-        <p className="mt-1.5 text-[11px] text-white/40 font-mono">
-          {message.length}/{MAX_MESSAGE}
-        </p>
         {fieldErr("message") && (
-          <p className="mt-1 text-xs text-pink-300">{fieldErr("message")}</p>
+          <p className="flex items-center gap-1 text-xs text-rose-400 font-mono">
+            <AlertCircle className="w-3.5 h-3.5" />
+            <span>{fieldErr("message")}</span>
+          </p>
         )}
       </div>
 
       {state.error && (
-        <p
+        <div
           role="alert"
-          className="text-sm text-white border border-pink-400/40 rounded-xl p-3 bg-pink-500/10"
+          className="flex items-start gap-2.5 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-200 text-xs font-mono"
         >
-          {state.error}
-        </p>
+          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <span>{state.error}</span>
+        </div>
       )}
 
       {state.ok && (
-        <p
+        <div
           role="status"
-          className="text-sm text-white border border-emerald-400/40 rounded-xl p-3 bg-emerald-500/10"
+          className="flex items-start gap-2.5 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 text-xs font-mono"
         >
-          Message sent. I&apos;ll get back to you within 24 hours.
-        </p>
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <span>Inquiry received successfully. I will review and reply within 24 hours.</span>
+        </div>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="btn-primary shimmer w-full justify-center disabled:opacity-60 disabled:cursor-wait"
-      >
-        {pending ? "Sending…" : "Send message"}
-        <IconArrow width={16} height={16} />
-      </button>
+      <div className="pt-2">
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          disabled={pending}
+          icon={pending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+          className="w-full"
+        >
+          {pending ? "Sending inquiry..." : "Send Scoping Inquiry"}
+        </Button>
+      </div>
 
-      <p className="text-xs text-white/45 text-center">
-        Submissions are emailed directly to Arefin. Your details are kept strictly confidential.
+      <p className="text-[11px] text-white/40 text-center font-mono">
+        Submissions deliver directly to Arefin Mueen. No promotional spam.
       </p>
     </form>
   );

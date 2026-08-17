@@ -6,25 +6,21 @@ const tools = [
   { name: "n8n", level: 95, group: "Orchestration" },
   { name: "Zapier", level: 88, group: "Orchestration" },
   { name: "Make", level: 86, group: "Orchestration" },
-  { name: "GoHighLevel", level: 80, group: "Orchestration" },
-  { name: "LangChain", level: 90, group: "AI" },
-  { name: "LangFlow", level: 85, group: "AI" },
-  { name: "OpenAI", level: 92, group: "AI" },
-  { name: "Anthropic", level: 88, group: "AI" },
-  { name: "Pinecone", level: 84, group: "Data" },
-  { name: "Supabase", level: 86, group: "Data" },
-  { name: "Postgres", level: 80, group: "Data" },
-  { name: "Airtable", level: 82, group: "Data" },
-  { name: "Python", level: 92, group: "Code" },
-  { name: "TypeScript", level: 90, group: "Code" },
-  { name: "Node.js", level: 88, group: "Code" },
-  { name: "Next.js", level: 84, group: "Code" },
+  { name: "LangChain", level: 92, group: "AI & Agents" },
+  { name: "LangFlow", level: 88, group: "AI & Agents" },
+  { name: "OpenAI API", level: 94, group: "Foundation" },
+  { name: "Claude API", level: 92, group: "Foundation" },
+  { name: "Pinecone / Qdrant", level: 86, group: "Vector DB" },
+  { name: "MongoDB Atlas", level: 90, group: "Data & Storage" },
+  { name: "PostgreSQL", level: 84, group: "Data & Storage" },
+  { name: "Airtable / Sheets", level: 92, group: "Business Data" },
+  { name: "Python", level: 94, group: "Code & Glue" },
+  { name: "TypeScript / Node", level: 90, group: "Code & Glue" },
+  { name: "REST / Webhooks", level: 96, group: "Integration" },
+  { name: "Git / GitHub", level: 90, group: "DevOps & CI" },
+  { name: "FastAPI / Next.js", level: 88, group: "App Layer" },
 ];
 
-/**
- * Animated tile grid — each tile fills a radial proficiency arc on
- * scroll-in, and tracks the cursor for a magnetic radial-glow hover.
- */
 export default function SkillsConstellation() {
   const ref = useRef<HTMLDivElement | null>(null);
   const [shown, setShown] = useState(false);
@@ -41,7 +37,7 @@ export default function SkillsConstellation() {
           }
         });
       },
-      { threshold: 0.18 }
+      { threshold: 0.15 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -76,66 +72,53 @@ function SkillTile({
   shown: boolean;
 }) {
   const tileRef = useRef<HTMLDivElement | null>(null);
-  const circumference = 2 * Math.PI * 18;
+  const circumference = 2 * Math.PI * 16;
   const dash = (tool.level / 100) * circumference;
-
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = tileRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-    el.style.setProperty("--my", `${e.clientY - rect.top}px`);
-  };
 
   return (
     <div
       ref={tileRef}
-      onMouseMove={onMove}
-      className="skill-tile rounded-2xl border border-line bg-surface p-5 overflow-hidden"
+      className="group relative rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-5 overflow-hidden transition-all duration-300 hover:border-violet-500/40 hover:bg-[#101420] shadow-lg hover:shadow-violet-950/20"
       style={{
-        transitionDelay: `${index * 30}ms`,
+        transitionDelay: `${index * 25}ms`,
         opacity: shown ? 1 : 0,
         transform: shown ? "translateY(0)" : "translateY(12px)",
       }}
     >
       <div className="flex items-center justify-between">
-        <span className="mono text-[10px] uppercase tracking-[0.16em] text-muted">
+        <span className="font-mono text-[10px] uppercase tracking-wider text-violet-400 font-semibold">
           {tool.group}
         </span>
-        <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
           <circle
-            cx="20"
-            cy="20"
-            r="18"
+            cx="18"
+            cy="18"
+            r="15"
             fill="none"
-            stroke="rgba(10, 10, 20, 0.08)"
-            strokeWidth="2"
+            stroke="rgba(255, 255, 255, 0.08)"
+            strokeWidth="2.5"
           />
           <circle
-            cx="20"
-            cy="20"
-            r="18"
+            cx="18"
+            cy="18"
+            r="15"
             fill="none"
-            stroke="url(#skill-grad)"
-            strokeWidth="2"
+            stroke="#a78bfa"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeDasharray={`${shown ? dash : 0} ${circumference}`}
-            transform="rotate(-90 20 20)"
+            transform="rotate(-90 18 18)"
             style={{
-              transition: "stroke-dasharray 1.4s cubic-bezier(0.2,0.8,0.2,1)",
-              transitionDelay: `${index * 60 + 200}ms`,
+              transition: "stroke-dasharray 1.2s cubic-bezier(0.2,0.8,0.2,1)",
+              transitionDelay: `${index * 40 + 150}ms`,
             }}
           />
-          <defs>
-            <linearGradient id="skill-grad" x1="0" x2="1" y1="0" y2="1">
-              <stop offset="0%" stopColor="var(--accent-1)" />
-              <stop offset="100%" stopColor="var(--accent-2)" />
-            </linearGradient>
-          </defs>
         </svg>
       </div>
-      <p className="mt-3 text-base font-medium tracking-tight">{tool.name}</p>
-      <p className="mt-1 mono text-[10px] uppercase tracking-[0.14em] text-muted">
+      <p className="mt-3 text-base font-bold text-white tracking-tight group-hover:text-violet-200 transition-colors">
+        {tool.name}
+      </p>
+      <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-white/40">
         Proficiency · {tool.level}%
       </p>
     </div>

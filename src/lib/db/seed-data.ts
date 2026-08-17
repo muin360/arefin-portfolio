@@ -14,6 +14,7 @@ export const INITIAL_DATABASE: DatabaseSchema = {
     phoneE164: "8801994605717",
     availability: "available",
     availabilityNote: "Open to automation & agent projects",
+    profileImage: "/pp.png",
     socialLinks: {
       github: "https://github.com/muin360",
       linkedin: "https://linkedin.com/in/arefinmueen",

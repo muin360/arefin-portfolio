@@ -76,6 +76,11 @@ export default async function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/skills" className="v2-footer__link">
+                  Stack
+                </Link>
+              </li>
+              <li>
                 <Link href="/blog" className="v2-footer__link">
                   Journal
                 </Link>

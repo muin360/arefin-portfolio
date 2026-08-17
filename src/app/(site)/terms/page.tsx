@@ -29,7 +29,7 @@ export default function TermsPage() {
       />
 
       <section className="max-w-3xl mx-auto px-6 sm:px-8 section">
-        <div className="prose-tensor space-y-12 text-foreground/85 leading-relaxed">
+        <div className="space-y-12 text-white/80 leading-relaxed font-sans text-sm sm:text-base">
           <Block num="01" title="Who we are">
             <p>
               &quot;We&quot; and &quot;us&quot; refer to Arefin Mueen, an
@@ -401,9 +401,9 @@ export default function TermsPage() {
           </Block>
         </div>
 
-        <p className="mt-16 text-xs mono text-muted">
+        <p className="mt-16 text-xs font-mono text-white/40">
           Last updated · {LAST_UPDATED} · See also{" "}
-          <Link href="/privacy" className="link-underline">
+          <Link href="/privacy" className="text-violet-400 hover:text-white transition-colors underline">
             Privacy Policy
           </Link>
         </p>
@@ -422,15 +422,15 @@ function Block({
   children: React.ReactNode;
 }) {
   return (
-    <section className="grid grid-cols-1 md:grid-cols-12 gap-4 border-t border-line pt-8">
+    <section className="grid grid-cols-1 md:grid-cols-12 gap-4 border-t border-white/[0.08] pt-8">
       <div className="md:col-span-2">
-        <span className="num text-sm text-muted">/{num}</span>
+        <span className="font-mono text-xs font-bold text-violet-400">/{num}</span>
       </div>
       <div className="md:col-span-10 space-y-4">
-        <h2 className="display text-xl md:text-2xl tracking-tight text-foreground">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
           {title}
         </h2>
-        <div className="space-y-3">{children}</div>
+        <div className="space-y-3 text-white/70">{children}</div>
       </div>
     </section>
   );

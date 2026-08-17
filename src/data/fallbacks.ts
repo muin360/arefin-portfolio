@@ -14,6 +14,7 @@ export type SiteConfig = {
   siteDescription: string;
   availability: string;
   availabilityNote: string;
+  profileImage?: string;
   social?: {
     facebook?: string;
     whatsapp?: string;
@@ -142,6 +143,7 @@ export const FALLBACK_SITE_CONFIG: SiteConfig = {
     "Arefin Mueen is an AI Automation & AI Agent Developer based in Dhaka. I build practical AI agents, RAG systems, multi-agent workflows, and business automations using n8n, LangChain, Langflow, LLMs, APIs, and Python.",
   availability: "Open to new projects",
   availabilityNote: "Open to AI automation & agent projects",
+  profileImage: "/pp.png",
   social: {
     facebook: "https://www.facebook.com/profile.php?id=61588840534814",
     whatsapp: process.env.WHATSAPP_URL ?? "https://wa.me/8801994605717",

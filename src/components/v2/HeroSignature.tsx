@@ -25,7 +25,7 @@ const WORKFLOW_STAGES = [
 ];
 
 export default function HeroSignature({
-  profileImage,
+  profileImage = "/pp.png",
   name = "Arefin Mueen",
   role = "AI Automation & AI Agent Developer",
   availabilityNote = "Available for projects",

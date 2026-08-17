@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/Section";
 import ContactForm from "./ContactForm";
+import SectionPlate from "@/components/SectionPlate";
 import {
-  IconMail,
-  IconCheck,
-  IconGithub,
-  IconLinkedin,
-  IconX,
-  IconWhatsapp,
-} from "@/components/icons";
-import BentoCard from "@/components/BentoCard";
-import StudioTime from "@/components/StudioTime";
+  Mail,
+  MessageSquare,
+  CheckCircle2,
+  Globe,
+  ArrowRight,
+} from "lucide-react";
 import { getSiteSettings } from "@/lib/db";
 
 export const metadata: Metadata = {
@@ -22,193 +20,119 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
-  const { email, phone, phoneE164, socialLinks } = settings;
-  const whatsapp = socialLinks.whatsapp || (phoneE164 ? `https://wa.me/${phoneE164}` : undefined);
+  const { email, phone, phoneE164, socialLinks, availabilityNote } = settings;
+  const whatsapp =
+    socialLinks.whatsapp ||
+    (phoneE164 ? `https://wa.me/${phoneE164}` : undefined);
 
   return (
     <>
       <PageHeader
-        eyebrow="Arefin Mueen · Contact"
-        index="07"
-        meta="Replies within 24 hours · Mon–Sat (Asia/Dhaka)"
+        eyebrow="Direct Scoping Channel"
+        index="05"
+        meta="Replies within 24 hours · Mon–Sat"
         title={
           <>
             Tell me about the workflow you want to{" "}
-            <span className="serif">automate.</span>
+            <span className="serif italic text-violet-300">automate.</span>
           </>
         }
-        subtitle="Whether you want to connect business apps with n8n, build an autonomous agent, or set up a RAG knowledge assistant — share what you're trying to accomplish and the tools you use."
+        subtitle="Whether you need to connect business apps with n8n, build an autonomous agent, or set up a RAG knowledge assistant — share what you're trying to accomplish and the tools you use."
       />
 
-      <section className="hero-dark relative overflow-hidden">
-        <div className="orb orb-violet" aria-hidden="true" />
-        <div className="orb orb-pink" aria-hidden="true" />
-        <div className="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true" />
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 section relative">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            <div className="md:col-span-5 space-y-6">
-              <BentoCard className="h-full">
+      <section className="py-16 sm:py-20" aria-label="Contact Channels & Form">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <SectionPlate
+            index="01"
+            title="SEND A PROJECT INQUIRY"
+            sectionId="form"
+            meta="direct intake · fast response"
+          />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* ─── LEFT COL: DIRECT CHANNELS (5 cols) ────────────────────── */}
+            <div className="lg:col-span-5 space-y-6">
+              {/* Direct Email Card */}
+              <div className="p-6 sm:p-7 rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 transition-all space-y-4">
+                <div className="flex items-center gap-2 text-violet-400 font-mono text-xs font-semibold uppercase tracking-wider">
+                  <Mail className="w-4 h-4" />
+                  <span>Email Channel</span>
+                </div>
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
-                    Direct
-                  </p>
                   <a
                     href={`mailto:${email}`}
-                    className="inline-flex items-center gap-3 text-xl md:text-2xl tracking-tight font-medium link-underline text-white break-all"
+                    className="text-lg sm:text-xl font-bold text-white hover:text-violet-200 transition-colors break-all tracking-tight"
                   >
-                    <IconMail width={22} height={22} />
                     {email}
                   </a>
-                  <p className="mt-4 text-white/65 leading-relaxed">
-                    The fastest way to reach me directly. Tell me what
-                    you&apos;re trying to build or automate and the tools you
-                    currently use.
+                  <p className="mt-2 text-xs sm:text-sm text-white/60 leading-relaxed font-sans">
+                    The fastest way to reach me directly for project inquiries, architecture reviews, and automation scoping.
                   </p>
                 </div>
-              </BentoCard>
+              </div>
 
-              {(whatsapp || phone) && (
-                <BentoCard className="h-full">
+              {/* WhatsApp Card */}
+              {whatsapp && (
+                <div className="p-6 sm:p-7 rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 transition-all space-y-4">
+                  <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-semibold uppercase tracking-wider">
+                    <MessageSquare className="w-4 h-4" />
+                    <span>WhatsApp / Direct Message</span>
+                  </div>
                   <div>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
-                      WhatsApp &amp; phone
-                    </p>
-                    <div className="flex flex-col gap-3">
-                      {whatsapp && (
-                        <a
-                          href={whatsapp}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-3 text-lg md:text-xl tracking-tight font-medium link-underline text-white"
-                        >
-                          <IconWhatsapp width={20} height={20} />
-                          {phone ? `WhatsApp ${phone}` : "Open WhatsApp"}
-                        </a>
-                      )}
-                      {phone && phoneE164 && (
-                        <a
-                          href={`tel:+${phoneE164}`}
-                          className="inline-flex items-center gap-3 text-base text-white/85 link-underline"
-                        >
-                          <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/45">
-                            Call
-                          </span>
-                          {phone}
-                        </a>
-                      )}
-                    </div>
-                    <p className="mt-4 text-white/65 leading-relaxed">
-                      Prefer voice? Drop a WhatsApp message any day, or call
-                      between 10:00–19:00 Asia/Dhaka.
+                    <a
+                      href={whatsapp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-base sm:text-lg font-bold text-white hover:text-emerald-300 transition-colors tracking-tight"
+                    >
+                      <span>{phone ? `WhatsApp: ${phone}` : "Chat on WhatsApp"}</span>
+                      <ArrowRight className="w-4 h-4 text-emerald-400" />
+                    </a>
+                    <p className="mt-2 text-xs sm:text-sm text-white/60 leading-relaxed font-sans">
+                      Quick async voice notes and direct messaging for active project scoping and sprint updates.
                     </p>
                   </div>
-                </BentoCard>
+                </div>
               )}
 
-              <BentoCard className="h-full">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-5">
-                    A good first message includes
-                  </p>
-                  <ul className="space-y-3">
-                    {[
-                      "What you're trying to automate or build",
-                      "The tools you currently use (CRM, email, comms…)",
-                      "Rough timeline and budget, if you have one",
-                    ].map((line) => (
-                      <li
-                        key={line}
-                        className="flex items-start gap-3 text-white/85"
-                      >
-                        <IconCheck
-                          width={18}
-                          height={18}
-                          className="mt-1 shrink-0 text-violet-300"
-                        />
-                        <span>{line}</span>
-                      </li>
-                    ))}
-                  </ul>
+              {/* Scoping Checklist Card */}
+              <div className="p-6 sm:p-7 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-4">
+                <div className="flex items-center gap-2 text-violet-400 font-mono text-xs font-semibold uppercase tracking-wider">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>A helpful first inquiry includes</span>
                 </div>
-              </BentoCard>
+                <ul className="space-y-2.5 text-xs sm:text-sm text-white/70 font-sans">
+                  <li className="flex items-start gap-2.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 mt-2 shrink-0" />
+                    <span>What manual task or bottleneck you want to automate</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 mt-2 shrink-0" />
+                    <span>Your current software stack (CRM, Gmail, Slack, Sheets, database)</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 mt-2 shrink-0" />
+                    <span>Desired timeline or key milestone targets</span>
+                  </li>
+                </ul>
+              </div>
 
-              <BentoCard className="h-full">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3 inline-flex items-center gap-2">
-                    <span className="live-dot" /> Availability
-                  </p>
-                  <p className="text-white/85 leading-relaxed">
-                    Currently taking on practical automation and agent projects. Free
-                    30-minute discovery calls always available — no pitch,
-                    just a real look at whether it&apos;s a fit.
-                  </p>
-                  <StudioTime />
+              {/* Status & Timezone Card */}
+              <div className="p-5 rounded-2xl bg-[#0c0f18] border border-white/[0.08] flex items-center justify-between font-mono text-xs text-white/60">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-white/80 font-medium">{availabilityNote || "Open for projects"}</span>
                 </div>
-              </BentoCard>
-
-              <BentoCard className="h-full">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-4">
-                    Find me elsewhere
-                  </p>
-                  <ul className="grid grid-cols-2 gap-3">
-                    {socialLinks.github && (
-                      <li>
-                        <a
-                          href={socialLinks.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
-                        >
-                          <IconGithub width={14} height={14} /> GitHub
-                        </a>
-                      </li>
-                    )}
-                    {socialLinks.linkedin && (
-                      <li>
-                        <a
-                          href={socialLinks.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
-                        >
-                          <IconLinkedin width={14} height={14} /> LinkedIn
-                        </a>
-                      </li>
-                    )}
-                    {socialLinks.twitter && (
-                      <li>
-                        <a
-                          href={socialLinks.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
-                        >
-                          <IconX width={14} height={14} /> X / Twitter
-                        </a>
-                      </li>
-                    )}
-                    {whatsapp && (
-                      <li>
-                        <a
-                          href={whatsapp}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-white/85 hover:text-white link-underline"
-                        >
-                          <IconWhatsapp width={14} height={14} /> WhatsApp
-                        </a>
-                      </li>
-                    )}
-                  </ul>
+                <div className="flex items-center gap-1.5 text-white/40">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Dhaka · GMT+6</span>
                 </div>
-              </BentoCard>
+              </div>
             </div>
 
-            <div className="md:col-span-7">
-              <BentoCard className="h-full">
-                <ContactForm />
-              </BentoCard>
+            {/* ─── RIGHT COL: CONTACT FORM (7 cols) ────────────────────── */}
+            <div className="lg:col-span-7 p-6 sm:p-10 rounded-2xl bg-[#0c0f18] border border-white/[0.08] shadow-2xl">
+              <ContactForm />
             </div>
           </div>
         </div>

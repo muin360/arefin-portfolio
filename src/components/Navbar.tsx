@@ -22,9 +22,10 @@ const links = [
   { href: "/", label: "Home", num: "01" },
   { href: "/projects", label: "Work", num: "02" },
   { href: "/services", label: "Services", num: "03" },
-  { href: "/blog", label: "Journal", num: "04" },
-  { href: "/about", label: "About", num: "05" },
-  { href: "/contact", label: "Contact", num: "06" },
+  { href: "/skills", label: "Stack", num: "04" },
+  { href: "/blog", label: "Journal", num: "05" },
+  { href: "/about", label: "About", num: "06" },
+  { href: "/contact", label: "Contact", num: "07" },
 ];
 
 export default function Navbar() {

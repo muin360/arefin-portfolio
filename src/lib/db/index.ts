@@ -91,6 +91,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       return initial;
     }
     const result = normalizeDoc<SiteSettings>(doc) as SiteSettings;
+    if (!result.profileImage) {
+      result.profileImage = INITIAL_DATABASE.siteSettings.profileImage || "/pp.png";
+    }
     setInCache("site_settings", result);
     return result;
   } catch (err) {
