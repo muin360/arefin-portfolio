@@ -17,7 +17,7 @@ import {
   Workflow,
 } from "lucide-react";
 import Link from "next/link";
-import type { Project, IconName, WorkflowStep } from "@/lib/db/types";
+import type { Project, WorkflowStep } from "@/lib/db/types";
 
 interface Props {
   initialProjects: Project[];
@@ -34,22 +34,6 @@ const PROJECT_TYPES = [
   "E-Commerce Automation",
 ];
 
-const ICONS: IconName[] = [
-  "workflow",
-  "bot",
-  "spark",
-  "chart",
-  "agent",
-  "brain",
-  "layers",
-  "terminal",
-  "lock",
-  "zap",
-  "bookmark",
-  "compass",
-  "rocket",
-  "globe",
-];
 
 const CATEGORIES = [
   "AI Automation",

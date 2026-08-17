@@ -3,18 +3,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getProjects, getProjectBySlug, getServices } from "@/lib/db";
-import type { IconName } from "@/lib/db/types";
-import { createElement } from "react";
-import { iconFor } from "@/components/IconRegistry";
-import { PageHeader } from "@/components/Section";
-import Reveal from "@/components/Reveal";
-import BentoCard from "@/components/BentoCard";
-import { IconArrow } from "@/components/icons";
-import { Sparkles, ArrowRight, Layers, Workflow, ExternalLink, ShieldCheck, CheckCircle2, Video, Image as ImageIcon } from "lucide-react";
-
-function renderIcon(name: IconName, size: number, className?: string) {
-  return createElement(iconFor(name), { width: size, height: size, className });
-}
+import ProjectLightbox from "@/components/ProjectLightbox";
+import SectionPlate from "@/components/SectionPlate";
+import Button from "@/components/Button";
+import {
+  Workflow,
+  Layers,
+  ArrowRight,
+  ExternalLink,
+  Code2,
+  Brain,
+  CheckCircle2,
+  Sparkles,
+} from "lucide-react";
 
 export async function generateStaticParams() {
   const projects = await getProjects({ publishedOnly: true });
@@ -36,7 +37,7 @@ export async function generateMetadata({
   if (!project) return { title: "Project not found" };
 
   return {
-    title: `${project.title}${isPreview ? " (Draft Preview)" : ""}`,
+    title: `${project.title}${isPreview ? " (Draft Preview)" : ""} — Arefin Mueen`,
     description: project.summary,
     robots: isPreview ? { index: false, follow: false } : undefined,
     alternates: { canonical: `/projects/${project.slug}` },
@@ -45,6 +46,7 @@ export async function generateMetadata({
       description: project.summary,
       url: `/projects/${project.slug}`,
       type: "article",
+      images: project.coverImage ? [{ url: project.coverImage }] : undefined,
     },
   };
 }
@@ -68,9 +70,13 @@ export default async function ProjectDetailPage({
     getServices({ publishedOnly: true }),
   ]);
 
-  const related = allProjects
+  const relatedProjects = allProjects
     .filter((p) => p.slug !== project.slug)
     .slice(0, 3);
+
+  const relatedService = allServices.find((s) =>
+    project.relatedServiceIds?.includes(s.id)
+  );
 
   const defaultWorkflowSteps = [
     { step: "01", name: "Trigger", desc: "Webhook or scheduled event initiates the pipeline" },
@@ -85,6 +91,12 @@ export default async function ProjectDetailPage({
     project.workflowSteps && project.workflowSteps.length > 0
       ? project.workflowSteps
       : defaultWorkflowSteps;
+
+  const galleryImages = (project.gallery || []).map((src, i) => ({
+    src,
+    alt: `${project.title} interface log ${i + 1}`,
+    caption: project.captions?.[i] || `${project.title} execution trace ${i + 1}`,
+  }));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -104,12 +116,11 @@ export default async function ProjectDetailPage({
       "@type": "SoftwareApplication",
       name: project.title,
       applicationCategory: project.category,
-      operatingSystem: "Cloud / Node.js",
     },
   };
 
   return (
-    <>
+    <article className="min-h-screen pb-24">
       {isPreview && (
         <div className="bg-amber-500/10 border-b border-amber-500/30 text-amber-300 py-2.5 px-4 text-center font-mono text-xs font-semibold flex items-center justify-center gap-2 sticky top-0 z-50 backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
@@ -121,363 +132,409 @@ export default async function ProjectDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PageHeader
-        eyebrow={`${project.projectType ?? "Personal AI Automation Project"} · ${project.category}`}
-        index="05"
-        meta={project.stack.join(" · ")}
-        title={<>{project.title}</>}
-        subtitle={project.summary}
-      />
 
-      <section className="hero-dark relative overflow-hidden border-b border-white/5">
-        <div className="orb orb-violet" aria-hidden="true" />
-        <div className="orb orb-cyan" aria-hidden="true" />
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 section relative space-y-12">
-          
-          {/* COVER MEDIA */}
-          {project.coverImage && (
-            <Reveal>
-              <div className="relative w-full h-64 sm:h-96 md:h-[450px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#090c16]">
-                <Image
-                  src={project.coverImage}
-                  alt={project.altText || `${project.title} cover architecture`}
-                  fill
-                  priority
-                  className="object-cover"
-                />
-              </div>
-            </Reveal>
-          )}
+      {/* ─── 01 HERO SECTION ─────────────────────────────────────────────── */}
+      <section className="pt-12 pb-16 sm:py-20 border-b border-white/[0.08]" aria-label="Project Hero">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <SectionPlate
+            index="CASE STUDY"
+            title={project.category.toUpperCase()}
+            meta={project.projectType || "AI Automation System"}
+            action={
+              <Link
+                href="/projects"
+                className="text-white/40 hover:text-white inline-flex items-center gap-1 font-mono text-[11px] transition-colors"
+              >
+                <span>← All Work</span>
+              </Link>
+            }
+          />
 
-          {/* PROBLEM & GOAL OVERVIEW */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Reveal>
-              <BentoCard className="h-full">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-2 h-2 rounded-full bg-pink-400" />
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/60">
-                    The Problem
-                  </p>
-                </div>
-                <p className="text-white/85 leading-relaxed">
-                  {project.problem ||
-                    "Repetitive manual tasks, delayed responses, or fragmented data across tools causing operational friction."}
-                </p>
-              </BentoCard>
-            </Reveal>
+          <div className="max-w-4xl space-y-4">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.12]">
+              {project.title}
+            </h1>
 
-            <Reveal delay={80}>
-              <BentoCard className="h-full">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/60">
-                    Project Goal
-                  </p>
-                </div>
-                <p className="text-white/85 leading-relaxed">
-                  {project.goal ||
-                    "Build a reliable, automated pipeline to handle data transformations, reasoning, and tool execution automatically."}
-                </p>
-              </BentoCard>
-            </Reveal>
+            <p className="text-base sm:text-lg text-white/70 leading-relaxed font-sans max-w-3xl">
+              {project.summary}
+            </p>
+
+            <div className="pt-2 flex flex-wrap items-center gap-2 font-mono text-xs text-white/50">
+              <span className="text-violet-400 font-semibold uppercase">Role:</span>
+              <span>End-to-End System Architecture, AI Prompts &amp; API Integration</span>
+            </div>
           </div>
 
-          {/* WORKFLOW DIAGRAM MEDIA (IF PROVIDED) */}
-          {project.workflowImage && (
-            <Reveal delay={100}>
-              <div className="rounded-3xl border border-white/10 bg-[#090c16] p-6 sm:p-8 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Workflow className="w-4 h-4 text-violet-400" />
-                  <h3 className="text-sm font-mono uppercase tracking-widest text-violet-300 font-semibold">
-                    Visual Workflow Map
-                  </h3>
-                </div>
-                <div className="relative w-full h-64 sm:h-96 rounded-2xl overflow-hidden border border-white/10">
-                  <Image
-                    src={project.workflowImage}
-                    alt={`${project.title} workflow diagram`}
-                    fill
-                    className="object-contain bg-[#05070d]"
-                  />
-                </div>
-              </div>
-            </Reveal>
-          )}
-
-          {/* SIGNATURE WORKFLOW ARCHITECTURE */}
-          <Reveal delay={120}>
-            <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10 backdrop-blur-sm">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10 mb-8">
-                <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50 mb-1">
-                    System Architecture
-                  </p>
-                  <h3 className="display text-xl md:text-2xl text-white">
-                    Workflow Execution Flow
-                  </h3>
-                </div>
-                <span className="font-mono text-[11px] text-violet-300 tracking-wider">
-                  TRIGGER → DATA → AI → TOOLS → DECISION → OUTPUT
+          {/* COVER MEDIA (Cinematic 16:9) */}
+          <div className="relative w-full h-64 sm:h-96 md:h-[500px] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0c0f18] shadow-2xl">
+            {project.coverImage ? (
+              <Image
+                src={project.coverImage}
+                alt={project.altText || `${project.title} cover architecture`}
+                fill
+                priority
+                className="object-cover"
+                sizes="100vw"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-gradient-to-br from-[#121622] to-[#07090e] text-center">
+                <Workflow className="w-12 h-12 text-violet-400 mb-3 opacity-80" />
+                <span className="text-sm font-mono text-white/70 tracking-wider">
+                  {project.category} · System Visualization
                 </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {workflow.map((st, idx) => (
-                  <div
-                    key={st.step}
-                    className="p-5 rounded-2xl border border-white/5 bg-white/[0.02] relative group hover:border-violet-400/30 transition-colors"
-                  >
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-violet-300/80 font-bold">
-                        Step {st.step}
-                      </span>
-                      {idx < workflow.length - 1 && (
-                        <span className="text-white/20 text-xs hidden lg:inline" aria-hidden="true">
-                          →
-                        </span>
-                      )}
-                    </div>
-                    <h4 className="text-white font-medium text-sm mb-1.5">{st.name}</h4>
-                    <p className="text-white/60 text-xs leading-relaxed">{st.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-
-          {/* ARCHITECTURE DIAGRAM (IF PROVIDED) */}
-          {project.architectureImage && (
-            <Reveal delay={140}>
-              <div className="rounded-3xl border border-white/10 bg-[#090c16] p-6 sm:p-8 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-violet-400" />
-                  <h3 className="text-sm font-mono uppercase tracking-widest text-violet-300 font-semibold">
-                    Detailed Infrastructure &amp; Tool Architecture
-                  </h3>
-                </div>
-                <div className="relative w-full h-64 sm:h-96 rounded-2xl overflow-hidden border border-white/10">
-                  <Image
-                    src={project.architectureImage}
-                    alt={`${project.title} architecture diagram`}
-                    fill
-                    className="object-contain bg-[#05070d]"
-                  />
-                </div>
-              </div>
-            </Reveal>
-          )}
-
-          {/* GALLERY SHOWCASE (IF PROVIDED) */}
-          {project.gallery && project.gallery.length > 0 && (
-            <Reveal delay={150}>
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-violet-400" />
-                  <h3 className="text-sm font-mono uppercase tracking-widest text-violet-300 font-semibold">
-                    Interface &amp; Logs Showcase
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {project.gallery.map((imgUrl, i) => (
-                    <div key={i} className="relative w-full h-56 rounded-2xl overflow-hidden border border-white/10 bg-[#090c16]">
-                      <Image
-                        src={imgUrl}
-                        alt={`${project.title} showcase ${i + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-          )}
-
-          {/* AI ROLE & AUTOMATION LOGIC */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Reveal delay={160}>
-              <BentoCard className="h-full">
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                  AI Role &amp; Processing
+                <p className="mt-1 text-xs text-white/40 max-w-md">
+                  {project.title}
                 </p>
-                <p className="text-white/80 leading-relaxed text-sm">
-                  {project.aiRole ||
-                    "LLM handles intent parsing, unstructured context extraction, and dynamic output formatting with structured schema guardrails."}
-                </p>
-              </BentoCard>
-            </Reveal>
-
-            <Reveal delay={200}>
-              <BentoCard className="h-full">
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55 mb-3">
-                  Automation Logic &amp; Connectors
-                </p>
-                <p className="text-white/80 leading-relaxed text-sm">
-                  {project.automationLogic || project.summary}
-                </p>
-              </BentoCard>
-            </Reveal>
+              </div>
+            )}
           </div>
 
-          {/* LEARNING OUTCOME */}
-          <Reveal delay={240}>
-            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 md:p-10">
-              <div className="flex items-start justify-between gap-6">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/55 mb-3">
-                    What I Learned
-                  </p>
-                  <p className="display text-xl md:text-2xl text-white leading-snug">
-                    <span className="serif text-white/90">
-                      {project.learningOutcome ||
-                        project.outcome ||
-                        "Mastered end-to-end workflow debugging, edge case management, and API error resilience."}
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40 mb-2">
-                    Technologies Used
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.stack.map((s) => (
-                      <span
-                        key={s}
-                        className="px-3 py-1 rounded-full text-xs font-mono bg-white/5 border border-white/10 text-white/70"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  {project.repoUrl && (
-                    <a
-                      href={project.repoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono bg-white/10 hover:bg-white/20 text-white transition-colors"
-                    >
-                      View GitHub Repo →
-                    </a>
-                  )}
-                  {project.demoUrl && (
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono bg-violet-600/30 hover:bg-violet-600/50 border border-violet-400/40 text-white transition-colors"
-                    >
-                      Live Demo →
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Reveal>
-
-          {/* RELATED SERVICES HOOK */}
-          {allServices.length > 0 && (
-            <Reveal delay={260}>
-              <div className="p-6 sm:p-8 rounded-3xl bg-[#0b0e1b] border border-violet-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                <div>
-                  <span className="text-[11px] font-mono uppercase tracking-widest text-violet-400 font-semibold block mb-1">
-                    Related Capability
-                  </span>
-                  <h4 className="text-lg font-bold text-white">
-                    Need a similar automation for your workflow?
-                  </h4>
-                  <p className="text-xs text-white/60 mt-1 max-w-xl">
-                    Explore available services across autonomous AI agents, RAG knowledge pipelines, and custom API workflows.
-                  </p>
-                </div>
-                <Link
-                  href="/services"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold tracking-wide transition-colors shrink-0"
+          {/* Action Links + Tech Stack */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 font-mono text-xs">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {(project.stack || []).map((s) => (
+                <span
+                  key={s}
+                  className="px-2.5 py-1 rounded bg-[#121622] border border-white/5 text-[11px] text-white/70"
                 >
-                  <span>Explore Capabilities</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </Reveal>
-          )}
+                  {s}
+                </span>
+              ))}
+            </div>
 
+            <div className="flex items-center gap-3 shrink-0">
+              {project.repoUrl && (
+                <a
+                  href={project.repoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#121622] hover:bg-[#181e2e] text-white border border-white/10 transition-colors"
+                >
+                  <span>GitHub Repository</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-white/50" />
+                </a>
+              )}
+              {project.demoUrl && (
+                <a
+                  href={project.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600/30 hover:bg-violet-600/50 text-white border border-violet-400/40 transition-colors"
+                >
+                  <span>Live Interactive Demo</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-violet-300" />
+                </a>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* RELATED PROJECTS */}
-      {related.length > 0 && (
-        <section className="border-b border-white/5 bg-[#060810]">
-          <div className="max-w-7xl mx-auto px-6 sm:px-8 section">
-            <Reveal>
-              <div className="flex items-end justify-between gap-6 mb-10">
-                <div>
-                  <p className="text-xs font-mono uppercase tracking-widest text-violet-400 font-semibold mb-1">
-                    Connected Work
-                  </p>
-                  <h2 className="display text-3xl md:text-4xl text-white">
-                    More <span className="serif">practical projects.</span>
-                  </h2>
+      {/* ─── 02 CONTEXT, PROBLEM & SOLUTION ──────────────────────────────── */}
+      <section className="py-16 sm:py-20 border-b border-white/[0.08]" aria-label="Problem and Solution">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <SectionPlate
+            index="01"
+            title="THE PROBLEM &amp; SOLUTION"
+            meta="operational friction vs automated architecture"
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+            {/* The Operational Problem */}
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-3 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-rose-400 font-mono text-xs font-semibold mb-2">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                  <span className="uppercase tracking-widest">The Problem</span>
                 </div>
-                <Link
-                  href="/projects"
-                  className="hover-arrow text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  <span className="link-underline">All projects</span>
-                  <span aria-hidden="true"> →</span>
-                </Link>
+                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                  Manual friction &amp; operational lag
+                </h3>
+                <p className="mt-3 text-xs sm:text-sm text-white/70 leading-relaxed font-sans">
+                  {project.problem ||
+                    "Manual data re-entry, delayed inquiry resolution, and lack of structured validation causing operational overhead."}
+                </p>
               </div>
-            </Reveal>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {related.map((p) => (
-                <Reveal key={p.id}>
-                  <Link
-                    href={`/projects/${p.slug}`}
-                    className="block h-full rounded-3xl border border-white/10 bg-[#0a0d18] hover:border-violet-500/30 p-7 transition-all duration-300 group"
-                  >
-                    <div className="flex items-start justify-between">
-                      {renderIcon(p.iconName, 26, "text-violet-400")}
-                      <span className="px-2.5 py-0.5 rounded-full bg-white/5 text-[11px] font-mono text-white/60">
-                        {p.category}
-                      </span>
-                    </div>
-                    <h3 className="mt-6 text-lg md:text-xl tracking-tight font-bold text-white group-hover:text-violet-200 transition-colors">
-                      {p.title}
-                    </h3>
-                    <p className="mt-2.5 text-xs text-white/60 leading-relaxed line-clamp-3">
-                      {p.summary}
-                    </p>
-                  </Link>
-                </Reveal>
-              ))}
             </div>
+
+            {/* The Engineered Solution */}
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0c0f18] border border-violet-500/30 space-y-3 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-violet-400 font-mono text-xs font-semibold mb-2">
+                  <span className="w-2 h-2 rounded-full bg-violet-400" />
+                  <span className="uppercase tracking-widest">The Solution</span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                  Automated reasoning &amp; execution pipeline
+                </h3>
+                <p className="mt-3 text-xs sm:text-sm text-white/70 leading-relaxed font-sans">
+                  {project.goal ||
+                    "An event-driven pipeline orchestrating LLM reasoning, schema validation, and tool execution with deterministic fallbacks."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 03 WORKFLOW SYSTEM ARCHITECTURE ─────────────────────────────── */}
+      <section className="py-16 sm:py-20 border-b border-white/[0.08]" aria-label="Workflow Architecture">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <SectionPlate
+            index="02"
+            title="EXECUTION PIPELINE"
+            meta="node-by-node execution flow"
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {workflow.map((st) => (
+              <div
+                key={st.step}
+                className="p-5 rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 transition-colors space-y-2 group"
+              >
+                <div className="flex items-center justify-between font-mono text-xs">
+                  <span className="text-violet-400 font-bold uppercase tracking-wider">
+                    Step {st.step}
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-white group-hover:text-violet-200 transition-colors">
+                  {st.name}
+                </h4>
+                <p className="text-xs text-white/60 leading-relaxed font-sans">
+                  {st.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Workflow Diagram Image if available */}
+          {project.workflowImage && (
+            <div className="mt-6 rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-6 space-y-3">
+              <div className="flex items-center gap-2 font-mono text-xs text-violet-400">
+                <Workflow className="w-4 h-4" />
+                <span className="font-semibold uppercase tracking-wider">
+                  Visual Workflow Map
+                </span>
+              </div>
+              <div className="relative w-full h-64 sm:h-96 rounded-xl overflow-hidden border border-white/10 bg-[#060810]">
+                <Image
+                  src={project.workflowImage}
+                  alt={`${project.title} workflow diagram`}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── 04 AI ROLE & AUTOMATION LOGIC ───────────────────────────────── */}
+      <section className="py-16 sm:py-20 border-b border-white/[0.08]" aria-label="AI Role">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <SectionPlate
+            index="03"
+            title="AI ROLE &amp; LOGIC"
+            meta="where intelligence is applied"
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-3">
+              <div className="flex items-center gap-2 font-mono text-xs text-violet-400 mb-2">
+                <Brain className="w-4 h-4" />
+                <span className="font-semibold uppercase tracking-wider">
+                  AI Role &amp; Processing
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-white/80 leading-relaxed font-sans">
+                {project.aiRole ||
+                  "LLM handles intent parsing, unstructured context extraction, and dynamic output formatting with structured schema guardrails."}
+              </p>
+            </div>
+
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-3">
+              <div className="flex items-center gap-2 font-mono text-xs text-violet-400 mb-2">
+                <Code2 className="w-4 h-4" />
+                <span className="font-semibold uppercase tracking-wider">
+                  Automation Logic &amp; Connectors
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-white/80 leading-relaxed font-sans">
+                {project.automationLogic || project.summary}
+              </p>
+            </div>
+          </div>
+
+          {/* Architecture Diagram if available */}
+          {project.architectureImage && (
+            <div className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-6 space-y-3">
+              <div className="flex items-center gap-2 font-mono text-xs text-violet-400">
+                <Layers className="w-4 h-4" />
+                <span className="font-semibold uppercase tracking-wider">
+                  Infrastructure &amp; Tool Architecture
+                </span>
+              </div>
+              <div className="relative w-full h-64 sm:h-96 rounded-xl overflow-hidden border border-white/10 bg-[#060810]">
+                <Image
+                  src={project.architectureImage}
+                  alt={`${project.title} architecture diagram`}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── 05 MEDIA SHOWCASE / GALLERY ─────────────────────────────────── */}
+      {galleryImages.length > 0 && (
+        <section className="py-16 sm:py-20 border-b border-white/[0.08]" aria-label="Gallery">
+          <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <SectionPlate
+              index="04"
+              title="MEDIA SHOWCASE"
+              meta="interface logs &amp; execution traces (click to enlarge)"
+            />
+
+            <ProjectLightbox images={galleryImages} />
           </div>
         </section>
       )}
 
-      {/* BOTTOM CTA */}
-      <section className="hero-dark relative overflow-hidden">
-        <div className="orb orb-pink" aria-hidden="true" />
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 py-20 relative text-center">
-          <h2 className="display text-3xl md:text-5xl text-white">
-            Have a workflow{" "}
-            <span className="serif iridescent">you&rsquo;d like to automate?</span>
-          </h2>
-          <p className="mt-5 text-white/65 max-w-2xl mx-auto leading-relaxed">
-            Free discovery scoping conversation — let&rsquo;s map out your systems and eliminate operational bottlenecks.
-          </p>
-          <div className="mt-8">
-            <Link href="/contact" className="btn-primary shimmer">
-              Let&rsquo;s build an automation
-              <IconArrow width={16} height={16} />
-            </Link>
+      {/* ─── 06 WHAT I LEARNED / ENGINEERING OUTCOME ─────────────────────── */}
+      <section className="py-16 sm:py-20 border-b border-white/[0.08]" aria-label="Learnings">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <SectionPlate
+            index="05"
+            title="WHAT I LEARNED"
+            meta="developer reflections &amp; edge case insights"
+          />
+
+          <div className="p-6 sm:p-10 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-4">
+            <div className="flex items-center gap-2 font-mono text-xs text-violet-400">
+              <CheckCircle2 className="w-4 h-4" />
+              <span className="font-semibold uppercase tracking-wider">
+                Engineering Takeaways
+              </span>
+            </div>
+
+            <p className="text-base sm:text-xl text-white/90 leading-relaxed font-serif italic max-w-3xl">
+              &ldquo;{project.learningOutcome ||
+                project.outcome ||
+                "Mastered end-to-end workflow debugging, edge case management, rate-limiting recoveries, and schema validation resilience."}&rdquo;
+            </p>
           </div>
         </div>
       </section>
-    </>
+
+      {/* ─── 07 CONNECTED SYSTEM BLUEPRINTS & RELATED WORK ───────────────── */}
+      <section className="py-16 sm:py-20 border-b border-white/[0.08]" aria-label="Related Work">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <SectionPlate
+            index="06"
+            title="CONNECTED WORK"
+            meta="related capability blueprints &amp; projects"
+          />
+
+          {/* Related Capability Blueprint Banner */}
+          {relatedService && (
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0c0f18] border border-violet-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-violet-400 font-semibold block mb-1">
+                  Related Capability
+                </span>
+                <h4 className="text-lg font-bold text-white">
+                  {relatedService.title}
+                </h4>
+                <p className="text-xs text-white/60 mt-1 max-w-xl font-sans">
+                  {relatedService.hook || relatedService.solution}
+                </p>
+              </div>
+              <Button href="/services" variant="secondary" size="md">
+                <span>Explore Capabilities</span>
+              </Button>
+            </div>
+          )}
+
+          {/* 3 Related Projects */}
+          {relatedProjects.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedProjects.map((p, idx) => (
+                <div
+                  key={p.slug || p.id}
+                  className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 p-6 flex flex-col justify-between transition-all group"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2 font-mono text-xs">
+                      <span className="text-[10px] text-violet-400 font-semibold uppercase tracking-wider">
+                        {p.category}
+                      </span>
+                      <span className="text-white/30 font-bold">0{idx + 1}</span>
+                    </div>
+
+                    <h3 className="text-base font-bold text-white tracking-tight group-hover:text-violet-200 transition-colors">
+                      <Link href={`/projects/${p.slug}`}>
+                        {p.title}
+                      </Link>
+                    </h3>
+
+                    <p className="mt-2 text-xs text-white/60 line-clamp-2 leading-relaxed font-sans">
+                      {p.summary}
+                    </p>
+                  </div>
+
+                  <div className="mt-6 pt-3 border-t border-white/[0.06] flex items-center justify-between font-mono text-xs">
+                    <span className="text-[10px] text-white/40">
+                      {p.stack?.[0] || "AI System"}
+                    </span>
+                    <Link
+                      href={`/projects/${p.slug}`}
+                      className="inline-flex items-center gap-1 text-violet-300 hover:text-white transition-colors"
+                    >
+                      <span>Case Study</span>
+                      <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── 08 FINAL PROJECT CTA ────────────────────────────────────────── */}
+      <section className="py-16 sm:py-24 text-center" aria-label="Scoping CTA">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-8 sm:p-14 relative overflow-hidden">
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
+                Have a similar workflow{" "}
+                <span className="serif italic text-violet-300">worth automating?</span>
+              </h2>
+
+              <p className="text-sm sm:text-base text-white/70 leading-relaxed font-sans font-normal">
+                Let&rsquo;s map your manual processes and build autonomous AI agents or reliable API pipelines under your 100% ownership.
+              </p>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                <Button
+                  href="/contact"
+                  variant="primary"
+                  size="lg"
+                  icon={<ArrowRight className="w-4 h-4" />}
+                >
+                  Let&rsquo;s Build an Automation
+                </Button>
+
+                <Button href="/projects" variant="secondary" size="lg">
+                  View More Work
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </article>
   );
 }
