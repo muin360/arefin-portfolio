@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getBlogPosts, getBlogPostBySlug } from "@/lib/db";
+import Image from "next/image";
+import { getBlogPosts, getBlogPostBySlug, getProjects, getServices } from "@/lib/db";
 import { SITE_URL } from "@/lib/site-url";
-import { IconArrow } from "@/components/icons";
 import ReadingProgress from "@/components/ReadingProgress";
 import MarkdownContent from "@/components/MarkdownContent";
 import BreadcrumbsJsonLd from "@/components/BreadcrumbsJsonLd";
+import SectionPlate from "@/components/SectionPlate";
+import Button from "@/components/Button";
+import { ArrowRight, Workflow, Bot, Brain } from "lucide-react";
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts({ publishedOnly: true });
@@ -26,7 +29,7 @@ export async function generateMetadata({
   const metaDesc = post.seoDescription || post.excerpt;
 
   return {
-    title: metaTitle,
+    title: `${metaTitle} — Arefin Mueen`,
     description: metaDesc,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
@@ -35,6 +38,7 @@ export async function generateMetadata({
       url: `/blog/${post.slug}`,
       type: "article",
       publishedTime: post.date,
+      images: post.coverImage ? [{ url: post.coverImage }] : undefined,
     },
   };
 }
@@ -48,10 +52,25 @@ export default async function BlogPostPage({
   const post = await getBlogPostBySlug(slug, { publishedOnly: true });
   if (!post) notFound();
 
-  const allPosts = await getBlogPosts({ publishedOnly: true });
-  const otherPosts = allPosts
+  const [allPosts, allProjects, allServices] = await Promise.all([
+    getBlogPosts({ publishedOnly: true }),
+    getProjects({ publishedOnly: true }),
+    getServices({ publishedOnly: true }),
+  ]);
+
+  const relatedPosts = allPosts
     .filter((p) => p.slug !== post.slug)
     .slice(0, 2);
+
+  const relatedProject = allProjects.find((p) =>
+    post.relatedProjectIds?.includes(p.id) ||
+    p.category.toLowerCase().includes((post.category || "").toLowerCase())
+  );
+
+  const relatedService = allServices.find((s) =>
+    post.relatedServiceIds?.includes(s.id) ||
+    s.title.toLowerCase().includes((post.category || "").toLowerCase())
+  );
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -77,7 +96,7 @@ export default async function BlogPostPage({
   };
 
   return (
-    <>
+    <article className="min-h-screen pt-12 pb-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -92,19 +111,25 @@ export default async function BlogPostPage({
       />
       <ReadingProgress />
 
-      <article className="hero-dark relative overflow-hidden border-b border-white/5 pt-32 pb-24">
-        <div className="orb orb-violet" aria-hidden="true" />
-        <div className="orb orb-pink" aria-hidden="true" />
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        {/* Top Back Navigation Plate */}
+        <SectionPlate
+          index="BUILD NOTE"
+          title={post.category?.toUpperCase() || "ENGINEERING"}
+          meta={post.readingTime || "4 min read"}
+          action={
+            <Link
+              href="/blog"
+              className="text-white/40 hover:text-white inline-flex items-center gap-1 font-mono text-[11px] transition-colors"
+            >
+              <span>← All Notes</span>
+            </Link>
+          }
+        />
 
-        <div className="max-w-3xl mx-auto px-6 sm:px-8 relative">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.18em] text-white/50 hover:text-white transition-colors mb-8"
-          >
-            ← Back to journal
-          </Link>
-
-          <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-white/50 mb-6">
+        {/* Article Header */}
+        <header className="space-y-6">
+          <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-white/50">
             <time dateTime={post.date}>
               {new Date(post.date).toLocaleDateString("en-US", {
                 month: "long",
@@ -113,106 +138,137 @@ export default async function BlogPostPage({
               })}
             </time>
             <span>·</span>
-            <span>{post.readingTime}</span>
-            {post.category && (
-              <>
-                <span>·</span>
-                <span className="tag-pill text-[10px]">{post.category}</span>
-              </>
-            )}
+            <span>By Arefin Mueen</span>
+            <span>·</span>
+            <span className="text-violet-300">{post.category}</span>
           </div>
 
-          <h1 className="display text-3xl sm:text-4xl md:text-5xl text-white tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-[1.15]">
             {post.title}
           </h1>
 
-          <p className="mt-6 text-lg sm:text-xl text-white/70 leading-relaxed font-sans border-l-2 border-violet-500/50 pl-4">
-            {post.excerpt}
-          </p>
-
-          <div className="mt-12 pt-8 border-t border-white/10">
-            <MarkdownContent content={post.content} />
-          </div>
-
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-6 border-t border-white/10 flex flex-wrap gap-2">
-              {post.tags.map((t) => (
-                <span
-                  key={t}
-                  className="px-3 py-1 rounded-full text-xs font-mono bg-white/5 text-white/60 border border-white/10"
-                >
-                  #{t}
-                </span>
-              ))}
-            </div>
+          {post.excerpt && (
+            <p className="text-base sm:text-lg text-white/70 leading-relaxed font-sans border-l-2 border-violet-500/40 pl-4">
+              {post.excerpt}
+            </p>
           )}
 
-          {/* Author Box */}
-          <div className="mt-16 p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-xs font-mono uppercase tracking-widest text-white/40">
-                Written by
-              </p>
-              <h3 className="text-lg font-bold text-white mt-1">Arefin Mueen</h3>
-              <p className="text-xs text-white/60 mt-0.5">
-                AI Automation &amp; AI Agent Developer · Dhaka, Bangladesh
-              </p>
+          {post.coverImage && (
+            <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0c0f18]">
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                priority
+                className="object-cover"
+              />
             </div>
-            <Link
-              href="/contact"
-              className="px-4 py-2 rounded-xl bg-violet-600/30 hover:bg-violet-600/50 border border-violet-400/40 text-xs font-mono text-white transition-colors"
-            >
-              Get in touch →
-            </Link>
-          </div>
-        </div>
-      </article>
+          )}
+        </header>
 
-      {/* More Posts */}
-      {otherPosts.length > 0 && (
-        <section className="py-20 border-b border-white/5 bg-slate-950">
-          <div className="max-w-4xl mx-auto px-6 sm:px-8">
-            <h2 className="display text-2xl text-white mb-8">
-              More <span className="serif">build notes.</span>
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {otherPosts.map((p) => (
+        {/* Article Body */}
+        <div className="prose prose-invert prose-violet max-w-none font-sans text-white/80 leading-relaxed text-sm sm:text-base">
+          <MarkdownContent content={post.content} />
+        </div>
+
+        {/* ─── CONNECTED CONTEXTUAL LINKS (PROJECT & SERVICE) ─────────────── */}
+        {(relatedProject || relatedService) && (
+          <div className="p-6 sm:p-8 rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-4">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-violet-400 font-semibold block">
+              Connected Architecture
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
+              {relatedProject && (
+                <Link
+                  href={`/projects/${relatedProject.slug}`}
+                  className="p-4 rounded-xl bg-[#121622] hover:bg-[#181e2e] border border-white/5 flex flex-col justify-between space-y-2 group transition-colors"
+                >
+                  <div className="flex items-center gap-2 text-violet-300">
+                    <Workflow className="w-4 h-4" />
+                    <span className="font-bold">Live Case Study</span>
+                  </div>
+                  <p className="text-white font-sans text-xs font-semibold line-clamp-1">
+                    {relatedProject.title}
+                  </p>
+                  <span className="text-[10px] text-white/40 group-hover:text-white flex items-center gap-1 transition-colors">
+                    <span>View implementation</span>
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </Link>
+              )}
+
+              {relatedService && (
+                <Link
+                  href="/services"
+                  className="p-4 rounded-xl bg-[#121622] hover:bg-[#181e2e] border border-white/5 flex flex-col justify-between space-y-2 group transition-colors"
+                >
+                  <div className="flex items-center gap-2 text-emerald-400">
+                    <Brain className="w-4 h-4" />
+                    <span className="font-bold">Capability Blueprint</span>
+                  </div>
+                  <p className="text-white font-sans text-xs font-semibold line-clamp-1">
+                    {relatedService.title}
+                  </p>
+                  <span className="text-[10px] text-white/40 group-hover:text-white flex items-center gap-1 transition-colors">
+                    <span>Explore service</span>
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ─── RELATED NOTES ──────────────────────────────────────────────── */}
+        {relatedPosts.length > 0 && (
+          <div className="pt-8 border-t border-white/[0.08] space-y-4">
+            <SectionPlate
+              index="NEXT"
+              title="MORE BUILD NOTES"
+              meta="related engineering reflections"
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {relatedPosts.map((p) => (
                 <Link
                   key={p.slug}
                   href={`/blog/${p.slug}`}
-                  className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-colors group block space-y-2"
+                  className="p-5 rounded-2xl bg-[#0c0f18] hover:bg-[#121622] border border-white/[0.08] group transition-colors space-y-2 block"
                 >
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-white/40">
-                    {p.date} · {p.readingTime}
-                  </p>
-                  <h3 className="text-lg font-bold text-white group-hover:text-violet-300 transition-colors">
+                  <span className="text-[10px] font-mono uppercase text-violet-400 font-semibold">
+                    {p.category}
+                  </span>
+                  <h4 className="text-sm font-bold text-white group-hover:text-violet-200 transition-colors">
                     {p.title}
-                  </h3>
-                  <p className="text-xs text-white/60 line-clamp-2">{p.excerpt}</p>
+                  </h4>
+                  <p className="text-xs text-white/50 line-clamp-2 font-sans">
+                    {p.excerpt}
+                  </p>
                 </Link>
               ))}
             </div>
           </div>
-        </section>
-      )}
+        )}
 
-      {/* Bottom CTA */}
-      <section className="hero-dark relative overflow-hidden py-16 text-center">
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="display text-3xl text-white">
-            Have thoughts or <span className="serif iridescent">questions?</span>
-          </h2>
-          <p className="mt-3 text-sm text-white/65">
-            Always open to discussing AI automation architectures and practical implementations.
-          </p>
-          <div className="mt-6">
-            <Link href="/contact" className="btn-primary shimmer">
-              Send a message
-              <IconArrow width={16} height={16} />
-            </Link>
+        {/* ─── CONTEXTUAL CTA ──────────────────────────────────────────────── */}
+        <div className="pt-8">
+          <div className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-8 text-center space-y-4">
+            <h3 className="text-xl font-bold text-white tracking-tight">
+              Have a workflow worth{" "}
+              <span className="serif italic text-violet-300">automating?</span>
+            </h3>
+            <p className="text-xs sm:text-sm text-white/60 max-w-md mx-auto font-sans">
+              Let&rsquo;s discuss your manual bottleneck and engineer an autonomous AI agent or workflow pipeline.
+            </p>
+            <div className="pt-2 flex justify-center">
+              <Button href="/contact" variant="primary" size="md">
+                Let&rsquo;s Build an Automation →
+              </Button>
+            </div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </article>
   );
 }
