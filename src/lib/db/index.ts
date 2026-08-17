@@ -31,6 +31,44 @@ const memoryFallback = JSON.parse(JSON.stringify(INITIAL_DATABASE));
 // Helper for checking if test environment allows in-memory mutations
 const isTestEnv = process.env.NODE_ENV === "test";
 
+// ─── HIGH SPEED IN-MEMORY TTL CACHE ─────────────────────────────────────────
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const MEMORY_CACHE = new Map<string, CacheEntry<unknown>>();
+const CACHE_TTL_MS = 60 * 1000; // 60s TTL
+
+function getFromCache<T>(key: string): T | null {
+  if (isTestEnv) return null; // Avoid cache interference in isolated test runner
+  const entry = MEMORY_CACHE.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    MEMORY_CACHE.delete(key);
+    return null;
+  }
+  return entry.data as T;
+}
+
+function setInCache<T>(key: string, data: T): void {
+  if (isTestEnv) return;
+  MEMORY_CACHE.set(key, { data, timestamp: Date.now() });
+}
+
+export function invalidateCache(prefix?: string): void {
+  if (!prefix) {
+    MEMORY_CACHE.clear();
+    return;
+  }
+  for (const key of MEMORY_CACHE.keys()) {
+    if (key.startsWith(prefix)) {
+      MEMORY_CACHE.delete(key);
+    }
+  }
+}
+
 function handleMutationDbUnavailable(): never {
   throw new Error("Database unavailable. Your changes were not saved.");
 }
@@ -38,6 +76,9 @@ function handleMutationDbUnavailable(): never {
 // ─── SITE SETTINGS ─────────────────────────────────────────────────────────
 
 export async function getSiteSettings(): Promise<SiteSettings> {
+  const cached = getFromCache<SiteSettings>("site_settings");
+  if (cached) return cached;
+
   const col = await getCollection<SiteSettings>("site_settings");
   if (!col) return memoryFallback.siteSettings;
 
@@ -46,9 +87,12 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     if (!doc) {
       const initial = { ...INITIAL_DATABASE.siteSettings };
       await col.insertOne(initial);
+      setInCache("site_settings", initial);
       return initial;
     }
-    return normalizeDoc<SiteSettings>(doc) as SiteSettings;
+    const result = normalizeDoc<SiteSettings>(doc) as SiteSettings;
+    setInCache("site_settings", result);
+    return result;
   } catch (err) {
     console.error("MongoDB getSiteSettings error:", err);
     return memoryFallback.siteSettings;
@@ -58,6 +102,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 export async function updateSiteSettings(
   updates: Partial<SiteSettings>,
 ): Promise<SiteSettings> {
+  invalidateCache("site_settings");
   const col = await getCollection<SiteSettings>("site_settings");
   const now = new Date().toISOString();
 
@@ -103,6 +148,9 @@ export async function updateSiteSettings(
 // ─── ABOUT DATA ────────────────────────────────────────────────────────────
 
 export async function getAboutData(): Promise<AboutData> {
+  const cached = getFromCache<AboutData>("about_data");
+  if (cached) return cached;
+
   const col = await getCollection<AboutData>("about");
   if (!col) return memoryFallback.about;
 
@@ -111,9 +159,12 @@ export async function getAboutData(): Promise<AboutData> {
     if (!doc) {
       const initial = { ...INITIAL_DATABASE.about };
       await col.insertOne(initial);
+      setInCache("about_data", initial);
       return initial;
     }
-    return normalizeDoc<AboutData>(doc) as AboutData;
+    const result = normalizeDoc<AboutData>(doc) as AboutData;
+    setInCache("about_data", result);
+    return result;
   } catch (err) {
     console.error("MongoDB getAboutData error:", err);
     return memoryFallback.about;
@@ -123,6 +174,7 @@ export async function getAboutData(): Promise<AboutData> {
 export async function updateAboutData(
   updates: Partial<AboutData>,
 ): Promise<AboutData> {
+  invalidateCache("about_data");
   const col = await getCollection<AboutData>("about");
   const now = new Date().toISOString();
 
@@ -533,6 +585,10 @@ export async function deleteBlogPost(id: string): Promise<boolean> {
 export async function getServices(options?: {
   publishedOnly?: boolean;
 }): Promise<Service[]> {
+  const cacheKey = "services_" + (options?.publishedOnly ? "pub" : "all");
+  const cached = getFromCache<Service[]>(cacheKey);
+  if (cached) return cached;
+
   const col = await getCollection<Service>("services");
   if (!col) {
     let list = [...memoryFallback.services];
@@ -566,7 +622,9 @@ export async function getServices(options?: {
     }
 
     const docs = await col.find(query).sort({ order: 1 }).toArray();
-    return normalizeDocs<Service>(docs);
+    const result = normalizeDocs<Service>(docs);
+    setInCache(cacheKey, result);
+    return result;
   } catch (err) {
     console.error("MongoDB getServices error:", err);
     return memoryFallback.services;
@@ -587,6 +645,7 @@ export async function getServiceById(id: string): Promise<Service | null> {
 export async function createService(
   data: Omit<Service, "id" | "createdAt" | "updatedAt">,
 ): Promise<Service> {
+  invalidateCache("services");
   const col = await getCollection<Service>("services");
   const now = new Date().toISOString();
   const newService = {
@@ -619,6 +678,7 @@ export async function updateService(
   id: string,
   updates: Partial<Service>,
 ): Promise<Service | null> {
+  invalidateCache("services");
   const col = await getCollection<Service>("services");
   const now = new Date().toISOString();
 
@@ -659,6 +719,7 @@ export async function updateService(
 }
 
 export async function deleteService(id: string): Promise<boolean> {
+  invalidateCache("services");
   const col = await getCollection<Service>("services");
   if (!col) {
     if (isTestEnv) {
@@ -684,6 +745,10 @@ export async function deleteService(id: string): Promise<boolean> {
 export async function getSkills(options?: {
   publishedOnly?: boolean;
 }): Promise<SkillCategory[]> {
+  const cacheKey = "skills_" + (options?.publishedOnly ? "pub" : "all");
+  const cached = getFromCache<SkillCategory[]>(cacheKey);
+  if (cached) return cached;
+
   const col = await getCollection<SkillCategory>("skills");
   if (!col) {
     let list = [...memoryFallback.skills];
@@ -717,7 +782,9 @@ export async function getSkills(options?: {
     }
 
     const docs = await col.find(query).sort({ order: 1 }).toArray();
-    return normalizeDocs<SkillCategory>(docs);
+    const result = normalizeDocs<SkillCategory>(docs);
+    setInCache(cacheKey, result);
+    return result;
   } catch (err) {
     console.error("MongoDB getSkills error:", err);
     return memoryFallback.skills;
@@ -738,6 +805,7 @@ export async function getSkillById(id: string): Promise<SkillCategory | null> {
 export async function createSkill(
   data: Omit<SkillCategory, "id" | "createdAt" | "updatedAt">,
 ): Promise<SkillCategory> {
+  invalidateCache("skills");
   const col = await getCollection<SkillCategory>("skills");
   const now = new Date().toISOString();
   const newSkill = {
@@ -770,6 +838,7 @@ export async function updateSkill(
   id: string,
   updates: Partial<SkillCategory>,
 ): Promise<SkillCategory | null> {
+  invalidateCache("skills");
   const col = await getCollection<SkillCategory>("skills");
   const now = new Date().toISOString();
 
@@ -810,6 +879,7 @@ export async function updateSkill(
 }
 
 export async function deleteSkill(id: string): Promise<boolean> {
+  invalidateCache("skills");
   const col = await getCollection<SkillCategory>("skills");
   if (!col) {
     if (isTestEnv) {
