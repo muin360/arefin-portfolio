@@ -4183,7 +4183,7 @@ html {
 }
 
 .animate-orbit-slow {
-  animation: orbit-slow 32s linear infinite;
+  animation: orbit-slow 36s linear infinite;
 }
 
 .animate-orbit-reverse {
@@ -4192,6 +4192,27 @@ html {
 
 .animate-orbit-pulse {
   animation: orbit-pulse 5s ease-in-out infinite;
+}
+
+@keyframes workflow-signal {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  80%, 100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-workflow-signal {
+  animation: workflow-signal 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4221,7 +4242,8 @@ html {
 
   .animate-orbit-slow,
   .animate-orbit-reverse,
-  .animate-orbit-pulse {
+  .animate-orbit-pulse,
+  .animate-workflow-signal {
     animation: none;
   }
 }

@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import MagneticButton from "@/components/MagneticButton";
+import Button from "@/components/Button";
 import HeroSignature from "./HeroSignature";
 
 interface HeroSectionProps {
@@ -17,7 +17,7 @@ interface HeroSectionProps {
 }
 
 export default function HeroSectionV2({
-  availabilityNote = "Open to automation projects",
+  availabilityNote = "Available for projects",
   profileImage,
   name = "Arefin Mueen",
   role = "AI Automation & AI Agent Developer",
@@ -29,101 +29,69 @@ export default function HeroSectionV2({
   labStack,
   labLink,
 }: HeroSectionProps) {
-  const line1 = "I build AI systems".split(" ");
-  const line2Pre = ["that", "automate"];
-  const line2Accent = "real work.";
-  const line2Post: string[] = [];
-
-  let wordIdx = 0;
-  const delay = () => `${wordIdx++ * 55}ms`;
-
   return (
-    <section className="v2-hero relative overflow-hidden" aria-label="Hero">
+    <section className="relative overflow-hidden pt-12 pb-16 sm:py-20 lg:py-24" aria-label="Hero">
       {/* Subtle Atmospheric Backdrop */}
-      <div className="absolute inset-0 bg-radial-gradient from-violet-900/10 via-transparent to-transparent pointer-events-none" />
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-violet-600/10 rounded-full blur-3xl pointer-events-none"
+        aria-hidden="true"
+      />
 
-      <div className="v2-hero__inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
-        <div className="v2-hero__grid items-center gap-12 lg:gap-16">
-          {/* LEFT COL */}
-          <div className="v2-hero__left">
-            <span className="v2-hero__pill">
-              <span className="v2-hero__pill-dot" aria-hidden="true" />
-              <span className="v2-hero__pill-text">
-                {role.toUpperCase()}
-              </span>
-              <span aria-hidden="true" className="v2-hero__pill-sep">·</span>
-              <span className="v2-hero__pill-meta shimmer-label">Dhaka · GMT+6 · open to work</span>
-            </span>
-
-            <h1 className="v2-hero__headline">
-              {/* Line 1 — geometric sans (Syne via --f-display) */}
-              <span className="v2-hero__line">
-                {line1.map((w, i) => (
-                  <span
-                    key={`l1-${i}`}
-                    className="v2-hero__word"
-                    style={{ ["--word-delay" as string]: delay() }}
-                  >
-                    {w}{" "}
-                  </span>
-                ))}
-              </span>
-              {/* Line 2 — italic serif (Instrument Serif) with accent word */}
-              <span className="v2-hero__line v2-hero__line--serif">
-                {line2Pre.map((w, i) => (
-                  <span
-                    key={`l2p-${i}`}
-                    className="v2-hero__word"
-                    style={{ ["--word-delay" as string]: delay() }}
-                  >
-                    {w}{" "}
-                  </span>
-                ))}
-                <span
-                  className="v2-hero__word v2-hero__accent"
-                  style={{ ["--word-delay" as string]: delay() }}
-                >
-                  {line2Accent}{" "}
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* ─── LEFT COL: IDENTITY & NARRATIVE (55% ON DESKTOP) ─────────── */}
+          <div className="lg:col-span-7 flex flex-col items-start space-y-6 order-2 lg:order-1">
+            {/* Identity & Technical Role Metadata */}
+            <div className="space-y-1.5 font-mono text-xs select-none">
+              <div className="flex items-center gap-2 text-white/50">
+                <span className="font-bold tracking-widest text-violet-400 uppercase">
+                  {name}
                 </span>
-                {line2Post.map((w, i) => (
-                  <span
-                    key={`l2s-${i}`}
-                    className="v2-hero__word"
-                    style={{ ["--word-delay" as string]: delay() }}
-                  >
-                    {w}{" "}
-                  </span>
-                ))}
-              </span>
-            </h1>
-
-            <p className="v2-hero__sub">
-              Practical AI agents, RAG knowledge pipelines, multi-agent systems, and business workflow automations.
-              <span className="v2-hero__sub-em"> n8n · LangChain · Langflow · LLMs · APIs · Python</span>
-            </p>
-
-            <div className="v2-hero__cta">
-              <MagneticButton href="/contact" className="v2-hero__btn v2-hero__btn--primary group">
-                <span>Let&rsquo;s Build an Automation</span>
-                <ArrowRight
-                  size={16}
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                  className="v2-hero__btn-arrow"
-                />
-              </MagneticButton>
-              <MagneticButton href="/projects" className="v2-hero__btn v2-hero__btn--ghost">
-                <span>View My Work</span>
-              </MagneticButton>
+                <span>·</span>
+                <span className="text-[11px] tracking-wider uppercase">
+                  {role}
+                </span>
+              </div>
+              <p className="text-[11px] text-white/40">
+                Dhaka · GMT+6 · {availabilityNote}
+              </p>
             </div>
 
+            {/* Core Headline */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.12]">
+              I build intelligent systems that{" "}
+              <span className="serif italic text-violet-300">automate real work.</span>
+            </h1>
+
+            {/* Supporting Context */}
+            <p className="text-sm sm:text-base text-white/70 leading-relaxed max-w-xl font-sans font-normal">
+              Specializing in practical AI agents, RAG knowledge retrieval, multi-agent systems, and event-driven workflow integrations under your complete ownership.
+            </p>
+
+            {/* Two Primary CTAs */}
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto">
+              <Button
+                href="/contact"
+                variant="primary"
+                size="lg"
+                icon={<ArrowRight className="w-4 h-4" />}
+              >
+                Let&rsquo;s Build an Automation
+              </Button>
+
+              <Button href="/projects" variant="secondary" size="lg">
+                View My Work
+              </Button>
+            </div>
+
+            {/* Technical Stack Indicator */}
             <div className="pt-2 text-xs font-mono text-white/40">
               <span>n8n · LangChain · Langflow · Python · REST APIs · MongoDB</span>
             </div>
           </div>
 
-          {/* RIGHT COL — Human + Technical Signature Visual */}
-          <div className="v2-hero__right flex justify-center items-center w-full">
+          {/* ─── RIGHT COL: PORTRAIT, WORKFLOW & LIVE LAB (45% ON DESKTOP) ─── */}
+          <div className="lg:col-span-5 flex justify-center items-center w-full order-1 lg:order-2">
             <HeroSignature
               profileImage={profileImage}
               name={name}
@@ -131,9 +99,7 @@ export default function HeroSectionV2({
               availabilityNote={availabilityNote}
               labTitle={labTitle}
               labStatus={labStatus}
-              labInput={labInput}
               labProcess={labProcess}
-              labOutput={labOutput}
               labStack={labStack}
               labLink={labLink}
             />
