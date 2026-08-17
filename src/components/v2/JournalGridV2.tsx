@@ -1,19 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { posts } from "@/data/posts";
+import type { BlogPost } from "@/lib/db/types";
 import { useInView } from "@/hooks/useInView";
 
 /**
  * Journal grid (v2).
  *
- * Magazine-style 3-up grid. Each card has a giant translucent
- * watermark number on the upper-right (01 / 02 / 03), a category +
- * date row, a display title, a 3-line excerpt, and a tiny mono CTA at
- * the foot. On hover, a 1px gradient bar lights up the top edge.
+ * Magazine-style 3-up grid with real MongoDB blog posts.
  */
-export default function JournalGridV2() {
-  const items = posts.slice(0, 3);
+export default function JournalGridV2({
+  posts: propPosts,
+  limit = 3,
+}: {
+  posts?: BlogPost[];
+  limit?: number;
+}) {
+  const items = propPosts && propPosts.length > 0 ? propPosts.slice(0, limit) : [];
+  if (items.length === 0) return null;
+
   return (
     <div className="v2-journal__grid">
       {items.map((p, i) => (
@@ -27,7 +32,7 @@ function Card({
   post,
   idx,
 }: {
-  post: (typeof posts)[number];
+  post: BlogPost;
   idx: number;
 }) {
   const [ref, inView] = useInView<HTMLAnchorElement>();

@@ -43,6 +43,9 @@ export type Project = {
   workflowImage?: string | null;
   architectureImage?: string | null;
   videoUrl?: string | null;
+  videoPoster?: string | null;
+  altText?: string;
+  captions?: string[];
   relatedProjectIds?: string[];
   relatedServiceIds?: string[];
   relatedPostIds?: string[];

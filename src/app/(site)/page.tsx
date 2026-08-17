@@ -1,25 +1,23 @@
 import Link from "next/link";
-import { getSiteSettings, getProjects, getAboutData } from "@/lib/db";
+import { getSiteSettings, getProjects, getAboutData, getBlogPosts } from "@/lib/db";
 
 import SectionLabel from "@/components/SectionLabel";
 import SprintTimeline from "@/components/SprintTimeline";
 import Reveal from "@/components/Reveal";
 
 import HeroSectionV2 from "@/components/v2/HeroSectionV2";
-import TechTicker from "@/components/v2/TechTicker";
 import BentoServices from "@/components/v2/BentoServices";
-import StatsBar from "@/components/v2/StatsBar";
 import ProjectsGridV2 from "@/components/v2/ProjectsGridV2";
 import JournalGridV2 from "@/components/v2/JournalGridV2";
-import FaqAccordionV2 from "@/components/v2/FaqAccordionV2";
 import FinalCtaV2 from "@/components/v2/FinalCtaV2";
-import { ArrowRight, Sparkles, User, Brain, Code } from "lucide-react";
+import { ArrowRight, Sparkles, Code } from "lucide-react";
 
 export default async function HomePage() {
-  const [settings, projects, about] = await Promise.all([
+  const [settings, projects, about, posts] = await Promise.all([
     getSiteSettings(),
     getProjects({ publishedOnly: true }),
     getAboutData(),
+    getBlogPosts({ publishedOnly: true }),
   ]);
 
   const availabilityNote =
@@ -40,9 +38,6 @@ export default async function HomePage() {
         nowBuildingFocus={settings.nowBuildingFocus}
         nowBuildingLink={settings.nowBuildingLink}
       />
-
-      {/* TECH TICKER */}
-      {settings.showLiveTicker && <TechTicker />}
 
       {/* 02 WHAT I BUILD — Bento Capabilities */}
       <section
@@ -68,9 +63,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* STATS BAR — Live activity metrics */}
-      {settings.showLive30Days && <StatsBar />}
 
       {/* 03 FEATURED WORK — 3-Tier Editorial Projects Hierarchy */}
       <section className="v2-section" aria-label="Selected projects">
@@ -187,25 +179,7 @@ export default async function HomePage() {
           </div>
           <div className="v2-section__body">
             <Reveal delay={100}>
-              <JournalGridV2 />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="v2-section" aria-label="FAQ">
-        <div className="v2-container v2-container--narrow">
-          <SectionLabel index="07" hint="common questions">
-            FAQ
-          </SectionLabel>
-          <h2 className="v2-section__head">
-            Direct answers{" "}
-            <em className="v2-section__head-em">to common questions.</em>
-          </h2>
-          <div className="v2-section__body">
-            <Reveal delay={80} y={16}>
-              <FaqAccordionV2 />
+              <JournalGridV2 posts={posts} limit={3} />
             </Reveal>
           </div>
         </div>

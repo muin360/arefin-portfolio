@@ -289,6 +289,10 @@ export async function getProjectBySlug(
   }
 }
 
+export async function getPublishedProjects(): Promise<Project[]> {
+  return getProjects({ publishedOnly: true });
+}
+
 export async function getProjectById(id: string): Promise<Project | null> {
   const col = await getCollection<Project>("projects");
   if (!col) {
@@ -475,6 +479,10 @@ export async function getBlogPostBySlug(
   }
 }
 
+export async function getPublishedPosts(): Promise<BlogPost[]> {
+  return getBlogPosts({ publishedOnly: true });
+}
+
 export async function getBlogPostById(id: string): Promise<BlogPost | null> {
   const col = await getCollection<BlogPost>("posts");
   if (!col) {
@@ -629,6 +637,10 @@ export async function getServices(options?: {
     console.error("MongoDB getServices error:", err);
     return memoryFallback.services;
   }
+}
+
+export async function getPublishedServices(): Promise<Service[]> {
+  return getServices({ publishedOnly: true });
 }
 
 export async function getServiceById(id: string): Promise<Service | null> {

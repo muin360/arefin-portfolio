@@ -8,6 +8,16 @@
  * ============================================================ */
 
 :root {
+  /* Canonical Surface Tokens */
+  --surface-0:      #04040a;   /* page base — deepest void */
+  --surface-1:      #080810;   /* base surfaces / secondary section */
+  --surface-2:      #0d0d1a;   /* cards, bento modules */
+  --surface-3:      #141a29;   /* elevated popovers, chips, inputs */
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --accent:         #7c3aed;   /* electric violet */
+  --accent-soft:    rgba(124, 58, 237, 0.15);
+
   /* Backgrounds — layered depth, deepest to most elevated */
   --bg-void:      #04040a;   /* page base — deepest */
   --bg-base:      #080810;   /* base surfaces */

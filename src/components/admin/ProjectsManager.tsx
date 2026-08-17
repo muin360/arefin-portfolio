@@ -11,19 +11,10 @@ import {
   Star,
   Copy,
   Search,
-  Check,
-  ArrowRight,
-  Layers,
-  Sparkles,
-  Bot,
-  Zap,
-  Code,
-  Link as LinkIcon,
   X,
   ChevronDown,
   ChevronUp,
   Workflow,
-  GripVertical,
 } from "lucide-react";
 import Link from "next/link";
 import type { Project, IconName, WorkflowStep } from "@/lib/db/types";
@@ -78,7 +69,9 @@ export default function ProjectsManager({ initialProjects }: Props) {
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft" | "featured">("all");
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [activeTab, setActiveTab] = useState<"basic" | "problem" | "workflow" | "stack" | "links">("basic");
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "story" | "workflow" | "media" | "stack" | "relations" | "seo" | "publishing"
+  >("overview");
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
@@ -86,6 +79,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
   // New tag chip inputs
   const [newIntegration, setNewIntegration] = useState("");
   const [newStackTag, setNewStackTag] = useState("");
+  const [newGalleryUrl, setNewGalleryUrl] = useState("");
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -113,7 +107,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
 
   const handleOpenNew = () => {
     setIsNew(true);
-    setActiveTab("basic");
+    setActiveTab("overview");
     setEditingProject({
       title: "",
       slug: "",
@@ -142,18 +136,25 @@ export default function ProjectsManager({ initialProjects }: Props) {
       order: projects.length + 1,
       demoUrl: "",
       repoUrl: "",
+      coverImage: "",
+      workflowImage: "",
+      architectureImage: "",
+      gallery: [],
+      videoUrl: "",
+      videoPoster: "",
+      altText: "",
     });
   };
 
   const handleOpenEdit = (project: Project) => {
     setIsNew(false);
-    setActiveTab("basic");
+    setActiveTab("overview");
     setEditingProject({ ...project });
   };
 
   const handleDuplicate = (project: Project) => {
     setIsNew(true);
-    setActiveTab("basic");
+    setActiveTab("overview");
     setEditingProject({
       ...project,
       id: undefined,
@@ -177,12 +178,16 @@ export default function ProjectsManager({ initialProjects }: Props) {
     setEditingProject((prev) => (prev ? { ...prev, slug } : null));
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const saveProjectWithStatus = async (publishedState?: boolean) => {
     if (!editingProject?.title || !editingProject?.slug) {
       showToast("Title and Slug are required.");
       return;
     }
+
+    const payload = {
+      ...editingProject,
+      published: publishedState !== undefined ? publishedState : (editingProject.published ?? true),
+    };
 
     setSaving(true);
     try {
@@ -190,18 +195,18 @@ export default function ProjectsManager({ initialProjects }: Props) {
         const res = await fetch("/api/admin/projects", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editingProject),
+          body: JSON.stringify(payload),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to create project");
         setProjects((prev) => [data.project, ...prev]);
         setEditingProject(null);
-        showToast("Project created successfully!");
+        showToast(publishedState === false ? "Draft saved successfully!" : "Project published successfully!");
       } else {
         const res = await fetch("/api/admin/projects", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editingProject),
+          body: JSON.stringify(payload),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to update project");
@@ -216,73 +221,78 @@ export default function ProjectsManager({ initialProjects }: Props) {
     }
   };
 
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await saveProjectWithStatus();
+  };
+
   const handleDelete = async (id: string) => {
     try {
       const res = await fetch(`/api/admin/projects?id=${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setProjects((prev) => prev.filter((p) => p.id !== id));
-        setDeleteConfirmId(null);
-        showToast("Project deleted permanently");
-      }
-    } catch {
-      showToast("Failed to delete project");
+      if (!res.ok) throw new Error("Failed to delete project");
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+      setDeleteConfirmId(null);
+      showToast("Project deleted.");
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : "Error deleting project");
     }
   };
 
-  const handleTogglePublish = async (p: Project) => {
+  const handleTogglePublish = async (project: Project) => {
     try {
+      const updated = { ...project, published: !project.published };
       const res = await fetch("/api/admin/projects", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: p.id, published: !p.published }),
+        body: JSON.stringify(updated),
       });
-      if (res.ok) {
-        setProjects((prev) => prev.map((item) => (item.id === p.id ? { ...item, published: !p.published } : item)));
-        showToast(p.published ? "Project unpublished" : "Project published live");
-      }
-    } catch {
-      showToast("Failed to toggle publish status");
+      if (!res.ok) throw new Error("Failed to toggle status");
+      setProjects((prev) => prev.map((p) => (p.id === project.id ? { ...p, published: !p.published } : p)));
+      showToast(`Project ${updated.published ? "published live" : "moved to drafts"}`);
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : "Failed to toggle status");
     }
-  };
-
-  const handleStepChange = (index: number, field: keyof WorkflowStep, value: string) => {
-    if (!editingProject?.workflowSteps) return;
-    const steps = [...editingProject.workflowSteps];
-    steps[index] = { ...steps[index], [field]: value };
-    setEditingProject({ ...editingProject, workflowSteps: steps });
   };
 
   const handleAddStep = () => {
     if (!editingProject) return;
-    const current = editingProject.workflowSteps || [];
-    const num = (current.length + 1).toString().padStart(2, "0");
+    const currentSteps = editingProject.workflowSteps || [];
+    const nextIdx = (currentSteps.length + 1).toString().padStart(2, "0");
+    const newStep: WorkflowStep = {
+      step: nextIdx,
+      name: "",
+      desc: "",
+    };
     setEditingProject({
       ...editingProject,
-      workflowSteps: [...current, { step: num, name: "New Step", desc: "Step description..." }],
+      workflowSteps: [...currentSteps, newStep],
     });
   };
 
-  const handleRemoveStep = (index: number) => {
+  const handleRemoveStep = (idx: number) => {
     if (!editingProject?.workflowSteps) return;
-    const steps = editingProject.workflowSteps
-      .filter((_, i) => i !== index)
-      .map((s, idx) => ({ ...s, step: (idx + 1).toString().padStart(2, "0") }));
+    const updated = editingProject.workflowSteps.filter((_, i) => i !== idx);
+    setEditingProject({ ...editingProject, workflowSteps: updated });
+  };
+
+  const handleStepChange = (idx: number, field: keyof WorkflowStep, val: string) => {
+    if (!editingProject?.workflowSteps) return;
+    const updated = [...editingProject.workflowSteps];
+    updated[idx] = { ...updated[idx], [field]: val };
+    setEditingProject({ ...editingProject, workflowSteps: updated });
+  };
+
+  const handleMoveStep = (idx: number, dir: "up" | "down") => {
+    if (!editingProject?.workflowSteps) return;
+    const steps = [...editingProject.workflowSteps];
+    const targetIdx = dir === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= steps.length) return;
+    const temp = steps[idx];
+    steps[idx] = steps[targetIdx];
+    steps[targetIdx] = temp;
     setEditingProject({ ...editingProject, workflowSteps: steps });
   };
 
-  const handleMoveStep = (index: number, direction: "up" | "down") => {
-    if (!editingProject?.workflowSteps) return;
-    const target = direction === "up" ? index - 1 : index + 1;
-    if (target < 0 || target >= editingProject.workflowSteps.length) return;
-    const steps = [...editingProject.workflowSteps];
-    const temp = steps[index];
-    steps[index] = steps[target];
-    steps[target] = temp;
-    const reindexed = steps.map((s, idx) => ({ ...s, step: (idx + 1).toString().padStart(2, "0") }));
-    setEditingProject({ ...editingProject, workflowSteps: reindexed });
-  };
-
-  // Tag helpers
   const addIntegration = () => {
     if (!newIntegration.trim() || !editingProject) return;
     const current = editingProject.integrations || [];
@@ -293,10 +303,10 @@ export default function ProjectsManager({ initialProjects }: Props) {
   };
 
   const removeIntegration = (tag: string) => {
-    if (!editingProject) return;
+    if (!editingProject?.integrations) return;
     setEditingProject({
       ...editingProject,
-      integrations: (editingProject.integrations || []).filter((t) => t !== tag),
+      integrations: editingProject.integrations.filter((t) => t !== tag),
     });
   };
 
@@ -310,99 +320,120 @@ export default function ProjectsManager({ initialProjects }: Props) {
   };
 
   const removeStackTag = (tag: string) => {
-    if (!editingProject) return;
+    if (!editingProject?.stack) return;
     setEditingProject({
       ...editingProject,
-      stack: (editingProject.stack || []).filter((t) => t !== tag),
+      stack: editingProject.stack.filter((t) => t !== tag),
+    });
+  };
+
+  const addGalleryItem = () => {
+    if (!newGalleryUrl.trim() || !editingProject) return;
+    const current = editingProject.gallery || [];
+    if (!current.includes(newGalleryUrl.trim())) {
+      setEditingProject({ ...editingProject, gallery: [...current, newGalleryUrl.trim()] });
+    }
+    setNewGalleryUrl("");
+  };
+
+  const removeGalleryItem = (url: string) => {
+    if (!editingProject?.gallery) return;
+    setEditingProject({
+      ...editingProject,
+      gallery: editingProject.gallery.filter((g) => g !== url),
     });
   };
 
   return (
-    <div className="space-y-6 max-w-[1360px] mx-auto">
-      {/* Toast Notification */}
+    <div className="space-y-6">
+      {/* Toast notification */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#161d2d] border border-violet-500/40 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium animate-in fade-in slide-in-from-bottom-2 duration-150">
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-3 bg-violet-600 text-white rounded-2xl text-xs font-mono font-bold shadow-2xl animate-in fade-in slide-in-from-bottom-3 duration-200">
           {toast}
         </div>
       )}
 
-      {/* ── HEADER WITH ACTIONS ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0f111a] p-6 rounded-3xl border border-[#1e2433] shadow-sm">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-violet-400 bg-violet-500/10 px-2.5 py-0.5 rounded-full border border-violet-500/20">
-              CONTENT MANAGEMENT
-            </span>
-            <span className="text-[#4b5563]">·</span>
-            <span className="text-xs text-[#6b7280] font-mono">{projects.length} Total Projects</span>
-          </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight mt-1">
-            Projects &amp; Case Studies
-          </h1>
-          <p className="text-xs text-[#9ca3af] mt-0.5">
-            Manage your hands-on AI automations, autonomous agents, and multi-agent case studies
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleOpenNew}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-semibold transition-all shadow-md shadow-violet-600/20 shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          Create New Project
-        </button>
-      </div>
-
-      {/* ── SEARCH & FILTER CONTROLS ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[#0f111a] p-4 rounded-2xl border border-[#1e2433]">
-        <div className="flex items-center gap-2 flex-1">
-          <div className="relative flex-1 sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6b7280]" />
+      {/* Control Bar: Filters, Search, Create */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#0f111a] border border-[#1e2433] p-4 rounded-2xl shadow-sm">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+          {/* Search bar */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-[#6b7280] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
+              placeholder="Search by title, stack, slug..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search projects, categories, stack..."
-              className="w-full pl-8 pr-3 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-xs text-white placeholder-[#6b7280] focus:outline-none focus:border-violet-500"
+              className="w-full pl-9 pr-4 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-xs text-white placeholder-[#6b7280] focus:outline-none focus:border-violet-500 font-mono"
             />
           </div>
 
-          {/* Category Dropdown */}
+          {/* Category Filter */}
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-xs text-[#9ca3af] focus:outline-none focus:border-violet-500"
+            className="px-3 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-xs text-[#9ca3af] focus:outline-none focus:border-violet-500 font-mono"
           >
             <option value="all">All Categories</option>
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Status Filters */}
-        <div className="flex items-center gap-1 bg-[#141a29] p-1 rounded-xl border border-[#1e2433] overflow-x-auto">
-          {(["all", "published", "draft", "featured"] as const).map((st) => (
-            <button
-              key={st}
-              type="button"
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize whitespace-nowrap transition-all ${
-                statusFilter === st
-                  ? "bg-violet-600 text-white shadow-sm"
-                  : "text-[#9ca3af] hover:text-white hover:bg-[#1a202c]"
-              }`}
-            >
-              {st}
-            </button>
-          ))}
+        {/* Status Segmented Buttons & Create CTA */}
+        <div className="flex items-center gap-3 self-end sm:self-auto">
+          <div className="flex items-center bg-[#141a29] border border-[#1e2433] rounded-xl p-1 text-[11px] font-mono">
+            {[
+              { id: "all", label: "All" },
+              { id: "published", label: "Live" },
+              { id: "draft", label: "Drafts" },
+              { id: "featured", label: "Featured" },
+            ].map((st) => (
+              <button
+                key={st.id}
+                type="button"
+                onClick={() => setStatusFilter(st.id as typeof statusFilter)}
+                className={`px-3 py-1 rounded-lg transition-colors ${
+                  statusFilter === st.id
+                    ? "bg-violet-600 text-white font-bold shadow"
+                    : "text-[#6b7280] hover:text-white"
+                }`}
+              >
+                {st.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleOpenNew}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-violet-600/20"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New Project</span>
+          </button>
         </div>
       </div>
 
-      {/* ── PROJECTS TABLE ── */}
+      {/* Stats Summary Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: "Total Projects", val: projects.length },
+          { label: "Published Live", val: projects.filter((p) => p.published).length },
+          { label: "Draft Projects", val: projects.filter((p) => !p.published).length },
+          { label: "Featured Anchors", val: projects.filter((p) => p.featured).length },
+        ].map((s) => (
+          <div key={s.label} className="bg-[#0f111a] border border-[#1e2433] p-3.5 rounded-xl">
+            <p className="text-[10px] font-mono uppercase tracking-wider text-[#6b7280]">{s.label}</p>
+            <p className="text-xl font-bold text-white mt-1 font-mono">{s.val}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Projects Table */}
       <div className="bg-[#0f111a] border border-[#1e2433] rounded-2xl overflow-hidden shadow-sm">
         {filtered.length === 0 ? (
           <div className="py-16 text-center text-xs text-[#6b7280] font-mono">
@@ -424,7 +455,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
               <tbody className="divide-y divide-[#1e2433]/60">
                 {filtered.map((p) => (
                   <tr key={p.id} className="hover:bg-[#141a29]/40 transition-colors group">
-                    {/* Title & Slug */}
                     <td className="py-3.5 pl-5 font-medium">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400 shrink-0">
@@ -434,36 +464,31 @@ export default function ProjectsManager({ initialProjects }: Props) {
                           <p className="text-white font-semibold text-sm truncate group-hover:text-violet-300 transition-colors">
                             {p.title}
                           </p>
-                          <p className="text-[11px] text-[#6b7280] font-mono truncate">
-                            /{p.slug}
-                          </p>
+                          <p className="text-[11px] text-[#6b7280] font-mono truncate">/{p.slug}</p>
                         </div>
                       </div>
                     </td>
 
-                    {/* Category */}
                     <td className="py-3.5">
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161d2d] text-[#9ca3af] border border-[#252f44]">
                         {p.category}
                       </span>
                     </td>
 
-                    {/* Stack */}
                     <td className="py-3.5 font-mono text-[11px] text-[#9ca3af]">
                       <span className="truncate max-w-xs block">
                         {p.stack.slice(0, 3).join(", ")} {p.stack.length > 3 ? `+${p.stack.length - 3}` : ""}
                       </span>
                     </td>
 
-                    {/* Status Toggle */}
                     <td className="py-3.5 text-center">
                       <button
                         type="button"
                         onClick={() => handleTogglePublish(p)}
                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold transition-all ${
                           p.published
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20"
-                            : "bg-[#1e2433] text-[#6b7280] border border-[#2d3748] hover:text-white"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            : "bg-[#1e2433] text-[#6b7280] border border-[#2d3748]"
                         }`}
                       >
                         {p.published ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
@@ -471,7 +496,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
                       </button>
                     </td>
 
-                    {/* Featured Status */}
                     <td className="py-3.5 text-center">
                       {p.featured ? (
                         <Star className="w-4 h-4 text-amber-400 fill-amber-400 mx-auto" />
@@ -480,12 +504,10 @@ export default function ProjectsManager({ initialProjects }: Props) {
                       )}
                     </td>
 
-                    {/* Action buttons */}
                     <td className="py-3.5 pr-5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        {/* Live Preview link */}
                         <Link
-                          href={`/projects/${p.slug}`}
+                          href={`/projects/${p.slug}?preview=true`}
                           target="_blank"
                           className="p-1.5 text-[#6b7280] hover:text-white hover:bg-[#1e2433] rounded-lg transition-colors"
                           title="Preview Public Page"
@@ -493,7 +515,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
                           <ExternalLink className="w-3.5 h-3.5" />
                         </Link>
 
-                        {/* Duplicate */}
                         <button
                           type="button"
                           onClick={() => handleDuplicate(p)}
@@ -503,7 +524,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
                           <Copy className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Edit */}
                         <button
                           type="button"
                           onClick={() => handleOpenEdit(p)}
@@ -513,20 +533,19 @@ export default function ProjectsManager({ initialProjects }: Props) {
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Delete Confirmation */}
                         {deleteConfirmId === p.id ? (
                           <div className="flex items-center gap-1 ml-1">
                             <button
                               type="button"
                               onClick={() => handleDelete(p.id)}
-                              className="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded font-mono text-[10px]"
+                              className="px-2 py-0.5 bg-rose-600 text-white rounded font-mono text-[10px]"
                             >
                               Yes
                             </button>
                             <button
                               type="button"
                               onClick={() => setDeleteConfirmId(null)}
-                              className="px-2 py-0.5 bg-[#1e2433] text-[#9ca3af] rounded font-mono text-[10px]"
+                              className="px-2 py-0.5 bg-[#1e2433] text-white rounded font-mono text-[10px]"
                             >
                               No
                             </button>
@@ -551,7 +570,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
         )}
       </div>
 
-      {/* ── ADVANCED TABBED PROJECT EDITOR MODAL ── */}
+      {/* ── 8-TAB PROJECT EDITOR MODAL ── */}
       {editingProject && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div className="w-full max-w-4xl bg-[#0f111a] border border-[#1e2433] rounded-3xl shadow-2xl overflow-hidden flex flex-col my-8 animate-in fade-in zoom-in-95 duration-150">
@@ -574,20 +593,23 @@ export default function ProjectsManager({ initialProjects }: Props) {
               </button>
             </div>
 
-            {/* Modal Tabs Bar */}
-            <div className="flex items-center gap-1 px-5 pt-3 border-b border-[#1a202c] bg-[#0b0e17] overflow-x-auto">
+            {/* 8-Tab Navigation Bar */}
+            <div className="flex items-center gap-1 px-5 pt-3 border-b border-[#1a202c] bg-[#0b0e17] overflow-x-auto scrollbar-none">
               {[
-                { id: "basic", label: "1. Basic Info" },
-                { id: "problem", label: "2. Problem & Goal" },
-                { id: "workflow", label: "3. Workflow Architecture" },
-                { id: "stack", label: "4. Stack & Learning" },
-                { id: "links", label: "5. Media & Publishing" },
+                { id: "overview", label: "1. Overview" },
+                { id: "story", label: "2. Story & Logic" },
+                { id: "workflow", label: "3. Workflow" },
+                { id: "media", label: "4. Media & Diagrams" },
+                { id: "stack", label: "5. Tech Stack" },
+                { id: "relations", label: "6. Relations" },
+                { id: "seo", label: "7. SEO Preview" },
+                { id: "publishing", label: "8. Publishing" },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                  className={`px-4 py-2 text-xs font-semibold rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
+                  className={`px-3.5 py-2 text-xs font-semibold rounded-t-xl transition-all border-b-2 whitespace-nowrap ${
                     activeTab === tab.id
                       ? "border-violet-500 text-white bg-[#0f111a]"
                       : "border-transparent text-[#6b7280] hover:text-white hover:bg-[#141a29]"
@@ -600,8 +622,8 @@ export default function ProjectsManager({ initialProjects }: Props) {
 
             {/* Form Body */}
             <form onSubmit={handleSave} className="p-6 overflow-y-auto max-h-[65vh] space-y-5 custom-scrollbar">
-              {/* TAB 1: BASIC INFO */}
-              {activeTab === "basic" && (
+              {/* TAB 1: OVERVIEW */}
+              {activeTab === "overview" && (
                 <div className="space-y-4 animate-in fade-in duration-100">
                   <div>
                     <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
@@ -640,7 +662,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
                         className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm font-mono focus:outline-none focus:border-violet-500"
                       />
                     </div>
-
                     <div>
                       <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
                         Project Type
@@ -659,108 +680,103 @@ export default function ProjectsManager({ initialProjects }: Props) {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                        Category
-                      </label>
-                      <select
-                        value={editingProject.category || CATEGORIES[0]}
-                        onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500"
-                      >
-                        {CATEGORIES.map((c) => (
-                          <option key={c} value={c}>
-                            {c}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                        Icon Style
-                      </label>
-                      <select
-                        value={editingProject.iconName || "workflow"}
-                        onChange={(e) => setEditingProject({ ...editingProject, iconName: e.target.value as IconName })}
-                        className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 font-mono"
-                      >
-                        {ICONS.map((ic) => (
-                          <option key={ic} value={ic}>
-                            {ic}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
                   <div>
                     <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
                       Summary (Headline description for cards)
                     </label>
                     <textarea
                       rows={3}
+                      required
                       value={editingProject.summary || ""}
                       onChange={(e) => setEditingProject({ ...editingProject, summary: e.target.value })}
-                      placeholder="Brief overview explaining what the automation does and why it was built..."
+                      placeholder="High-intent automation classifying incoming tickets and generating structured drafts..."
                       className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                      Key Outcome Quote
+                    </label>
+                    <input
+                      type="text"
+                      value={editingProject.outcome || ""}
+                      onChange={(e) => setEditingProject({ ...editingProject, outcome: e.target.value })}
+                      placeholder="Reduced triage response latency from 4 hours to 12 seconds."
+                      className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500"
                     />
                   </div>
                 </div>
               )}
 
-              {/* TAB 2: PROBLEM & OBJECTIVES */}
-              {activeTab === "problem" && (
+              {/* TAB 2: STORY & LOGIC */}
+              {activeTab === "story" && (
                 <div className="space-y-4 animate-in fade-in duration-100">
-                  <div>
-                    <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                      The Problem (Friction / Bottleneck)
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={editingProject.problem || ""}
-                      onChange={(e) => setEditingProject({ ...editingProject, problem: e.target.value })}
-                      placeholder="Manual inbox triage takes hours of scanning, tagging, and repetitive writing..."
-                      className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                        Problem Statement
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={editingProject.problem || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, problem: e.target.value })}
+                        placeholder="What bottleneck was occurring?"
+                        className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                        Project Goal
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={editingProject.goal || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, goal: e.target.value })}
+                        placeholder="What is the automation engineered to accomplish?"
+                        className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                        AI Role &amp; Processing Logic
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={editingProject.aiRole || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, aiRole: e.target.value })}
+                        placeholder="How LLMs, structured outputs, or vector embeddings are used..."
+                        className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                        Automation Connectors &amp; Routing
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={editingProject.automationLogic || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, automationLogic: e.target.value })}
+                        placeholder="n8n webhook triggers, error handling loops, retry logic..."
+                        className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
+                      />
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                      Project Goal
+                      What I Learned / Technical Takeaways
                     </label>
                     <textarea
                       rows={3}
-                      value={editingProject.goal || ""}
-                      onChange={(e) => setEditingProject({ ...editingProject, goal: e.target.value })}
-                      placeholder="Build a reliable, automated pipeline to handle classification, drafting, and notification..."
-                      className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                      AI Role &amp; Prompt Reasoning
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={editingProject.aiRole || ""}
-                      onChange={(e) => setEditingProject({ ...editingProject, aiRole: e.target.value })}
-                      placeholder="LLM handles intent parsing, urgency scoring with structured JSON schema guardrails..."
-                      className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                      Automation Logic &amp; Connectors
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={editingProject.automationLogic || ""}
-                      onChange={(e) => setEditingProject({ ...editingProject, automationLogic: e.target.value })}
-                      placeholder="Event-driven webhook in n8n triggers JSON parsing, OpenAI API prompt chaining, and Gmail API draft creation..."
+                      value={editingProject.learningOutcome || ""}
+                      onChange={(e) => setEditingProject({ ...editingProject, learningOutcome: e.target.value })}
+                      placeholder="Key engineering learnings and production architecture takeaways..."
                       className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
                     />
                   </div>
@@ -770,17 +786,22 @@ export default function ProjectsManager({ initialProjects }: Props) {
               {/* TAB 3: WORKFLOW ARCHITECTURE */}
               {activeTab === "workflow" && (
                 <div className="space-y-4 animate-in fade-in duration-100">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#1a202c]">
-                    <p className="text-xs font-mono uppercase text-[#9ca3af] font-semibold">
-                      Execution Steps ({editingProject.workflowSteps?.length || 0})
-                    </p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xs font-mono uppercase text-violet-400 font-semibold tracking-wider">
+                        Workflow Steps (Trigger → Tool → Output)
+                      </h3>
+                      <p className="text-xs text-[#6b7280]">
+                        Build the step-by-step technical architecture trace shown on the public case study page.
+                      </p>
+                    </div>
                     <button
                       type="button"
                       onClick={handleAddStep}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-violet-600 hover:bg-violet-700 text-white rounded-lg text-xs font-semibold"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#141a29] hover:bg-[#1e2433] text-violet-400 text-xs font-semibold rounded-xl border border-violet-500/20"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      Add Step
+                      <span>Add Step</span>
                     </button>
                   </div>
 
@@ -788,25 +809,25 @@ export default function ProjectsManager({ initialProjects }: Props) {
                     {(editingProject.workflowSteps || []).map((st, i) => (
                       <div
                         key={i}
-                        className="p-3.5 bg-[#141a29] border border-[#1e2433] rounded-xl flex items-start gap-3 group"
+                        className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] flex items-start gap-3"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-300 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-1">
-                          {st.step}
-                        </div>
+                        <span className="w-6 h-6 rounded-lg bg-violet-600/20 text-violet-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-1">
+                          0{i + 1}
+                        </span>
 
                         <div className="flex-1 space-y-2">
                           <input
                             type="text"
                             value={st.name}
                             onChange={(e) => handleStepChange(i, "name", e.target.value)}
-                            placeholder="Step name (e.g. AI Processing)"
+                            placeholder="Step name (e.g. AI Intent Processing)"
                             className="w-full px-3 py-1.5 bg-[#0f111a] border border-[#1e2433] rounded-lg text-white text-xs font-semibold focus:outline-none focus:border-violet-500"
                           />
                           <textarea
                             rows={2}
                             value={st.desc}
                             onChange={(e) => handleStepChange(i, "desc", e.target.value)}
-                            placeholder="What happens in this step..."
+                            placeholder="Detailed description..."
                             className="w-full px-3 py-1.5 bg-[#0f111a] border border-[#1e2433] rounded-lg text-[#9ca3af] text-xs focus:outline-none focus:border-violet-500 leading-relaxed"
                           />
                         </div>
@@ -817,7 +838,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
                             disabled={i === 0}
                             onClick={() => handleMoveStep(i, "up")}
                             className="p-1 text-[#6b7280] hover:text-white bg-[#0f111a] hover:bg-[#1a202c] disabled:opacity-30 rounded transition-colors"
-                            title="Move Up"
                           >
                             <ChevronUp className="w-3.5 h-3.5" />
                           </button>
@@ -826,7 +846,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
                             disabled={i === (editingProject.workflowSteps?.length || 1) - 1}
                             onClick={() => handleMoveStep(i, "down")}
                             className="p-1 text-[#6b7280] hover:text-white bg-[#0f111a] hover:bg-[#1a202c] disabled:opacity-30 rounded transition-colors"
-                            title="Move Down"
                           >
                             <ChevronDown className="w-3.5 h-3.5" />
                           </button>
@@ -834,7 +853,6 @@ export default function ProjectsManager({ initialProjects }: Props) {
                             type="button"
                             onClick={() => handleRemoveStep(i)}
                             className="p-1 text-[#6b7280] hover:text-rose-400 bg-[#0f111a] hover:bg-rose-500/10 rounded transition-colors mt-0.5"
-                            title="Remove Step"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -845,10 +863,170 @@ export default function ProjectsManager({ initialProjects }: Props) {
                 </div>
               )}
 
-              {/* TAB 4: STACK & LEARNINGS */}
+              {/* TAB 4: MEDIA & DIAGRAMS */}
+              {activeTab === "media" && (
+                <div className="space-y-5 animate-in fade-in duration-100">
+                  {/* Cover Image */}
+                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-mono uppercase text-violet-400 font-semibold tracking-wider">
+                        Cover Image
+                      </label>
+                      {editingProject.coverImage && (
+                        <button
+                          type="button"
+                          onClick={() => setEditingProject({ ...editingProject, coverImage: "" })}
+                          className="text-[10px] text-rose-400 hover:text-rose-300 font-mono"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      type="url"
+                      value={editingProject.coverImage || ""}
+                      onChange={(e) => setEditingProject({ ...editingProject, coverImage: e.target.value })}
+                      placeholder="https://example.com/cover-architecture.png"
+                      className="w-full px-3.5 py-2.5 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                    />
+                    <input
+                      type="text"
+                      value={editingProject.altText || ""}
+                      onChange={(e) => setEditingProject({ ...editingProject, altText: e.target.value })}
+                      placeholder="Accessibility alt text describing the cover architecture"
+                      className="w-full px-3.5 py-2 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                    />
+                    {editingProject.coverImage && (
+                      <div className="relative w-full h-44 rounded-xl overflow-hidden border border-white/10 bg-black">
+                        <img
+                          src={editingProject.coverImage}
+                          alt="Cover preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Workflow & Architecture Diagram URLs */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-2">
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] font-semibold">
+                        Workflow Map Diagram
+                      </label>
+                      <input
+                        type="url"
+                        value={editingProject.workflowImage || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, workflowImage: e.target.value })}
+                        placeholder="https://example.com/workflow-map.png"
+                        className="w-full px-3.5 py-2 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                      />
+                      {editingProject.workflowImage && (
+                        <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10 bg-black mt-2">
+                          <img
+                            src={editingProject.workflowImage}
+                            alt="Workflow diagram preview"
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-2">
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] font-semibold">
+                        Infrastructure Architecture Diagram
+                      </label>
+                      <input
+                        type="url"
+                        value={editingProject.architectureImage || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, architectureImage: e.target.value })}
+                        placeholder="https://example.com/architecture.png"
+                        className="w-full px-3.5 py-2 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                      />
+                      {editingProject.architectureImage && (
+                        <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10 bg-black mt-2">
+                          <img
+                            src={editingProject.architectureImage}
+                            alt="Architecture preview"
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Multi-Image Gallery */}
+                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-3">
+                    <label className="block text-xs font-mono uppercase text-violet-400 font-semibold tracking-wider">
+                      Interface &amp; Logs Gallery
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="url"
+                        value={newGalleryUrl}
+                        onChange={(e) => setNewGalleryUrl(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addGalleryItem())}
+                        placeholder="Add gallery image URL (https://...)..."
+                        className="flex-1 px-3.5 py-2 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={addGalleryItem}
+                        className="px-3 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-semibold"
+                      >
+                        Add Photo
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {(editingProject.gallery || []).map((img, idx) => (
+                        <div key={idx} className="relative rounded-xl overflow-hidden border border-white/10 bg-black group h-24">
+                          <img src={img} alt={`Gallery item ${idx + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeGalleryItem(img)}
+                            className="absolute top-1 right-1 p-1 bg-black/80 text-rose-400 rounded-lg hover:bg-rose-600 hover:text-white transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Demo Video URL */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                        Demo Video Embed / Direct URL
+                      </label>
+                      <input
+                        type="url"
+                        value={editingProject.videoUrl || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, videoUrl: e.target.value })}
+                        placeholder="https://youtube.com/watch?v=..."
+                        className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                        Video Poster Thumbnail URL
+                      </label>
+                      <input
+                        type="url"
+                        value={editingProject.videoPoster || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, videoPoster: e.target.value })}
+                        placeholder="https://example.com/poster.jpg"
+                        className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 5: TECH STACK */}
               {activeTab === "stack" && (
                 <div className="space-y-5 animate-in fade-in duration-100">
-                  {/* Integrations Chips */}
+                  {/* Tool Integrations */}
                   <div>
                     <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
                       Tool Integrations
@@ -859,7 +1037,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
                         value={newIntegration}
                         onChange={(e) => setNewIntegration(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addIntegration())}
-                        placeholder="Add integration (e.g. Pinecone, Slack, n8n)..."
+                        placeholder="e.g. Pinecone, Slack, n8n..."
                         className="flex-1 px-3 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
                       />
                       <button
@@ -885,7 +1063,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
                     </div>
                   </div>
 
-                  {/* Stack Chips */}
+                  {/* Technology Stack */}
                   <div>
                     <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
                       Technology Stack
@@ -896,7 +1074,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
                         value={newStackTag}
                         onChange={(e) => setNewStackTag(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addStackTag())}
-                        placeholder="Add technology (e.g. Python, LangChain, OpenAI)..."
+                        placeholder="e.g. Python, LangChain, OpenAI..."
                         className="flex-1 px-3 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
                       />
                       <button
@@ -921,102 +1099,84 @@ export default function ProjectsManager({ initialProjects }: Props) {
                       ))}
                     </div>
                   </div>
+                </div>
+              )}
 
-                  {/* Learning Outcome & Final Outcome */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                        What I Learned / Technical Takeaways
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={editingProject.learningOutcome || ""}
-                        onChange={(e) => setEditingProject({ ...editingProject, learningOutcome: e.target.value })}
-                        placeholder="Mastered structured output schemas, rate limit handling, MIME parsing..."
-                        className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
-                      />
-                    </div>
+              {/* TAB 6: RELATIONS */}
+              {activeTab === "relations" && (
+                <div className="space-y-4 animate-in fade-in duration-100">
+                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-2">
+                    <h3 className="text-xs font-mono uppercase text-violet-400 font-semibold tracking-wider">
+                      Connected Architecture Relationships
+                    </h3>
+                    <p className="text-xs text-[#6b7280]">
+                      Cross-link this project to relevant capabilities and case studies across the site.
+                    </p>
+                  </div>
 
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                        Final Key Outcome (Quote format)
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={editingProject.outcome || ""}
-                        onChange={(e) => setEditingProject({ ...editingProject, outcome: e.target.value })}
-                        placeholder="Classified incoming emails with structured metadata and created review-ready drafts."
-                        className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
-                      />
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                      Linked Project Slugs (Comma Separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={(editingProject.relatedProjectIds || []).join(", ")}
+                      onChange={(e) =>
+                        setEditingProject({
+                          ...editingProject,
+                          relatedProjectIds: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                        })
+                      }
+                      placeholder="customer-support-qa-bot, social-media-content-generator"
+                      className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                      Linked Capability Names / IDs (Comma Separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={(editingProject.relatedServiceIds || []).join(", ")}
+                      onChange={(e) =>
+                        setEditingProject({
+                          ...editingProject,
+                          relatedServiceIds: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                        })
+                      }
+                      placeholder="AI Workflow Automation, AI Agents & Tool Calling"
+                      className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 7: SEO PREVIEW */}
+              {activeTab === "seo" && (
+                <div className="space-y-4 animate-in fade-in duration-100">
+                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-3">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#6b7280]">
+                      Google SERP &amp; OpenGraph Snippet Preview
+                    </span>
+                    <div className="p-4 bg-[#0a0d18] rounded-xl border border-white/10 space-y-1">
+                      <p className="text-[11px] font-mono text-[#22c55e]">
+                        https://tensorstudio.vercel.app &rsaquo; projects &rsaquo; {editingProject.slug || "project-slug"}
+                      </p>
+                      <h4 className="text-base text-[#93c5fd] font-medium hover:underline cursor-pointer">
+                        {editingProject.title || "Project Title"} — Arefin Mueen
+                      </h4>
+                      <p className="text-xs text-[#9ca3af] leading-relaxed line-clamp-2">
+                        {editingProject.summary || "Project summary description will render here for search engine crawlers."}
+                      </p>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* TAB 5: MEDIA, LINKS & PUBLISHING */}
-              {activeTab === "links" && (
+              {/* TAB 8: PUBLISHING & ACTIONS */}
+              {activeTab === "publishing" && (
                 <div className="space-y-5 animate-in fade-in duration-100">
-                  {/* Media Management Section */}
-                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-4">
-                    <h3 className="text-xs font-mono uppercase text-violet-400 font-semibold tracking-wider">
-                      Media &amp; Architecture Diagrams
-                    </h3>
-
-                    {/* Cover Image */}
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
-                        Cover Image URL
-                      </label>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="url"
-                          value={editingProject.coverImage || ""}
-                          onChange={(e) => setEditingProject({ ...editingProject, coverImage: e.target.value })}
-                          placeholder="https://example.com/project-cover.png"
-                          className="flex-1 px-3.5 py-2.5 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
-                        />
-                        {editingProject.coverImage && (
-                          <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-black">
-                            <img
-                              src={editingProject.coverImage}
-                              alt="Cover preview"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Workflow & Architecture Diagrams */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
-                          Workflow Diagram URL
-                        </label>
-                        <input
-                          type="url"
-                          value={editingProject.workflowImage || ""}
-                          onChange={(e) => setEditingProject({ ...editingProject, workflowImage: e.target.value })}
-                          placeholder="https://example.com/workflow-map.png"
-                          className="w-full px-3.5 py-2 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
-                          Demo Video URL
-                        </label>
-                        <input
-                          type="url"
-                          value={editingProject.videoUrl || ""}
-                          onChange={(e) => setEditingProject({ ...editingProject, videoUrl: e.target.value })}
-                          placeholder="https://youtube.com/watch?v=..."
-                          className="w-full px-3.5 py-2 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Links */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
@@ -1030,22 +1190,20 @@ export default function ProjectsManager({ initialProjects }: Props) {
                         className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500"
                       />
                     </div>
-
                     <div>
                       <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
-                        GitHub Repository URL (Optional)
+                        GitHub Repo URL (Optional)
                       </label>
                       <input
                         type="url"
                         value={editingProject.repoUrl || ""}
                         onChange={(e) => setEditingProject({ ...editingProject, repoUrl: e.target.value })}
-                        placeholder="https://github.com/arefinmuin/project"
+                        placeholder="https://github.com/arefinmuin/repo"
                         className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500"
                       />
                     </div>
                   </div>
 
-                  {/* Publishing Controls & Public Preview */}
                   <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-6">
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -1065,15 +1223,15 @@ export default function ProjectsManager({ initialProjects }: Props) {
                           onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
                           className="w-4 h-4 accent-violet-600 rounded"
                         />
-                        <span className="text-xs text-white font-medium">Featured Anchor</span>
+                        <span className="text-xs text-white font-medium">Featured Flagship</span>
                       </label>
                     </div>
 
                     {editingProject.slug && (
                       <Link
-                        href={`/projects/${editingProject.slug}`}
+                        href={`/projects/${editingProject.slug}?preview=true`}
                         target="_blank"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-mono text-violet-300 hover:text-white transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600/20 hover:bg-violet-600/40 text-xs font-mono text-violet-300 hover:text-white border border-violet-500/30 transition-colors"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         <span>Preview Live Design</span>
@@ -1083,23 +1241,44 @@ export default function ProjectsManager({ initialProjects }: Props) {
                 </div>
               )}
 
-              {/* Modal Footer */}
-              <div className="flex items-center justify-between pt-5 border-t border-[#1a202c]">
+              {/* Modal Footer with Save Draft / Preview / Publish buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-5 border-t border-[#1a202c]">
                 <button
                   type="button"
                   onClick={() => setEditingProject(null)}
-                  className="px-4 py-2.5 text-xs text-[#9ca3af] hover:text-white bg-[#141a29] hover:bg-[#1a202c] rounded-xl transition-colors font-medium"
+                  className="px-4 py-2.5 text-xs text-[#9ca3af] hover:text-white bg-[#141a29] hover:bg-[#1a202c] rounded-xl transition-colors font-medium text-center"
                 >
                   Cancel
                 </button>
 
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center justify-end gap-2.5">
+                  {editingProject.slug && (
+                    <Link
+                      href={`/projects/${editingProject.slug}?preview=true`}
+                      target="_blank"
+                      className="px-4 py-2.5 bg-[#141a29] hover:bg-[#1e2433] text-white border border-[#2d3748] rounded-xl text-xs font-mono flex items-center gap-1.5 transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 text-violet-400" />
+                      <span>Preview</span>
+                    </Link>
+                  )}
+
                   <button
-                    type="submit"
+                    type="button"
                     disabled={saving}
+                    onClick={() => saveProjectWithStatus(false)}
+                    className="px-4 py-2.5 bg-[#1e2433] hover:bg-[#252f44] text-white rounded-xl text-xs font-medium transition-all disabled:opacity-50"
+                  >
+                    Save Draft
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => saveProjectWithStatus(true)}
                     className="px-6 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-violet-600/20 disabled:opacity-50"
                   >
-                    {saving ? "Saving Changes..." : isNew ? "Create Project" : "Save Changes"}
+                    {saving ? "Saving..." : isNew ? "Publish Project" : "Save & Publish"}
                   </button>
                 </div>
               </div>

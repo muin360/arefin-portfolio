@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/Section";
 import Reveal from "@/components/Reveal";
 import BentoCard from "@/components/BentoCard";
 import { IconArrow } from "@/components/icons";
-import { Sparkles, ArrowRight, Layers, Workflow, ExternalLink, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Sparkles, ArrowRight, Layers, Workflow, ExternalLink, ShieldCheck, CheckCircle2, Video, Image as ImageIcon } from "lucide-react";
 
 function renderIcon(name: IconName, size: number, className?: string) {
   return createElement(iconFor(name), { width: size, height: size, className });
@@ -23,15 +23,22 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ preview?: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug, { publishedOnly: true });
+  const sParams = searchParams ? await searchParams : undefined;
+  const isPreview = sParams?.preview === "true";
+
+  const project = await getProjectBySlug(slug, { publishedOnly: !isPreview });
   if (!project) return { title: "Project not found" };
+
   return {
-    title: project.title,
+    title: `${project.title}${isPreview ? " (Draft Preview)" : ""}`,
     description: project.summary,
+    robots: isPreview ? { index: false, follow: false } : undefined,
     alternates: { canonical: `/projects/${project.slug}` },
     openGraph: {
       title: `${project.title} — Arefin Mueen`,
@@ -44,11 +51,16 @@ export async function generateMetadata({
 
 export default async function ProjectDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ preview?: string }>;
 }) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug, { publishedOnly: true });
+  const sParams = searchParams ? await searchParams : undefined;
+  const isPreview = sParams?.preview === "true";
+
+  const project = await getProjectBySlug(slug, { publishedOnly: !isPreview });
   if (!project) notFound();
 
   const [allProjects, allServices] = await Promise.all([
@@ -98,6 +110,13 @@ export default async function ProjectDetailPage({
 
   return (
     <>
+      {isPreview && (
+        <div className="bg-amber-500/10 border-b border-amber-500/30 text-amber-300 py-2.5 px-4 text-center font-mono text-xs font-semibold flex items-center justify-center gap-2 sticky top-0 z-50 backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <span>ADMIN PREVIEW MODE — This draft is not indexed and is visible only in preview.</span>
+        </div>
+      )}
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -115,13 +134,13 @@ export default async function ProjectDetailPage({
         <div className="orb orb-cyan" aria-hidden="true" />
         <div className="max-w-5xl mx-auto px-6 sm:px-8 section relative space-y-12">
           
-          {/* COVER MEDIA (IF AVAILABLE) */}
+          {/* COVER MEDIA */}
           {project.coverImage && (
             <Reveal>
-              <div className="relative w-full h-64 sm:h-96 rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+              <div className="relative w-full h-64 sm:h-96 md:h-[450px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#090c16]">
                 <Image
                   src={project.coverImage}
-                  alt={`${project.title} cover architecture`}
+                  alt={project.altText || `${project.title} cover architecture`}
                   fill
                   priority
                   className="object-cover"
@@ -163,6 +182,28 @@ export default async function ProjectDetailPage({
             </Reveal>
           </div>
 
+          {/* WORKFLOW DIAGRAM MEDIA (IF PROVIDED) */}
+          {project.workflowImage && (
+            <Reveal delay={100}>
+              <div className="rounded-3xl border border-white/10 bg-[#090c16] p-6 sm:p-8 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Workflow className="w-4 h-4 text-violet-400" />
+                  <h3 className="text-sm font-mono uppercase tracking-widest text-violet-300 font-semibold">
+                    Visual Workflow Map
+                  </h3>
+                </div>
+                <div className="relative w-full h-64 sm:h-96 rounded-2xl overflow-hidden border border-white/10">
+                  <Image
+                    src={project.workflowImage}
+                    alt={`${project.title} workflow diagram`}
+                    fill
+                    className="object-contain bg-[#05070d]"
+                  />
+                </div>
+              </div>
+            </Reveal>
+          )}
+
           {/* SIGNATURE WORKFLOW ARCHITECTURE */}
           <Reveal delay={120}>
             <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10 backdrop-blur-sm">
@@ -203,6 +244,54 @@ export default async function ProjectDetailPage({
               </div>
             </div>
           </Reveal>
+
+          {/* ARCHITECTURE DIAGRAM (IF PROVIDED) */}
+          {project.architectureImage && (
+            <Reveal delay={140}>
+              <div className="rounded-3xl border border-white/10 bg-[#090c16] p-6 sm:p-8 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-violet-400" />
+                  <h3 className="text-sm font-mono uppercase tracking-widest text-violet-300 font-semibold">
+                    Detailed Infrastructure &amp; Tool Architecture
+                  </h3>
+                </div>
+                <div className="relative w-full h-64 sm:h-96 rounded-2xl overflow-hidden border border-white/10">
+                  <Image
+                    src={project.architectureImage}
+                    alt={`${project.title} architecture diagram`}
+                    fill
+                    className="object-contain bg-[#05070d]"
+                  />
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {/* GALLERY SHOWCASE (IF PROVIDED) */}
+          {project.gallery && project.gallery.length > 0 && (
+            <Reveal delay={150}>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-violet-400" />
+                  <h3 className="text-sm font-mono uppercase tracking-widest text-violet-300 font-semibold">
+                    Interface &amp; Logs Showcase
+                  </h3>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {project.gallery.map((imgUrl, i) => (
+                    <div key={i} className="relative w-full h-56 rounded-2xl overflow-hidden border border-white/10 bg-[#090c16]">
+                      <Image
+                        src={imgUrl}
+                        alt={`${project.title} showcase ${i + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          )}
 
           {/* AI ROLE & AUTOMATION LOGIC */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

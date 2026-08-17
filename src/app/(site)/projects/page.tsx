@@ -1,20 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getProjects } from "@/lib/db";
-import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import Reveal from "@/components/Reveal";
 import { IconArrow } from "@/components/icons";
-import BentoCard from "@/components/BentoCard";
-import TiltCard from "@/components/TiltCard";
+import ProjectsFilterArchive from "@/components/ProjectsFilterArchive";
 
 export const metadata: Metadata = {
-  title: "Selected Projects",
+  title: "Selected Work — Arefin Mueen",
   description:
     "Practical AI automations, autonomous agents, RAG systems, and multi-agent workflows built by Arefin Mueen.",
   alternates: { canonical: "/projects" },
   openGraph: {
-    title: "Selected Projects — Arefin Mueen",
+    title: "Selected Work — Arefin Mueen",
     description:
       "Hands-on AI automation projects, autonomous agents, RAG assistants, and multi-agent workflows built by Arefin Mueen.",
     url: "/projects",
@@ -27,8 +25,8 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Arefin Mueen · Selected Projects"
-        index="05"
+        eyebrow="Arefin Mueen · Selected Work"
+        index="03"
         meta="AI Automation · AI Agents · RAG · Multi-Agent"
         title={
           <>
@@ -37,71 +35,15 @@ export default async function ProjectsPage() {
             <span className="serif">built to automate real work.</span>
           </>
         }
-        subtitle="A selection of hands-on AI automation workflows, autonomous agents, RAG assistants, and multi-agent systems built by Arefin Mueen."
+        subtitle="A collection of hands-on AI automation workflows, autonomous agents, RAG assistants, and multi-agent systems built by Arefin Mueen."
       />
 
-      <section className="hero-dark relative overflow-hidden border-b border-white/5">
+      <section className="hero-dark relative overflow-hidden border-b border-white/5 py-12 sm:py-16">
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-pink" aria-hidden="true" />
         <div className="orb orb-cyan" aria-hidden="true" />
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 section relative">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-            {projects.map(({ iconName, title, summary, stack, category, outcome, slug }, i) => {
-              const Icon = iconFor(iconName);
-              // Asymmetric editorial layout
-              const spans = [
-                "md:col-span-7",
-                "md:col-span-5",
-                "md:col-span-5",
-                "md:col-span-7",
-                "md:col-span-7",
-                "md:col-span-5",
-              ];
-              const span = spans[i] || "md:col-span-6";
-              return (
-                <Reveal key={title} delay={i * 70} className={span}>
-                  <TiltCard className="h-full rounded-3xl">
-                    <BentoCard className="h-full">
-                      <Link href={slug ? `/projects/${slug}` : "/contact"} className="block h-full">
-                        <div className="h-full flex flex-col group">
-                          <div className="flex items-start justify-between gap-4">
-                            <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 border border-white/10">
-                              <Icon width={24} height={24} className="text-white" />
-                            </span>
-                            <div className="flex items-center gap-2 text-[10px]">
-                              <span className="font-mono uppercase tracking-[0.18em] text-white/40">
-                                / {(i + 1).toString().padStart(2, "0")}
-                              </span>
-                              <span className="tag-pill">{category}</span>
-                            </div>
-                          </div>
-                          <h2 className="display text-2xl md:text-3xl tracking-tight text-white mt-7 line-draw inline-block pb-1">
-                            {title}
-                          </h2>
-                          <p className="mt-4 text-white/65 max-w-xl leading-relaxed flex-1">
-                            {summary}
-                          </p>
-                          {outcome && (
-                            <p className="mt-4 inline-flex items-start gap-2 text-sm">
-                              <span className="w-6 h-px bg-[var(--accent-1)] mt-2.5" />
-                              <span className="text-white/85 italic serif text-base">
-                                {outcome}
-                              </span>
-                            </p>
-                          )}
-                          <div className="mt-6 pt-6 border-t border-white/10 flex flex-wrap gap-x-5 gap-y-2 text-xs font-mono text-white/45">
-                            {stack.map((s) => (
-                              <span key={s}>· {s}</span>
-                            ))}
-                          </div>
-                        </div>
-                      </Link>
-                    </BentoCard>
-                  </TiltCard>
-                </Reveal>
-              );
-            })}
-          </div>
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 relative">
+          <ProjectsFilterArchive projects={projects} />
 
           <Reveal>
             <div className="mt-20 relative rounded-3xl overflow-hidden p-10 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-6 border border-white/10 bg-white/[0.03] backdrop-blur-md">
