@@ -163,7 +163,7 @@ export default function PrivacyPage() {
               >
                 WhatsApp&apos;s privacy policy
               </a>
-              . We retain WhatsApp conversations on the Tensorix business phone
+              . We retain WhatsApp conversations on our business device
               for as long as the relationship is active.
             </p>
           </Block>

@@ -199,7 +199,7 @@ export default async function Footer() {
           </p>
           <p>
             <span className="opacity-50">build</span>{" "}
-            <span>v2.0 · neural-dark</span>
+            <span>v2.0 · Production</span>
           </p>
         </div>
       </div>

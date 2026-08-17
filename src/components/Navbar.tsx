@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
  * Sticky, glassmorphic nav band that lights up its own backdrop blur
  * once the page scrolls. Three lanes:
  *
- *   left   ◈ TENSORIX wordmark — the lozenge rotates 45° on hover
+ *   left   ◈ AREFIN MUEEN wordmark — the lozenge rotates 45° on hover
  *   center mono uppercase nav links, underline animates on hover
  *   right  live status pill (system status) + "Book audit" CTA
  *

@@ -1,10 +1,9 @@
 @import "tailwindcss";
 
 /* ============================================================
- * Tensorix · Deep Neural Dark — v3.0
- * Brand DNA: quiet confidence, technical depth, founder-led.
- * Aesthetic: Linear.app · Vercel · a Bloomberg terminal that
- * went to design school.
+ * Arefin Mueen · Portfolio Design System — v2.0
+ * Brand DNA: quiet confidence, technical depth, personal identity.
+ * Aesthetic: Clean, editorial, highly legible neural dark.
  * ============================================================ */
 
 :root {
@@ -1382,9 +1381,8 @@ body.is-loaded main {
 }
 
 /* ============================================================
- * Tensorix v3 · Component utilities
- * SectionLabel, GlowCard, scan-line, reveal animations,
- * NeuralMesh & friends.
+ * Component utilities & layout primitives
+ * SectionLabel, scan-line, reveal animations, etc.
  * ============================================================ */
 
 /* ─── Section label — [ 01 ] · SERVICES ─────────────────────
@@ -1580,7 +1578,7 @@ body.is-loaded main {
   100% { transform: scale(3); opacity: 0; }
 }
 
-/* ─── Tensorix logo lozenge ◈ ────────────────────────────────
+/* ─── Brand logo lozenge ◈ ──────────────────────────────────
  * Hard-edged 4-pointed diamond. Used in the nav logo and brand mark. */
 .tx-lozenge {
   display: inline-block;

@@ -21,8 +21,8 @@ describe("isAdmin authorization", () => {
   const originalEnv = { ...process.env };
 
   beforeEach(() => {
-    process.env.ADMIN_EMAILS = "admin@tensorix.dev,founder@tensorix.dev";
-    process.env.ADMIN_GITHUB_USERS = "arefin-dev,tensorix-admin";
+    process.env.ADMIN_EMAILS = "admin@arefin.dev,founder@arefin.dev";
+    process.env.ADMIN_GITHUB_USERS = "arefin-dev,arefin-admin";
   });
 
   afterEach(() => {
@@ -31,13 +31,13 @@ describe("isAdmin authorization", () => {
   });
 
   it("authorizes listed admin emails", () => {
-    expect(isAdmin("admin@tensorix.dev", null)).toBe(true);
-    expect(isAdmin("founder@tensorix.dev", null)).toBe(true);
+    expect(isAdmin("admin@arefin.dev", null)).toBe(true);
+    expect(isAdmin("founder@arefin.dev", null)).toBe(true);
   });
 
   it("authorizes listed github logins", () => {
     expect(isAdmin(null, "arefin-dev")).toBe(true);
-    expect(isAdmin(null, "tensorix-admin")).toBe(true);
+    expect(isAdmin(null, "arefin-admin")).toBe(true);
   });
 
   it("rejects non-admin emails and logins", () => {

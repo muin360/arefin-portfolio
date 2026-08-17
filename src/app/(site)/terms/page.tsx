@@ -381,7 +381,7 @@ export default function TermsPage() {
                 Privacy Policy
               </Link>{" "}
               and any signed Project Agreement, these Terms are the complete
-              agreement between you and Tensorix regarding the Site and
+              agreement between you and Arefin Mueen regarding the Site and
               pre-engagement interactions, and supersede prior verbal or
               written communications on the same subject.
             </p>

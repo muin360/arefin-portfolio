@@ -199,7 +199,7 @@ export async function sendContact(
   // FROM domain must be verified in Resend. Until you verify your own
   // domain, use the Resend onboarding sender; it works out of the box but
   // sends from `onboarding@resend.dev`. After verifying your domain
-  // set CONTACT_FROM_EMAIL to "Tensorix <hi@your.dev>".
+  // set CONTACT_FROM_EMAIL to "Arefin Mueen <hi@your.dev>".
   const from =
     process.env.CONTACT_FROM_EMAIL || "Arefin Mueen <onboarding@resend.dev>";
   const to = CONTACT_TO_EMAIL;
