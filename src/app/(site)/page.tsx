@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getSiteSettings, getProjects, getAboutData, getBlogPosts } from "@/lib/db";
 
-import SectionLabel from "@/components/SectionLabel";
+import SectionPlate from "@/components/SectionPlate";
 import SprintTimeline from "@/components/SprintTimeline";
 import Reveal from "@/components/Reveal";
 
@@ -25,30 +25,29 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 01 HERO — Human + AI Technical Anchor + NOW BUILDING Module */}
+      {/* 01 HERO — Personal + Orbital Topology + LIVE LAB Support Card */}
       <HeroSectionV2
         availabilityNote={availabilityNote}
         profileImage={settings.profileImage}
         name={settings.name}
         role={settings.role}
-        nowBuildingTitle={settings.nowBuildingTitle}
-        nowBuildingStatus={settings.nowBuildingStatus}
-        nowBuildingDescription={settings.nowBuildingDescription}
-        nowBuildingStack={settings.nowBuildingStack}
-        nowBuildingFocus={settings.nowBuildingFocus}
-        nowBuildingLink={settings.nowBuildingLink}
+        labTitle={settings.labTitle}
+        labStatus={settings.labStatus}
+        labInput={settings.labInput}
+        labProcess={settings.labProcess}
+        labOutput={settings.labOutput}
+        labStack={settings.labStack}
+        labLink={settings.labLink}
       />
 
-      {/* 02 WHAT I BUILD — Bento Capabilities */}
+      {/* 02 WHAT I BUILD — Capability System Pipeline */}
       <section
         id="services"
-        className="v2-section"
+        className="v2-section py-16 sm:py-24"
         aria-label="Capabilities"
       >
         <div className="v2-container">
-          <SectionLabel index="02" hint="what i build and automate">
-            Capabilities
-          </SectionLabel>
+          <SectionPlate variant="system" />
           <h2 className="v2-section__head">
             Core capabilities,{" "}
             <em className="v2-section__head-em">focused on real work.</em>
@@ -56,7 +55,7 @@ export default async function HomePage() {
           <p className="v2-section__sub">
             Practical AI automation workflows, autonomous agents, RAG knowledge bases, and multi-agent systems designed to solve real business bottlenecks.
           </p>
-          <div className="v2-section__body">
+          <div className="v2-section__body mt-8">
             <Reveal delay={120}>
               <BentoServices />
             </Reveal>
@@ -65,13 +64,11 @@ export default async function HomePage() {
       </section>
 
       {/* 03 FEATURED WORK — 3-Tier Editorial Projects Hierarchy */}
-      <section className="v2-section" aria-label="Selected projects">
+      <section className="v2-section py-16 sm:py-24" aria-label="Selected projects">
         <div className="v2-container">
-          <div className="v2-section__top">
+          <SectionPlate variant="work" />
+          <div className="v2-section__top mb-8">
             <div>
-              <SectionLabel index="03" hint="practical automated systems">
-                Selected Work
-              </SectionLabel>
               <h2 className="v2-section__head">
                 AI automations that{" "}
                 <em className="v2-section__head-em">do the work,</em>
@@ -92,12 +89,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 04 HOW I BUILD — Sprint Timeline */}
-      <section className="v2-section v2-section--dark" aria-label="How it works">
+      {/* 04 HOW I BUILD — Flowing 6-Stage Process Pipeline */}
+      <section className="v2-section v2-section--dark py-16 sm:py-24" aria-label="How it works">
         <div className="v2-container">
-          <SectionLabel index="04" hint="from workflow map to working automation">
-            How I Work
-          </SectionLabel>
+          <SectionPlate variant="process" />
           <h2 className="v2-section__head">
             From first message
             <br />
@@ -106,7 +101,7 @@ export default async function HomePage() {
           <p className="v2-section__sub">
             A transparent step-by-step process: mapping the workflow, designing the automation architecture, connecting APIs and prompts, testing edge cases, and handover under your accounts.
           </p>
-          <div className="v2-section__body">
+          <div className="v2-section__body mt-8">
             <Reveal delay={100} y={24}>
               <SprintTimeline />
             </Reveal>
@@ -114,20 +109,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 05 ABOUT / LEARNING JOURNEY — Personal Anchor */}
-      <section className="v2-section" aria-label="About Arefin Mueen">
+      {/* 05 ABOUT / LEARNING JOURNEY — Human Pause Anchor */}
+      <section className="v2-section py-16 sm:py-24" aria-label="About Arefin Mueen">
         <div className="v2-container">
+          <SectionPlate variant="about" />
           <div className="rounded-3xl bg-gradient-to-br from-[#0e1326] via-[#090c18] to-[#070911] border border-white/10 p-8 sm:p-12">
             <div className="flex flex-col lg:flex-row items-start justify-between gap-8">
               <div className="flex-1">
-                <SectionLabel index="05" hint="personal anchor & philosophy">
-                  About &amp; Mindset
-                </SectionLabel>
-                <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight mt-2 leading-tight">
+                <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight leading-tight">
                   I learn and solve problems by{" "}
                   <span className="serif text-violet-300 italic">building practical AI systems.</span>
                 </h2>
-                <p className="mt-4 text-sm sm:text-base text-white/70 leading-relaxed max-w-2xl">
+                <p className="mt-4 text-sm sm:text-base text-white/70 leading-relaxed max-w-2xl font-sans">
                   {about.bio || "Independent developer specializing in practical AI workflows, tool-calling agents, and API integrations. Based in Dhaka, working globally."}
                 </p>
                 <div className="mt-6 flex flex-wrap gap-4 items-center">
@@ -159,14 +152,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 06 JOURNAL — Build Notes */}
-      <section className="v2-section" aria-label="Journal">
+      {/* 06 JOURNAL — Quiet Editorial Build Notes */}
+      <section className="v2-section py-16 sm:py-24" aria-label="Journal">
         <div className="v2-container">
-          <div className="v2-section__top">
+          <SectionPlate variant="journal" />
+          <div className="v2-section__top mb-8">
             <div>
-              <SectionLabel index="06" hint="recent notes & experiments">
-                Journal
-              </SectionLabel>
               <h2 className="v2-section__head">
                 Notes on building{" "}
                 <em className="v2-section__head-em">AI automations &amp; agents.</em>

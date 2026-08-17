@@ -168,6 +168,13 @@ export type SiteSettings = {
   nowBuildingStack?: string[];
   nowBuildingFocus?: string[];
   nowBuildingLink?: string;
+  labTitle?: string;
+  labStatus?: string;
+  labInput?: string;
+  labProcess?: string;
+  labOutput?: string;
+  labStack?: string[];
+  labLink?: string;
   updatedAt: string;
 };
 

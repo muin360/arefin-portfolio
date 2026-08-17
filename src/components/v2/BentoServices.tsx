@@ -2,270 +2,210 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import {
+  Workflow,
+  Bot,
+  Brain,
+  Layers,
+  ArrowRight,
+  CheckCircle2,
+  ChevronRight,
+} from "lucide-react";
 
-/**
- * Bento grid services section — 4 cards with internal visuals.
- *
- * Layout: two rows of 7+5 / 5+7 column splits so the grid feels weighted
- * like an editorial spread rather than a flat 2×2. Each card shows:
- *   - small mono index ("01" / SERVICE)
- *   - bold display title
- *   - one-line hook
- *   - a hand-rolled internal "visual" (workflow diagram, connection map,
- *     browser mockup) made of SVG / divs — no external assets.
- *   - tiny "read more" link to the matching anchor in /services.
- *
- * Visuals are intentionally schematic, not stock — they make the card
- * read like a piece of a real product surface.
- */
-
-type Card = {
-  index: string;
-  title: string;
-  hook: string;
-  visual: React.ReactNode;
-  href: string;
-};
-
-function AgentTabs() {
-  const [tab, setTab] = useState<"problem" | "solution" | "outcome">("problem");
-  const COPY: Record<typeof tab, string> = {
-    problem:
-      "Inbound on web, WhatsApp and Messenger piles up faster than your team can reply.",
-    solution:
-      "An LLM agent trained on your real content. Qualifies, books, hands off with full context.",
-    outcome:
-      "Replies in seconds, qualified leads to a human, audit trail per conversation.",
-  };
-  return (
-    <div className="rounded-xl border" style={{ background: "rgba(0,0,0,0.25)", borderColor: "var(--border-2)" }}>
-      <div className="flex border-b" style={{ borderColor: "var(--border-2)" }}>
-        {(["problem", "solution", "outcome"] as const).map((k) => (
-          <button
-            key={k}
-            type="button"
-            onClick={() => setTab(k)}
-            className="flex-1 px-3 py-2 text-[10px] tracking-[0.18em] uppercase font-mono"
-            style={{
-              color: tab === k ? "var(--t1)" : "var(--t3)",
-              background: tab === k ? "var(--a4)" : "transparent",
-              borderBottom:
-                tab === k ? "1px solid var(--a1)" : "1px solid transparent",
-            }}
-            aria-pressed={tab === k}
-          >
-            {k}
-          </button>
-        ))}
-      </div>
-      <p className="p-4 text-[13px] leading-relaxed" style={{ color: "var(--t1)" }}>
-        {COPY[tab]}
-      </p>
-    </div>
-  );
+interface CapabilityNode {
+  step: string;
+  category: string;
+  name: string;
+  purpose: string;
+  tech: string[];
+  projectTitle: string;
+  projectSlug: string;
+  icon: typeof Workflow;
+  accent: string;
 }
 
-function WorkflowDiagram() {
-  const nodes = ["CRM", "n8n", "Slack", "Sheets"];
-  return (
-    <svg viewBox="0 0 320 110" className="w-full">
-      <defs>
-        <linearGradient id="wf-line" x1="0" x2="1">
-          <stop offset="0%" stopColor="rgba(91,110,245,0)" />
-          <stop offset="50%" stopColor="rgba(91,110,245,0.7)" />
-          <stop offset="100%" stopColor="rgba(91,110,245,0)" />
-        </linearGradient>
-      </defs>
-      {nodes.map((label, i) => {
-        const x = 40 + i * 80;
-        return (
-          <g key={label}>
-            {i < nodes.length - 1 && (
-              <line
-                x1={x + 20}
-                y1={55}
-                x2={x + 60}
-                y2={55}
-                stroke="url(#wf-line)"
-                strokeWidth={1.5}
-                strokeDasharray="3 3"
-                style={{ animation: "dash-flow 4s linear infinite" }}
-              />
-            )}
-            <rect
-              x={x - 24}
-              y={36}
-              width={48}
-              height={36}
-              rx={6}
-              fill="rgba(0,0,0,0.5)"
-              stroke="rgba(91,110,245,0.4)"
-              strokeWidth={1}
-            />
-            <text
-              x={x}
-              y={59}
-              textAnchor="middle"
-              fontSize={9}
-              fontFamily="var(--font-jetbrains-mono), monospace"
-              fill="rgba(248,248,252,0.85)"
-              letterSpacing="0.1em"
-            >
-              {label}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
-function ConnectionMap() {
-  const tools = ["Airtable", "Notion", "Slack", "Sheets", "Stripe", "Gmail"];
-  return (
-    <div className="relative aspect-[3/2]">
-      <div
-        className="absolute inset-0 grid place-items-center pointer-events-none"
-        aria-hidden="true"
-      >
-        <div
-          className="w-20 h-20 rounded-full border grid place-items-center font-mono text-[10px] uppercase tracking-[0.18em]"
-          style={{
-            background: "var(--a4)",
-            borderColor: "var(--a3)",
-            color: "var(--a2)",
-          }}
-        >
-          API
-        </div>
-      </div>
-      {tools.map((t, i) => {
-        const angle = (i / tools.length) * Math.PI * 2 - Math.PI / 2;
-        const r = 38; // %
-        const x = 50 + Math.cos(angle) * r;
-        const y = 50 + Math.sin(angle) * r;
-        return (
-          <span
-            key={t}
-            className="absolute -translate-x-1/2 -translate-y-1/2 px-2 py-1 rounded-md font-mono text-[10px]"
-            style={{
-              left: `${x}%`,
-              top: `${y}%`,
-              background: "rgba(0,0,0,0.5)",
-              border: "1px solid var(--border-3)",
-              color: "var(--t2)",
-            }}
-          >
-            {t}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
-function BrowserMockup() {
-  return (
-    <div
-      className="rounded-lg overflow-hidden border"
-      style={{ borderColor: "var(--border-2)", background: "rgba(0,0,0,0.30)" }}
-    >
-      <div
-        className="flex items-center gap-1.5 px-3 py-2 border-b"
-        style={{ borderColor: "var(--border-2)" }}
-      >
-        <span className="w-2 h-2 rounded-full" style={{ background: "var(--red)" }} />
-        <span className="w-2 h-2 rounded-full" style={{ background: "var(--amber)" }} />
-        <span className="w-2 h-2 rounded-full" style={{ background: "var(--green)" }} />
-        <span
-          className="ml-3 px-2 py-0.5 rounded text-[10px] font-mono"
-          style={{ background: "rgba(255,255,255,0.04)", color: "var(--t3)" }}
-        >
-          arefin.mueen/app
-        </span>
-      </div>
-      <div className="p-4 space-y-2">
-        <div className="h-2 rounded w-2/3" style={{ background: "rgba(255,255,255,0.10)" }} />
-        <div className="h-2 rounded w-1/2" style={{ background: "rgba(255,255,255,0.07)" }} />
-        <div className="grid grid-cols-3 gap-2 pt-2">
-          <div className="h-12 rounded" style={{ background: "var(--a4)", border: "1px solid var(--a3)" }} />
-          <div className="h-12 rounded" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--border-2)" }} />
-          <div className="h-12 rounded" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--border-2)" }} />
-        </div>
-        <div className="mt-2 flex justify-end">
-          <span
-            className="px-2.5 py-1 rounded-full text-[10px] font-mono"
-            style={{ background: "var(--a1)", color: "#fff" }}
-          >
-            Launch Project →
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const CARDS: Card[] = [
+const CAPABILITIES: CapabilityNode[] = [
   {
-    index: "01 / AUTOMATION",
-    title: "AI Workflow Automation",
-    hook: "Event-driven automation pipelines connecting business apps, email inboxes, spreadsheets, and webhooks.",
-    visual: <WorkflowDiagram />,
-    href: "/services#workflow-automation",
+    step: "01",
+    category: "INGESTION & TRIGGER",
+    name: "AI Workflow Automation",
+    purpose: "Event-driven pipelines connecting webhooks, inbox triage, and CRM records to eliminate repetitive operational chores.",
+    tech: ["n8n", "Make", "Zapier", "Webhooks", "JSON"],
+    projectTitle: "Email Automation & Smart Triage",
+    projectSlug: "email-automation-smart-triage",
+    icon: Workflow,
+    accent: "text-violet-400 border-violet-500/30 bg-violet-600/10",
   },
   {
-    index: "02 / AGENTS",
-    title: "AI Agents & Autonomous Assistants",
-    hook: "Intelligent agents that reason, call tools, query data, and execute real tasks with human handoff.",
-    visual: <AgentTabs />,
-    href: "/services#agent-chatbot",
+    step: "02",
+    category: "REASONING & ROUTING",
+    name: "AI Agents & Autonomous Assistants",
+    purpose: "Autonomous reasoning agents equipped with tool calling, schema validation, and deterministic conditional routing.",
+    tech: ["LangChain", "OpenAI API", "Claude 3.5", "Python"],
+    projectTitle: "Customer Support Q&A Bot",
+    projectSlug: "customer-support-qa-bot",
+    icon: Bot,
+    accent: "text-cyan-400 border-cyan-500/30 bg-cyan-600/10",
   },
   {
-    index: "03 / RAG SYSTEMS",
-    title: "RAG & Knowledge Retrieval",
-    hook: "Context-aware AI assistants that accurately answer questions using your verified company documents.",
-    visual: <ConnectionMap />,
-    href: "/services#rag-systems",
+    step: "03",
+    category: "KNOWLEDGE GROUNDING",
+    name: "RAG & Knowledge Retrieval",
+    purpose: "Context-aware question answering with semantic vector chunking, metadata filters, and zero hallucination guardrails.",
+    tech: ["MongoDB Vector Search", "Pinecone", "Embeddings"],
+    projectTitle: "RAG Knowledge Base Assistant",
+    projectSlug: "rag-knowledge-base-assistant",
+    icon: Brain,
+    accent: "text-emerald-400 border-emerald-500/30 bg-emerald-600/10",
   },
   {
-    index: "04 / MULTI-AGENT",
-    title: "Multi-Agent & Chatbot Workflows",
-    hook: "Specialized crews of AI agents collaborating on complex research, content generation, and customer Q&A.",
-    visual: <BrowserMockup />,
-    href: "/services#multi-agent",
+    step: "04",
+    category: "MULTI-AGENT COLLABORATION",
+    name: "Multi-Agent System Networks",
+    purpose: "Coordinated crews of specialized agents (Researcher, Data Analyst, Writer, Critic) handling multi-phase synthesis.",
+    tech: ["LangGraph", "CrewAI", "Python", "REST APIs"],
+    projectTitle: "Market Research Multi-Agent System",
+    projectSlug: "market-research-multi-agent-system",
+    icon: Layers,
+    accent: "text-indigo-400 border-indigo-500/30 bg-indigo-600/10",
+  },
+  {
+    step: "05",
+    category: "DESTINATION & SIDE-EFFECTS",
+    name: "Tools, APIs & Business Output",
+    purpose: "Clean execution of external mutations: database writes, ticket handoffs, Slack dispatches, and human-in-the-loop signoff.",
+    tech: ["REST APIs", "Gmail API", "Google Sheets", "Slack"],
+    projectTitle: "Social Media Content Generator",
+    projectSlug: "social-media-content-generator",
+    icon: CheckCircle2,
+    accent: "text-amber-400 border-amber-500/30 bg-amber-600/10",
   },
 ];
 
 export default function BentoServices() {
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const activeCap = CAPABILITIES[selectedIdx];
+  const ActiveIcon = activeCap.icon;
+
   return (
-    <div className="space-y-5">
-      <div className="v2-bento">
-        <Card data={CARDS[0]} />
-        <Card data={CARDS[1]} />
+    <div className="w-full space-y-6">
+      {/* ─── SYSTEM TOPOLOGY FLOW PIPELINE ───────────────────────────────── */}
+      <div className="rounded-3xl bg-[#090c16] border border-white/10 p-6 sm:p-8 shadow-2xl">
+        {/* Step Flow Tracker */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-8">
+          {CAPABILITIES.map((cap, i) => {
+            const isCurrent = selectedIdx === i;
+            const Icon = cap.icon;
+            return (
+              <button
+                key={cap.step}
+                type="button"
+                onClick={() => setSelectedIdx(i)}
+                className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all relative ${
+                  isCurrent
+                    ? "bg-[#141a2e] border-violet-500/50 shadow-md shadow-violet-900/20"
+                    : "bg-[#0c0f1d] border-white/5 hover:border-white/15 hover:bg-[#101426]"
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-2">
+                  <span className="font-mono text-[10px] font-bold text-white/40">
+                    {cap.step}
+                  </span>
+                  <Icon
+                    className={`w-3.5 h-3.5 ${
+                      isCurrent ? "text-violet-400" : "text-white/30"
+                    }`}
+                  />
+                </div>
+                <span className="text-[11px] font-bold text-white font-mono truncate w-full">
+                  {cap.name.split(" ")[0]} {cap.name.split(" ")[1] || ""}
+                </span>
+                <span className="text-[9px] text-white/40 font-mono uppercase tracking-wider mt-0.5 truncate w-full">
+                  {cap.category.split(" ")[0]}
+                </span>
+
+                {isCurrent && (
+                  <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-violet-400 rounded-full" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ─── ACTIVE CAPABILITY DETAILED STAGE VIEW ─────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch p-6 rounded-2xl bg-[#0e1224] border border-white/[0.08]">
+          {/* Left: Capability Spec */}
+          <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 font-mono text-[10px] uppercase tracking-widest text-violet-300">
+                  STAGE {activeCap.step} · {activeCap.category}
+                </span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2.5 mt-1">
+                <ActiveIcon className="w-6 h-6 text-violet-400 shrink-0" />
+                <span>{activeCap.name}</span>
+              </h3>
+              <p className="mt-3 text-xs sm:text-sm text-white/70 leading-relaxed font-sans">
+                {activeCap.purpose}
+              </p>
+            </div>
+
+            {/* Tech Stack Chips */}
+            <div className="space-y-1.5 pt-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 font-semibold block">
+                Production Tech Layer:
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {activeCap.tech.map((t) => (
+                  <span
+                    key={t}
+                    className="px-2.5 py-1 rounded-md bg-[#161d36] border border-white/5 font-mono text-[11px] text-violet-200"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Connected Real Project Anchor */}
+          <div className="lg:col-span-5 rounded-xl bg-[#080b16] border border-white/10 p-5 flex flex-col justify-between space-y-4">
+            <div>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-semibold flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Proven In Real Case Study
+              </span>
+              <h4 className="text-base font-bold text-white tracking-tight mt-2">
+                {activeCap.projectTitle}
+              </h4>
+              <p className="text-xs text-white/60 mt-1 leading-relaxed font-mono text-[11px]">
+                Full end-to-end implementation with verified architecture and error recovery.
+              </p>
+            </div>
+
+            <Link
+              href={`/projects/${activeCap.projectSlug}`}
+              className="inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-violet-600/20 hover:bg-violet-600/40 text-violet-300 hover:text-white border border-violet-500/30 text-xs font-mono font-semibold transition-colors group"
+            >
+              <span>Explore Case Study</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
       </div>
-      <div className="v2-bento v2-bento__row--inverted">
-        <Card data={CARDS[2]} />
-        <Card data={CARDS[3]} />
+
+      {/* Direct Service Index Link */}
+      <div className="flex items-center justify-between px-2 text-xs font-mono text-white/40">
+        <span>05 distinct pipeline specializations</span>
+        <Link
+          href="/services"
+          className="text-violet-400 hover:text-white inline-flex items-center gap-1 transition-colors"
+        >
+          <span>View all service blueprints</span>
+          <ChevronRight className="w-3 h-3" />
+        </Link>
       </div>
     </div>
-  );
-}
-
-function Card({ data }: { data: Card }) {
-  return (
-    <Link href={data.href} className="v2-bento__card group block nebula-card">
-      <div className="v2-bento__index">{data.index}</div>
-      <h3 className="v2-bento__title">{data.title}</h3>
-      <p className="v2-bento__hook">{data.hook}</p>
-      <div className="v2-bento__visual">{data.visual}</div>
-      <span
-        className="mt-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em]"
-        style={{ color: "var(--a2)" }}
-      >
-        See service
-        <ArrowRight size={14} strokeWidth={1.75} aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-1" />
-      </span>
-    </Link>
   );
 }

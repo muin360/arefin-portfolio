@@ -3,78 +3,52 @@
 import Link from "next/link";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { whatsappHref, WA_MESSAGES } from "@/lib/cta";
+import SectionPlate from "@/components/SectionPlate";
 
-/**
- * Final CTA (v2).
- *
- * The last band on the homepage before the footer. A blurred indigo
- * orb sits behind a glass card. The card holds a small mono label, a
- * display-font headline, a short pitch, a 4-item checklist, and two
- * CTAs side by side (book audit + whatsapp).
- *
- * Headline copy is unchanged from the rest of the site — this just
- * binds it into the v2 visual language.
- */
 export default function FinalCtaV2() {
   return (
-    <section className="v2-finalcta" aria-label="Let's work together">
-      <div className="v2-finalcta__orb" aria-hidden="true" />
-      <div className="v2-finalcta__card">
-        <span className="v2-finalcta__eyebrow">[ next step ]  let&rsquo;s work together</span>
-        <h2 className="v2-finalcta__head">
-          Have a workflow or repetitive task
-          <br />
-          you want to <em>automate?</em>
-        </h2>
-        <p className="v2-finalcta__sub">
-          Let&rsquo;s map out your process and build practical AI agents, automated workflows, or RAG assistants to handle the work for you.
-        </p>
+    <section className="v2-section py-16 sm:py-24" aria-label="Start a project">
+      <div className="v2-container max-w-4xl mx-auto px-4 sm:px-6">
+        <SectionPlate variant="cta" />
 
-        <ul className="v2-finalcta__check">
-          {[
-            "Free 30-min scoping call — explore what's possible",
-            "Clear workflow architecture and step-by-step logic",
-            "Built with n8n, LangChain, Langflow, or custom Python",
-            "You own 100% of workflows, credentials, and code",
-          ].map((line) => (
-            <li key={line}>
-              <span className="v2-finalcta__tick" aria-hidden="true">
-                ✓
-              </span>
-              <span>{line}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="rounded-3xl bg-[#090c16] border border-white/10 p-8 sm:p-14 text-center relative overflow-hidden shadow-2xl">
+          {/* Subtle Ambient Radial Glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="v2-finalcta__row">
-          <Link
-            href="/contact"
-            className="v2-finalcta__primary group"
-            aria-label="Let's build an automation"
-          >
-            <span>Let&rsquo;s build an automation</span>
-            <ArrowRight
-              size={16}
-              strokeWidth={1.75}
-              aria-hidden="true"
-              className="v2-finalcta__arrow"
-            />
-          </Link>
-          <a
-            href={whatsappHref(WA_MESSAGES.generic)}
-            className="v2-finalcta__secondary group"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Message on WhatsApp"
-          >
-            <MessageCircle
-              size={16}
-              strokeWidth={1.75}
-              aria-hidden="true"
-              className="v2-finalcta__wa-icon"
-            />
-            <span>WhatsApp me</span>
-          </a>
+          <div className="relative z-10 max-w-2xl mx-auto space-y-6">
+            <h2 className="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
+              Let&rsquo;s build an{" "}
+              <span className="serif italic text-violet-300">automation.</span>
+            </h2>
+
+            <p className="text-sm sm:text-base text-white/70 leading-relaxed font-sans">
+              Have a repetitive workflow worth automating? Let&rsquo;s map your process and engineer practical AI agents, RAG pipelines, or workflow integrations under your complete ownership.
+            </p>
+
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/contact"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-white text-black hover:bg-white/90 font-mono text-xs font-bold transition-all shadow-xl shadow-white/10 group"
+              >
+                <span>Start a conversation</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+
+              <a
+                href={whatsappHref(WA_MESSAGES.generic)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#141a2e] hover:bg-[#1a223c] text-white border border-white/10 font-mono text-xs font-semibold transition-colors"
+              >
+                <MessageCircle className="w-4 h-4 text-emerald-400" />
+                <span>WhatsApp Message</span>
+              </a>
+            </div>
+
+            <p className="text-[11px] font-mono text-white/40 pt-2">
+              Free 30-min scoping call · Direct architecture review · 100% Client ownership
+            </p>
+          </div>
         </div>
       </div>
     </section>

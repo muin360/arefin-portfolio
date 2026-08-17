@@ -7,12 +7,13 @@ interface HeroSectionProps {
   profileImage?: string | null;
   name?: string;
   role?: string;
-  nowBuildingTitle?: string;
-  nowBuildingStatus?: string;
-  nowBuildingDescription?: string;
-  nowBuildingStack?: string[];
-  nowBuildingFocus?: string[];
-  nowBuildingLink?: string;
+  labTitle?: string;
+  labStatus?: string;
+  labInput?: string;
+  labProcess?: string;
+  labOutput?: string;
+  labStack?: string[];
+  labLink?: string;
 }
 
 export default function HeroSectionV2({
@@ -20,12 +21,13 @@ export default function HeroSectionV2({
   profileImage,
   name = "Arefin Mueen",
   role = "AI Automation & AI Agent Developer",
-  nowBuildingTitle,
-  nowBuildingStatus,
-  nowBuildingDescription,
-  nowBuildingStack,
-  nowBuildingFocus,
-  nowBuildingLink,
+  labTitle,
+  labStatus,
+  labInput,
+  labProcess,
+  labOutput,
+  labStack,
+  labLink,
 }: HeroSectionProps) {
   const line1 = "I build AI systems".split(" ");
   const line2Pre = ["that", "automate"];
@@ -36,14 +38,12 @@ export default function HeroSectionV2({
   const delay = () => `${wordIdx++ * 55}ms`;
 
   return (
-    <section className="v2-hero" aria-label="Hero">
-      <div className="v2-hero__grain" aria-hidden="true" />
-      <div className="v2-hero__mesh" aria-hidden="true" />
-      <div className="cosmic-grid" aria-hidden="true" />
-      <div className="nebula-orb nebula-orb--hero" aria-hidden="true" />
+    <section className="v2-hero relative overflow-hidden" aria-label="Hero">
+      {/* Subtle Atmospheric Backdrop */}
+      <div className="absolute inset-0 bg-radial-gradient from-violet-900/10 via-transparent to-transparent pointer-events-none" />
 
-      <div className="v2-hero__inner">
-        <div className="v2-hero__grid items-center">
+      <div className="v2-hero__inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+        <div className="v2-hero__grid items-center gap-12 lg:gap-16">
           {/* LEFT COL */}
           <div className="v2-hero__left">
             <span className="v2-hero__pill">
@@ -140,12 +140,13 @@ export default function HeroSectionV2({
               name={name}
               role={role}
               availabilityNote={availabilityNote}
-              nowBuildingTitle={nowBuildingTitle}
-              nowBuildingStatus={nowBuildingStatus}
-              nowBuildingDescription={nowBuildingDescription}
-              nowBuildingStack={nowBuildingStack}
-              nowBuildingFocus={nowBuildingFocus}
-              nowBuildingLink={nowBuildingLink}
+              labTitle={labTitle}
+              labStatus={labStatus}
+              labInput={labInput}
+              labProcess={labProcess}
+              labOutput={labOutput}
+              labStack={labStack}
+              labLink={labLink}
             />
           </div>
         </div>

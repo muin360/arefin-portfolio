@@ -75,6 +75,13 @@ export const INITIAL_DATABASE: DatabaseSchema = {
       "Sub-second latency & zero hallucination guardrails",
     ],
     nowBuildingLink: "/projects/customer-support-qa-bot",
+    labTitle: "RAG Support & Routing Agent",
+    labStatus: "ACTIVE EXPERIMENT",
+    labInput: "Company knowledge base & ticket stream",
+    labProcess: "retrieve → rerank → reason → structured dispatch",
+    labOutput: "Cited response & ticket resolution",
+    labStack: ["n8n", "LangChain", "MongoDB", "Python"],
+    labLink: "/projects/customer-support-qa-bot",
     updatedAt: new Date().toISOString(),
   },
   about: {

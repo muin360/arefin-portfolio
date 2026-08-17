@@ -380,6 +380,125 @@ export default function SettingsForm({ initialConfig }: Props) {
           </div>
         </div>
 
+        {/* ── LIVE LAB HERO SUPPORT CARD ── */}
+        <div className="bg-[#0f111a] border border-[#1e2433] rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#1a202c] pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <h2 className="text-sm font-bold text-white tracking-tight">
+                  Hero &ldquo;LIVE LAB&rdquo; Active Spec Card
+                </h2>
+              </div>
+              <p className="text-xs text-[#6b7280] font-mono mt-0.5">
+                Configures the functional INPUT → PROCESS → OUTPUT experiment card on the homepage
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                Lab Title
+              </label>
+              <input
+                type="text"
+                value={formData.labTitle || ""}
+                onChange={(e) => setFormData({ ...formData, labTitle: e.target.value })}
+                placeholder="RAG Support & Routing Agent"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                Lab Status
+              </label>
+              <input
+                type="text"
+                value={formData.labStatus || ""}
+                onChange={(e) => setFormData({ ...formData, labStatus: e.target.value })}
+                placeholder="ACTIVE EXPERIMENT"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-mono uppercase text-violet-400 mb-1 font-semibold">
+                Input Spec
+              </label>
+              <input
+                type="text"
+                value={formData.labInput || ""}
+                onChange={(e) => setFormData({ ...formData, labInput: e.target.value })}
+                placeholder="Company knowledge base & ticket stream"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase text-cyan-400 mb-1 font-semibold">
+                Process Spec
+              </label>
+              <input
+                type="text"
+                value={formData.labProcess || ""}
+                onChange={(e) => setFormData({ ...formData, labProcess: e.target.value })}
+                placeholder="retrieve → rerank → reason → structured dispatch"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase text-emerald-400 mb-1 font-semibold">
+                Output Spec
+              </label>
+              <input
+                type="text"
+                value={formData.labOutput || ""}
+                onChange={(e) => setFormData({ ...formData, labOutput: e.target.value })}
+                placeholder="Cited response & ticket resolution"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                Lab Stack (Comma Separated)
+              </label>
+              <input
+                type="text"
+                value={(formData.labStack || []).join(", ")}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    labStack: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                  })
+                }
+                placeholder="n8n, LangChain, MongoDB, Python"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                Lab Target Link
+              </label>
+              <input
+                type="text"
+                value={formData.labLink || ""}
+                onChange={(e) => setFormData({ ...formData, labLink: e.target.value })}
+                placeholder="/projects/customer-support-qa-bot"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Live 30-Day Activity Stats */}
         <div className="bg-[#0f111a] border border-[#1e2433] rounded-2xl p-6 space-y-4 shadow-sm">
           <div className="flex items-center justify-between border-b border-[#1a202c] pb-3">

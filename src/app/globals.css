@@ -4197,15 +4197,15 @@ html {
 }
 
 .animate-orbit-slow {
-  animation: orbit-slow 36s linear infinite;
+  animation: orbit-slow 32s linear infinite;
 }
 
 .animate-orbit-reverse {
-  animation: orbit-reverse 28s linear infinite;
+  animation: orbit-reverse 46s linear infinite;
 }
 
 .animate-orbit-pulse {
-  animation: orbit-pulse 3s ease-in-out infinite;
+  animation: orbit-pulse 5s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

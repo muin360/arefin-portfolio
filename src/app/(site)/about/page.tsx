@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/Section";
 import { IconArrow } from "@/components/icons";
 import BentoCard from "@/components/BentoCard";
 import Reveal from "@/components/Reveal";
+import ProfilePortrait from "@/components/ProfilePortrait";
 import { ArrowRight, Sparkles, CheckCircle2, Workflow, Code, Bot, Zap, Layers } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -66,51 +67,15 @@ export default async function AboutPage() {
       <section className="hero-dark relative overflow-hidden border-b border-white/5 py-16 sm:py-24">
         <div className="orb orb-violet" aria-hidden="true" />
         <div className="orb orb-cyan" aria-hidden="true" />
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 lg:grid-cols-12 gap-12 items-start relative">
-          {/* Left: Large Portrait Frame */}
-          <div className="lg:col-span-5 flex flex-col items-center sm:items-start text-center sm:text-left">
-            <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full p-1 bg-[#090b12] border-2 border-white/20 shadow-2xl overflow-hidden flex items-center justify-center mb-6">
-              {settings.profileImage ? (
-                <Image
-                  src={settings.profileImage}
-                  alt={`${settings.name} — ${settings.role}`}
-                  width={256}
-                  height={256}
-                  priority
-                  className="w-full h-full object-cover rounded-full"
-                />
-              ) : (
-                <div className="w-full h-full rounded-full bg-gradient-to-br from-[#121629] to-[#070911] flex flex-col items-center justify-center text-center p-4">
-                  <div className="w-12 h-12 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-300 mb-2">
-                    <Sparkles className="w-6 h-6 text-violet-400" />
-                  </div>
-                  <span className="text-2xl font-bold text-white font-mono tracking-widest">
-                    AM
-                  </span>
-                  <span className="text-xs text-white/50 font-mono tracking-wider uppercase mt-1">
-                    Dhaka, Bangladesh
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-white tracking-tight">
-                Arefin Mueen
-              </h2>
-              <p className="text-xs font-mono text-violet-300 mt-1 uppercase tracking-wider">
-                AI Automation &amp; AI Agent Developer
-              </p>
-              <p className="text-xs font-mono text-white/50 mt-1">
-                Dhaka, Bangladesh · Remote Worldwide
-              </p>
-            </div>
-
-            {/* Quick Status Pill */}
-            <div className="mt-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>{settings.availabilityNote || "Open to automation projects"}</span>
-            </div>
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 section grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative">
+          {/* Left: Orbital Portrait System */}
+          <div className="lg:col-span-5 flex flex-col items-center justify-center">
+            <ProfilePortrait
+              profileImage={settings.profileImage}
+              name={settings.name}
+              role={settings.role}
+              availabilityNote={settings.availabilityNote}
+            />
           </div>
 
           {/* Right: Narrative Story */}
@@ -119,7 +84,7 @@ export default async function AboutPage() {
               My story &amp; <span className="serif text-violet-300 italic">engineering philosophy.</span>
             </h3>
             {about.story.map((p, idx) => (
-              <p key={idx} className="leading-relaxed">{p}</p>
+              <p key={idx} className="leading-relaxed font-sans">{p}</p>
             ))}
           </div>
         </div>
