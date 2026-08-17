@@ -1,23 +1,88 @@
 "use client";
 
-import { useState } from "react";
-import { Trash2, Mail, Archive, MessageSquare } from "lucide-react";
+import { useState, useMemo } from "react";
+import {
+  Trash2,
+  Archive,
+  MailOpen,
+  Mail,
+  Search,
+  ExternalLink,
+  Reply,
+  Clock,
+  CheckCircle,
+  Circle,
+  Download,
+  Copy,
+  Check,
+  MessageCircle,
+  Inbox,
+  AlertTriangle,
+} from "lucide-react";
 import type { ContactSubmission } from "@/lib/db/types";
 
 interface Props {
   initialSubmissions: ContactSubmission[];
 }
 
+type FilterTab = "all" | "unread" | "read" | "archived";
+
+const TAB_LABELS: Record<FilterTab, string> = {
+  all: "All Messages",
+  unread: "Unread",
+  read: "Read",
+  archived: "Archived",
+};
+
 export default function SubmissionsManager({ initialSubmissions }: Props) {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>(initialSubmissions);
   const [activeSub, setActiveSub] = useState<ContactSubmission | null>(
-    initialSubmissions[0] || null,
+    initialSubmissions.find((s) => s.status === "unread") ?? initialSubmissions[0] ?? null,
+  );
+  const [activeTab, setActiveTab] = useState<FilterTab>("all");
+  const [search, setSearch] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const filtered = useMemo(() => {
+    let list = submissions;
+    if (activeTab !== "all") {
+      list = list.filter((s) =>
+        activeTab === "archived"
+          ? s.archived || s.status === "archived"
+          : s.status === activeTab && !s.archived,
+      );
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(
+        (s) =>
+          s.name.toLowerCase().includes(q) ||
+          s.email.toLowerCase().includes(q) ||
+          s.subject.toLowerCase().includes(q) ||
+          s.message.toLowerCase().includes(q),
+      );
+    }
+    return list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [submissions, activeTab, search]);
+
+  const counts = useMemo(
+    () => ({
+      all: submissions.length,
+      unread: submissions.filter((s) => s.status === "unread" && !s.archived).length,
+      read: submissions.filter((s) => s.status === "read" && !s.archived).length,
+      archived: submissions.filter((s) => s.archived || s.status === "archived").length,
+    }),
+    [submissions],
   );
 
-  const handleStatusChange = async (
-    id: string,
-    status: ContactSubmission["status"],
-  ) => {
+  const handleStatusChange = async (id: string, status: ContactSubmission["status"]) => {
     try {
       const res = await fetch("/api/admin/submissions", {
         method: "PATCH",
@@ -26,158 +91,325 @@ export default function SubmissionsManager({ initialSubmissions }: Props) {
       });
       if (res.ok) {
         setSubmissions((prev) =>
-          prev.map((s) => (s.id === id ? { ...s, status } : s)),
+          prev.map((s) => (s.id === id ? { ...s, status, archived: status === "archived" } : s)),
         );
         if (activeSub?.id === id) {
-          setActiveSub((prev) => (prev ? { ...prev, status } : null));
+          setActiveSub((prev) => (prev ? { ...prev, status, archived: status === "archived" } : null));
         }
+        showToast(status === "read" ? "Marked as read" : status === "unread" ? "Marked as unread" : "Archived");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      showToast("Failed to update message status");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this submission?")) return;
     try {
-      const res = await fetch(`/api/admin/submissions?id=${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`/api/admin/submissions?id=${id}`, { method: "DELETE" });
       if (res.ok) {
         setSubmissions((prev) => prev.filter((s) => s.id !== id));
         if (activeSub?.id === id) {
-          setActiveSub(null);
+          const remaining = submissions.filter((s) => s.id !== id);
+          setActiveSub(remaining[0] ?? null);
         }
+        setDeleteConfirmId(null);
+        showToast("Message deleted permanently");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      showToast("Failed to delete message");
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-slate-400 text-sm">
-          {submissions.length} total message{submissions.length !== 1 ? "s" : ""} received.
-        </p>
-      </div>
+  const copyMessage = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    showToast("Message text copied to clipboard");
+  };
 
-      {submissions.length === 0 ? (
-        <div className="p-16 rounded-2xl bg-slate-900 border border-slate-800 text-center text-slate-500 space-y-3">
-          <MessageSquare className="w-8 h-8 mx-auto text-slate-600" />
-          <p className="text-sm">No contact inquiries yet.</p>
+  const exportCsv = () => {
+    const rows = [
+      ["Date", "Name", "Email", "Subject", "Status", "Message", "IP"],
+      ...submissions.map((s) => [
+        s.createdAt,
+        s.name,
+        s.email,
+        s.subject,
+        s.status,
+        `"${s.message.replace(/"/g, '""')}"`,
+        s.ip || "",
+      ]),
+    ];
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `inbox_messages_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#161d2d] border border-violet-500/40 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium animate-in fade-in slide-in-from-bottom-2 duration-150">
+          {toast}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* List Column */}
-          <div className="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden divide-y divide-slate-800/80 max-h-[75vh] overflow-y-auto">
-            {submissions.map((s) => (
-              <div
-                key={s.id}
-                onClick={() => {
-                  setActiveSub(s);
-                  if (s.status === "unread") {
-                    handleStatusChange(s.id, "read");
-                  }
-                }}
-                className={`p-4 cursor-pointer transition-colors space-y-1 ${
-                  activeSub?.id === s.id
-                    ? "bg-slate-800 border-l-4 border-l-violet-500"
-                    : s.status === "unread"
-                    ? "bg-slate-900 font-semibold"
-                    : "hover:bg-slate-800/40 text-slate-400"
+      )}
+
+      {/* Top action bar with Search, Tabs, and Export */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#0f111a] p-4 rounded-2xl border border-[#1e2433]">
+        {/* Tabs */}
+        <div className="flex items-center gap-1 bg-[#141a29] p-1 rounded-xl border border-[#1e2433] overflow-x-auto">
+          {(["all", "unread", "read", "archived"] as FilterTab[]).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                activeTab === tab
+                  ? "bg-violet-600 text-white shadow-sm"
+                  : "text-[#9ca3af] hover:text-white hover:bg-[#1a202c]"
+              }`}
+            >
+              <span>{TAB_LABELS[tab]}</span>
+              <span
+                className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+                  activeTab === tab
+                    ? "bg-white/20 text-white"
+                    : "bg-[#1e2433] text-[#6b7280]"
                 }`}
               >
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-white font-medium truncate">{s.name}</span>
-                  <span className="text-slate-500 font-mono">
-                    {new Date(s.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-300 truncate">{s.subject}</p>
-                <p className="text-xs text-slate-500 line-clamp-1">{s.message}</p>
-              </div>
-            ))}
+                {counts[tab]}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Search & Export */}
+        <div className="flex items-center gap-2.5">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6b7280]" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search sender, email, subject..."
+              className="w-full pl-8 pr-3 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-xs text-white placeholder-[#6b7280] focus:outline-none focus:border-violet-500"
+            />
           </div>
 
-          {/* Details Column */}
-          <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-6">
-            {activeSub ? (
-              <div className="space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
-                  <div>
-                    <h2 className="text-xl font-bold text-white">{activeSub.subject}</h2>
-                    <p className="text-sm text-slate-400 mt-1">
-                      From: <strong className="text-white">{activeSub.name}</strong> (
-                      <a
-                        href={`mailto:${activeSub.email}`}
-                        className="text-violet-400 hover:underline"
-                      >
-                        {activeSub.email}
-                      </a>
-                      )
-                    </p>
-                    <p className="text-xs text-slate-500 font-mono mt-0.5">
-                      Received: {new Date(activeSub.createdAt).toLocaleString()}
-                    </p>
-                  </div>
+          <button
+            type="button"
+            onClick={exportCsv}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#161d2d] hover:bg-[#1f293d] border border-[#252f44] text-white text-xs font-semibold rounded-xl transition-all shrink-0"
+          >
+            <Download className="w-3.5 h-3.5 text-violet-400" />
+            CSV
+          </button>
+        </div>
+      </div>
 
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={`mailto:${activeSub.email}?subject=Re: ${encodeURIComponent(
-                        activeSub.subject,
-                      )}`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium transition-colors"
-                    >
-                      <Mail className="w-3.5 h-3.5" />
-                      Reply via Email
-                    </a>
-                    <button
-                      onClick={() =>
-                        handleStatusChange(
-                          activeSub.id,
-                          activeSub.status === "archived" ? "read" : "archived",
-                        )
-                      }
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
-                      title="Archive message"
-                    >
-                      <Archive className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(activeSub.id)}
-                      className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 transition-colors"
-                      title="Delete message"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+      {/* Dual Pane Layout */}
+      {submissions.length === 0 ? (
+        <div className="p-16 rounded-3xl bg-[#0f111a] border border-[#1e2433] text-center">
+          <Inbox className="w-12 h-12 text-[#252f44] mx-auto mb-3" />
+          <h2 className="text-white font-bold text-base">Inbox is empty</h2>
+          <p className="text-xs text-[#6b7280] mt-1 max-w-sm mx-auto">
+            Client inquiries and discovery requests submitted through the contact form will appear here.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-[620px]">
+          {/* Left Pane: Messages List (5 cols) */}
+          <div className="lg:col-span-5 bg-[#0f111a] border border-[#1e2433] rounded-2xl p-2.5 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto space-y-1.5 custom-scrollbar pr-1">
+              {filtered.length === 0 ? (
+                <div className="py-12 text-center text-xs text-[#6b7280] font-mono">
+                  No messages match this filter.
                 </div>
-
-                <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-5 text-sm text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
-                  {activeSub.message}
-                </div>
-
-                <div className="flex items-center gap-3 pt-4 border-t border-slate-800 text-xs">
-                  <span className="text-slate-400">Status:</span>
-                  {(["unread", "read", "replied", "archived"] as const).map((st) => (
-                    <button
-                      key={st}
-                      onClick={() => handleStatusChange(activeSub.id, st)}
-                      className={`px-3 py-1 rounded-full uppercase tracking-wider font-mono text-[10px] transition-colors ${
-                        activeSub.status === st
-                          ? "bg-violet-600 text-white"
-                          : "bg-slate-800 text-slate-400 hover:text-white"
+              ) : (
+                filtered.map((s) => {
+                  const isSelected = activeSub?.id === s.id;
+                  const isUnread = s.status === "unread" && !s.archived;
+                  return (
+                    <div
+                      key={s.id}
+                      onClick={() => {
+                        setActiveSub(s);
+                        if (s.status === "unread") {
+                          handleStatusChange(s.id, "read");
+                        }
+                      }}
+                      className={`p-3.5 rounded-xl cursor-pointer transition-all border ${
+                        isSelected
+                          ? "bg-[#161d2d] border-violet-500/40 shadow-sm"
+                          : isUnread
+                            ? "bg-[#121624] border-[#252f44] hover:bg-[#141a29]"
+                            : "bg-[#0b0e17]/60 border-transparent hover:bg-[#141a29]/60"
                       }`}
                     >
-                      {st}
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-2 min-w-0">
+                          {isUnread ? (
+                            <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0 ring-2 ring-[#0f111a]" />
+                          ) : (
+                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400/70 shrink-0" />
+                          )}
+                          <span
+                            className={`text-xs truncate ${
+                              isUnread ? "font-bold text-white" : "font-medium text-slate-300"
+                            }`}
+                          >
+                            {s.name}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-[#6b7280] shrink-0">
+                          {new Date(s.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })}
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-violet-300 font-medium truncate mb-1">{s.subject}</p>
+                      <p className="text-[11px] text-[#9ca3af] line-clamp-2 leading-relaxed">{s.message}</p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* Right Pane: Message Detail (7 cols) */}
+          <div className="lg:col-span-7 bg-[#0f111a] border border-[#1e2433] rounded-2xl p-6 flex flex-col justify-between overflow-y-auto custom-scrollbar">
+            {activeSub ? (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="border-b border-[#1a202c] pb-5">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20">
+                          {activeSub.subject}
+                        </span>
+                        {activeSub.archived && (
+                          <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[#1e2433] text-[#6b7280]">
+                            Archived
+                          </span>
+                        )}
+                      </div>
+                      <h2 className="text-lg font-bold text-white tracking-tight">{activeSub.name}</h2>
+                      <p className="text-xs text-violet-400 font-mono mt-0.5">{activeSub.email}</p>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {/* Reply via Email */}
+                      <a
+                        href={`mailto:${activeSub.email}?subject=Re: ${encodeURIComponent(activeSub.subject)}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-semibold transition-all shadow-sm"
+                      >
+                        <Reply className="w-3.5 h-3.5" />
+                        Reply
+                      </a>
+
+                      {/* WhatsApp Direct */}
+                      <a
+                        href={`https://wa.me/?text=${encodeURIComponent(
+                          `Hi ${activeSub.name}! Thanks for reaching out regarding "${activeSub.subject}".`,
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-semibold transition-all"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        WhatsApp
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Metadata line */}
+                  <div className="flex items-center gap-4 text-[10px] font-mono text-[#6b7280] mt-4 pt-3 border-t border-[#1a202c]/50">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      Received {new Date(activeSub.createdAt).toLocaleString()}
+                    </span>
+                    {activeSub.ip && <span>IP: {activeSub.ip}</span>}
+                  </div>
+                </div>
+
+                {/* Message Body */}
+                <div className="bg-[#141a29]/40 border border-[#1e2433] rounded-xl p-5 relative group">
+                  <button
+                    type="button"
+                    onClick={() => copyMessage(activeSub.message)}
+                    className="absolute top-3 right-3 p-1.5 text-[#6b7280] hover:text-white bg-[#1e2433] hover:bg-[#252f44] rounded-lg transition-colors"
+                    title="Copy message"
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+
+                  <p className="text-xs font-mono uppercase text-[#6b7280] mb-2 font-semibold">Message Content</p>
+                  <div className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
+                    {activeSub.message}
+                  </div>
+                </div>
+
+                {/* Status & Management Toolbar */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#1a202c]">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleStatusChange(activeSub.id, activeSub.status === "unread" ? "read" : "unread")}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#161d2d] hover:bg-[#1f293d] border border-[#252f44] text-[#9ca3af] hover:text-white rounded-xl text-xs font-medium transition-colors"
+                    >
+                      {activeSub.status === "unread" ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
+                      Mark {activeSub.status === "unread" ? "Read" : "Unread"}
                     </button>
-                  ))}
+
+                    <button
+                      type="button"
+                      onClick={() => handleStatusChange(activeSub.id, activeSub.archived ? "read" : "archived")}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#161d2d] hover:bg-[#1f293d] border border-[#252f44] text-[#9ca3af] hover:text-white rounded-xl text-xs font-medium transition-colors"
+                    >
+                      <Archive className="w-3.5 h-3.5" />
+                      {activeSub.archived ? "Unarchive" : "Archive"}
+                    </button>
+                  </div>
+
+                  {/* Delete with Confirmation */}
+                  {deleteConfirmId === activeSub.id ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-rose-400 font-mono">Delete forever?</span>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(activeSub.id)}
+                        className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition-colors"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeleteConfirmId(null)}
+                        className="px-2.5 py-1 bg-[#1e2433] text-[#9ca3af] rounded-lg text-xs transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setDeleteConfirmId(activeSub.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 rounded-xl text-xs font-medium transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             ) : (
-              <div className="p-12 text-center text-slate-500 text-sm">
-                Select a message on the left to read details.
+              <div className="py-20 text-center text-xs text-[#6b7280] font-mono">
+                Select an inquiry from the left to view details.
               </div>
             )}
           </div>

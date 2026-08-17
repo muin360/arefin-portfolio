@@ -165,6 +165,66 @@ export type ContactSubmission = {
   updatedAt: string;
 };
 
+export type AnalyticsEventType =
+  | "page_view"
+  | "project_view"
+  | "project_demo_click"
+  | "project_github_click"
+  | "cta_click"
+  | "whatsapp_click"
+  | "email_click"
+  | "contact_start"
+  | "contact_submit"
+  | "blog_view"
+  | "scroll_50"
+  | "scroll_90";
+
+export type AnalyticsEvent = {
+  id: string;
+  event: AnalyticsEventType;
+  path: string;
+  projectSlug?: string;
+  postSlug?: string;
+  label?: string;
+  sessionId?: string;
+  anonymousId?: string;
+  referrer?: string;
+  deviceCategory?: "desktop" | "mobile" | "tablet";
+  browser?: string;
+  os?: string;
+  timestamp: string;
+};
+
+export type AdminActivityType =
+  | "project_created"
+  | "project_updated"
+  | "project_deleted"
+  | "project_published"
+  | "project_unpublished"
+  | "post_created"
+  | "post_updated"
+  | "post_deleted"
+  | "post_published"
+  | "post_unpublished"
+  | "service_updated"
+  | "skill_updated"
+  | "settings_updated"
+  | "seo_updated"
+  | "about_updated"
+  | "submission_read"
+  | "submission_archived"
+  | "submission_deleted";
+
+export type AdminActivity = {
+  id: string;
+  type: AdminActivityType;
+  description: string;
+  targetId?: string;
+  targetTitle?: string;
+  actor?: string;
+  timestamp: string;
+};
+
 export type DatabaseSchema = {
   siteSettings: SiteSettings;
   about: AboutData;
@@ -174,3 +234,4 @@ export type DatabaseSchema = {
   skills: SkillCategory[];
   submissions: ContactSubmission[];
 };
+

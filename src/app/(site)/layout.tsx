@@ -6,6 +6,7 @@ import CursorRing from "@/components/CursorRing";
 import PageLoader from "@/components/PageLoader";
 import PageTransition from "@/components/transitions/PageTransition";
 import MobileStickyBar from "@/components/MobileStickyBar";
+import TrackPageView from "@/components/analytics/TrackPageView";
 
 export default function SiteLayout({
   children,
@@ -20,6 +21,7 @@ export default function SiteLayout({
       >
         Skip to content
       </a>
+      <TrackPageView />
       <PageLoader />
       <PageTransition />
       <CursorRing />

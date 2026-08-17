@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
+import CommandPalette from "@/components/admin/CommandPalette";
+import { getContactSubmissions } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
@@ -21,19 +23,29 @@ export default async function AdminDashboardLayout({
     redirect("/admin/login");
   }
 
+  // Unread count for the sidebar badge — best-effort, never blocks render
+  let unreadCount = 0;
+  try {
+    const submissions = await getContactSubmissions();
+    unreadCount = submissions.filter((s) => s.status === "unread").length;
+  } catch {
+    unreadCount = 0;
+  }
+
   return (
-    <div className="flex h-screen bg-slate-900">
+    <div className="flex h-screen bg-[#07090e] overflow-hidden text-slate-100">
+      <CommandPalette />
       {/* Sidebar */}
-      <AdminSidebar user={session.user} />
+      <AdminSidebar user={session.user} unreadCount={unreadCount} />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#0a0e1a]">
         {/* Header */}
-        <AdminHeader user={session.user} />
+        <AdminHeader user={session.user} unreadCount={unreadCount} />
 
         {/* Content */}
-        <main className="flex-1 overflow-auto bg-slate-800">
-          <div className="p-8">{children}</div>
+        <main className="flex-1 overflow-auto custom-scrollbar">
+          <div className="p-6 md:p-8 max-w-[1400px] mx-auto">{children}</div>
         </main>
       </div>
     </div>

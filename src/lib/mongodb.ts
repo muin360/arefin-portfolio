@@ -104,6 +104,16 @@ export async function ensureIndexes(): Promise<void> {
     await submissions.createIndex({ status: 1 });
     await submissions.createIndex({ archived: 1 });
 
+    const analytics = db.collection("analytics_events");
+    await analytics.createIndex({ timestamp: -1 });
+    await analytics.createIndex({ event: 1, timestamp: -1 });
+    await analytics.createIndex({ path: 1, timestamp: -1 });
+    await analytics.createIndex({ projectSlug: 1, timestamp: -1 });
+    await analytics.createIndex({ sessionId: 1, timestamp: -1 });
+
+    const adminActivities = db.collection("admin_activities");
+    await adminActivities.createIndex({ timestamp: -1 });
+
     indexesEnsured = true;
   } catch {
     // Non-blocking index creation failure

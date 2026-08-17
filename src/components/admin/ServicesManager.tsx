@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Workflow, Bot, Zap, ArrowRight, X } from "lucide-react";
 import type { Service, IconName } from "@/lib/db/types";
 
 interface Props {
@@ -30,13 +30,16 @@ export default function ServicesManager({ initialServices }: Props) {
   const [editingService, setEditingService] = useState<Partial<Service> | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleOpenNew = () => {
     setIsNew(true);
-    setError(null);
-    setSuccess(null);
     setEditingService({
       title: "",
       iconName: "workflow",
@@ -49,187 +52,221 @@ export default function ServicesManager({ initialServices }: Props) {
       ctaPrefill: "Hi Arefin! I want to discuss: ",
       isFeatured: false,
       published: true,
-      order: services.length,
+      order: services.length + 1,
     });
   };
 
   const handleOpenEdit = (svc: Service) => {
     setIsNew(false);
-    setError(null);
-    setSuccess(null);
     setEditingService({ ...svc });
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingService?.title) {
-      setError("Title is required.");
+      showToast("Title is required.");
       return;
     }
 
     setSaving(true);
-    setError(null);
     try {
-      const url = "/api/admin/services";
-      const method = isNew ? "POST" : "PUT";
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingService),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to save service");
-
       if (isNew) {
+        const res = await fetch("/api/admin/services", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editingService),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to create service");
         setServices((prev) => [...prev, data.service]);
-      } else {
-        setServices((prev) =>
-          prev.map((s) => (s.id === data.service.id ? data.service : s)),
-        );
-      }
-
-      setSuccess("Service saved successfully!");
-      setTimeout(() => {
         setEditingService(null);
-        setSuccess(null);
-      }, 800);
+        showToast("Service offering created!");
+      } else {
+        const res = await fetch("/api/admin/services", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editingService),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to update service");
+        setServices((prev) => prev.map((s) => (s.id === data.service.id ? data.service : s)));
+        setEditingService(null);
+        showToast("Service offering updated!");
+      }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error saving service");
+      showToast(err instanceof Error ? err.message : "Error saving service");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this service?")) return;
     try {
-      const res = await fetch(`/api/admin/services?id=${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete service");
-      setServices((prev) => prev.filter((s) => s.id !== id));
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Error deleting service");
+      const res = await fetch(`/api/admin/services?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setServices((prev) => prev.filter((s) => s.id !== id));
+        setDeleteConfirmId(null);
+        showToast("Service deleted");
+      }
+    } catch {
+      showToast("Failed to delete service");
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-slate-400 text-sm">
-          Manage your automation and AI development capability offerings.
-        </p>
+    <div className="space-y-6 max-w-[1360px] mx-auto">
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#161d2d] border border-violet-500/40 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-medium animate-in fade-in slide-in-from-bottom-2 duration-150">
+          {toast}
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0f111a] p-6 rounded-3xl border border-[#1e2433] shadow-sm">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
+              SERVICE OFFERINGS
+            </span>
+            <span className="text-[#4b5563]">·</span>
+            <span className="text-xs text-[#6b7280] font-mono">{services.length} Active Capabilities</span>
+          </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight mt-1">
+            Services &amp; Capabilities
+          </h1>
+          <p className="text-xs text-[#9ca3af] mt-0.5">
+            Manage your AI automations, agent engineering, and advisory capability packages
+          </p>
+        </div>
+
         <button
+          type="button"
           onClick={handleOpenNew}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-semibold transition-all shadow-md shadow-violet-600/20 shrink-0"
         >
           <Plus className="w-4 h-4" />
           Add Service
         </button>
       </div>
 
+      {/* Service Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {services.map((s) => (
           <div
             key={s.id}
-            className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 hover:border-slate-700 transition-colors"
+            className="p-6 rounded-2xl bg-[#0f111a] border border-[#1e2433] space-y-4 hover:border-violet-500/30 transition-all group shadow-sm"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <span className="text-xs font-mono text-violet-400 uppercase">
+                <span className="text-[10px] font-mono text-violet-400 uppercase tracking-wider">
                   Icon: {s.iconName} · Order #{s.order}
                 </span>
-                <h3 className="text-lg font-bold text-white mt-1">{s.title}</h3>
-                <p className="text-sm text-slate-400 mt-1">{s.hook}</p>
+                <h3 className="text-base font-bold text-white mt-1 group-hover:text-violet-300 transition-colors">
+                  {s.title}
+                </h3>
+                <p className="text-xs text-[#9ca3af] mt-1 leading-relaxed">{s.hook}</p>
               </div>
-              <div className="flex items-center gap-2">
+
+              <div className="flex items-center gap-1.5 shrink-0">
                 <button
+                  type="button"
                   onClick={() => handleOpenEdit(s)}
-                  className="p-2 rounded-lg bg-violet-950/40 border border-violet-800/80 text-violet-300 hover:bg-violet-900/60 transition-colors"
+                  className="p-1.5 text-violet-400 hover:text-white hover:bg-violet-600 rounded-lg transition-colors"
+                  title="Edit Service"
                 >
-                  <Edit2 className="w-4 h-4" />
+                  <Edit2 className="w-3.5 h-3.5" />
                 </button>
-                <button
-                  onClick={() => handleDelete(s.id)}
-                  className="p-2 rounded-lg bg-rose-950/40 border border-rose-900/80 text-rose-400 hover:bg-rose-900/60 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+
+                {deleteConfirmId === s.id ? (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(s.id)}
+                      className="px-2 py-0.5 bg-rose-600 text-white rounded text-[10px] font-mono"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDeleteConfirmId(null)}
+                      className="px-2 py-0.5 bg-[#1e2433] text-[#9ca3af] rounded text-[10px] font-mono"
+                    >
+                      No
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setDeleteConfirmId(s.id)}
+                    className="p-1.5 text-[#6b7280] hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                    title="Delete Service"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="text-xs text-slate-300 space-y-1 pt-3 border-t border-slate-800">
+            <div className="text-xs text-[#9ca3af] space-y-1.5 pt-3 border-t border-[#1a202c]">
               <p>
-                <strong className="text-slate-400">Problem:</strong> {s.problem}
+                <strong className="text-white font-medium">Problem:</strong> {s.problem}
               </p>
               <p>
-                <strong className="text-slate-400">Solution:</strong> {s.solution}
+                <strong className="text-white font-medium">Solution:</strong> {s.solution}
               </p>
               <p>
-                <strong className="text-slate-400">Outcome:</strong> {s.outcome}
+                <strong className="text-white font-medium">Outcome:</strong> {s.outcome}
               </p>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Editor Modal */}
       {editingService && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 md:p-8 space-y-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h2 className="text-xl font-bold text-white">
-                {isNew ? "Create Service" : `Edit Service: ${editingService.title}`}
-              </h2>
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-2xl bg-[#0f111a] border border-[#1e2433] rounded-3xl shadow-2xl overflow-hidden flex flex-col my-8 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between p-5 border-b border-[#1a202c] bg-[#111827]">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-violet-400 font-semibold">
+                  {isNew ? "Create Service Offering" : "Edit Service Offering"}
+                </span>
+                <h2 className="text-lg font-bold text-white tracking-tight mt-0.5">
+                  {editingService.title || "Untitled Service"}
+                </h2>
+              </div>
               <button
+                type="button"
                 onClick={() => setEditingService(null)}
-                className="text-slate-400 hover:text-white text-sm"
+                className="p-2 text-[#6b7280] hover:text-white bg-[#1a202c] rounded-xl"
               >
-                ✕ Close
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {error && (
-              <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-sm">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-sm">
-                {success}
-              </div>
-            )}
-
-            <form onSubmit={handleSave} className="space-y-4">
+            <form onSubmit={handleSave} className="p-6 overflow-y-auto max-h-[70vh] space-y-4 custom-scrollbar">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
+                  <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
                     Service Title *
                   </label>
                   <input
                     type="text"
                     required
                     value={editingService.title || ""}
-                    onChange={(e) =>
-                      setEditingService((p) => ({ ...p, title: e.target.value }))
-                    }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                    onChange={(e) => setEditingService({ ...editingService, title: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
-                    Icon
+                  <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                    Icon Identifier
                   </label>
                   <select
                     value={editingService.iconName || "workflow"}
-                    onChange={(e) =>
-                      setEditingService((p) => ({
-                        ...p,
-                        iconName: e.target.value as IconName,
-                      }))
-                    }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                    onChange={(e) => setEditingService({ ...editingService, iconName: e.target.value as IconName })}
+                    className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500 font-mono"
                   >
                     {ICONS.map((i) => (
                       <option key={i} value={i}>
@@ -241,154 +278,123 @@ export default function ServicesManager({ initialServices }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
+                <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
                   Hook / One-liner
                 </label>
                 <input
                   type="text"
                   value={editingService.hook || ""}
-                  onChange={(e) =>
-                    setEditingService((p) => ({ ...p, hook: e.target.value }))
-                  }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                  onChange={(e) => setEditingService({ ...editingService, hook: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
+                <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
                   Problem Description
                 </label>
                 <textarea
                   rows={2}
                   value={editingService.problem || ""}
-                  onChange={(e) =>
-                    setEditingService((p) => ({ ...p, problem: e.target.value }))
-                  }
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                  onChange={(e) => setEditingService({ ...editingService, problem: e.target.value })}
+                  className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500 leading-relaxed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
+                <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
                   Solution Description
                 </label>
                 <textarea
                   rows={2}
                   value={editingService.solution || ""}
-                  onChange={(e) =>
-                    setEditingService((p) => ({ ...p, solution: e.target.value }))
-                  }
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                  onChange={(e) => setEditingService({ ...editingService, solution: e.target.value })}
+                  className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500 leading-relaxed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
-                  Outcome / Result
+                <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                  Outcome / Deliverable
                 </label>
                 <input
                   type="text"
                   value={editingService.outcome || ""}
-                  onChange={(e) =>
-                    setEditingService((p) => ({ ...p, outcome: e.target.value }))
-                  }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                  onChange={(e) => setEditingService({ ...editingService, outcome: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-sm focus:outline-none focus:border-violet-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
-                  Bullets (One per line)
+                <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                  Key Bullet Points (One per line)
                 </label>
                 <textarea
                   rows={3}
                   value={(editingService.bullets || []).join("\n")}
                   onChange={(e) =>
-                    setEditingService((p) => ({
-                      ...p,
+                    setEditingService({
+                      ...editingService,
                       bullets: e.target.value.split("\n").filter(Boolean),
-                    }))
+                    })
                   }
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                  className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500 leading-relaxed"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
+                  <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
                     CTA Button Label
                   </label>
                   <input
                     type="text"
                     value={editingService.ctaLabel || ""}
-                    onChange={(e) =>
-                      setEditingService((p) => ({ ...p, ctaLabel: e.target.value }))
-                    }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                    onChange={(e) => setEditingService({ ...editingService, ctaLabel: e.target.value })}
+                    className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono uppercase text-slate-400 mb-1">
-                    CTA WhatsApp Prefill
+                  <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                    WhatsApp Prefill Message
                   </label>
                   <input
                     type="text"
                     value={editingService.ctaPrefill || ""}
-                    onChange={(e) =>
-                      setEditingService((p) => ({ ...p, ctaPrefill: e.target.value }))
-                    }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:outline-none focus:border-violet-500"
+                    onChange={(e) => setEditingService({ ...editingService, ctaPrefill: e.target.value })}
+                    className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-6 pt-2 border-t border-slate-800">
-                <label className="flex items-center gap-2 text-sm text-white cursor-pointer">
+              <div className="flex items-center justify-between pt-4 border-t border-[#1a202c]">
+                <label className="flex items-center gap-2 text-xs text-white cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editingService.published ?? true}
-                    onChange={(e) =>
-                      setEditingService((p) => ({
-                        ...p,
-                        published: e.target.checked,
-                      }))
-                    }
-                    className="rounded bg-slate-800 border-slate-700 text-violet-600 focus:ring-0"
+                    onChange={(e) => setEditingService({ ...editingService, published: e.target.checked })}
+                    className="w-4 h-4 accent-violet-600 rounded"
                   />
-                  Published
+                  Published Live
                 </label>
-                <div className="flex items-center gap-2 ml-auto">
-                  <label className="text-xs text-slate-400 font-mono">Order:</label>
-                  <input
-                    type="number"
-                    value={editingService.order ?? 0}
-                    onChange={(e) =>
-                      setEditingService((p) => ({
-                        ...p,
-                        order: Number(e.target.value),
-                      }))
-                    }
-                    className="w-16 px-2 py-1 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm text-center"
-                  />
-                </div>
-              </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setEditingService(null)}
-                  className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-6 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
-                >
-                  {saving ? "Saving..." : isNew ? "Create Service" : "Save Changes"}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingService(null)}
+                    className="px-4 py-2 text-xs text-[#9ca3af] hover:text-white bg-[#141a29] rounded-xl"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="px-6 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+                  >
+                    {saving ? "Saving..." : isNew ? "Create Service" : "Save Changes"}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

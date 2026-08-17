@@ -1,57 +1,127 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Bell, Search } from "lucide-react";
+import { Bell, ChevronRight, Command, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import type { Session } from "next-auth";
 
 interface AdminHeaderProps {
   user?: Session["user"];
+  unreadCount?: number;
 }
 
-export default function AdminHeader({ user }: AdminHeaderProps) {
+const BREADCRUMB_MAP: Record<string, string> = {
+  admin: "Dashboard",
+  analytics: "Analytics",
+  projects: "Projects",
+  posts: "Journal",
+  services: "Services",
+  skills: "Skills",
+  about: "About",
+  messages: "Messages",
+  activity: "Activity",
+  seo: "SEO Control",
+  settings: "Settings",
+  health: "System Health",
+  submissions: "Messages",
+  new: "New",
+  edit: "Edit",
+};
+
+export default function AdminHeader({ user, unreadCount = 0 }: AdminHeaderProps) {
   const pathname = usePathname();
 
-  const getPageTitle = (path: string) => {
-    const segments = path.split("/").filter(Boolean);
-    if (segments.length <= 1) return "Dashboard";
-    return segments[segments.length - 1]
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
+  // Build breadcrumbs
+  const segments = pathname.split("/").filter(Boolean);
+  const crumbs = segments.map((seg, i) => ({
+    label: BREADCRUMB_MAP[seg] ?? seg.charAt(0).toUpperCase() + seg.slice(1),
+    href: "/" + segments.slice(0, i + 1).join("/"),
+    isLast: i === segments.length - 1,
+  }));
+
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const firstName = user?.name?.split(" ")[0] || "Arefin";
+
+  const triggerCommandPalette = () => {
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "k",
+        metaKey: true,
+        bubbles: true,
+      }),
+    );
   };
 
   return (
-    <header className="bg-slate-800 border-b border-slate-700 px-8 py-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white">{getPageTitle(pathname)}</h2>
+    <header className="bg-[#0b0e17] border-b border-[#1a202c] px-6 py-3 shrink-0 z-10">
+      <div className="flex items-center justify-between gap-4">
+        {/* Breadcrumbs */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs min-w-0 font-medium">
+          {crumbs.map((crumb, idx) => (
+            <span key={crumb.href} className="flex items-center gap-1.5 min-w-0">
+              {idx > 0 && <ChevronRight className="w-3.5 h-3.5 text-[#4b5563] shrink-0" />}
+              {crumb.isLast ? (
+                <span className="text-white font-semibold truncate bg-[#141a29] px-2 py-0.5 rounded-md border border-[#1e2433]">
+                  {crumb.label}
+                </span>
+              ) : (
+                <Link
+                  href={crumb.href}
+                  className="text-[#6b7280] hover:text-white transition-colors truncate"
+                >
+                  {crumb.label}
+                </Link>
+              )}
+            </span>
+          ))}
+        </nav>
 
-        <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="hidden md:flex items-center bg-slate-700 rounded-lg px-4 py-2">
-            <Search className="w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search..."
-              aria-label="Search admin dashboard"
-              className="bg-transparent ml-2 outline-none text-white placeholder-slate-400 text-sm w-48"
-            />
-          </div>
-
-          {/* Notifications */}
+        {/* Center / Right controls */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Quick Search / Command Palette Button */}
           <button
             type="button"
-            aria-label="Notifications"
-            className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            onClick={triggerCommandPalette}
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#111827] hover:bg-[#161f33] border border-[#1e2433] hover:border-violet-500/30 rounded-xl text-xs text-[#9ca3af] transition-all shadow-sm group"
           >
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            <Command className="w-3.5 h-3.5 text-violet-400 group-hover:scale-110 transition-transform" />
+            <span className="hidden sm:inline">Search or command...</span>
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 bg-[#1a202c] text-[#6b7280] text-[10px] font-mono rounded border border-[#2d3748]">
+              ⌘K
+            </kbd>
           </button>
 
-          {user?.name && (
-            <span className="hidden sm:inline-block text-xs text-slate-400 font-medium">
-              {user.name}
-            </span>
-          )}
+          {/* Time greeting */}
+          <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#6b7280]">
+            <span>{greeting},</span>
+            <span className="text-white font-semibold">{firstName}</span>
+          </div>
+
+          <div className="h-4 w-px bg-[#1a202c] hidden lg:block" />
+
+          {/* Messages / Notifications */}
+          <Link
+            href="/admin/messages"
+            className="relative p-2 text-[#9ca3af] hover:text-white hover:bg-[#141a29] rounded-xl transition-colors border border-transparent hover:border-[#1e2433]"
+            aria-label={`Inquiries: ${unreadCount} unread`}
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-[#0b0e17]" />
+            )}
+          </Link>
+
+          {/* External site link */}
+          <Link
+            href="/"
+            target="_blank"
+            className="p-2 text-[#9ca3af] hover:text-white hover:bg-[#141a29] rounded-xl transition-colors border border-transparent hover:border-[#1e2433]"
+            title="Open Live Portfolio"
+          >
+            <ExternalLink className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </header>

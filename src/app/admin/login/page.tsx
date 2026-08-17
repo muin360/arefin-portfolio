@@ -1,26 +1,12 @@
 import type { Metadata } from "next";
 import { signIn } from "@/lib/auth";
-import { Button } from "@/components/admin/Button";
-import { Mail, Lock, ShieldCheck, ArrowRight } from "lucide-react";
+import { Lock, Shield, ArrowRight, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Admin Login",
-  description: "Sign in to Arefin Mueen Admin Panel",
+  title: "Admin Passcode Login · Portfolio OS",
+  description: "Sign in to Arefin Mueen Portfolio OS",
   robots: { index: false, follow: false },
 };
-
-function GitHubSVG({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      fill="currentColor"
-      className={className}
-    >
-      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12c0-5.523-4.477-10-10-10z" />
-    </svg>
-  );
-}
 
 export default async function LoginPage({
   searchParams,
@@ -32,40 +18,38 @@ export default async function LoginPage({
   let errorMessage: string | null = null;
   if (params?.error) {
     const err = params.error.toLowerCase();
-    if (err.includes("github") || err === "oauthcallback" || err === "oauthsignin") {
-      errorMessage = "GitHub sign-in is unavailable right now. Use the admin passcode.";
-    } else if (err.includes("google") || err === "accessdenied") {
-      errorMessage = "Google sign-in is unavailable right now. Use the admin passcode.";
-    } else if (err === "credentialssignin") {
-      errorMessage = "Invalid admin passcode. Please try again.";
+    if (err === "credentialssignin") {
+      errorMessage = "Invalid passcode. Please verify your admin secret and try again.";
     } else {
-      errorMessage = "Invalid credentials or unauthorized access. Please verify your passcode.";
+      errorMessage = "Authentication failed. Please verify your passcode.";
     }
   }
 
-  const hasGithub = Boolean(process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET);
-  const hasGoogle = Boolean(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET);
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
+    <div className="flex items-center justify-center min-h-screen bg-[#07090e] px-4 py-12 text-slate-100 relative overflow-hidden">
+      {/* Background ambient glow */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="w-full max-w-md relative z-10">
+        <div className="bg-[#0f111a] border border-[#1e2433] rounded-3xl p-8 shadow-2xl">
           {/* Logo / Title */}
           <div className="mb-6 text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-violet-600/20 text-violet-400 mb-4 border border-violet-500/20">
-              <ShieldCheck className="w-6 h-6" />
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-violet-600/10 text-violet-400 mb-3 border border-violet-500/20 shadow-inner">
+              <Shield className="w-6 h-6" />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">
-              Arefin Mueen
-            </h1>
-            <p className="text-sm text-slate-400 mt-1 font-mono">
-              [ Personal Admin Panel ]
+            <div className="flex items-center justify-center gap-1.5 mb-1">
+              <h1 className="text-xl font-bold text-white tracking-tight">Portfolio OS</h1>
+              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                PRO
+              </span>
+            </div>
+            <p className="text-xs text-[#6b7280] font-mono">
+              Arefin Mueen · Secure Control Center
             </p>
           </div>
 
           {errorMessage && (
-            <div className="mb-6 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center font-medium">
+            <div className="mb-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs text-center font-medium animate-in fade-in duration-150">
               {errorMessage}
             </div>
           )}
@@ -80,93 +64,41 @@ export default async function LoginPage({
                 redirectTo: "/admin",
               });
             }}
-            className="space-y-4 mb-6"
+            className="space-y-4"
           >
             <div>
               <label
                 htmlFor="password"
-                className="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-2"
+                className="block text-xs font-mono uppercase tracking-wider text-[#9ca3af] mb-2 font-semibold"
               >
                 Admin Passcode
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-[#6b7280] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   id="password"
                   name="password"
                   type="password"
                   required
-                  placeholder="Enter admin passcode"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                  autoFocus
+                  placeholder="Enter passcode..."
+                  className="w-full bg-[#141a29] border border-[#1e2433] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-[#6b7280] focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors font-mono"
                 />
               </div>
             </div>
 
-            <Button
+            <button
               type="submit"
-              className="w-full bg-violet-600 hover:bg-violet-500 text-white font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-600/25"
+              className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs shadow-md shadow-violet-600/25"
             >
-              Sign In to Admin
+              Sign In to Portfolio OS
               <ArrowRight className="w-4 h-4" />
-            </Button>
+            </button>
           </form>
 
-          {/* OAuth Section (if configured) */}
-          {(hasGithub || hasGoogle) && (
-            <>
-              {/* Divider */}
-              <div className="relative flex py-3 items-center mb-6">
-                <div className="flex-grow border-t border-slate-800"></div>
-                <span className="flex-shrink mx-4 text-xs font-mono uppercase text-slate-500">
-                  Or sign in with OAuth
-                </span>
-                <div className="flex-grow border-t border-slate-800"></div>
-              </div>
-
-              {/* OAuth Buttons */}
-              <div className="space-y-3">
-                {/* GitHub Login */}
-                {hasGithub && (
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signIn("github", { redirectTo: "/admin" });
-                    }}
-                  >
-                    <Button
-                      type="submit"
-                      className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-xl border border-slate-700/60 transition-colors flex items-center justify-center gap-2 text-sm"
-                    >
-                      <GitHubSVG className="w-4 h-4" />
-                      Sign in with GitHub
-                    </Button>
-                  </form>
-                )}
-
-                {/* Google Login */}
-                {hasGoogle && (
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signIn("google", { redirectTo: "/admin" });
-                    }}
-                  >
-                    <Button
-                      type="submit"
-                      className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 rounded-xl border border-slate-700/60 transition-colors flex items-center justify-center gap-2 text-sm"
-                    >
-                      <Mail className="w-4 h-4 text-blue-400" />
-                      Sign in with Google
-                    </Button>
-                  </form>
-                )}
-              </div>
-            </>
-          )}
-
           {/* Footer note */}
-          <p className="text-slate-500 text-[11px] text-center mt-6">
-            Protected personal admin console for Arefin Mueen.
+          <p className="text-[#6b7280] text-[11px] text-center mt-6 font-mono">
+            Encrypted session protected by NextAuth JWT
           </p>
         </div>
       </div>

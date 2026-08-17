@@ -7,6 +7,7 @@ import {
   deleteBlogPost,
 } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { recordAdminActivity } from "@/lib/analytics-db";
 
 export async function GET() {
   const session = await auth();
@@ -49,6 +50,15 @@ export async function POST(req: NextRequest) {
       seoDescription: body.seoDescription || "",
     });
 
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "post_created",
+      description: `Created article "${post.title}"`,
+      targetId: post.id,
+      targetTitle: post.title,
+      actor,
+    });
+
     revalidatePath("/blog");
     revalidatePath(`/blog/${post.slug}`);
     revalidatePath("/");
@@ -78,6 +88,15 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: updates.published !== undefined ? (updates.published ? "post_published" : "post_unpublished") : "post_updated",
+      description: `Updated article "${updated.title}"`,
+      targetId: updated.id,
+      targetTitle: updated.title,
+      actor,
+    });
+
     revalidatePath("/blog");
     revalidatePath(`/blog/${updated.slug}`);
     revalidatePath("/");
@@ -106,6 +125,14 @@ export async function DELETE(req: NextRequest) {
     if (!deleted) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "post_deleted",
+      description: `Deleted article ${id}`,
+      targetId: id,
+      actor,
+    });
 
     revalidatePath("/blog");
     revalidatePath("/");

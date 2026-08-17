@@ -7,6 +7,7 @@ import {
   deleteProject,
 } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { recordAdminActivity } from "@/lib/analytics-db";
 
 export async function GET() {
   const session = await auth();
@@ -57,6 +58,16 @@ export async function POST(req: NextRequest) {
       order: Number(body.order ?? 99),
     });
 
+    const actor = session.user.name || session.user.email || "Admin";
+
+    await recordAdminActivity({
+      type: "project_created",
+      description: `Created project "${project.title}"`,
+      targetId: project.id,
+      targetTitle: project.title,
+      actor,
+    });
+
     revalidatePath("/projects");
     revalidatePath(`/projects/${project.slug}`);
     revalidatePath("/");
@@ -86,6 +97,15 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: updates.published !== undefined ? (updates.published ? "project_published" : "project_unpublished") : "project_updated",
+      description: `Updated project "${updated.title}"`,
+      targetId: updated.id,
+      targetTitle: updated.title,
+      actor,
+    });
+
     revalidatePath("/projects");
     revalidatePath(`/projects/${updated.slug}`);
     revalidatePath("/");
@@ -114,6 +134,14 @@ export async function DELETE(req: NextRequest) {
     if (!deleted) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
+
+    const actor = session.user.name || session.user.email || "Admin";
+    await recordAdminActivity({
+      type: "project_deleted",
+      description: `Deleted project ${id}`,
+      targetId: id,
+      actor,
+    });
 
     revalidatePath("/projects");
     revalidatePath("/");
