@@ -9,7 +9,7 @@ Project → **Settings → Environment Variables** (Production + Preview):
 | Name                                  | Required | Notes                                                                                  |
 | ------------------------------------- | -------- | -------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL`                | optional | e.g. `https://tensorstudio.vercel.app`. Defaults gracefully if omitted. |
-| `ADMIN_PASSWORD`                      | optional | Passcode for logging into `/admin`. Defaults to `admin123` if omitted.                |
+| `ADMIN_PASSWORD`                      | yes      | Passcode for logging into `/admin` (set a strong private passcode).                   |
 | `ADMIN_EMAILS`                        | optional | Comma-separated admin emails (e.g. `arefinmueen360@gmail.com`).                        |
 | `ADMIN_GITHUB_USERS`                  | optional | Comma-separated admin GitHub logins (e.g. `muin360`).                                  |
 | `NEXTAUTH_SECRET`                     | yes      | Random secret string: `openssl rand -base64 32`.                                       |

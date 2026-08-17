@@ -53,11 +53,6 @@ export default function AdminSidebar({ user, unreadCount = 0 }: AdminSidebarProp
     return () => window.removeEventListener("toggle-admin-mobile-sidebar", handleToggle);
   }, []);
 
-  // Close mobile drawer on route change
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
   const sections: NavSection[] = [
     {
       title: "OVERVIEW",
@@ -180,6 +175,7 @@ export default function AdminSidebar({ user, unreadCount = 0 }: AdminSidebarProp
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={() => setMobileOpen(false)}
                     title={collapsed ? item.label : undefined}
                     className={`relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all text-xs font-medium group ${
                       active

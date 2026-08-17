@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Database,
   Shield,
@@ -11,10 +11,6 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Clock,
-  Server,
-  Zap,
-  Lock,
 } from "lucide-react";
 
 interface HealthData {
@@ -93,7 +89,7 @@ export default function SystemHealthClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     setError(false);
     try {
@@ -105,11 +101,30 @@ export default function SystemHealthClient() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
-    void load();
+    let active = true;
+    fetch("/api/admin/health")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed");
+        return res.json();
+      })
+      .then((json: HealthData) => {
+        if (active) {
+          setData(json);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setError(true);
+          setLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (loading) {
