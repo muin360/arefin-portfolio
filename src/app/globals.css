@@ -4285,6 +4285,77 @@ html {
   animation: workflow-signal 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+/* ============================================================
+   ORBITAL AUDIO-REACTIVE HUD KEYFRAMES
+   ============================================================ */
+
+@keyframes hud-bar-wave {
+  0%, 100% {
+    transform: scaleY(0.45);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scaleY(1.25);
+    opacity: 0.95;
+  }
+}
+
+@keyframes hud-scanner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hud-track-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes hud-waveform-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.02);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hud-node-pulse {
+  0%, 100% {
+    transform: scale(0.85);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+@keyframes hud-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-hud-fade-in {
+  animation: hud-fade-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -4317,8 +4388,13 @@ html {
   .animate-status-pulse,
   .animate-profile-activate,
   .animate-workflow-signal,
-  .v2-nav__drawer {
-    animation: none;
+  .v2-nav__drawer,
+  .animate-hud-fade-in,
+  .hud-spectrum-group line,
+  .hud-scanner-layer g,
+  .hud-nodes-layer g,
+  .hud-waveform-layer path {
+    animation: none !important;
   }
 }
 
