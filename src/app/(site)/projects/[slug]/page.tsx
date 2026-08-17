@@ -36,7 +36,7 @@ export async function generateMetadata({
   if (!project) return { title: "Project not found" };
 
   return {
-    title: `${project.title}${isPreview ? " (Draft Preview)" : ""} — Arefin Mueen`,
+    title: `${project.title}${isPreview ? " (Draft Preview)" : ""}`,
     description: project.summary,
     robots: isPreview ? { index: false, follow: false } : undefined,
     alternates: { canonical: `/projects/${project.slug}` },

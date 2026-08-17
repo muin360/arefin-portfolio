@@ -4,7 +4,7 @@ import Button from "@/components/Button";
 import { ArrowRight, Compass, Home } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "404 — Page Not Found · Arefin Mueen",
+  title: "404 — Page Not Found",
   description: "The requested workflow route could not be found.",
 };
 

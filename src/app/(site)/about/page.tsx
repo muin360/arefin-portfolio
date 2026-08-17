@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About — Arefin Mueen",
+  title: "About",
   description:
     "Hi, I'm Arefin Mueen — an AI Automation & AI Agent Developer. I build practical AI agents, RAG systems, and business automations.",
   alternates: { canonical: "/about" },

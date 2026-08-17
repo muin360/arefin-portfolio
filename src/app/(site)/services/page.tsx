@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Services & Capabilities — Arefin Mueen",
+  title: "Services & Capabilities",
   description:
     "Practical AI workflow automation, autonomous tool-calling agents, RAG knowledge retrieval, and multi-agent systems engineered under 100% client ownership.",
   alternates: { canonical: "/services" },

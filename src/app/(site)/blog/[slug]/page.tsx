@@ -29,7 +29,7 @@ export async function generateMetadata({
   const metaDesc = post.seoDescription || post.excerpt;
 
   return {
-    title: `${metaTitle} — Arefin Mueen`,
+    title: metaTitle,
     description: metaDesc,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {

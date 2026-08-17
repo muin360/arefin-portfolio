@@ -6,7 +6,7 @@ import Button from "@/components/Button";
 import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Selected Work — Arefin Mueen",
+  title: "Selected Work",
   description:
     "Practical AI automations, autonomous agents, RAG systems, and multi-agent workflows built by Arefin Mueen.",
   alternates: { canonical: "/projects" },
