@@ -117,20 +117,9 @@ export default function HeroSectionV2({
               </MagneticButton>
             </div>
 
-            <ul className="v2-hero__proof" aria-label="Trust signals">
-              <li>
-                <span className="v2-hero__proof-dot" />
-                <span>AI Agents · RAG · Multi-Agent Workflows</span>
-              </li>
-              <li>
-                <span className="v2-hero__proof-dot" />
-                <span>{availabilityNote}</span>
-              </li>
-              <li>
-                <span className="v2-hero__proof-dot" />
-                <span>100% Client Workflow Ownership</span>
-              </li>
-            </ul>
+            <div className="pt-2 text-xs font-mono text-white/40">
+              <span>n8n · LangChain · Langflow · Python · REST APIs · MongoDB</span>
+            </div>
           </div>
 
           {/* RIGHT COL — Human + Technical Signature Visual */}

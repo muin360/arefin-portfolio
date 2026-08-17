@@ -9,9 +9,13 @@ export default function FinalCtaV2() {
   return (
     <section className="v2-section py-16 sm:py-24" aria-label="Start a project">
       <div className="v2-container max-w-4xl mx-auto px-4 sm:px-6">
-        <SectionPlate variant="cta" />
+        <SectionPlate
+          index="07"
+          title="INITIALIZE"
+          meta="start a project · direct scoping"
+        />
 
-        <div className="rounded-3xl bg-[#090c16] border border-white/10 p-8 sm:p-14 text-center relative overflow-hidden shadow-2xl">
+        <div className="rounded-2xl bg-[#090c16] border border-white/[0.08] p-8 sm:p-14 text-center relative overflow-hidden shadow-2xl">
           {/* Subtle Ambient Radial Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -28,7 +32,7 @@ export default function FinalCtaV2() {
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/contact"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-white text-black hover:bg-white/90 font-mono text-xs font-bold transition-all shadow-xl shadow-white/10 group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-white text-black hover:bg-white/90 font-mono text-xs font-bold transition-all shadow-lg group"
               >
                 <span>Start a conversation</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -38,7 +42,7 @@ export default function FinalCtaV2() {
                 href={whatsappHref(WA_MESSAGES.generic)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#141a2e] hover:bg-[#1a223c] text-white border border-white/10 font-mono text-xs font-semibold transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#101426] hover:bg-[#151a32] text-white border border-white/10 font-mono text-xs font-semibold transition-colors"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-400" />
                 <span>WhatsApp Message</span>
