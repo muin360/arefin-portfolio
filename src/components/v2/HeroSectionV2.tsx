@@ -1,47 +1,25 @@
 import { ArrowRight } from "lucide-react";
-import AgentDashboard from "./AgentDashboard";
-import AutomateWidget from "./AutomateWidget";
 import MagneticButton from "@/components/MagneticButton";
-import LiveAgent from "@/components/masterpiece/LiveAgent";
+import HeroSignature from "./HeroSignature";
 
-/**
- * Hero section (v2, upgraded for v3).
- *
- * Two-column layout. Left side carries the editorial voice — a top
- * status bar with a live dot, a two-line display headline (geometric
- * sans + italic serif accent), a single-sentence subheadline, the
- * primary + secondary CTAs, and a foot row with founder + coverage
- * trust marks.
- *
- * The headline pairs Syne (--f-display) with Instrument Serif
- * (--font-instrument-serif) for the second line; the accent word
- * ("systems") picks up the brand a2 colour so the eye lands on the
- * value prop, not the verb. Per-word stagger animation respects
- * `prefers-reduced-motion`.
- *
- * Right side hosts the `<AgentDashboard />` widget. On mobile the
- * widget stacks underneath the copy so the headline owns the first
- * viewport.
- *
- * Alternative headlines for easy A/B swapping (uncomment one to use):
- *   A — bold promise:      "Stop doing work / machines can do."
- *   B — outcome-first:     "14 days from first call / to a live AI system."
- *   C — current (default): "Your team does the work. / Your systems should too."
- *   D — challenger:        "The tools exist. / Most teams never use them."
- */
+interface HeroSectionProps {
+  availabilityNote?: string;
+  profileImage?: string | null;
+  name?: string;
+  role?: string;
+}
+
 export default function HeroSectionV2({
   availabilityNote = "Open to automation projects",
-}: {
-  availabilityNote?: string;
-}) {
+  profileImage,
+  name = "Arefin Mueen",
+  role = "AI Automation & AI Agent Developer",
+}: HeroSectionProps) {
   const line1 = "I build AI systems".split(" ");
   const line2Pre = ["that", "automate"];
   const line2Accent = "real work.";
   const line2Post: string[] = [];
 
-  // Compute word delays continuously across both lines so the
-  // animation reads as one phrase, not two independently-revealing
-  // chunks.
   let wordIdx = 0;
   const delay = () => `${wordIdx++ * 55}ms`;
 
@@ -49,19 +27,17 @@ export default function HeroSectionV2({
     <section className="v2-hero" aria-label="Hero">
       <div className="v2-hero__grain" aria-hidden="true" />
       <div className="v2-hero__mesh" aria-hidden="true" />
-      {/* Cosmic grid — perspective lines fading from top */}
       <div className="cosmic-grid" aria-hidden="true" />
-      {/* Nebula orb — violet ambient glow top-right */}
       <div className="nebula-orb nebula-orb--hero" aria-hidden="true" />
 
       <div className="v2-hero__inner">
-        <div className="v2-hero__grid">
+        <div className="v2-hero__grid items-center">
           {/* LEFT COL */}
           <div className="v2-hero__left">
             <span className="v2-hero__pill">
               <span className="v2-hero__pill-dot" aria-hidden="true" />
               <span className="v2-hero__pill-text">
-                AI AUTOMATION &amp; AI AGENT DEVELOPER
+                {role.toUpperCase()}
               </span>
               <span aria-hidden="true" className="v2-hero__pill-sep">·</span>
               <span className="v2-hero__pill-meta shimmer-label">Dhaka · GMT+6 · open to work</span>
@@ -110,7 +86,7 @@ export default function HeroSectionV2({
             </h1>
 
             <p className="v2-hero__sub">
-              I build AI agents, RAG assistants, multi-agent workflows, and business automations.
+              Practical AI agents, RAG knowledge pipelines, multi-agent systems, and business workflow automations.
               <span className="v2-hero__sub-em"> n8n · LangChain · Langflow · LLMs · APIs · Python</span>
             </p>
 
@@ -140,18 +116,19 @@ export default function HeroSectionV2({
               </li>
               <li>
                 <span className="v2-hero__proof-dot" />
-                <span>Independent AI Automation Developer</span>
+                <span>Zero Hallucination Guarantee</span>
               </li>
             </ul>
           </div>
 
-          {/* RIGHT COL — dashboard widget */}
-          <div className="v2-hero__right">
-            <AgentDashboard />
-            <LiveAgent />
-            <div className="mt-4">
-              <AutomateWidget />
-            </div>
+          {/* RIGHT COL — Human + Technical Signature Visual */}
+          <div className="v2-hero__right flex justify-center items-center w-full">
+            <HeroSignature
+              profileImage={profileImage}
+              name={name}
+              role={role}
+              availabilityNote={availabilityNote}
+            />
           </div>
         </div>
       </div>

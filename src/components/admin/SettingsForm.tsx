@@ -179,6 +179,58 @@ export default function SettingsForm({ initialConfig }: Props) {
           </div>
         </div>
 
+        {/* Profile Image & Avatar */}
+        <div className="bg-[#0f111a] border border-[#1e2433] rounded-2xl p-6 space-y-4 shadow-sm">
+          <h2 className="text-sm font-bold text-white tracking-tight border-b border-[#1a202c] pb-3 flex items-center justify-between">
+            <span>Hero Portrait / Profile Image</span>
+            <span className="text-[10px] font-mono text-violet-400 font-normal">Homepage Hero Anchor</span>
+          </h2>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+            {/* Live circular preview */}
+            <div className="w-20 h-20 rounded-full border-2 border-violet-500/30 bg-[#141a29] flex items-center justify-center overflow-hidden shrink-0 shadow-lg relative">
+              {formData.profileImage ? (
+                <img
+                  src={formData.profileImage}
+                  alt="Profile preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center">
+                  <span className="text-sm font-mono font-bold text-violet-400">AM</span>
+                  <p className="text-[8px] text-[#6b7280] font-mono">No Image</p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1 w-full space-y-2">
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] font-semibold">
+                Profile Image URL
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="url"
+                  value={formData.profileImage || ""}
+                  onChange={(e) => setFormData({ ...formData, profileImage: e.target.value })}
+                  placeholder="https://example.com/arefin-portrait.jpg"
+                  className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm focus:outline-none focus:border-violet-500 font-mono"
+                />
+                {formData.profileImage && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, profileImage: null })}
+                    className="px-3 py-2.5 text-xs text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition-colors shrink-0"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <p className="text-[11px] text-[#6b7280] font-mono">
+                Renders in the dedicated circular hero slot on the homepage. When empty, a stylized monogram fallback is displayed.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Availability & Scoping Status */}
         <div className="bg-[#0f111a] border border-[#1e2433] rounded-2xl p-6 space-y-4 shadow-sm">
           <h2 className="text-sm font-bold text-white tracking-tight border-b border-[#1a202c] pb-3">

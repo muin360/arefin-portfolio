@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getProjects, getProjectBySlug } from "@/lib/db";
+import { getProjects, getProjectBySlug, getServices } from "@/lib/db";
 import type { IconName } from "@/lib/db/types";
 import { createElement } from "react";
 import { iconFor } from "@/components/IconRegistry";
@@ -9,6 +10,7 @@ import { PageHeader } from "@/components/Section";
 import Reveal from "@/components/Reveal";
 import BentoCard from "@/components/BentoCard";
 import { IconArrow } from "@/components/icons";
+import { Sparkles, ArrowRight, Layers, Workflow, ExternalLink, ShieldCheck, CheckCircle2 } from "lucide-react";
 
 function renderIcon(name: IconName, size: number, className?: string) {
   return createElement(iconFor(name), { width: size, height: size, className });
@@ -49,7 +51,11 @@ export default async function ProjectDetailPage({
   const project = await getProjectBySlug(slug, { publishedOnly: true });
   if (!project) notFound();
 
-  const allProjects = await getProjects({ publishedOnly: true });
+  const [allProjects, allServices] = await Promise.all([
+    getProjects({ publishedOnly: true }),
+    getServices({ publishedOnly: true }),
+  ]);
+
   const related = allProjects
     .filter((p) => p.slug !== project.slug)
     .slice(0, 3);
@@ -109,6 +115,21 @@ export default async function ProjectDetailPage({
         <div className="orb orb-cyan" aria-hidden="true" />
         <div className="max-w-5xl mx-auto px-6 sm:px-8 section relative space-y-12">
           
+          {/* COVER MEDIA (IF AVAILABLE) */}
+          {project.coverImage && (
+            <Reveal>
+              <div className="relative w-full h-64 sm:h-96 rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                <Image
+                  src={project.coverImage}
+                  alt={`${project.title} cover architecture`}
+                  fill
+                  priority
+                  className="object-cover"
+                />
+              </div>
+            </Reveal>
+          )}
+
           {/* PROBLEM & GOAL OVERVIEW */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Reveal>
@@ -154,8 +175,8 @@ export default async function ProjectDetailPage({
                     Workflow Execution Flow
                   </h3>
                 </div>
-                <span className="font-mono text-[11px] text-white/40 tracking-wider">
-                  TRIGGER → AI → TOOLS → DECISION → OUTPUT
+                <span className="font-mono text-[11px] text-violet-300 tracking-wider">
+                  TRIGGER → DATA → AI → TOOLS → DECISION → OUTPUT
                 </span>
               </div>
 
@@ -166,7 +187,7 @@ export default async function ProjectDetailPage({
                     className="p-5 rounded-2xl border border-white/5 bg-white/[0.02] relative group hover:border-violet-400/30 transition-colors"
                   >
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-violet-300/80">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-violet-300/80 font-bold">
                         Step {st.step}
                       </span>
                       {idx < workflow.length - 1 && (
@@ -270,24 +291,55 @@ export default async function ProjectDetailPage({
             </div>
           </Reveal>
 
+          {/* RELATED SERVICES HOOK */}
+          {allServices.length > 0 && (
+            <Reveal delay={260}>
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0b0e1b] border border-violet-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div>
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-violet-400 font-semibold block mb-1">
+                    Related Capability
+                  </span>
+                  <h4 className="text-lg font-bold text-white">
+                    Need a similar automation for your workflow?
+                  </h4>
+                  <p className="text-xs text-white/60 mt-1 max-w-xl">
+                    Explore available services across autonomous AI agents, RAG knowledge pipelines, and custom API workflows.
+                  </p>
+                </div>
+                <Link
+                  href="/services"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold tracking-wide transition-colors shrink-0"
+                >
+                  <span>Explore Capabilities</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </Reveal>
+          )}
+
         </div>
       </section>
 
       {/* RELATED PROJECTS */}
       {related.length > 0 && (
-        <section className="border-b border-line">
+        <section className="border-b border-white/5 bg-[#060810]">
           <div className="max-w-7xl mx-auto px-6 sm:px-8 section">
             <Reveal>
               <div className="flex items-end justify-between gap-6 mb-10">
-                <h2 className="display text-3xl md:text-4xl">
-                  More <span className="serif">practical projects.</span>
-                </h2>
+                <div>
+                  <p className="text-xs font-mono uppercase tracking-widest text-violet-400 font-semibold mb-1">
+                    Connected Work
+                  </p>
+                  <h2 className="display text-3xl md:text-4xl text-white">
+                    More <span className="serif">practical projects.</span>
+                  </h2>
+                </div>
                 <Link
                   href="/projects"
-                  className="hover-arrow text-sm text-muted hover:text-foreground"
+                  className="hover-arrow text-sm text-white/60 hover:text-white transition-colors"
                 >
                   <span className="link-underline">All projects</span>
-                  <span aria-hidden="true">→</span>
+                  <span aria-hidden="true"> →</span>
                 </Link>
               </div>
             </Reveal>
@@ -296,16 +348,18 @@ export default async function ProjectDetailPage({
                 <Reveal key={p.id}>
                   <Link
                     href={`/projects/${p.slug}`}
-                    className="block h-full rounded-3xl border border-line bg-surface p-8 transition-all duration-300 hover:border-foreground/30"
+                    className="block h-full rounded-3xl border border-white/10 bg-[#0a0d18] hover:border-violet-500/30 p-7 transition-all duration-300 group"
                   >
                     <div className="flex items-start justify-between">
-                      {renderIcon(p.iconName, 28, "text-foreground")}
-                      <span className="chip">{p.category}</span>
+                      {renderIcon(p.iconName, 26, "text-violet-400")}
+                      <span className="px-2.5 py-0.5 rounded-full bg-white/5 text-[11px] font-mono text-white/60">
+                        {p.category}
+                      </span>
                     </div>
-                    <h3 className="mt-8 text-xl md:text-2xl tracking-tight font-medium">
+                    <h3 className="mt-6 text-lg md:text-xl tracking-tight font-bold text-white group-hover:text-violet-200 transition-colors">
                       {p.title}
                     </h3>
-                    <p className="mt-3 text-sm text-muted leading-relaxed line-clamp-3">
+                    <p className="mt-2.5 text-xs text-white/60 leading-relaxed line-clamp-3">
                       {p.summary}
                     </p>
                   </Link>
@@ -325,7 +379,7 @@ export default async function ProjectDetailPage({
             <span className="serif iridescent">you&rsquo;d like to automate?</span>
           </h2>
           <p className="mt-5 text-white/65 max-w-2xl mx-auto leading-relaxed">
-            Free discovery scoping conversation — let&rsquo;s explore what we can automate.
+            Free discovery scoping conversation — let&rsquo;s map out your systems and eliminate operational bottlenecks.
           </p>
           <div className="mt-8">
             <Link href="/contact" className="btn-primary shimmer">

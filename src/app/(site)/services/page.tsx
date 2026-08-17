@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getServices } from "@/lib/db";
+import { getServices, getProjects } from "@/lib/db";
 import { iconFor } from "@/components/IconRegistry";
 import { PageHeader } from "@/components/Section";
 import { IconArrow, IconCheck } from "@/components/icons";
 import BentoCard from "@/components/BentoCard";
 import Reveal from "@/components/Reveal";
+import { ArrowRight, Sparkles, Workflow } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Services & Capabilities",
@@ -123,7 +124,10 @@ const engagement = [
 ];
 
 export default async function ServicesPage() {
-  const services = await getServices({ publishedOnly: true });
+  const [services, projects] = await Promise.all([
+    getServices({ publishedOnly: true }),
+    getProjects({ publishedOnly: true }),
+  ]);
 
   return (
     <>
@@ -258,6 +262,14 @@ export default async function ServicesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {services.map((svc, i) => {
               const Icon = iconFor(svc.iconName);
+              // Find matching projects for this service
+              const matchingProjects = projects.filter(
+                (p) =>
+                  p.category.toLowerCase().includes(svc.title.toLowerCase()) ||
+                  svc.title.toLowerCase().includes(p.category.toLowerCase()) ||
+                  (p.stack && p.stack.some((s) => svc.bullets.some((b) => b.includes(s)))),
+              ).slice(0, 2);
+
               return (
                 <Reveal key={svc.id} delay={i * 80}>
                   <BentoCard className="h-full">
@@ -292,14 +304,35 @@ export default async function ServicesPage() {
                       ))}
                     </ul>
 
-                    <div className="mt-6 pt-4 border-t border-white/10">
+                    {/* RELATED CASE STUDIES LINK */}
+                    {matchingProjects.length > 0 && (
+                      <div className="mt-5 pt-4 border-t border-white/10">
+                        <p className="text-[10px] font-mono uppercase tracking-widest text-violet-300 mb-2 font-semibold">
+                          Live Examples
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {matchingProjects.map((mp) => (
+                            <Link
+                              key={mp.id}
+                              href={`/projects/${mp.slug}`}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-violet-600/20 border border-white/10 text-[11px] font-mono text-white/70 hover:text-white transition-colors"
+                            >
+                              <span>{mp.title}</span>
+                              <ArrowRight className="w-3 h-3 text-violet-400" />
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
                       <a
                         href={`https://wa.me/8801994605717?text=${encodeURIComponent(
                           svc.ctaPrefill || `Hi Arefin! I'd like to discuss ${svc.title}: `,
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-xs font-mono text-violet-400 hover:text-violet-300"
+                        className="inline-flex items-center gap-2 text-xs font-mono text-violet-400 hover:text-violet-300 font-semibold"
                       >
                         {svc.ctaLabel || "Let's build an automation"} →
                       </a>

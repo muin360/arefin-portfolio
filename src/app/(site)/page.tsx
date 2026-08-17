@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getSiteSettings } from "@/lib/db";
+import { getSiteSettings, getProjects } from "@/lib/db";
 
 import SectionLabel from "@/components/SectionLabel";
 import SprintTimeline from "@/components/SprintTimeline";
@@ -15,15 +15,23 @@ import FaqAccordionV2 from "@/components/v2/FaqAccordionV2";
 import FinalCtaV2 from "@/components/v2/FinalCtaV2";
 
 export default async function HomePage() {
-  const settings = await getSiteSettings();
+  const [settings, projects] = await Promise.all([
+    getSiteSettings(),
+    getProjects({ publishedOnly: true }),
+  ]);
 
   const availabilityNote =
     settings.availabilityNote || "Open to automation & agent projects";
 
   return (
     <>
-      {/* HERO */}
-      <HeroSectionV2 availabilityNote={availabilityNote} />
+      {/* HERO — Human + AI Technical Anchor */}
+      <HeroSectionV2
+        availabilityNote={availabilityNote}
+        profileImage={settings.profileImage}
+        name={settings.name}
+        role={settings.role}
+      />
 
       {/* TECH TICKER */}
       {settings.showLiveTicker && <TechTicker />}
@@ -78,7 +86,7 @@ export default async function HomePage() {
           </div>
           <div className="v2-section__body">
             <Reveal delay={100} y={20}>
-              <ProjectsGridV2 limit={4} />
+              <ProjectsGridV2 projects={projects} limit={4} />
             </Reveal>
           </div>
         </div>

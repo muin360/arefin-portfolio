@@ -955,7 +955,68 @@ export default function ProjectsManager({ initialProjects }: Props) {
 
               {/* TAB 5: MEDIA, LINKS & PUBLISHING */}
               {activeTab === "links" && (
-                <div className="space-y-4 animate-in fade-in duration-100">
+                <div className="space-y-5 animate-in fade-in duration-100">
+                  {/* Media Management Section */}
+                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-4">
+                    <h3 className="text-xs font-mono uppercase text-violet-400 font-semibold tracking-wider">
+                      Media &amp; Architecture Diagrams
+                    </h3>
+
+                    {/* Cover Image */}
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                        Cover Image URL
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="url"
+                          value={editingProject.coverImage || ""}
+                          onChange={(e) => setEditingProject({ ...editingProject, coverImage: e.target.value })}
+                          placeholder="https://example.com/project-cover.png"
+                          className="flex-1 px-3.5 py-2.5 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                        />
+                        {editingProject.coverImage && (
+                          <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-black">
+                            <img
+                              src={editingProject.coverImage}
+                              alt="Cover preview"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Workflow & Architecture Diagrams */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                          Workflow Diagram URL
+                        </label>
+                        <input
+                          type="url"
+                          value={editingProject.workflowImage || ""}
+                          onChange={(e) => setEditingProject({ ...editingProject, workflowImage: e.target.value })}
+                          placeholder="https://example.com/workflow-map.png"
+                          className="w-full px-3.5 py-2 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                          Demo Video URL
+                        </label>
+                        <input
+                          type="url"
+                          value={editingProject.videoUrl || ""}
+                          onChange={(e) => setEditingProject({ ...editingProject, videoUrl: e.target.value })}
+                          placeholder="https://youtube.com/watch?v=..."
+                          className="w-full px-3.5 py-2 bg-[#0f111a] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Links */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
@@ -984,9 +1045,8 @@ export default function ProjectsManager({ initialProjects }: Props) {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-3">
-                    <p className="text-xs font-mono uppercase text-[#9ca3af] font-semibold">Publishing Controls</p>
-
+                  {/* Publishing Controls & Public Preview */}
+                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-6">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
@@ -995,7 +1055,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
                           onChange={(e) => setEditingProject({ ...editingProject, published: e.target.checked })}
                           className="w-4 h-4 accent-violet-600 rounded"
                         />
-                        <span className="text-xs text-white font-medium">Published Live on Site</span>
+                        <span className="text-xs text-white font-medium">Published Live</span>
                       </label>
 
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -1005,9 +1065,20 @@ export default function ProjectsManager({ initialProjects }: Props) {
                           onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
                           className="w-4 h-4 accent-violet-600 rounded"
                         />
-                        <span className="text-xs text-white font-medium">Featured on Home Page</span>
+                        <span className="text-xs text-white font-medium">Featured Anchor</span>
                       </label>
                     </div>
+
+                    {editingProject.slug && (
+                      <Link
+                        href={`/projects/${editingProject.slug}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-mono text-violet-300 hover:text-white transition-colors"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Preview Live Design</span>
+                      </Link>
+                    )}
                   </div>
                 </div>
               )}

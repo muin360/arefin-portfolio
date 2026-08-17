@@ -38,6 +38,14 @@ export type Project = {
   outcome?: string;
   iconName: IconName;
   thumbnail?: string | null;
+  coverImage?: string | null;
+  gallery?: string[];
+  workflowImage?: string | null;
+  architectureImage?: string | null;
+  videoUrl?: string | null;
+  relatedProjectIds?: string[];
+  relatedServiceIds?: string[];
+  relatedPostIds?: string[];
   demoUrl?: string | null;
   repoUrl?: string | null;
   featured: boolean;
@@ -60,6 +68,8 @@ export type BlogPost = {
   date: string;
   published: boolean;
   featured: boolean;
+  relatedProjectIds?: string[];
+  relatedServiceIds?: string[];
   seoTitle?: string;
   seoDescription?: string;
   createdAt: string;
@@ -80,6 +90,7 @@ export type Service = {
   isFeatured: boolean;
   published: boolean;
   order: number;
+  relatedProjectIds?: string[];
   createdAt: string;
   updatedAt: string;
 };
@@ -132,6 +143,7 @@ export type SiteSettings = {
   email: string;
   phone: string;
   phoneE164: string;
+  profileImage?: string | null;
   availability: "available" | "scoping" | "booked";
   availabilityNote: string;
   socialLinks: SocialLinks;
