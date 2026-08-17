@@ -271,6 +271,115 @@ export default function SettingsForm({ initialConfig }: Props) {
           </div>
         </div>
 
+        {/* Dynamic NOW BUILDING Module (Hero & About Anchor) */}
+        <div className="bg-[#0f111a] border border-[#1e2433] rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#1a202c] pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
+                <h2 className="text-sm font-bold text-white tracking-tight">
+                  Hero &ldquo;NOW BUILDING&rdquo; Live Module
+                </h2>
+              </div>
+              <p className="text-xs text-[#6b7280] font-mono mt-0.5">
+                Displays real active development focus underneath the hero orbital portrait
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                Active System Title
+              </label>
+              <input
+                type="text"
+                value={formData.nowBuildingTitle || ""}
+                onChange={(e) => setFormData({ ...formData, nowBuildingTitle: e.target.value })}
+                placeholder="RAG Support & Agent Routing System"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                Status Badge Label
+              </label>
+              <input
+                type="text"
+                value={formData.nowBuildingStatus || ""}
+                onChange={(e) => setFormData({ ...formData, nowBuildingStatus: e.target.value })}
+                placeholder="ACTIVE EXPERIMENT"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+              Brief System Description
+            </label>
+            <textarea
+              rows={2}
+              value={formData.nowBuildingDescription || ""}
+              onChange={(e) => setFormData({ ...formData, nowBuildingDescription: e.target.value })}
+              placeholder="Context-aware customer intelligence system with vector chunk retrieval..."
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm focus:outline-none focus:border-violet-500 leading-relaxed"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                Tech Stack (Comma Separated)
+              </label>
+              <input
+                type="text"
+                value={(formData.nowBuildingStack || []).join(", ")}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    nowBuildingStack: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                  })
+                }
+                placeholder="n8n, LangChain, MongoDB Atlas, Python"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                Target Link URL (Case Study or Journal)
+              </label>
+              <input
+                type="text"
+                value={formData.nowBuildingLink || ""}
+                onChange={(e) => setFormData({ ...formData, nowBuildingLink: e.target.value })}
+                placeholder="/projects/customer-support-qa-bot"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm font-mono focus:outline-none focus:border-violet-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+              Current Engineering Focus Bullets (One per line)
+            </label>
+            <textarea
+              rows={3}
+              value={(formData.nowBuildingFocus || []).join("\n")}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  nowBuildingFocus: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
+                })
+              }
+              placeholder="Vector retrieval quality & metadata filtering&#10;Deterministic agent routing without infinite loops&#10;Sub-second latency & zero hallucination guardrails"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#141a29] border border-[#1e2433] text-white text-sm font-mono focus:outline-none focus:border-violet-500 leading-relaxed"
+            />
+          </div>
+        </div>
+
         {/* Live 30-Day Activity Stats */}
         <div className="bg-[#0f111a] border border-[#1e2433] rounded-2xl p-6 space-y-4 shadow-sm">
           <div className="flex items-center justify-between border-b border-[#1a202c] pb-3">

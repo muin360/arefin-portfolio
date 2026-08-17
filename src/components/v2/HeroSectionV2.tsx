@@ -7,6 +7,12 @@ interface HeroSectionProps {
   profileImage?: string | null;
   name?: string;
   role?: string;
+  nowBuildingTitle?: string;
+  nowBuildingStatus?: string;
+  nowBuildingDescription?: string;
+  nowBuildingStack?: string[];
+  nowBuildingFocus?: string[];
+  nowBuildingLink?: string;
 }
 
 export default function HeroSectionV2({
@@ -14,6 +20,12 @@ export default function HeroSectionV2({
   profileImage,
   name = "Arefin Mueen",
   role = "AI Automation & AI Agent Developer",
+  nowBuildingTitle,
+  nowBuildingStatus,
+  nowBuildingDescription,
+  nowBuildingStack,
+  nowBuildingFocus,
+  nowBuildingLink,
 }: HeroSectionProps) {
   const line1 = "I build AI systems".split(" ");
   const line2Pre = ["that", "automate"];
@@ -101,7 +113,7 @@ export default function HeroSectionV2({
                 />
               </MagneticButton>
               <MagneticButton href="/projects" className="v2-hero__btn v2-hero__btn--ghost">
-                <span>View My Projects</span>
+                <span>View My Work</span>
               </MagneticButton>
             </div>
 
@@ -116,7 +128,7 @@ export default function HeroSectionV2({
               </li>
               <li>
                 <span className="v2-hero__proof-dot" />
-                <span>Zero Hallucination Guarantee</span>
+                <span>100% Client Workflow Ownership</span>
               </li>
             </ul>
           </div>
@@ -128,6 +140,12 @@ export default function HeroSectionV2({
               name={name}
               role={role}
               availabilityNote={availabilityNote}
+              nowBuildingTitle={nowBuildingTitle}
+              nowBuildingStatus={nowBuildingStatus}
+              nowBuildingDescription={nowBuildingDescription}
+              nowBuildingStack={nowBuildingStack}
+              nowBuildingFocus={nowBuildingFocus}
+              nowBuildingLink={nowBuildingLink}
             />
           </div>
         </div>

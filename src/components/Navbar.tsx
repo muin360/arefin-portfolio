@@ -20,12 +20,11 @@ import { useEffect, useState } from "react";
 
 const links = [
   { href: "/", label: "Home", num: "01" },
-  { href: "/about", label: "About", num: "02" },
+  { href: "/projects", label: "Work", num: "02" },
   { href: "/services", label: "Services", num: "03" },
-  { href: "/skills", label: "Stack", num: "04" },
-  { href: "/projects", label: "Work", num: "05" },
-  { href: "/blog", label: "Journal", num: "06" },
-  { href: "/contact", label: "Contact", num: "07" },
+  { href: "/blog", label: "Journal", num: "04" },
+  { href: "/about", label: "About", num: "05" },
+  { href: "/contact", label: "Contact", num: "06" },
 ];
 
 export default function Navbar() {
@@ -76,7 +75,7 @@ export default function Navbar() {
 
         {/* Center links */}
         <nav className="v2-nav__center" aria-label="Primary">
-          {links.slice(0, -1).map((link) => (
+          {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -126,30 +125,31 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Scroll progress hairline */}
-      <div className="v2-nav__progress">
-        <div
-          className="v2-nav__progress-fill"
-          style={{ transform: `scaleX(${progress})` }}
-        />
-      </div>
-
       {/* Mobile drawer */}
       {open && (
-        <nav className="v2-nav__drawer" aria-label="Mobile">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="v2-nav__drawer-link"
-            >
-              <span>{link.label}</span>
-              <span className="v2-nav__drawer-num">{link.num}</span>
-            </Link>
-          ))}
-        </nav>
+        <div className="v2-nav__drawer" role="dialog" aria-label="Mobile navigation">
+          <div className="v2-nav__drawer-list">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`v2-nav__drawer-link ${isActive(link.href) ? "is-active" : ""}`}
+                onClick={() => setOpen(false)}
+              >
+                <span className="v2-nav__drawer-num">{link.num}</span>
+                <span>{link.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
       )}
+
+      {/* Scroll indicator */}
+      <div
+        className="v2-nav__progress"
+        style={{ transform: `scaleX(${progress})` }}
+        aria-hidden="true"
+      />
     </header>
   );
 }

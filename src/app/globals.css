@@ -4154,6 +4154,50 @@ html {
   display: none;
 }
 
+/* ==========================================================================
+   PORTRAIT ORBITAL SYSTEM & SYSTEM TOKENS
+   ========================================================================== */
+@keyframes orbit-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes orbit-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+}
+
+.animate-orbit-slow {
+  animation: orbit-slow 36s linear infinite;
+}
+
+.animate-orbit-reverse {
+  animation: orbit-reverse 28s linear infinite;
+}
+
+.animate-orbit-pulse {
+  animation: orbit-pulse 3s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -4177,6 +4221,12 @@ html {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  .animate-orbit-slow,
+  .animate-orbit-reverse,
+  .animate-orbit-pulse {
+    animation: none;
   }
 }
 

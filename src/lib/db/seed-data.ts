@@ -64,6 +64,17 @@ export const INITIAL_DATABASE: DatabaseSchema = {
     showLiveTicker: true,
     showHeroTiles: true,
     showLive30Days: true,
+    nowBuildingTitle: "RAG Support & Agent Routing System",
+    nowBuildingStatus: "ACTIVE EXPERIMENT",
+    nowBuildingDescription:
+      "Context-aware customer intelligence system with vector chunk retrieval, fallback confidence scoring, and multi-tier routing.",
+    nowBuildingStack: ["n8n", "LangChain", "MongoDB Atlas", "Python", "Claude 3.5"],
+    nowBuildingFocus: [
+      "Vector retrieval quality & metadata filtering",
+      "Deterministic agent routing without infinite loops",
+      "Sub-second latency & zero hallucination guardrails",
+    ],
+    nowBuildingLink: "/projects/customer-support-qa-bot",
     updatedAt: new Date().toISOString(),
   },
   about: {

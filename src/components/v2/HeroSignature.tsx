@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Sparkles,
-  Cpu,
-  Zap,
-  CheckCircle2,
-  Workflow,
-  Bot,
-  Database,
   ArrowRight,
-  ShieldCheck,
+  Workflow,
+  CheckCircle2,
+  Bot,
+  Zap,
+  Layers,
 } from "lucide-react";
 
 interface HeroSignatureProps {
@@ -19,54 +18,20 @@ interface HeroSignatureProps {
   name?: string;
   role?: string;
   availabilityNote?: string;
+  nowBuildingTitle?: string;
+  nowBuildingStatus?: string;
+  nowBuildingDescription?: string;
+  nowBuildingStack?: string[];
+  nowBuildingFocus?: string[];
+  nowBuildingLink?: string;
 }
 
-const WORKFLOW_NODES = [
-  {
-    id: "trigger",
-    step: "01",
-    label: "TRIGGER",
-    title: "Event Webhook / Inbound",
-    desc: "n8n captures event payload",
-    icon: Zap,
-    badge: "12ms",
-  },
-  {
-    id: "data",
-    step: "02",
-    label: "DATA",
-    title: "Parse & Vector Query",
-    desc: "Schema normalize + RAG lookup",
-    icon: Database,
-    badge: "Embeddings",
-  },
-  {
-    id: "ai",
-    step: "03",
-    label: "AI REASONING",
-    title: "LLM Agent Decision",
-    desc: "Structured prompt & intent classify",
-    icon: Bot,
-    badge: "GPT-4o / Claude",
-  },
-  {
-    id: "tool",
-    step: "04",
-    label: "TOOLS & APIS",
-    title: "Execution & Write-back",
-    desc: "CRM, Database & Slack dispatch",
-    icon: Cpu,
-    badge: "REST / SQL",
-  },
-  {
-    id: "output",
-    step: "05",
-    label: "OUTPUT",
-    title: "Deterministic Action",
-    desc: "Task resolved & metrics logged",
-    icon: CheckCircle2,
-    badge: "100% Handled",
-  },
+const SIGNATURE_STEPS = [
+  { step: "01", label: "Trigger", icon: Zap },
+  { step: "02", label: "Data", icon: Layers },
+  { step: "03", label: "AI", icon: Bot },
+  { step: "04", label: "Tools", icon: Workflow },
+  { step: "05", label: "Output", icon: CheckCircle2 },
 ];
 
 export default function HeroSignature({
@@ -74,160 +39,191 @@ export default function HeroSignature({
   name = "Arefin Mueen",
   role = "AI Automation & AI Agent Developer",
   availabilityNote = "Available for automation projects",
+  nowBuildingTitle = "RAG Support & Agent Routing System",
+  nowBuildingStatus = "ACTIVE EXPERIMENT",
+  nowBuildingDescription = "Context-aware customer intelligence system with vector chunk retrieval, fallback confidence scoring, and multi-tier routing.",
+  nowBuildingStack = ["n8n", "LangChain", "MongoDB Atlas", "Python"],
+  nowBuildingFocus = [
+    "Vector retrieval quality & metadata filtering",
+    "Deterministic agent routing without infinite loops",
+    "Sub-second latency & zero hallucination guardrails",
+  ],
+  nowBuildingLink = "/projects/customer-support-qa-bot",
 }: HeroSignatureProps) {
   const [activeStep, setActiveStep] = useState(0);
 
-  // Subtle cyclic progression through the workflow signature nodes
+  // Subtle cyclic progression through the signature nodes
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % WORKFLOW_NODES.length);
-    }, 2800);
+      setActiveStep((prev) => (prev + 1) % SIGNATURE_STEPS.length);
+    }, 3200);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <div className="relative w-full max-w-lg mx-auto flex flex-col items-center">
-      {/* Background ambient lighting */}
-      <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-80 h-80 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-10 right-1/4 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Background ambient radial glow */}
+      <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* ─── HUMAN ANCHOR: CIRCULAR PORTRAIT HUB ───────────────────────────── */}
-      <div className="relative z-10 flex flex-col items-center mb-6 text-center">
-        <div className="relative group">
-          {/* Subtle spinning accent ring */}
-          <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-violet-600/40 via-indigo-500/30 to-emerald-500/40 blur-sm opacity-70 group-hover:opacity-100 transition duration-500" />
+      {/* ─── 01 LARGE PORTRAIT SYSTEM WITH SYSTEM ORBIT ───────────────────── */}
+      <div className="relative z-10 flex flex-col items-center mb-8 text-center">
+        {/* Orbital System Wrapper: 260px desktop / 190px mobile */}
+        <div className="relative flex items-center justify-center w-[250px] h-[250px] sm:w-[290px] sm:h-[290px]">
+          {/* Outer Orbit Ring (Slow Rotation) */}
+          <div className="absolute inset-0 rounded-full border border-dashed border-violet-500/30 animate-orbit-slow pointer-events-none">
+            {/* Small Orbiting Glowing Node */}
+            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-violet-400 shadow-[0_0_14px_#a78bfa] border-2 border-[#090b12]" />
+          </div>
 
-          {/* Portrait Container */}
-          <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full p-1 bg-[#090b12] border border-white/15 shadow-2xl overflow-hidden flex items-center justify-center">
+          {/* Inner Counter-Orbit Ring (Reverse Rotation) */}
+          <div className="absolute inset-3 sm:inset-4 rounded-full border border-white/10 animate-orbit-reverse pointer-events-none">
+            {/* Secondary subtle node */}
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399] border border-[#090b12]" />
+          </div>
+
+          {/* Portrait Anchor: Perfect Circle (210px desktop / 160px mobile) */}
+          <div className="relative w-[190px] h-[190px] sm:w-[230px] sm:h-[230px] rounded-full p-1 bg-[#090b12] border-2 border-white/20 shadow-2xl shadow-violet-950/40 overflow-hidden flex items-center justify-center group transition-all duration-500">
             {profileImage ? (
               <Image
                 src={profileImage}
                 alt={`${name} — ${role}`}
-                width={128}
-                height={128}
+                width={240}
+                height={240}
                 priority
-                className="w-full h-full object-cover rounded-full transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover rounded-full transition-transform duration-700 group-hover:scale-105"
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-[#121626] to-[#0b0e18] flex flex-col items-center justify-center text-center p-2 relative">
-                <div className="w-8 h-8 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-300 mb-1">
-                  <Sparkles className="w-4 h-4 text-violet-400" />
+              <div className="w-full h-full rounded-full bg-gradient-to-br from-[#121629] via-[#0b0e18] to-[#070911] flex flex-col items-center justify-center text-center p-4 relative">
+                {/* Inner highlight & subtle neural icon */}
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-300 mb-2 shadow-inner">
+                  <Sparkles className="w-6 h-6 text-violet-400 animate-orbit-pulse" />
                 </div>
-                <span className="text-sm font-bold text-white font-mono tracking-wider">
+                <span className="text-xl sm:text-2xl font-bold text-white font-mono tracking-widest">
                   AM
                 </span>
-                <span className="text-[9px] text-white/50 font-mono tracking-tight">
-                  Portfolio OS
+                <span className="text-[10px] text-white/50 font-mono tracking-wider uppercase mt-0.5">
+                  AI Automation
                 </span>
               </div>
             )}
+
+            {/* Inner top highlight arc */}
+            <div className="absolute inset-0 rounded-full border-t border-white/30 pointer-events-none" />
           </div>
 
-          {/* Active status pulse pill */}
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-[#0d111d] border border-emerald-500/30 px-3 py-0.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-black/50 whitespace-nowrap">
+          {/* Active Status Pulse Pill */}
+          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-[#0c101c] border border-emerald-500/30 px-3.5 py-1 rounded-full flex items-center gap-2 shadow-xl shadow-black/70 whitespace-nowrap z-20">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] font-mono font-medium text-emerald-300 tracking-tight uppercase">
+            <span className="text-[10px] font-mono font-medium text-emerald-300 tracking-wider uppercase">
               {availabilityNote}
             </span>
           </div>
         </div>
 
-        {/* Human Signature Label */}
-        <div className="mt-4">
-          <p className="text-xs font-mono text-white/50 tracking-wider uppercase font-semibold">
+        {/* Human Signature Title */}
+        <div className="mt-5">
+          <p className="text-xs font-mono text-white/50 tracking-widest uppercase font-semibold">
             {name}
           </p>
-          <p className="text-[11px] text-violet-300 font-mono">
+          <p className="text-xs text-violet-300/90 font-mono mt-0.5">
             {role}
           </p>
         </div>
       </div>
 
-      {/* ─── TECHNICAL ANCHOR: SIGNATURE WORKFLOW ARCHITECTURE ─────────────── */}
-      <div className="w-full relative z-10 rounded-2xl bg-[#0a0d18]/90 border border-white/10 backdrop-blur-xl p-4 sm:p-5 shadow-2xl">
-        {/* Terminal / System Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400">
-              <Workflow className="w-3.5 h-3.5" />
-            </div>
-            <div>
-              <span className="text-xs font-bold text-white tracking-tight block">
-                Automation Architecture
-              </span>
-              <span className="text-[10px] font-mono text-white/40 block">
-                Deterministic Execution Loop
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-mono text-white/60">
-            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            <span>n8n · LangChain · Python</span>
-          </div>
-        </div>
-
-        {/* Workflow Progression Stepper */}
-        <div className="grid grid-cols-5 gap-1 sm:gap-1.5 mb-3.5">
-          {WORKFLOW_NODES.map((node, i) => {
-            const isActive = activeStep === i;
-            return (
+      {/* ─── 02 SIGNATURE WORKFLOW MOTIF LOOP ─────────────────────────────── */}
+      <div className="w-full relative z-10 flex items-center justify-center gap-1.5 sm:gap-2 mb-6">
+        {SIGNATURE_STEPS.map((st, i) => {
+          const isActive = activeStep === i;
+          const StepIcon = st.icon;
+          return (
+            <div key={st.step} className="flex items-center gap-1.5 sm:gap-2">
               <button
-                key={node.id}
+                type="button"
                 onClick={() => setActiveStep(i)}
-                className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center relative ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-mono transition-all ${
                   isActive
                     ? "bg-violet-600/25 border-violet-500/50 text-white shadow-sm shadow-violet-500/20"
-                    : "bg-[#101424]/60 border-white/5 text-white/40 hover:text-white hover:bg-white/5"
+                    : "bg-[#0b0e17] border-white/10 text-white/50 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <span className="text-[9px] font-mono font-bold leading-none mb-0.5">
-                  {node.step}
-                </span>
-                <span className="text-[8px] font-mono uppercase tracking-tight truncate w-full text-center">
-                  {node.label}
-                </span>
-                {isActive && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-violet-400" />
-                )}
+                <StepIcon className={`w-3 h-3 ${isActive ? "text-violet-400" : "text-white/40"}`} />
+                <span className="font-semibold">{st.label}</span>
               </button>
-            );
-          })}
-        </div>
-
-        {/* Active Node Live Telemetry Card */}
-        {(() => {
-          const current = WORKFLOW_NODES[activeStep];
-          const CurrentIcon = current.icon;
-          return (
-            <div className="p-3 sm:p-3.5 rounded-xl bg-[#0f1424] border border-violet-500/20 flex items-center justify-between gap-3 animate-in fade-in duration-200">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center shrink-0 text-violet-300">
-                  <CurrentIcon className="w-4 h-4" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-white truncate">
-                      {current.title}
-                    </span>
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30 shrink-0">
-                      {current.badge}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-white/60 truncate mt-0.5">
-                    {current.desc}
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-4 h-4 text-violet-400 shrink-0" />
+              {i < SIGNATURE_STEPS.length - 1 && (
+                <span className="text-white/20 text-xs font-mono">→</span>
+              )}
             </div>
           );
-        })()}
+        })}
+      </div>
 
-        {/* Real Outcome Footnote */}
-        <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-white/50">
-          <span>Target Latency: &lt;1.5s</span>
-          <span className="text-emerald-400">Zero Hallucination Guardrails</span>
+      {/* ─── 03 FUNCTIONAL PERSONAL MODULE: NOW BUILDING ──────────────────── */}
+      <div className="w-full relative z-10 rounded-2xl bg-[#090c16]/95 border border-white/10 backdrop-blur-xl p-5 sm:p-6 shadow-2xl hover:border-violet-500/30 transition-colors">
+        {/* Module Header */}
+        <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3.5">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
+            <span className="text-[11px] font-mono font-bold tracking-wider text-violet-300 uppercase">
+              NOW BUILDING
+            </span>
+          </div>
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/60">
+            {nowBuildingStatus}
+          </span>
         </div>
+
+        {/* Title & Description */}
+        <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+          {nowBuildingTitle}
+        </h3>
+        <p className="mt-1.5 text-xs text-white/65 leading-relaxed">
+          {nowBuildingDescription}
+        </p>
+
+        {/* Tech Stack Pills */}
+        <div className="mt-3.5 flex flex-wrap gap-1.5">
+          {nowBuildingStack.map((tech) => (
+            <span
+              key={tech}
+              className="px-2 py-0.5 rounded-md bg-[#13182b] border border-white/5 text-[10px] font-mono text-violet-300/80"
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+
+        {/* Current Focus Bullets */}
+        {nowBuildingFocus && nowBuildingFocus.length > 0 && (
+          <div className="mt-3.5 pt-3 border-t border-white/5 space-y-1.5">
+            <p className="text-[10px] font-mono uppercase tracking-wider text-white/40 font-semibold">
+              Current Engineering Focus:
+            </p>
+            <ul className="space-y-1 text-xs text-white/70">
+              {nowBuildingFocus.map((f) => (
+                <li key={f} className="flex items-start gap-2">
+                  <span className="text-violet-400 font-mono text-[10px] mt-0.5">▹</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* CTA Link */}
+        {nowBuildingLink && (
+          <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+            <Link
+              href={nowBuildingLink}
+              className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-violet-300 hover:text-white transition-colors group"
+            >
+              <span>Explore build architecture</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <span className="text-[10px] font-mono text-white/30">Updated live</span>
+          </div>
+        )}
       </div>
     </div>
   );

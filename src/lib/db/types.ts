@@ -159,6 +159,12 @@ export type SiteSettings = {
   showLiveTicker: boolean;
   showHeroTiles: boolean;
   showLive30Days: boolean;
+  nowBuildingTitle?: string;
+  nowBuildingStatus?: string;
+  nowBuildingDescription?: string;
+  nowBuildingStack?: string[];
+  nowBuildingFocus?: string[];
+  nowBuildingLink?: string;
   updatedAt: string;
 };
 

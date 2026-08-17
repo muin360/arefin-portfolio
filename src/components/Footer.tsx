@@ -63,11 +63,11 @@ export default async function Footer() {
 
           {/* COLUMN 2 — sitemap */}
           <div className="v2-footer__col">
-            <p className="v2-footer__col-title">Sitemap</p>
+            <p className="v2-footer__col-title">Navigation</p>
             <ul className="v2-footer__links">
               <li>
-                <Link href="/about" className="v2-footer__link">
-                  About
+                <Link href="/projects" className="v2-footer__link">
+                  Work
                 </Link>
               </li>
               <li>
@@ -76,23 +76,13 @@ export default async function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/skills" className="v2-footer__link">
-                  Stack
-                </Link>
-              </li>
-              <li>
-                <Link href="/projects" className="v2-footer__link">
-                  Selected work
-                </Link>
-              </li>
-              <li>
                 <Link href="/blog" className="v2-footer__link">
                   Journal
                 </Link>
               </li>
               <li>
-                <Link href="/book" className="v2-footer__link">
-                  Book audit
+                <Link href="/about" className="v2-footer__link">
+                  About
                 </Link>
               </li>
               <li>
