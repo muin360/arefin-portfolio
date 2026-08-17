@@ -98,17 +98,18 @@ export default function SprintTimeline() {
 
   return (
     <div className="w-full space-y-6">
-      {/* ─── FUNCTIONAL PROCESS PLATE ──────────────────────────────────── */}
+      {/* ─── 04 / BUILD LOOP FUNCTIONAL CONTROLLER PLATE ─────────────────── */}
       <SectionPlate
         index="04"
         title="BUILD LOOP"
+        sectionId="process"
         tabs={tabs}
         activeTab={activeId}
         onTabChange={setActiveId}
       />
 
       {/* ─── ACTIVE PHASE DEEP DIVE SPECIFICATION ────────────────────────── */}
-      <div className="rounded-2xl bg-[#090c16] border border-white/[0.08] p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-7 space-y-3">
           <div className="flex items-center gap-2 font-mono text-xs text-violet-400">
             <span className="font-semibold uppercase tracking-wider">
@@ -128,9 +129,9 @@ export default function SprintTimeline() {
           </p>
         </div>
 
-        <div className="lg:col-span-5 p-5 rounded-xl bg-[#0e1224] border border-white/5 space-y-3 font-mono text-xs">
+        <div className="lg:col-span-5 p-5 rounded-xl bg-[#121622] border border-white/5 space-y-3 font-mono text-xs">
           <span className="text-[11px] text-white/50 font-semibold uppercase tracking-wider block">
-            Deliverables:
+            Concrete Deliverables:
           </span>
 
           <ul className="space-y-2 text-white/80">

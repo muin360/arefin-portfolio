@@ -56,10 +56,11 @@ export default function JournalGridV2({
 
   return (
     <div className="w-full space-y-6">
-      {/* ─── FUNCTIONAL JOURNAL PLATE ──────────────────────────────────── */}
+      {/* ─── 05 / JOURNAL FUNCTIONAL CONTROLLER PLATE ────────────────────── */}
       <SectionPlate
-        index="06"
+        index="05"
         title="JOURNAL"
+        sectionId="journal"
         tabs={tabs}
         activeTab={filter}
         onTabChange={setFilter}

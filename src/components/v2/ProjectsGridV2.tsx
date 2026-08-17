@@ -8,15 +8,15 @@ import SectionPlate from "@/components/SectionPlate";
 
 export default function ProjectsGridV2({
   projects = [],
-  limit = 5,
+  limit = 6,
 }: {
   projects?: Project[];
   limit?: number;
 }) {
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("featured");
 
   // Calculate dynamic categories and counts strictly from MongoDB data
-  const { categories, filteredProjects } = useMemo(() => {
+  const { categories, displayedProjects } = useMemo(() => {
     const catMap = new Map<string, number>();
     projects.forEach((p) => {
       if (p.category) {
@@ -31,42 +31,48 @@ export default function ProjectsGridV2({
       originalCat: cat,
     }));
 
-    let filtered = projects;
+    let result = projects;
     if (filter === "featured") {
-      filtered = projects.filter((p) => p.featured);
+      result = projects.filter((p) => p.featured);
+      if (result.length === 0) result = projects.slice(0, 3);
+    } else if (filter === "recent") {
+      result = [...projects].sort(
+        (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      ).slice(0, 2);
     } else if (filter !== "all") {
       const match = categoryList.find((c) => c.id === filter);
       if (match) {
-        filtered = projects.filter((p) => p.category === match.originalCat);
+        result = projects.filter((p) => p.category === match.originalCat);
       }
     }
 
     return {
       categories: categoryList,
-      filteredProjects: filtered.slice(0, limit),
+      displayedProjects: result.slice(0, limit),
     };
   }, [projects, filter, limit]);
 
+  const featuredCount = projects.filter((p) => p.featured).length;
+
   const tabs = [
+    { id: "featured", label: "Featured", count: featuredCount },
+    { id: "recent", label: "Recent", count: Math.min(projects.length, 2) },
     { id: "all", label: "All", count: projects.length },
-    {
-      id: "featured",
-      label: "Featured",
-      count: projects.filter((p) => p.featured).length,
-    },
     ...categories.map((c) => ({ id: c.id, label: c.label, count: c.count })),
   ];
 
-  const flagship = filteredProjects[0];
-  const secondary = filteredProjects.slice(1, 3);
-  const compact = filteredProjects.slice(3);
+  const isAllView = filter === "all";
+  const flagship = displayedProjects[0];
+  const secondary = displayedProjects.slice(1, 3);
+  const remaining = displayedProjects.slice(3);
 
   return (
     <div className="w-full space-y-6">
-      {/* ─── FUNCTIONAL WORK PLATE ──────────────────────────────────────── */}
+      {/* ─── 03 / WORK FUNCTIONAL CONTROLLER PLATE ───────────────────────── */}
       <SectionPlate
         index="03"
         title="WORK"
+        sectionId="work"
         tabs={tabs}
         activeTab={filter}
         onTabChange={setFilter}
@@ -75,22 +81,70 @@ export default function ProjectsGridV2({
             href="/projects"
             className="text-white/40 hover:text-white inline-flex items-center gap-1 font-mono text-[11px] transition-colors"
           >
-            <span>View all ({projects.length})</span>
+            <span>Project archive ({projects.length})</span>
             <ArrowRight className="w-3 h-3" />
           </Link>
         }
       />
 
-      {filteredProjects.length === 0 ? (
-        <div className="p-8 text-center rounded-2xl bg-[#090c16] border border-white/[0.08] text-white/50 font-mono text-xs">
-          No projects found for the selected filter.
+      {projects.length === 0 ? (
+        <div className="p-12 text-center rounded-2xl bg-[#0c0f18] border border-white/[0.08] text-white/50 font-mono text-xs">
+          No builds yet.
+        </div>
+      ) : displayedProjects.length === 0 ? (
+        <div className="p-10 text-center rounded-2xl bg-[#0c0f18] border border-white/[0.08] text-white/50 font-mono text-xs">
+          No projects found in this category.
+        </div>
+      ) : isAllView ? (
+        /* ─── ALL VIEW: COMPACT EDITORIAL ARCHIVE ───────────────────────── */
+        <div className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-4 sm:p-6 divide-y divide-white/5">
+          {displayedProjects.map((p, i) => {
+            const slug = p.slug || "";
+            return (
+              <div
+                key={slug || p.id || p.title}
+                className="py-3.5 px-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group hover:bg-white/[0.02] rounded-xl transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono text-white/30 font-semibold w-6">
+                    0{i + 1}
+                  </span>
+                  <div>
+                    <Link
+                      href={`/projects/${slug}`}
+                      className="text-sm font-bold text-white group-hover:text-violet-300 transition-colors"
+                    >
+                      {p.title}
+                    </Link>
+                    <p className="text-xs text-white/50 line-clamp-1 mt-0.5 font-sans">
+                      {p.summary}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0 font-mono text-xs">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-[#121622] border border-white/5 text-white/50">
+                    {p.category}
+                  </span>
+                  <Link
+                    href={`/projects/${slug}`}
+                    className="inline-flex items-center gap-1 text-violet-300 hover:text-white transition-colors"
+                  >
+                    <span>Case Study</span>
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
+        /* ─── FEATURED / RECENT / CATEGORY VIEW: EDITORIAL PRESENTATION ─── */
         <div className="space-y-6">
-          {/* TIER 1: FLAGSHIP PROJECT SHOWCASE */}
+          {/* TIER 1: FLAGSHIP EDITORIAL PROJECT */}
           {flagship && <FlagshipCard project={flagship} />}
 
-          {/* TIER 2: SECONDARY PROJECTS */}
+          {/* TIER 2: SECONDARY RECENT BUILDS */}
           {secondary.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {secondary.map((p, i) => (
@@ -103,10 +157,10 @@ export default function ProjectsGridV2({
             </div>
           )}
 
-          {/* TIER 3: COMPACT ADDITIONAL LIST */}
-          {compact.length > 0 && (
-            <div className="rounded-2xl bg-[#090c16] border border-white/[0.08] p-4 sm:p-5 divide-y divide-white/5">
-              {compact.map((p, i) => {
+          {/* TIER 3: COMPACT ADDITIONAL BUILDS IF ANY */}
+          {remaining.length > 0 && (
+            <div className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-4 sm:p-5 divide-y divide-white/5">
+              {remaining.map((p, i) => {
                 const slug = p.slug || "";
                 return (
                   <div
@@ -114,7 +168,7 @@ export default function ProjectsGridV2({
                     className="py-3 px-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group hover:bg-white/[0.02] rounded-xl transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-mono text-white/30 font-semibold">
+                      <span className="text-xs font-mono text-white/30 font-semibold w-6">
                         0{i + 4}
                       </span>
                       <div>
@@ -130,13 +184,13 @@ export default function ProjectsGridV2({
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/50">
+                    <div className="flex items-center gap-3 shrink-0 font-mono text-xs">
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-[#121622] border border-white/5 text-white/50">
                         {p.category}
                       </span>
                       <Link
                         href={`/projects/${slug}`}
-                        className="inline-flex items-center gap-1 text-xs font-mono text-violet-300 hover:text-white transition-colors"
+                        className="inline-flex items-center gap-1 text-violet-300 hover:text-white transition-colors"
                       >
                         <span>Case Study</span>
                         <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
@@ -158,9 +212,9 @@ function FlagshipCard({ project }: { project: Project }) {
   const coverImage = project.coverImage;
 
   return (
-    <div className="group relative rounded-2xl bg-[#090c16] border border-white/[0.08] hover:border-violet-500/30 p-6 sm:p-8 transition-all overflow-hidden">
+    <div className="group relative rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 p-6 sm:p-8 transition-all overflow-hidden">
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        {/* Visual: Real Media Cover Image or Conceptual SVG Diagram */}
+        {/* Cover Media */}
         <div className="lg:col-span-5 relative w-full h-52 sm:h-64 rounded-xl overflow-hidden border border-white/10 bg-[#060810] shrink-0">
           {coverImage ? (
             <img
@@ -169,7 +223,7 @@ function FlagshipCard({ project }: { project: Project }) {
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
             />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-[#101426] to-[#070912]">
+            <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-[#121622] to-[#07090e]">
               <Workflow className="w-8 h-8 text-violet-400 mb-2 opacity-80" />
               <span className="text-xs font-mono text-white/60 tracking-wider">
                 {project.category}
@@ -178,7 +232,7 @@ function FlagshipCard({ project }: { project: Project }) {
           )}
         </div>
 
-        {/* Narrative */}
+        {/* Narrative & Metrics */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center gap-2 mb-2 font-mono text-xs text-white/50">
@@ -212,7 +266,7 @@ function FlagshipCard({ project }: { project: Project }) {
               {(project.stack || []).map((s) => (
                 <span
                   key={s}
-                  className="px-2 py-0.5 rounded bg-[#101426] border border-white/5 text-[10px] text-white/60"
+                  className="px-2 py-0.5 rounded bg-[#121622] border border-white/5 text-[10px] text-white/60"
                 >
                   {s}
                 </span>
@@ -244,7 +298,7 @@ function SecondaryCard({
   const coverImage = project.coverImage;
 
   return (
-    <div className="group relative rounded-2xl bg-[#090c16] border border-white/[0.08] hover:border-violet-500/30 p-6 flex flex-col justify-between transition-all overflow-hidden">
+    <div className="group relative rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 p-6 flex flex-col justify-between transition-all overflow-hidden">
       <div>
         {coverImage && (
           <div className="relative w-full h-40 rounded-xl overflow-hidden border border-white/10 bg-[#060810] mb-4">
@@ -281,7 +335,7 @@ function SecondaryCard({
           {(project.stack || []).slice(0, 3).map((s) => (
             <span
               key={s}
-              className="px-2 py-0.5 rounded bg-[#101426] border border-white/5 text-[10px] text-white/50"
+              className="px-2 py-0.5 rounded bg-[#121622] border border-white/5 text-[10px] text-white/50"
             >
               {s}
             </span>
