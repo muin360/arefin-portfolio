@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Bell, ChevronRight, Command, ExternalLink } from "lucide-react";
+import { Bell, ChevronRight, Command, ExternalLink, Menu } from "lucide-react";
 import Link from "next/link";
 import type { Session } from "next-auth";
 
@@ -54,32 +54,47 @@ export default function AdminHeader({ user, unreadCount = 0 }: AdminHeaderProps)
     );
   };
 
+  const toggleMobileSidebar = () => {
+    window.dispatchEvent(new CustomEvent("toggle-admin-mobile-sidebar"));
+  };
+
   return (
-    <header className="bg-[#0b0e17] border-b border-[#1a202c] px-6 py-3 shrink-0 z-10">
+    <header className="bg-[#0b0e17] border-b border-[#1a202c] px-4 sm:px-6 py-3 shrink-0 z-10">
       <div className="flex items-center justify-between gap-4">
-        {/* Breadcrumbs */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs min-w-0 font-medium">
-          {crumbs.map((crumb, idx) => (
-            <span key={crumb.href} className="flex items-center gap-1.5 min-w-0">
-              {idx > 0 && <ChevronRight className="w-3.5 h-3.5 text-[#4b5563] shrink-0" />}
-              {crumb.isLast ? (
-                <span className="text-white font-semibold truncate bg-[#141a29] px-2 py-0.5 rounded-md border border-[#1e2433]">
-                  {crumb.label}
-                </span>
-              ) : (
-                <Link
-                  href={crumb.href}
-                  className="text-[#6b7280] hover:text-white transition-colors truncate"
-                >
-                  {crumb.label}
-                </Link>
-              )}
-            </span>
-          ))}
-        </nav>
+        {/* Left: Mobile hamburger + Breadcrumbs */}
+        <div className="flex items-center gap-3 min-w-0">
+          <button
+            type="button"
+            onClick={toggleMobileSidebar}
+            className="p-1.5 text-[#9ca3af] hover:text-white bg-[#141a29] hover:bg-[#1e2433] rounded-lg md:hidden border border-[#1e2433] transition-colors"
+            aria-label="Toggle navigation menu"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs min-w-0 font-medium">
+            {crumbs.map((crumb, idx) => (
+              <span key={crumb.href} className="flex items-center gap-1.5 min-w-0">
+                {idx > 0 && <ChevronRight className="w-3.5 h-3.5 text-[#4b5563] shrink-0" />}
+                {crumb.isLast ? (
+                  <span className="text-white font-semibold truncate bg-[#141a29] px-2 py-0.5 rounded-md border border-[#1e2433]">
+                    {crumb.label}
+                  </span>
+                ) : (
+                  <Link
+                    href={crumb.href}
+                    className="text-[#6b7280] hover:text-white transition-colors truncate"
+                  >
+                    {crumb.label}
+                  </Link>
+                )}
+              </span>
+            ))}
+          </nav>
+        </div>
 
         {/* Center / Right controls */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           {/* Quick Search / Command Palette Button */}
           <button
             type="button"
