@@ -8,28 +8,30 @@
  * ============================================================ */
 
 :root {
-  /* Canonical Surface Tokens */
-  --surface-0:      #04040a;   /* page base — deepest void */
-  --surface-1:      #080810;   /* base surfaces / secondary section */
-  --surface-2:      #0d0d1a;   /* cards, bento modules */
-  --surface-3:      #141a29;   /* elevated popovers, chips, inputs */
-  --border-subtle:  rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.12);
+  /* Canonical Surface Tokens — 4 Tiers */
+  --surface-0:      #07090e;   /* page base — void */
+  --surface-1:      #0c0f18;   /* base section surfaces */
+  --surface-2:      #121622;   /* cards, bento modules */
+  --surface-3:      #181e2e;   /* elevated popovers, chips, inputs */
+
+  /* Borders — 3 Standard Tiers */
+  --border-subtle:      rgba(255, 255, 255, 0.06);
+  --border-default:     rgba(255, 255, 255, 0.10);
+  --border-interactive: rgba(124, 58, 237, 0.35);
+
+  /* Radius Tokens — 3 Standard Tiers */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  /* Single Brand Accent — Indigo/Violet Family */
   --accent:         #7c3aed;   /* electric violet */
-  --accent-soft:    rgba(124, 58, 237, 0.15);
+  --accent-hover:   #8b5cf6;
+  --accent-soft:    rgba(124, 58, 237, 0.12);
+  --accent-pulse:   rgba(124, 58, 237, 0.05);
 
-  /* Backgrounds — layered depth, deepest to most elevated */
-  --bg-void:      #04040a;   /* page base — deepest */
-  --bg-base:      #080810;   /* base surfaces */
-  --bg-surface:   #0d0d1a;   /* cards, panels */
-  --bg-elevated:  #121224;   /* elevated elements */
-  --bg-overlay:   #1a1a30;   /* modals, dropdowns */
-
-  /* Borders — barely-there precision lines */
-  --border-dim:   rgba(255, 255, 255, 0.04);
-  --border-soft:  rgba(255, 255, 255, 0.08);
-  --border-mid:   rgba(255, 255, 255, 0.12);
-  --border-lit:   rgba(255, 255, 255, 0.20);
+  /* Signal Green — Real Status Only (Online/Available) */
+  --signal-green:   #10b981;
 
   /* Text — three-tier hierarchy */
   --text-primary:   #f0f0f8;   /* headlines */
@@ -37,25 +39,9 @@
   --text-muted:     #5c5c7a;   /* labels, captions */
   --text-ghost:     #2e2e48;   /* decorative/disabled */
 
-  /* Accent — electric indigo, signal teal-green */
-  --accent-core:   #5B6EF5;   /* primary CTA, links */
-  --accent-bright: #7B8FFF;   /* hover states */
-  --accent-soft:   rgba(91, 110, 245, 0.15);
-  --accent-pulse:  rgba(91, 110, 245, 0.06);
-
-  /* Signal colors */
-  --signal-green:  #22d3a5;
-  --signal-amber:  #f59e0b;
-  --signal-red:    #f43f5e;
-
-  /* Gradients */
-  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(91, 110, 245, 0.18) 0%, transparent 65%);
-  --gradient-card: linear-gradient(135deg, rgba(91, 110, 245, 0.08) 0%, transparent 60%);
-  --gradient-text: linear-gradient(135deg, #f0f0f8 0%, #a8a8c0 100%);
-  --gradient-accent: linear-gradient(135deg, #5B6EF5 0%, #22d3a5 100%);
-
-  /* Spacing scale */
-  --space-section: clamp(6rem, 12vw, 10rem);
+  /* Spacing & Container scale */
+  --container-max: 1240px;
+  --space-section: clamp(5rem, 10vw, 8rem);
   --space-block:   clamp(3rem, 6vw, 5rem);
   --space-gap:     clamp(1.5rem, 3vw, 2.5rem);
 
