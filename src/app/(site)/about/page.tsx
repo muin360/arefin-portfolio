@@ -7,11 +7,9 @@ import Button from "@/components/Button";
 import {
   Workflow,
   Bot,
-  Brain,
   Code2,
   Database,
   ArrowRight,
-  Sparkles,
   Compass,
 } from "lucide-react";
 

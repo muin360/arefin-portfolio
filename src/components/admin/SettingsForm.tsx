@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Plus, Trash2, Globe, Sparkles, MessageSquare, Phone, Mail, ToggleLeft, Activity } from "lucide-react";
+import { Save, Plus, Trash2 } from "lucide-react";
 import type { SiteSettings, LiveStatCard } from "@/lib/db/types";
 
 type Props = {

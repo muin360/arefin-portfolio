@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { BlogPost } from "@/lib/db/types";
 import SectionPlate from "@/components/SectionPlate";
-import { ArrowRight, BookOpen, Search } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 
 export default function BlogList({ posts }: { posts: BlogPost[] }) {
   const [filter, setFilter] = useState("all");

@@ -23,9 +23,7 @@ export default function HeroSectionV2({
   role = "AI Automation & AI Agent Developer",
   labTitle,
   labStatus,
-  labInput,
   labProcess,
-  labOutput,
   labStack,
   labLink,
 }: HeroSectionProps) {

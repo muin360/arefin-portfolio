@@ -7,17 +7,14 @@ import {
   MailOpen,
   Mail,
   Search,
-  ExternalLink,
   Reply,
   Clock,
   CheckCircle,
-  Circle,
   Download,
   Copy,
   Check,
   MessageCircle,
   Inbox,
-  AlertTriangle,
 } from "lucide-react";
 import type { ContactSubmission } from "@/lib/db/types";
 

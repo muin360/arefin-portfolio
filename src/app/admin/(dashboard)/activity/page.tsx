@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Activity, Clock, Shield, User, ArrowRight } from "lucide-react";
+import { Activity, Clock, Shield, User } from "lucide-react";
 import { getRecentAdminActivity } from "@/lib/analytics-db";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Admin Activity Audit · Portfolio OS",

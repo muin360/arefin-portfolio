@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { User, Plus, Trash2, Check, Sparkles, HeartHandshake } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import type { AboutData } from "@/lib/db/types";
 
 interface Props {

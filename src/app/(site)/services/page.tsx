@@ -10,8 +10,6 @@ import {
   Brain,
   Layers,
   ArrowRight,
-  CheckCircle2,
-  Cpu,
 } from "lucide-react";
 
 export const metadata: Metadata = {

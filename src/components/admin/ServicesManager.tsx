@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Edit2, Trash2, Workflow, Bot, Zap, ArrowRight, X } from "lucide-react";
+import { Plus, Edit2, Trash2, X } from "lucide-react";
 import type { Service, IconName } from "@/lib/db/types";
 
 interface Props {

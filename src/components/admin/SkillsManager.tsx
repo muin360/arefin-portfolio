@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Edit2, Trash2, Sparkles, X, Brain } from "lucide-react";
+import { Plus, Edit2, Trash2, X } from "lucide-react";
 import type { SkillCategory, IconName } from "@/lib/db/types";
 
 interface Props {

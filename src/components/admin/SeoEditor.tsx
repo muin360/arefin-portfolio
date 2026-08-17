@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Globe, CheckCircle2, AlertCircle, Share2, Sparkles, ExternalLink } from "lucide-react";
+import { Search, Globe, CheckCircle2, AlertCircle, Share2 } from "lucide-react";
 import type { SiteSettings } from "@/lib/db/types";
 
 interface Props {

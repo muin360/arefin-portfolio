@@ -7,16 +7,13 @@ import {
   MessageSquare,
   ArrowRight,
   Plus,
-  Activity,
   TrendingUp,
   TrendingDown,
   Mouse,
   Mail,
   Eye,
-  BarChart3,
   Zap,
   Users,
-  Clock,
   CheckCircle2,
   ExternalLink,
   ChevronRight,
@@ -51,7 +48,7 @@ interface MetricCardProps {
   value: number;
   changePct: number;
   trendUp: boolean;
-  previous: number;
+  previous?: number;
   hasData: boolean;
   icon: React.ElementType;
   href: string;
@@ -63,7 +60,6 @@ function MetricCard({
   value,
   changePct,
   trendUp,
-  previous,
   hasData,
   icon: Icon,
   href,
@@ -415,14 +411,6 @@ export default async function AdminDashboard() {
 
             <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
               {funnel.map((step, idx) => {
-                const colors = [
-                  "bg-sky-500 text-sky-400 border-sky-500/30",
-                  "bg-indigo-500 text-indigo-400 border-indigo-500/30",
-                  "bg-violet-500 text-violet-400 border-violet-500/30",
-                  "bg-amber-500 text-amber-400 border-amber-500/30",
-                  "bg-emerald-500 text-emerald-400 border-emerald-500/30",
-                ][idx % 5];
-
                 return (
                   <div key={step.step} className="p-3.5 bg-[#141a29] rounded-xl border border-[#1e2433] space-y-2">
                     <div className="flex items-center justify-between text-[10px] font-mono">

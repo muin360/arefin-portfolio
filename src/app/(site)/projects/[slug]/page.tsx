@@ -14,7 +14,6 @@ import {
   Code2,
   Brain,
   CheckCircle2,
-  Sparkles,
 } from "lucide-react";
 
 export async function generateStaticParams() {

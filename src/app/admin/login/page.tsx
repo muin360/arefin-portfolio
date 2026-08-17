@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { signIn } from "@/lib/auth";
-import { Lock, Shield, ArrowRight, Sparkles } from "lucide-react";
+import { Lock, Shield, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Admin Passcode Login · Portfolio OS",

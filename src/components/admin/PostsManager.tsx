@@ -11,12 +11,7 @@ import {
   Star,
   Copy,
   Search,
-  Check,
-  FileText,
-  Clock,
-  Sparkles,
   X,
-  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import type { BlogPost } from "@/lib/db/types";

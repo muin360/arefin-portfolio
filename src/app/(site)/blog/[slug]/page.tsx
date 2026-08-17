@@ -9,7 +9,7 @@ import MarkdownContent from "@/components/MarkdownContent";
 import BreadcrumbsJsonLd from "@/components/BreadcrumbsJsonLd";
 import SectionPlate from "@/components/SectionPlate";
 import Button from "@/components/Button";
-import { ArrowRight, Workflow, Bot, Brain } from "lucide-react";
+import { ArrowRight, Workflow, Brain } from "lucide-react";
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts({ publishedOnly: true });
