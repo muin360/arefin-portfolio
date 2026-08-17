@@ -3,12 +3,13 @@
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
-// A drop-in scroll-reveal wrapper. Fades + lifts content as it enters the
-// viewport. Honors reduced-motion. Delay is in milliseconds.
+// Phase 6 Motion Standard: Coordinated, subtle scroll reveal.
+// Fades + lifts content gently as it enters the viewport.
+// Respects prefers-reduced-motion automatically.
 export default function Reveal({
   children,
   delay = 0,
-  y = 24,
+  y = 12,
   className,
   as = "div",
 }: {
@@ -25,11 +26,11 @@ export default function Reveal({
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1],
+        duration: 0.38,
+        ease: [0.16, 1, 0.3, 1],
         delay: delay / 1000,
       }}
-      viewport={{ once: true, margin: "-10% 0px" }}
+      viewport={{ once: true, margin: "-8% 0px" }}
     >
       {children}
     </Tag>

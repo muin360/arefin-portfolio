@@ -4,15 +4,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 /**
- * PageTransition
+ * Phase 6 Route Transition
  *
- * Detects route changes via usePathname and applies a smooth
- * fade-out → fade-in transition between pages.
- *
- * Exit: main slides up + fades (240ms)
- * Enter: main slides up from below + fades in (650ms)
- *
- * Respects prefers-reduced-motion — skips animation entirely if set.
+ * Lightweight, fast, non-blocking page transition.
+ * Total perceived transition < 300ms.
+ * Respects prefers-reduced-motion.
  */
 export default function PageTransition() {
   const pathname = usePathname();
@@ -34,21 +30,19 @@ export default function PageTransition() {
     const main = document.querySelector("main");
     if (!main) return;
 
-    // Step 1: Exit animation
+    // Fast 100ms exit
     main.classList.add("page-exiting");
     document.body.classList.remove("is-loaded");
 
     const t = window.setTimeout(() => {
-      // Step 2: Remove exit, trigger entrance
       main.classList.remove("page-exiting");
 
-      // Double rAF ensures the class removal is painted before re-adding is-loaded
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           document.body.classList.add("is-loaded");
         });
       });
-    }, 240);
+    }, 100);
 
     return () => window.clearTimeout(t);
   }, [pathname]);
