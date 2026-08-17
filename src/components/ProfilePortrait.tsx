@@ -25,14 +25,14 @@ export default function ProfilePortrait({
 
   return (
     <div
-      className={`relative flex flex-col items-center select-none ${className}`}
+      className={`relative flex flex-col items-center select-none motion-safe:animate-profile-activate ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-label={`${name} — ${role}`}
     >
       {/* ─── 01 CONCENTRATED AMBIENT ATMOSPHERIC HALO ─────────────────────── */}
       <div
-        className={`absolute -top-2 left-1/2 -translate-x-1/2 w-64 h-64 sm:w-72 sm:h-72 rounded-full bg-violet-600/25 blur-3xl pointer-events-none transition-all duration-700 ${
+        className={`absolute -top-2 left-1/2 -translate-x-1/2 w-64 h-64 sm:w-72 sm:h-72 rounded-full bg-violet-600/25 blur-3xl pointer-events-none transition-all duration-500 ease-out ${
           isHovered ? "opacity-95 scale-105" : "opacity-65"
         }`}
         aria-hidden="true"
@@ -43,12 +43,38 @@ export default function ProfilePortrait({
         {/* Single Primary Outer Orbit Ring (32s linear continuous rotation) */}
         <div
           className={`absolute inset-0 rounded-full border border-violet-400/35 motion-safe:animate-orbit-slow pointer-events-none transition-colors duration-500 ${
-            isHovered ? "border-violet-400/55 [animation-duration:22s]" : ""
+            isHovered ? "border-violet-400/60 [animation-duration:22s]" : ""
           }`}
           aria-hidden="true"
         >
           {/* Signal Node (Traveling along orbit with soft violet glow and gentle pulse) */}
           <div className="absolute -top-1 sm:-top-1.25 left-1/2 -translate-x-1/2 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-violet-300 shadow-[0_0_10px_#a78bfa] border border-[#07090e] motion-safe:animate-orbit-pulse" />
+        </div>
+
+        {/* ─── SIGNATURE ORBITAL SIGNAL SWEEP (Traveling soft highlight every 5.5s) ─── */}
+        <div
+          className="absolute inset-0 rounded-full pointer-events-none motion-safe:animate-orbit-sweep"
+          aria-hidden="true"
+        >
+          <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="orbitSweepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#c4b5fd" stopOpacity="0" />
+                <stop offset="50%" stopColor="#a78bfa" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="#7c3aed" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <circle
+              cx="50"
+              cy="50"
+              r="49.2"
+              fill="none"
+              stroke="url(#orbitSweepGrad)"
+              strokeWidth="1.5"
+              strokeDasharray="55 260"
+              strokeLinecap="round"
+            />
+          </svg>
         </div>
 
         {/* Faint Inner Secondary Depth Ring (48s subtle counter-rotation) */}
@@ -62,7 +88,7 @@ export default function ProfilePortrait({
           tabIndex={0}
           role="img"
           aria-label={`${name} portrait photo`}
-          className={`relative w-[155px] h-[155px] sm:w-[190px] sm:h-[190px] md:w-[220px] md:h-[220px] rounded-full p-1 bg-[#090c14] border border-white/20 shadow-2xl overflow-hidden flex items-center justify-center transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07090e] ${
+          className={`relative w-[155px] h-[155px] sm:w-[190px] sm:h-[190px] md:w-[220px] md:h-[220px] rounded-full p-1 bg-[#090c14] border border-white/20 shadow-2xl overflow-hidden flex items-center justify-center transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07090e] ${
             isHovered
               ? "border-violet-400/45 shadow-violet-950/40 scale-[1.018]"
               : "shadow-black/80"
@@ -99,7 +125,7 @@ export default function ProfilePortrait({
         {/* Real Status Badge (Availability indicator below portrait) */}
         {availabilityNote && (
           <div className="absolute -bottom-3 sm:-bottom-3.5 left-1/2 -translate-x-1/2 bg-[#0c0f18] border border-white/10 px-3 py-1 rounded-full flex items-center gap-2 shadow-lg shadow-black/60 whitespace-nowrap z-20 font-mono text-[10px]">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 motion-safe:animate-status-pulse" />
             <span className="text-white/80 font-medium tracking-wider">
               {availabilityNote}
             </span>
