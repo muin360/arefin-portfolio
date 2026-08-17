@@ -79,14 +79,14 @@ export default function Navbar() {
         {/* Wordmark (Brand) */}
         <Link
           href="/"
-          className="v2-nav__brand group shrink-0"
+          className="v2-nav__brand group shrink-0 flex items-center gap-2 sm:gap-2.5"
           onClick={() => setOpen(false)}
           aria-label="Arefin Mueen — Home"
         >
-          <span className="v2-nav__diamond" aria-hidden="true">
+          <span className="v2-nav__diamond shrink-0" aria-hidden="true">
             ◈
           </span>
-          <span className="v2-nav__wordmark">
+          <span className="v2-nav__wordmark whitespace-nowrap text-xs sm:text-sm font-bold tracking-[0.2em] sm:tracking-[0.28em] text-white">
             AREFIN MUEEN
             <span className="v2-nav__wordmark-sub hidden sm:inline-block">automation · DHK</span>
           </span>
