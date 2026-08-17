@@ -111,7 +111,7 @@ export default async function BlogPostPage({
       />
       <ReadingProgress />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-12">
         {/* Top Back Navigation Plate */}
         <SectionPlate
           index="BUILD NOTE"

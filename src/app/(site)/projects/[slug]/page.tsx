@@ -133,7 +133,7 @@ export default async function ProjectDetailPage({
       />
 
       {/* ─── 01 HERO SECTION ─────────────────────────────────────────────── */}
-      <section className="pt-12 pb-16 sm:py-20 border-b border-white/[0.08]" aria-label="Project Hero">
+      <section className="pt-10 pb-16 sm:py-20 border-b border-white/[0.08]" aria-label="Project Hero">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <SectionPlate
             index="CASE STUDY"

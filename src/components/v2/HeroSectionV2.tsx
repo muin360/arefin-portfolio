@@ -28,7 +28,7 @@ export default function HeroSectionV2({
   labLink,
 }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden pt-12 pb-16 sm:py-20 lg:py-24" aria-label="Hero">
+    <section className="relative overflow-hidden pt-10 pb-16 sm:py-16 lg:py-20" aria-label="Hero">
       {/* Subtle Atmospheric Backdrop */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-violet-600/10 rounded-full blur-3xl pointer-events-none"

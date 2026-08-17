@@ -26,7 +26,7 @@ export default function SiteLayout({
       <PageTransition />
       <CursorRing />
       <Navbar />
-      <main id="main" className="flex-1">
+      <main id="main" className="flex-1 min-h-screen pt-[calc(var(--nav-height)+env(safe-area-inset-top,0px))]">
         {children}
       </main>
       <Footer />

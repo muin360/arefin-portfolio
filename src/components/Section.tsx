@@ -16,7 +16,7 @@ export function PageHeader({
   index?: string;
 }) {
   return (
-    <section className="relative overflow-hidden pt-12 pb-16 sm:py-20 lg:py-24 border-b border-white/[0.08]" aria-label="Page Header">
+    <section className="relative overflow-hidden pt-10 pb-14 sm:py-16 lg:py-20 border-b border-white/[0.08]" aria-label="Page Header">
       {/* Ambient background glow */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-violet-600/10 rounded-full blur-3xl pointer-events-none"
