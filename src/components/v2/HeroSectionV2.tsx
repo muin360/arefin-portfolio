@@ -28,16 +28,16 @@ export default function HeroSectionV2({
   labLink,
 }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden pt-10 pb-16 sm:py-16 lg:py-20" aria-label="Hero">
-      {/* Subtle Atmospheric Backdrop */}
+    <section className="relative overflow-hidden pt-8 pb-14 sm:py-16 lg:py-20" aria-label="Hero">
+      {/* Concentrated ambient depth backdrop */}
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-violet-600/10 rounded-full blur-3xl pointer-events-none"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[650px] h-[380px] bg-violet-600/10 rounded-full blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 
       <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* ─── LEFT COL: IDENTITY & NARRATIVE (55% ON DESKTOP) ─────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* ─── LEFT COL: EDITORIAL IDENTITY & NARRATIVE (58% ON DESKTOP) ─── */}
           <div className="lg:col-span-7 flex flex-col items-start space-y-6 order-2 lg:order-1">
             {/* Identity & Technical Role Metadata */}
             <div className="space-y-1.5 font-mono text-xs select-none">
@@ -55,19 +55,19 @@ export default function HeroSectionV2({
               </p>
             </div>
 
-            {/* Core Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.12]">
+            {/* Core Editorial Headline */}
+            <h1 className="text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-bold text-white tracking-tight leading-[1.04]">
               I build intelligent systems that{" "}
-              <span className="serif italic text-violet-300">automate real work.</span>
+              <span className="serif italic text-violet-300 font-normal">automate real work.</span>
             </h1>
 
             {/* Supporting Context */}
-            <p className="text-sm sm:text-base text-white/70 leading-relaxed max-w-xl font-sans font-normal">
+            <p className="text-base sm:text-lg text-white/70 leading-[1.65] max-w-xl font-sans">
               Specializing in practical AI agents, RAG knowledge retrieval, multi-agent systems, and event-driven workflow integrations under your complete ownership.
             </p>
 
             {/* Two Primary CTAs */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto">
+            <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto">
               <Button
                 href="/contact"
                 variant="primary"
@@ -83,12 +83,13 @@ export default function HeroSectionV2({
             </div>
 
             {/* Technical Stack Indicator */}
-            <div className="pt-2 text-xs font-mono text-white/40">
+            <div className="pt-2 text-xs font-mono text-white/40 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-violet-400/80" />
               <span>n8n · LangChain · Langflow · Python · REST APIs · MongoDB</span>
             </div>
           </div>
 
-          {/* ─── RIGHT COL: PORTRAIT, WORKFLOW & LIVE LAB (45% ON DESKTOP) ─── */}
+          {/* ─── RIGHT COL: SIGNATURE PROFILE COUNTERWEIGHT (42% ON DESKTOP) ─ */}
           <div className="lg:col-span-5 flex justify-center items-center w-full order-1 lg:order-2">
             <HeroSignature
               profileImage={profileImage}

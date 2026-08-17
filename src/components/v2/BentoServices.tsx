@@ -9,9 +9,12 @@ import {
   Layers,
   ArrowRight,
   ChevronRight,
+  CheckCircle2,
+  Cpu,
 } from "lucide-react";
 import type { Service, Project } from "@/lib/db/types";
 import SectionPlate from "@/components/SectionPlate";
+import Button from "@/components/Button";
 
 interface BentoServicesProps {
   services?: Service[];
@@ -69,7 +72,7 @@ const DEFAULT_CAPABILITIES: CapabilityItem[] = [
       "Custom vector retrieval pipelines indexing your private documents, product manuals, and internal documentation with semantic chunking and source citations.",
     problemSolved:
       "Prevents LLM hallucinations by grounding every answer strictly in your verified private knowledge base with exact page and document references.",
-    tools: ["MongoDB Vector Search", "Pinecone", "Embeddings"],
+    tools: ["MongoDB Vector Search", "Pinecone", "Embeddings", "FastAPI"],
     relatedProjectTitle: "RAG Knowledge Base Assistant",
     relatedProjectSlug: "rag-knowledge-base-assistant",
     icon: Brain,
@@ -94,8 +97,6 @@ export default function BentoServices({
   services = [],
   projects = [],
 }: BentoServicesProps) {
-  const [activeTab, setActiveTab] = useState("all");
-
   // Merge MongoDB services with capability items if available
   const capabilities = useMemo(() => {
     if (services.length === 0) return DEFAULT_CAPABILITIES;
@@ -124,15 +125,15 @@ export default function BentoServices({
     });
   }, [services, projects]);
 
-  const tabs = [
-    { id: "all", label: "All", count: capabilities.length },
-    ...capabilities.map((c) => ({ id: c.id, label: c.tabLabel })),
-  ];
+  const [selectedId, setSelectedId] = useState(capabilities[0]?.id || "automation");
 
-  const displayedCapabilities =
-    activeTab === "all"
-      ? capabilities
-      : capabilities.filter((c) => c.id === activeTab);
+  const tabs = capabilities.map((c) => ({
+    id: c.id,
+    label: c.tabLabel,
+  }));
+
+  const activeCap = capabilities.find((c) => c.id === selectedId) || capabilities[0];
+  const ActiveIcon = activeCap.icon;
 
   return (
     <div className="w-full space-y-6">
@@ -142,8 +143,8 @@ export default function BentoServices({
         title="CAPABILITIES"
         sectionId="services"
         tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
+        activeTab={selectedId}
+        onTabChange={setSelectedId}
         action={
           <Link
             href="/services"
@@ -155,69 +156,96 @@ export default function BentoServices({
         }
       />
 
-      {/* ─── DYNAMIC CAPABILITY ARCHITECTURE LIST ────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        {displayedCapabilities.map((cap) => {
-          const Icon = cap.icon;
-          return (
-            <div
-              key={cap.id}
-              className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 group"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-violet-600/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-mono text-white/50 uppercase tracking-wider">
-                      {cap.category}
-                    </span>
-                  </div>
-                </div>
-
-                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight group-hover:text-violet-200 transition-colors">
-                  {cap.title}
-                </h3>
-
-                <p className="mt-3 text-xs sm:text-sm text-white/70 leading-relaxed font-sans">
-                  {cap.explanation}
-                </p>
-
-                <div className="mt-4 pt-3 border-t border-white/5 space-y-1 font-mono text-xs">
-                  <span className="text-[10px] text-white/40 uppercase tracking-wider block">
-                    Problem Solved:
-                  </span>
-                  <p className="text-white/80 text-xs leading-relaxed">
-                    {cap.problemSolved}
-                  </p>
-                </div>
+      {/* ─── STRUCTURED ARCHITECTURAL BLUEPRINT DETAIL PANEL ───────────────── */}
+      <div className="rounded-2xl bg-[#0c0f18] border border-white/[0.08] p-6 sm:p-8 lg:p-10 shadow-2xl relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left / Main Details (7 cols) */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-violet-600/15 border border-violet-500/30 flex items-center justify-center text-violet-400">
+                <ActiveIcon className="w-5 h-5" />
               </div>
-
-              {/* Bottom: Connected Real Case Study & Production Tools */}
-              <div className="mt-6 pt-4 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono text-xs">
-                <div className="flex flex-wrap gap-1.5">
-                  {cap.tools.slice(0, 4).map((t) => (
-                    <span
-                      key={t}
-                      className="px-2 py-0.5 rounded bg-[#121622] border border-white/5 text-[10px] text-white/50"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                <Link
-                  href={`/projects/${cap.relatedProjectSlug}`}
-                  className="inline-flex items-center gap-1.5 text-violet-300 hover:text-white font-medium text-[11px] transition-colors shrink-0 group/link"
-                >
-                  <span>View related work</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform text-violet-400" />
-                </Link>
+              <div>
+                <span className="text-xs font-mono text-violet-400 font-semibold uppercase tracking-wider block">
+                  {activeCap.category}
+                </span>
+                <span className="text-[11px] font-mono text-white/40">
+                  Deterministic System Blueprint
+                </span>
               </div>
             </div>
-          );
-        })}
+
+            <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug">
+              {activeCap.title}
+            </h3>
+
+            <p className="text-sm sm:text-base text-white/70 leading-relaxed font-sans">
+              {activeCap.explanation}
+            </p>
+
+            <div className="rounded-xl bg-[#121622]/80 border border-white/[0.06] p-4 space-y-1.5 font-mono text-xs">
+              <div className="flex items-center gap-1.5 text-violet-300 font-semibold text-[11px] uppercase tracking-wider">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Primary Operational Outcome:</span>
+              </div>
+              <p className="text-white/80 text-xs sm:text-sm leading-relaxed">
+                {activeCap.problemSolved}
+              </p>
+            </div>
+
+            {/* Production Stack Tags */}
+            <div className="pt-2 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-mono text-white/40 mr-1">Stack:</span>
+              {activeCap.tools.map((tool) => (
+                <span
+                  key={tool}
+                  className="px-2.5 py-1 rounded-lg bg-[#141828] border border-white/[0.08] text-xs font-mono text-white/70"
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Right / Connected Case Study & Action Card (5 cols) */}
+          <div className="lg:col-span-5 rounded-xl bg-[#121622] border border-white/[0.08] p-6 flex flex-col justify-between space-y-6 self-stretch">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs font-mono text-white/40">
+                <Cpu className="w-3.5 h-3.5 text-violet-400" />
+                <span>Verified Case Study</span>
+              </div>
+
+              <h4 className="text-lg font-bold text-white tracking-tight">
+                {activeCap.relatedProjectTitle}
+              </h4>
+
+              <p className="text-xs text-white/60 leading-relaxed font-sans">
+                Explore the complete production implementation, architecture flowchart, node logic, and measurable business impact.
+              </p>
+            </div>
+
+            <div className="space-y-3 pt-4 border-t border-white/[0.06]">
+              <Button
+                href={`/projects/${activeCap.relatedProjectSlug}`}
+                variant="primary"
+                size="md"
+                className="w-full"
+                icon={<ArrowRight className="w-4 h-4" />}
+              >
+                <span>Read Case Study</span>
+              </Button>
+
+              <Button
+                href="/contact"
+                variant="secondary"
+                size="md"
+                className="w-full"
+              >
+                <span>Scope This Capability</span>
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
