@@ -25,13 +25,32 @@ export class AnthropicProviderAdapter implements AIProviderAdapter {
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      "x-api-key": apiKey,
+      "x-api-key": apiKey.trim(),
       "anthropic-version": "2023-06-01",
     };
 
-    const messages = req.messages
+    const rawFiltered = req.messages
       .filter((m) => m.role === "user" || m.role === "assistant")
-      .map((m) => ({ role: m.role, content: m.content }));
+      .map((m) => ({ role: m.role as "user" | "assistant", content: m.content.trim() }))
+      .filter((m) => m.content.length > 0);
+
+    // Merge consecutive messages with the same role and guarantee the conversation starts with user
+    const messages: { role: "user" | "assistant"; content: string }[] = [];
+    for (const m of rawFiltered) {
+      if (messages.length === 0 && m.role !== "user") {
+        messages.push({ role: "user", content: "Hello" });
+      }
+      const last = messages[messages.length - 1];
+      if (last && last.role === m.role) {
+        last.content += `\n\n${m.content}`;
+      } else {
+        messages.push({ role: m.role, content: m.content });
+      }
+    }
+
+    if (messages.length === 0) {
+      messages.push({ role: "user", content: "Hello" });
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), req.timeoutMs || 15000);
@@ -58,7 +77,7 @@ export class AnthropicProviderAdapter implements AIProviderAdapter {
           throw new Error("Invalid Anthropic API key (401 Unauthorized)");
         }
         if (res.status === 429) {
-          throw new Error("Anthropic rate limit reached (429)");
+          throw new Error("Anthropic rate limit reached or quota exhausted (429)");
         }
         throw new Error(`Anthropic API error (${res.status}): ${errorText.slice(0, 150)}`);
       }
@@ -113,7 +132,7 @@ export class AnthropicProviderAdapter implements AIProviderAdapter {
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      "x-api-key": apiKey,
+      "x-api-key": apiKey.trim(),
       "anthropic-version": "2023-06-01",
     };
 
@@ -144,6 +163,15 @@ export class AnthropicProviderAdapter implements AIProviderAdapter {
           ok: false,
           status: "invalid",
           message: "Invalid API key (401 Unauthorized)",
+          latencyMs,
+        };
+      }
+
+      if (res.status === 429) {
+        return {
+          ok: false,
+          status: "unavailable",
+          message: "Rate limit reached or quota exhausted (429)",
           latencyMs,
         };
       }

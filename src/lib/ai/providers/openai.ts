@@ -25,16 +25,39 @@ export class OpenAIProviderAdapter implements AIProviderAdapter {
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey.trim()}`,
     };
     if (req.organizationId) {
-      headers["OpenAI-Organization"] = req.organizationId;
+      headers["OpenAI-Organization"] = req.organizationId.trim();
     }
 
-    const messages = [
-      { role: "system", content: req.systemPrompt },
-      ...req.messages.map((m) => ({ role: m.role, content: m.content })),
-    ];
+    const isReasoningModel =
+      req.modelId?.startsWith("o1") ||
+      req.modelId?.startsWith("o3") ||
+      req.modelId?.includes("preview");
+
+    const messages = isReasoningModel
+      ? [
+          { role: "developer", content: req.systemPrompt },
+          ...req.messages.map((m) => ({ role: m.role, content: m.content })),
+        ]
+      : [
+          { role: "system", content: req.systemPrompt },
+          ...req.messages.map((m) => ({ role: m.role, content: m.content })),
+        ];
+
+    const bodyPayload: Record<string, unknown> = {
+      model: req.modelId || "gpt-4o-mini",
+      messages,
+    };
+
+    if (isReasoningModel) {
+      bodyPayload.max_completion_tokens = req.maxTokens ?? 1000;
+    } else {
+      bodyPayload.temperature = req.temperature ?? 0.2;
+      bodyPayload.top_p = req.topP ?? 0.95;
+      bodyPayload.max_tokens = req.maxTokens ?? 500;
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), req.timeoutMs || 15000);
@@ -43,13 +66,7 @@ export class OpenAIProviderAdapter implements AIProviderAdapter {
       const res = await fetch(endpoint, {
         method: "POST",
         headers,
-        body: JSON.stringify({
-          model: req.modelId || "gpt-4o-mini",
-          messages,
-          temperature: req.temperature ?? 0.2,
-          top_p: req.topP ?? 0.95,
-          max_tokens: req.maxTokens ?? 500,
-        }),
+        body: JSON.stringify(bodyPayload),
         signal: controller.signal,
       });
 
@@ -61,7 +78,7 @@ export class OpenAIProviderAdapter implements AIProviderAdapter {
           throw new Error("Invalid OpenAI API key (401 Unauthorized)");
         }
         if (res.status === 429) {
-          throw new Error("OpenAI rate limit reached (429)");
+          throw new Error("OpenAI rate limit reached or quota exceeded (429)");
         }
         throw new Error(`OpenAI API error (${res.status}): ${errorText.slice(0, 150)}`);
       }
@@ -116,10 +133,10 @@ export class OpenAIProviderAdapter implements AIProviderAdapter {
       : "https://api.openai.com/v1/models";
 
     const headers: Record<string, string> = {
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey.trim()}`,
     };
     if (credentials?.organizationId) {
-      headers["OpenAI-Organization"] = credentials.organizationId;
+      headers["OpenAI-Organization"] = credentials.organizationId.trim();
     }
 
     try {
@@ -144,6 +161,15 @@ export class OpenAIProviderAdapter implements AIProviderAdapter {
           ok: false,
           status: "invalid",
           message: "Invalid API key (401 Unauthorized)",
+          latencyMs,
+        };
+      }
+
+      if (res.status === 429) {
+        return {
+          ok: false,
+          status: "unavailable",
+          message: "Rate limit reached or quota exhausted (429)",
           latencyMs,
         };
       }

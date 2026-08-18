@@ -183,6 +183,51 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     onClose();
   };
 
+  const formatInlineText = (text: string): React.ReactNode[] => {
+    const tokenRegex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/g;
+    const parts = text.split(tokenRegex);
+
+    return parts.map((part, i) => {
+      if (!part) return null;
+
+      const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (linkMatch) {
+        const [, label, href] = linkMatch;
+        return (
+          <Link
+            key={i}
+            href={href}
+            onClick={onClose}
+            className="text-violet-400 hover:text-violet-300 underline decoration-violet-500/40 hover:decoration-violet-300 transition-colors font-medium"
+          >
+            {label}
+          </Link>
+        );
+      }
+
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return (
+          <strong key={i} className="font-semibold text-white">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+
+      if (part.startsWith("`") && part.endsWith("`")) {
+        return (
+          <code
+            key={i}
+            className="px-1.5 py-0.5 rounded bg-white/10 text-violet-300 font-mono text-[11px]"
+          >
+            {part.slice(1, -1)}
+          </code>
+        );
+      }
+
+      return part;
+    });
+  };
+
   const renderFormattedContent = (content: string) => {
     const parts = content.split("\n\n");
     return (
@@ -194,7 +239,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
               <ul key={i} className="list-disc list-inside space-y-1 pl-1 text-white/90">
                 {listItems.map((li, j) => (
                   <li key={j} className="leading-relaxed">
-                    {li.replace(/^[-*]\s+/, "")}
+                    {formatInlineText(li.replace(/^[-*]\s+/, ""))}
                   </li>
                 ))}
               </ul>
@@ -206,7 +251,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
               <ol key={i} className="list-decimal list-inside space-y-1 pl-1 text-white/90">
                 {listItems.map((li, j) => (
                   <li key={j} className="leading-relaxed">
-                    {li.replace(/^\d+\.\s+/, "")}
+                    {formatInlineText(li.replace(/^\d+\.\s+/, ""))}
                   </li>
                 ))}
               </ol>
@@ -214,7 +259,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
           }
           return (
             <p key={i} className="leading-relaxed text-white/90">
-              {p}
+              {formatInlineText(p)}
             </p>
           );
         })}

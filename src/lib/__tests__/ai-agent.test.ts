@@ -1,6 +1,9 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { retrievePortfolioContext } from "@/lib/ai/retrieval";
 import { generateAIResponse } from "@/lib/ai/provider";
+import { OpenAIProviderAdapter } from "@/lib/ai/providers/openai";
+import { AnthropicProviderAdapter } from "@/lib/ai/providers/anthropic";
+import { GoogleGeminiProviderAdapter } from "@/lib/ai/providers/google";
 
 describe("Arefin AI Portfolio Context Retrieval", () => {
   it("retrieves relevant RAG context and citations for RAG queries", async () => {
@@ -60,5 +63,101 @@ describe("Arefin AI Response Generation & Grounding", () => {
     });
 
     expect(res.reply.toLowerCase()).toContain("rag");
+  });
+});
+
+describe("AI Providers Deep Integration & Error Handling", () => {
+  it("executes OpenAIProviderAdapter with mock fetch and parses tokens", async () => {
+    const adapter = new OpenAIProviderAdapter();
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        choices: [{ message: { content: "Here is Arefin's AI agent architecture." } }],
+        usage: { prompt_tokens: 150, completion_tokens: 45, total_tokens: 195 },
+      }),
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const res = await adapter.generate({
+      apiKey: "sk-test-mock-key",
+      messages: [{ role: "user", content: "Explain your agent architecture" }],
+      systemPrompt: "You are Arefin AI",
+      modelId: "gpt-4o-mini",
+    });
+
+    expect(res.reply).toContain("Here is Arefin's AI agent architecture.");
+    expect(res.providerUsed).toBe("openai");
+    expect(res.tokens?.totalTokens).toBe(195);
+    vi.unstubAllGlobals();
+  });
+
+  it("executes AnthropicProviderAdapter with mock fetch and parses message response", async () => {
+    const adapter = new AnthropicProviderAdapter();
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        content: [{ type: "text", text: "Arefin builds n8n and LangChain workflows." }],
+        usage: { input_tokens: 120, output_tokens: 30 },
+      }),
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const res = await adapter.generate({
+      apiKey: "sk-ant-test-mock-key",
+      messages: [{ role: "user", content: "What tools do you use?" }],
+      systemPrompt: "You are Arefin AI",
+      modelId: "claude-3-5-haiku-20241022",
+    });
+
+    expect(res.reply).toContain("Arefin builds n8n and LangChain workflows.");
+    expect(res.providerUsed).toBe("anthropic");
+    expect(res.tokens?.promptTokens).toBe(120);
+    vi.unstubAllGlobals();
+  });
+
+  it("executes GoogleGeminiProviderAdapter with mock fetch and handles candidates format", async () => {
+    const adapter = new GoogleGeminiProviderAdapter();
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        candidates: [{ content: { parts: [{ text: "Gemini response for Arefin AI." }] } }],
+        usageMetadata: { promptTokenCount: 90, candidatesTokenCount: 25, totalTokenCount: 115 },
+      }),
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const res = await adapter.generate({
+      apiKey: "AIzaSyTestMockKey",
+      messages: [{ role: "user", content: "Hi" }],
+      systemPrompt: "You are Arefin AI",
+      modelId: "gemini-1.5-flash",
+    });
+
+    expect(res.reply).toContain("Gemini response for Arefin AI.");
+    expect(res.providerUsed).toBe("google");
+    expect(res.tokens?.totalTokens).toBe(115);
+    vi.unstubAllGlobals();
+  });
+
+  it("OpenAI healthCheck returns connected on successful 200 GET /models", async () => {
+    const adapter = new OpenAIProviderAdapter();
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const check = await adapter.healthCheck({ apiKey: "sk-test-mock-key" });
+    expect(check.ok).toBe(true);
+    expect(check.status).toBe("connected");
+    vi.unstubAllGlobals();
+  });
+
+  it("Anthropic healthCheck returns connected on successful 200 POST /messages", async () => {
+    const adapter = new AnthropicProviderAdapter();
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const check = await adapter.healthCheck({ apiKey: "sk-ant-test-mock-key" });
+    expect(check.ok).toBe(true);
+    expect(check.status).toBe("connected");
+    vi.unstubAllGlobals();
   });
 });
