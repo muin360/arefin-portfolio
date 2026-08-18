@@ -17,11 +17,22 @@ import {
   Workflow,
 } from "lucide-react";
 import Link from "next/link";
-import type { Project, WorkflowStep } from "@/lib/db/types";
+import type { Project, WorkflowStep, WorkflowStepType } from "@/lib/db/types";
 
 interface Props {
   initialProjects: Project[];
 }
+
+const STEP_TYPES: Array<{ value: WorkflowStepType; label: string }> = [
+  { value: "trigger", label: "Trigger (Webhook / Event)" },
+  { value: "input", label: "Data Input (Payload / Validation)" },
+  { value: "ai", label: "AI Reasoning (LLM / Embeddings)" },
+  { value: "agent", label: "Agent Router (Decision / Loop)" },
+  { value: "tool", label: "Tool / API (Connector / Action)" },
+  { value: "database", label: "Database / Vector (Persistence)" },
+  { value: "decision", label: "Decision Logic (Condition / Guard)" },
+  { value: "output", label: "Output / Handoff (Notification / Delivery)" },
+];
 
 const PROJECT_TYPES = [
   "Personal Automation Project",
@@ -244,8 +255,10 @@ export default function ProjectsManager({ initialProjects }: Props) {
     const nextIdx = (currentSteps.length + 1).toString().padStart(2, "0");
     const newStep: WorkflowStep = {
       step: nextIdx,
+      type: currentSteps.length === 0 ? "trigger" : "tool",
       name: "",
       desc: "",
+      tool: "",
     };
     setEditingProject({
       ...editingProject,
@@ -767,16 +780,16 @@ export default function ProjectsManager({ initialProjects }: Props) {
                 </div>
               )}
 
-              {/* TAB 3: WORKFLOW ARCHITECTURE */}
+              {/* TAB 3: WORKFLOW ARCHITECTURE & BUILD EXPLORER */}
               {activeTab === "workflow" && (
                 <div className="space-y-4 animate-in fade-in duration-100">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-xs font-mono uppercase text-violet-400 font-semibold tracking-wider">
-                        Workflow Steps (Trigger → Tool → Output)
+                        Workflow &amp; Build Explorer Steps
                       </h3>
                       <p className="text-xs text-[#6b7280]">
-                        Build the step-by-step technical architecture trace shown on the public case study page.
+                        Configure the interactive execution pipeline (Trigger → Data → AI → Agent → Tools → Database → Output) shown on the public project page.
                       </p>
                     </div>
                     <button
@@ -789,61 +802,130 @@ export default function ProjectsManager({ initialProjects }: Props) {
                     </button>
                   </div>
 
-                  <div className="space-y-3">
-                    {(editingProject.workflowSteps || []).map((st, i) => (
-                      <div
-                        key={i}
-                        className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] flex items-start gap-3"
+                  {(!editingProject.workflowSteps || editingProject.workflowSteps.length === 0) ? (
+                    <div className="p-8 rounded-2xl bg-[#141a29] border border-dashed border-[#1e2433] text-center space-y-2">
+                      <p className="text-xs text-[#9ca3af]">No workflow steps configured for this project.</p>
+                      <button
+                        type="button"
+                        onClick={handleAddStep}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold rounded-xl"
                       >
-                        <span className="w-6 h-6 rounded-lg bg-violet-600/20 text-violet-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-1">
-                          0{i + 1}
-                        </span>
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add First Execution Step</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {editingProject.workflowSteps.map((st, i) => (
+                        <div
+                          key={i}
+                          className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-3"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-lg bg-violet-600/20 text-violet-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
+                                0{i + 1}
+                              </span>
+                              <span className="text-xs font-mono text-[#9ca3af] uppercase font-semibold">
+                                Step Stage {i + 1}
+                              </span>
+                            </div>
 
-                        <div className="flex-1 space-y-2">
-                          <input
-                            type="text"
-                            value={st.name}
-                            onChange={(e) => handleStepChange(i, "name", e.target.value)}
-                            placeholder="Step name (e.g. AI Intent Processing)"
-                            className="w-full px-3 py-1.5 bg-[#0f111a] border border-[#1e2433] rounded-lg text-white text-xs font-semibold focus:outline-none focus:border-violet-500"
-                          />
-                          <textarea
-                            rows={2}
-                            value={st.desc}
-                            onChange={(e) => handleStepChange(i, "desc", e.target.value)}
-                            placeholder="Detailed description..."
-                            className="w-full px-3 py-1.5 bg-[#0f111a] border border-[#1e2433] rounded-lg text-[#9ca3af] text-xs focus:outline-none focus:border-violet-500 leading-relaxed"
-                          />
-                        </div>
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                disabled={i === 0}
+                                onClick={() => handleMoveStep(i, "up")}
+                                className="p-1 text-[#6b7280] hover:text-white bg-[#0f111a] hover:bg-[#1a202c] disabled:opacity-30 rounded transition-colors"
+                                title="Move Step Up"
+                              >
+                                <ChevronUp className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={i === (editingProject.workflowSteps?.length || 1) - 1}
+                                onClick={() => handleMoveStep(i, "down")}
+                                className="p-1 text-[#6b7280] hover:text-white bg-[#0f111a] hover:bg-[#1a202c] disabled:opacity-30 rounded transition-colors"
+                                title="Move Step Down"
+                              >
+                                <ChevronDown className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveStep(i)}
+                                className="p-1 text-[#6b7280] hover:text-rose-400 bg-[#0f111a] hover:bg-rose-500/10 rounded transition-colors ml-1"
+                                title="Delete Step"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
 
-                        <div className="flex flex-col gap-1 shrink-0">
-                          <button
-                            type="button"
-                            disabled={i === 0}
-                            onClick={() => handleMoveStep(i, "up")}
-                            className="p-1 text-[#6b7280] hover:text-white bg-[#0f111a] hover:bg-[#1a202c] disabled:opacity-30 rounded transition-colors"
-                          >
-                            <ChevronUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            disabled={i === (editingProject.workflowSteps?.length || 1) - 1}
-                            onClick={() => handleMoveStep(i, "down")}
-                            className="p-1 text-[#6b7280] hover:text-white bg-[#0f111a] hover:bg-[#1a202c] disabled:opacity-30 rounded transition-colors"
-                          >
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveStep(i)}
-                            className="p-1 text-[#6b7280] hover:text-rose-400 bg-[#0f111a] hover:bg-rose-500/10 rounded transition-colors mt-0.5"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                              <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                                Stage Type
+                              </label>
+                              <select
+                                value={st.type || "tool"}
+                                onChange={(e) =>
+                                  handleStepChange(i, "type", e.target.value as WorkflowStepType)
+                                }
+                                className="w-full px-3 py-1.5 bg-[#0f111a] border border-[#1e2433] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                              >
+                                {STEP_TYPES.map((t) => (
+                                  <option key={t.value} value={t.value}>
+                                    {t.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div className="sm:col-span-2">
+                              <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                                Step Name / Title *
+                              </label>
+                              <input
+                                type="text"
+                                value={st.name || st.title || ""}
+                                onChange={(e) => handleStepChange(i, "name", e.target.value)}
+                                placeholder="e.g. LLM Reasoning & Intent Classification"
+                                className="w-full px-3 py-1.5 bg-[#0f111a] border border-[#1e2433] rounded-lg text-white text-xs font-semibold focus:outline-none focus:border-violet-500"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                              <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                                Tool / Tech Used
+                              </label>
+                              <input
+                                type="text"
+                                value={st.tool || ""}
+                                onChange={(e) => handleStepChange(i, "tool", e.target.value)}
+                                placeholder="e.g. OpenAI GPT-4o, n8n, Pinecone"
+                                className="w-full px-3 py-1.5 bg-[#0f111a] border border-[#1e2433] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                              />
+                            </div>
+
+                            <div className="sm:col-span-2">
+                              <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1 font-semibold">
+                                Detailed Step Description
+                              </label>
+                              <input
+                                type="text"
+                                value={st.desc || st.description || ""}
+                                onChange={(e) => handleStepChange(i, "desc", e.target.value)}
+                                placeholder="Describe what happens during this architecture step..."
+                                className="w-full px-3 py-1.5 bg-[#0f111a] border border-[#1e2433] rounded-lg text-[#9ca3af] text-xs focus:outline-none focus:border-violet-500"
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 

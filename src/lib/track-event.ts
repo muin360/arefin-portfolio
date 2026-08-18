@@ -84,3 +84,29 @@ export function trackWhatsAppClick(label = "WhatsApp Contact") {
 export function trackEmailClick(label = "Email Contact") {
   void trackEvent("email_click", { label });
 }
+
+/** Helper for tracking Arefin AI assistant modal opening */
+export function trackAIOpen(label = "Ask Arefin AI") {
+  void trackEvent("ai_open", { label });
+}
+
+/** Helper for tracking user prompt in Arefin AI (stores only anonymized intent/length, no private chat) */
+export function trackAIPrompt(prompt: string) {
+  const sanitizedLabel = prompt.slice(0, 40).replace(/[^a-zA-Z0-9\s-_]/g, "").trim();
+  void trackEvent("ai_prompt", { label: sanitizedLabel || "prompt" });
+}
+
+/** Helper for tracking citation click in Arefin AI */
+export function trackAIProjectClick(projectSlug: string) {
+  void trackEvent("ai_project_click", { projectSlug, label: `Citation: ${projectSlug}` });
+}
+
+/** Helper for tracking interactive Build Explorer interaction */
+export function trackBuildExplorerOpen(projectSlug: string) {
+  void trackEvent("build_explorer_open", { projectSlug, label: `Build Explorer: ${projectSlug}` });
+}
+
+/** Helper for tracking node/step click in Build Explorer */
+export function trackBuildStepClick(stepType: string, projectSlug?: string) {
+  void trackEvent("build_step_click", { projectSlug, label: `Step: ${stepType}` });
+}

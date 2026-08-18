@@ -4356,6 +4356,27 @@ html {
   animation: hud-fade-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@keyframes signal-travel {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 4rem);
+    opacity: 0;
+  }
+}
+
+.animate-signal-travel {
+  animation: signal-travel 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -4388,6 +4409,7 @@ html {
   .animate-status-pulse,
   .animate-profile-activate,
   .animate-workflow-signal,
+  .animate-signal-travel,
   .v2-nav__drawer,
   .animate-hud-fade-in,
   .hud-spectrum-group line,

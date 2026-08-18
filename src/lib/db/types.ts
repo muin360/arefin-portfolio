@@ -1,7 +1,25 @@
+export type WorkflowStepType =
+  | "trigger"
+  | "input"
+  | "ai"
+  | "agent"
+  | "tool"
+  | "database"
+  | "decision"
+  | "output";
+
 export type WorkflowStep = {
-  step: string;
+  id?: string;
+  step?: string;
+  type?: WorkflowStepType;
   name: string;
+  title?: string;
   desc: string;
+  description?: string;
+  tool?: string;
+  order?: number;
+  serviceSlug?: string;
+  postSlug?: string;
 };
 
 export type IconName =
@@ -205,7 +223,12 @@ export type AnalyticsEventType =
   | "contact_submit"
   | "blog_view"
   | "scroll_50"
-  | "scroll_90";
+  | "scroll_90"
+  | "ai_open"
+  | "ai_prompt"
+  | "ai_project_click"
+  | "build_explorer_open"
+  | "build_step_click";
 
 export type AnalyticsEvent = {
   id: string;

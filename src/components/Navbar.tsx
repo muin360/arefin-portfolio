@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowRight, MessageSquare } from "lucide-react";
 import { whatsappHref, WA_MESSAGES } from "@/lib/cta";
+import ArefinAITrigger from "@/components/ai/ArefinAITrigger";
 
 const links = [
   { href: "/", label: "Home", num: "01" },
@@ -107,12 +108,14 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Right cluster: Availability + CTA + Mobile Hamburger */}
-        <div className="v2-nav__right flex items-center gap-3 shrink-0">
+        {/* Right cluster: Availability + AI + CTA + Mobile Hamburger */}
+        <div className="v2-nav__right flex items-center gap-2.5 sm:gap-3 shrink-0">
           <span className="v2-nav__pill hidden xl:inline-flex" aria-label="Available for projects">
             <span className="v2-nav__pill-dot" />
             <span className="v2-nav__pill-text">available · DHK</span>
           </span>
+
+          <ArefinAITrigger variant="compact" className="hidden sm:inline-flex" />
 
           <Link href="/contact" className="v2-nav__cta hidden sm:inline-flex">
             <span>Contact me</span>
@@ -182,7 +185,7 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Drawer footer with availability and quick contact CTA */}
+          {/* Drawer footer with availability, Ask AI button, and quick contact CTA */}
           <div className="pt-6 border-t border-white/[0.08] space-y-3">
             <div className="flex items-center justify-between text-xs font-mono text-white/50 px-1">
               <div className="flex items-center gap-2">
@@ -190,6 +193,10 @@ export default function Navbar() {
                 <span>Available for projects</span>
               </div>
               <span>Dhaka · GMT+6</span>
+            </div>
+
+            <div className="pt-1">
+              <ArefinAITrigger variant="button" className="w-full justify-center" />
             </div>
 
             <div className="grid grid-cols-2 gap-2 pt-1">

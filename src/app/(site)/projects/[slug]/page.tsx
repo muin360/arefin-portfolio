@@ -6,6 +6,7 @@ import { getProjects, getProjectBySlug, getServices } from "@/lib/db";
 import ProjectLightbox from "@/components/ProjectLightbox";
 import SectionPlate from "@/components/SectionPlate";
 import Button from "@/components/Button";
+import BuildExplorer from "@/components/BuildExplorer";
 import {
   Workflow,
   Layers,
@@ -276,35 +277,20 @@ export default async function ProjectDetailPage({
         </div>
       </section>
 
-      {/* ─── 03 WORKFLOW SYSTEM ARCHITECTURE ─────────────────────────────── */}
+      {/* ─── 03 WORKFLOW SYSTEM ARCHITECTURE / BUILD EXPLORER ───────────── */}
       <section className="py-16 sm:py-20 border-b border-white/[0.08]" aria-label="Workflow Architecture">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <SectionPlate
             index="02"
             title="EXECUTION PIPELINE"
-            meta="node-by-node execution flow"
+            meta="interactive node-by-node architecture trace"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {workflow.map((st) => (
-              <div
-                key={st.step}
-                className="p-5 rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 transition-colors space-y-2 group"
-              >
-                <div className="flex items-center justify-between font-mono text-xs">
-                  <span className="text-violet-400 font-bold uppercase tracking-wider">
-                    Step {st.step}
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-white group-hover:text-violet-200 transition-colors">
-                  {st.name}
-                </h4>
-                <p className="text-xs text-white/60 leading-relaxed font-sans">
-                  {st.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+          <BuildExplorer
+            workflowSteps={workflow}
+            projectTitle={project.title}
+            projectSlug={project.slug}
+          />
 
           {/* Workflow Diagram Image if available */}
           {project.workflowImage && (

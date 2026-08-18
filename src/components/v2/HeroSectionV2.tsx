@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Button from "@/components/Button";
 import HeroSignature from "./HeroSignature";
+import ArefinAITrigger from "@/components/ai/ArefinAITrigger";
 
 interface HeroSectionProps {
   availabilityNote?: string;
@@ -50,20 +51,25 @@ export default function HeroSectionV2({
 
           {/* ─── NARRATIVE & EDITORIAL HEADLINE (58% ON DESKTOP) ─────────────── */}
           <div className="lg:col-span-7 flex flex-col items-start space-y-6">
-            {/* Identity & Technical Role Metadata */}
-            <div className="space-y-1.5 font-mono text-xs select-none">
-              <div className="flex items-center gap-2 text-white/50">
-                <span className="font-bold tracking-widest text-violet-400 uppercase">
-                  {name}
-                </span>
-                <span>·</span>
-                <span className="text-[11px] tracking-wider uppercase">
-                  {role}
-                </span>
+            {/* Identity & Technical Role Metadata + Arefin AI Entry */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full font-mono text-xs select-none">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 text-white/50">
+                  <span className="font-bold tracking-widest text-violet-400 uppercase">
+                    {name}
+                  </span>
+                  <span>·</span>
+                  <span className="text-[11px] tracking-wider uppercase">
+                    {role}
+                  </span>
+                </div>
+                <p className="text-[11px] text-white/40">
+                  Dhaka · GMT+6 · {availabilityNote}
+                </p>
               </div>
-              <p className="text-[11px] text-white/40">
-                Dhaka · GMT+6 · {availabilityNote}
-              </p>
+
+              {/* Subtle Entry: Ask Arefin AI */}
+              <ArefinAITrigger variant="pill" />
             </div>
 
             {/* Core Editorial Headline */}

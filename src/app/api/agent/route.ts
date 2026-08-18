@@ -1,76 +1,145 @@
 import { NextRequest, NextResponse } from "next/server";
+import { retrievePortfolioContext } from "@/lib/ai/retrieval";
+import { generateAIResponse, type ChatMessage } from "@/lib/ai/provider";
+import { sanitizeString } from "@/lib/validators";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
-function getFallbackResponse(userMessage: string): string {
-  const query = userMessage.toLowerCase();
+// In-memory sliding window rate limiter
+interface RateLimitRecord {
+  timestamps: number[];
+}
+const ipRateLimits = new Map<string, RateLimitRecord>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 15; // 15 requests per minute per IP
 
-  if (query.includes("pricing") || query.includes("cost") || query.includes("rate") || query.includes("charge")) {
-    return "Projects are scoped based on the specific workflow requirements. We can explore your needs during a free 30-minute scoping conversation.";
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const record = ipRateLimits.get(ip) || { timestamps: [] };
+
+  // Filter timestamps within the current window
+  const validTimestamps = record.timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+
+  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    ipRateLimits.set(ip, { timestamps: validTimestamps });
+    return true;
   }
 
-  if (query.includes("stack") || query.includes("tech") || query.includes("tool") || query.includes("language") || query.includes("python")) {
-    return "Arefin specializes in n8n, Zapier, Langflow, LangChain, OpenAI & Claude APIs, vector search (Pinecone), webhooks, REST APIs, and Python/JavaScript fundamentals.";
-  }
+  validTimestamps.push(now);
+  ipRateLimits.set(ip, { timestamps: validTimestamps });
+  return false;
+}
 
-  if (query.includes("book") || query.includes("contact") || query.includes("call") || query.includes("hire") || query.includes("schedule")) {
-    return "You can get in touch directly via the contact form at /contact or via WhatsApp.";
-  }
-
-  if (query.includes("project") || query.includes("case study") || query.includes("portfolio") || query.includes("work")) {
-    return "Arefin has built practical projects including Email Triage Automation (n8n + OpenAI), Customer Support Q&A Bots (Langflow), and Market Research Multi-Agent systems. Check /projects for details.";
-  }
-
-  if (query.includes("who") || query.includes("arefin") || query.includes("about") || query.includes("experience")) {
-    return "Arefin Mueen is an AI Automation & AI Agent Developer based in Dhaka. He builds practical AI workflows, autonomous agents, RAG systems, and custom webhook integrations.";
-  }
-
-  return "I'm Arefin's AI assistant. I can answer questions about AI automation workflows, n8n integrations, tech stacks, and how to get in touch!";
+// Clean up stale rate limit entries periodically (every 5 minutes)
+if (typeof setInterval !== "undefined") {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [ip, record] of ipRateLimits.entries()) {
+      const valid = record.timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+      if (valid.length === 0) {
+        ipRateLimits.delete(ip);
+      } else {
+        ipRateLimits.set(ip, { timestamps: valid });
+      }
+    }
+  }, 5 * 60 * 1000).unref?.();
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { system, messages } = body ?? {};
+    // 1. Extract IP for rate limiting
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      "127.0.0.1";
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json({ reply: "Please provide a valid question." }, { status: 400 });
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        {
+          error: "Rate limit exceeded. Please wait a moment before asking another question.",
+          reply: "You've sent several queries in a short time. Please wait a minute before asking your next question.",
+          citations: [{ title: "Contact Directly", url: "/contact", type: "contact" }],
+        },
+        { status: 429 },
+      );
     }
 
-    const lastMessage = messages[messages.length - 1]?.content ?? "";
-
-    // If no API key configured, use our rich local knowledge fallback
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json({ reply: getFallbackResponse(lastMessage) });
+    // 2. Validate request payload
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Invalid request payload." },
+        { status: 400 },
+      );
     }
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-3-haiku-20240307",
-        max_tokens: 200,
-        system,
-        messages,
-      }),
+    const { messages } = body;
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return NextResponse.json(
+        { error: "Please provide a valid messages array." },
+        { status: 400 },
+      );
+    }
+
+    // Sanitize and normalize messages (max 10 recent messages)
+    const sanitizedMessages: ChatMessage[] = [];
+    const recentMessages = messages.slice(-10);
+
+    for (const m of recentMessages) {
+      if (typeof m !== "object" || !m) continue;
+      const role = m.role === "assistant" ? "assistant" : "user";
+      const rawContent = typeof m.content === "string" ? m.content : "";
+      const content = sanitizeString(rawContent, 600); // 600 chars limit per message
+      if (content.trim().length > 0) {
+        sanitizedMessages.push({ role, content });
+      }
+    }
+
+    if (sanitizedMessages.length === 0) {
+      return NextResponse.json(
+        { error: "No valid message content provided." },
+        { status: 400 },
+      );
+    }
+
+    const lastUserMessage =
+      [...sanitizedMessages].reverse().find((m) => m.role === "user")?.content || "";
+
+    if (!lastUserMessage) {
+      return NextResponse.json(
+        { error: "User message required." },
+        { status: 400 },
+      );
+    }
+
+    // 3. Retrieve relevant portfolio context from MongoDB
+    const { contextText, relevantCitations } = await retrievePortfolioContext(lastUserMessage);
+
+    // 4. Generate AI response using swappable provider or grounded fallback
+    const result = await generateAIResponse({
+      messages: sanitizedMessages,
+      contextText,
+      citations: relevantCitations,
     });
 
-    if (!response.ok) {
-      return NextResponse.json({ reply: getFallbackResponse(lastMessage) }, { status: 200 });
-    }
-
-    const data = await response.json();
-    const reply = data.content?.[0]?.text ?? getFallbackResponse(lastMessage);
-    return NextResponse.json({ reply });
-  } catch {
+    return NextResponse.json({
+      reply: result.reply,
+      citations: result.citations,
+      provider: result.providerUsed,
+    });
+  } catch (err) {
+    console.error("[API/agent] Error processing AI chat:", err);
     return NextResponse.json(
-      { reply: "I'm Arefin's AI assistant. Feel free to explore my portfolio at /projects or book a call at /book!" },
+      {
+        reply:
+          "I am Arefin AI. The assistant is temporarily recovering. Feel free to explore projects directly at /projects or reach out at /contact!",
+        citations: [
+          { title: "View Projects", url: "/projects", type: "project" },
+          { title: "Contact", url: "/contact", type: "contact" },
+        ],
+        error: "Internal error occurred",
+      },
       { status: 200 },
     );
   }
 }
-
