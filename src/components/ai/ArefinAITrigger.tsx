@@ -12,20 +12,27 @@ const ArefinAIPanel = dynamic(() => import("./ArefinAIPanel"), {
 interface ArefinAITriggerProps {
   variant?: "pill" | "button" | "compact";
   className?: string;
+  onTrigger?: () => void;
 }
 
 export default function ArefinAITrigger({
   variant = "pill",
   className = "",
+  onTrigger,
 }: ArefinAITriggerProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = () => {
+    onTrigger?.();
+    setIsOpen(true);
+  };
 
   return (
     <>
       {variant === "pill" && (
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpen}
           aria-label="Ask Arefin AI assistant"
           className={`group inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#121624] hover:bg-[#181e30] border border-white/10 hover:border-violet-500/40 text-white transition-all duration-200 shadow-sm hover:shadow-violet-950/20 text-xs font-mono select-none ${className}`}
         >
@@ -40,7 +47,7 @@ export default function ArefinAITrigger({
       {variant === "compact" && (
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpen}
           aria-label="Ask Arefin AI assistant"
           className={`group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-violet-600/15 border border-white/10 hover:border-violet-500/30 text-white/80 hover:text-white text-[11px] font-mono transition-colors ${className}`}
         >
@@ -52,7 +59,7 @@ export default function ArefinAITrigger({
       {variant === "button" && (
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpen}
           aria-label="Ask Arefin AI assistant"
           className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#121624] hover:bg-[#181e30] border border-violet-500/30 hover:border-violet-400/60 text-violet-200 hover:text-white text-xs font-mono font-semibold transition-all shadow-md active:scale-[0.98] ${className}`}
         >
@@ -61,9 +68,7 @@ export default function ArefinAITrigger({
         </button>
       )}
 
-      {isOpen && (
-        <ArefinAIPanel isOpen={isOpen} onClose={() => setIsOpen(false)} />
-      )}
+      {isOpen && <ArefinAIPanel isOpen={isOpen} onClose={() => setIsOpen(false)} />}
     </>
   );
 }

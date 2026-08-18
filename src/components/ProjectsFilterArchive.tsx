@@ -6,7 +6,7 @@ import Image from "next/image";
 import type { Project } from "@/lib/db/types";
 import SectionPlate from "@/components/SectionPlate";
 import Button from "@/components/Button";
-import { ArrowRight, Workflow } from "lucide-react";
+import { ArrowRight, Workflow, Search, X } from "lucide-react";
 
 interface Props {
   projects: Project[];
@@ -14,6 +14,7 @@ interface Props {
 
 export default function ProjectsFilterArchive({ projects }: Props) {
   const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { categories, displayedProjects } = useMemo(() => {
     const catMap = new Map<string, number>();
@@ -31,6 +32,8 @@ export default function ProjectsFilterArchive({ projects }: Props) {
     }));
 
     let result = projects;
+
+    // Filter by tab category
     if (filter === "featured") {
       result = projects.filter((p) => p.featured);
       if (result.length === 0) result = projects.slice(0, 3);
@@ -41,11 +44,23 @@ export default function ProjectsFilterArchive({ projects }: Props) {
       }
     }
 
+    // Filter by search query
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      result = result.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.summary.toLowerCase().includes(q) ||
+          (p.category && p.category.toLowerCase().includes(q)) ||
+          (p.stack && p.stack.some((s) => s.toLowerCase().includes(q))),
+      );
+    }
+
     return {
       categories: categoryList,
       displayedProjects: result,
     };
-  }, [projects, filter]);
+  }, [projects, filter, searchQuery]);
 
   const featuredCount = projects.filter((p) => p.featured).length;
 
@@ -60,7 +75,7 @@ export default function ProjectsFilterArchive({ projects }: Props) {
   const archive = displayedProjects.slice(3);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       {/* ─── WORK CONTROLLER PLATE ───────────────────────────────────────── */}
       <SectionPlate
         index="03"
@@ -71,9 +86,45 @@ export default function ProjectsFilterArchive({ projects }: Props) {
         meta={`${projects.length} verified builds`}
       />
 
+      {/* ─── SEARCH FILTER INPUT ─────────────────────────────────────────── */}
+      <div className="relative max-w-md">
+        <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search builds by stack (n8n, LangChain), title, or category..."
+          className="w-full pl-10 pr-10 py-2.5 bg-[#0c101d] border border-white/[0.08] rounded-xl text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-violet-500/50 transition-colors font-mono"
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/40 hover:text-white"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+
       {displayedProjects.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-[#0c0f18] border border-white/[0.08] text-white/50 font-mono text-xs">
-          No projects found in this category.
+        <div className="p-12 text-center rounded-2xl bg-[#0c0f18] border border-white/[0.08] space-y-3">
+          <Workflow className="w-10 h-10 text-violet-400/60 mx-auto" />
+          <p className="text-white/60 font-mono text-xs">
+            No projects matched your active filters.
+          </p>
+          {(filter !== "all" || searchQuery) && (
+            <button
+              type="button"
+              onClick={() => {
+                setFilter("all");
+                setSearchQuery("");
+              }}
+              className="px-4 py-2 bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/30 rounded-xl text-xs font-mono transition-colors"
+            >
+              Reset all filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-8">
@@ -81,7 +132,7 @@ export default function ProjectsFilterArchive({ projects }: Props) {
           {flagship && (
             <div className="group relative rounded-2xl bg-[#0c0f18] border border-white/[0.08] hover:border-violet-500/30 p-6 sm:p-10 transition-all overflow-hidden">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                {/* Media Container (16:9 cinematic priority) */}
+                {/* Media Container (16:9 priority) */}
                 <div className="lg:col-span-6 relative w-full h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden border border-white/10 bg-[#060810] shrink-0">
                   {flagship.coverImage ? (
                     <Image

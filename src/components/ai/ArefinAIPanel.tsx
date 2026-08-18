@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import {
-  Sparkles,
   X,
   Send,
   RefreshCw,
   Bot,
   User,
   ShieldCheck,
+  Copy,
+  Check,
+  Trash2,
+  ArrowDown,
 } from "lucide-react";
 import type { Citation } from "@/lib/ai/retrieval";
 import { trackAIOpen, trackAIPrompt, trackAIProjectClick } from "@/lib/track-event";
@@ -35,21 +38,24 @@ const SUGGESTED_PROMPTS = [
   "How can I contact or hire you?",
 ];
 
+const INITIAL_MESSAGE: MessageItem = {
+  id: "welcome",
+  role: "assistant",
+  content:
+    "Hello! I am **Arefin AI**, grounded in Arefin Mueen's verified portfolio. Ask me anything about his AI agent architectures, RAG systems, n8n automations, tech stack, or case studies.",
+  timestamp: "Just now",
+};
+
 export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
-  const [messages, setMessages] = useState<MessageItem[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      content:
-        "Hello! I am **Arefin AI**, grounded in Arefin Mueen's verified portfolio. Ask me anything about his AI agent architectures, RAG systems, n8n automations, tech stack, or case studies.",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    },
-  ]);
+  const [messages, setMessages] = useState<MessageItem[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Focus input and track open
@@ -66,10 +72,26 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     };
   }, [isOpen]);
 
-  // Scroll to bottom on new messages
-  useEffect(() => {
+  // Scroll to bottom helper
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+    setShowScrollBottom(false);
+  }, []);
+
+  // Detect user scrolling up
+  const handleScroll = useCallback(() => {
+    if (!chatContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+    const isUp = scrollHeight - scrollTop - clientHeight > 120;
+    setShowScrollBottom(isUp);
+  }, []);
+
+  // Scroll to bottom on new messages if not scrolled up
+  useEffect(() => {
+    if (!showScrollBottom) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, loading, showScrollBottom]);
 
   // Handle escape key
   useEffect(() => {
@@ -81,6 +103,21 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
+
+  const handleCopyMessage = (id: string, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleClearMessages = () => {
+    setMessages([
+      {
+        ...INITIAL_MESSAGE,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      },
+    ]);
+  };
 
   if (!isOpen) return null;
 
@@ -99,188 +136,153 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
-    const newHistory = [...messages, userMsg];
-    setMessages(newHistory);
+    const nextMessages = [...messages, userMsg];
+    setMessages(nextMessages);
     setLoading(true);
-
     trackAIPrompt(query);
 
     try {
-      const apiMessages = newHistory.map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
+      const payload = {
+        messages: nextMessages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        })),
+      };
 
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiMessages }),
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) {
-        if (res.status === 429) {
-          throw new Error("Rate limit exceeded. Please wait a moment before sending another message.");
-        }
-        throw new Error("Failed to get response from AI assistant.");
+      const data = await res.json();
+
+      if (!res.ok && res.status !== 200) {
+        throw new Error(data.error || "Failed to retrieve response");
       }
 
-      const data = await res.json();
       const assistantMsg: MessageItem = {
         id: `assistant_${Date.now()}`,
         role: "assistant",
-        content: data.reply || "I am here to help. What else would you like to know about Arefin's work?",
+        content: data.reply || "I am here to assist with Arefin's technical case studies and workflows.",
         citations: data.citations || [],
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "AI assistant is temporarily unavailable.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Network error. Please retry.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCitationClick = (citation: Citation) => {
-    trackAIProjectClick(citation.url);
+  const handleCitationClick = (c: Citation) => {
+    trackAIProjectClick(c.url);
     onClose();
   };
 
-  /** Simple lightweight markdown-to-JSX renderer for bold, code, bullet lists, and paragraphs */
   const renderFormattedContent = (content: string) => {
-    const lines = content.split("\n");
-    return lines.map((line, idx) => {
-      const trimmed = line.trim();
-      if (!trimmed) {
-        return <div key={idx} className="h-2" />;
-      }
-
-      // Bullet line
-      if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-        const itemText = trimmed.slice(2);
-        return (
-          <li key={idx} className="ml-4 list-disc text-white/80 my-0.5">
-            {renderInlineMarkdown(itemText)}
-          </li>
-        );
-      }
-
-      // Numbered list item
-      if (/^\d+\.\s/.test(trimmed)) {
-        const match = trimmed.match(/^(\d+\.)\s(.*)$/);
-        if (match) {
+    const parts = content.split("\n\n");
+    return (
+      <div className="space-y-2">
+        {parts.map((p, i) => {
+          if (p.startsWith("- ") || p.startsWith("* ")) {
+            const listItems = p.split("\n");
+            return (
+              <ul key={i} className="list-disc list-inside space-y-1 pl-1 text-white/90">
+                {listItems.map((li, j) => (
+                  <li key={j} className="leading-relaxed">
+                    {li.replace(/^[-*]\s+/, "")}
+                  </li>
+                ))}
+              </ul>
+            );
+          }
+          if (p.startsWith("1. ") || p.startsWith("2. ")) {
+            const listItems = p.split("\n");
+            return (
+              <ol key={i} className="list-decimal list-inside space-y-1 pl-1 text-white/90">
+                {listItems.map((li, j) => (
+                  <li key={j} className="leading-relaxed">
+                    {li.replace(/^\d+\.\s+/, "")}
+                  </li>
+                ))}
+              </ol>
+            );
+          }
           return (
-            <div key={idx} className="flex items-start gap-1.5 text-white/80 my-0.5">
-              <span className="font-mono text-violet-400 font-semibold">{match[1]}</span>
-              <span>{renderInlineMarkdown(match[2])}</span>
-            </div>
+            <p key={i} className="leading-relaxed text-white/90">
+              {p}
+            </p>
           );
-        }
-      }
-
-      return (
-        <p key={idx} className="my-1 leading-relaxed text-white/85">
-          {renderInlineMarkdown(line)}
-        </p>
-      );
-    });
+        })}
+      </div>
+    );
   };
-
-  function renderInlineMarkdown(text: string) {
-    // Split by bold (**text**) and code (`text`)
-    const parts: React.ReactNode[] = [];
-    let remaining = text;
-    let keyIdx = 0;
-
-    while (remaining.length > 0) {
-      // Check for **bold**
-      const boldMatch = remaining.match(/\*\*(.*?)\*\*/);
-      // Check for `code`
-      const codeMatch = remaining.match(/`(.*?)`/);
-
-      const boldIndex = boldMatch ? remaining.indexOf(boldMatch[0]) : -1;
-      const codeIndex = codeMatch ? remaining.indexOf(codeMatch[0]) : -1;
-
-      if (boldIndex === -1 && codeIndex === -1) {
-        parts.push(remaining);
-        break;
-      }
-
-      if (boldIndex !== -1 && (codeIndex === -1 || boldIndex < codeIndex)) {
-        if (boldIndex > 0) {
-          parts.push(remaining.slice(0, boldIndex));
-        }
-        parts.push(
-          <strong key={keyIdx++} className="font-bold text-white">
-            {boldMatch![1]}
-          </strong>,
-        );
-        remaining = remaining.slice(boldIndex + boldMatch![0].length);
-      } else if (codeIndex !== -1) {
-        if (codeIndex > 0) {
-          parts.push(remaining.slice(0, codeIndex));
-        }
-        parts.push(
-          <code
-            key={keyIdx++}
-            className="px-1.5 py-0.5 rounded bg-white/10 text-violet-300 font-mono text-[11px]"
-          >
-            {codeMatch![1]}
-          </code>,
-        );
-        remaining = remaining.slice(codeIndex + codeMatch![0].length);
-      }
-    }
-
-    return parts;
-  }
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-sm animate-fade-in"
       role="dialog"
       aria-modal="true"
-      aria-label="Arefin AI Technical Assistant"
+      aria-labelledby="ai-drawer-title"
     >
-      {/* Click outside backdrop */}
-      <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
-
-      {/* Modal / Slide-over container */}
-      <div className="relative w-full sm:max-w-2xl bg-[#0b0e17] border-t sm:border border-white/10 sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[90vh] sm:h-[680px] max-h-screen z-10 animate-in slide-in-from-bottom-6 duration-200">
-        {/* ─── HEADER ──────────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.08] bg-[#0f1320]/95 backdrop-blur-sm shrink-0">
+      <div
+        className="w-full max-w-lg h-full bg-[#090d16] border-l border-white/[0.08] shadow-2xl flex flex-col justify-between overflow-hidden relative animate-slide-left"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* ─── DRAWER HEADER ───────────────────────────────────────────────── */}
+        <div className="p-4 sm:p-5 border-b border-white/[0.08] bg-[#0c101d] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 shadow-md">
-              <Sparkles className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+              <Bot className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-white font-mono tracking-wider">
-                  AREFIN AI
-                </h2>
-                <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-mono text-emerald-400 font-semibold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <h3 id="ai-drawer-title" className="font-bold text-white text-sm sm:text-base">
+                  Arefin AI Assistant
+                </h3>
+                <span className="px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-[9px] font-mono text-emerald-400 font-bold">
                   GROUNDED
                 </span>
               </div>
-              <p className="text-[11px] text-white/50 font-sans">
-                Ask about my work, systems, and capabilities.
+              <p className="text-[11px] text-white/50 font-mono">
+                Verified portfolio intelligence &amp; architectures
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close Arefin AI assistant"
-            className="p-2 text-white/60 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] rounded-xl transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            {messages.length > 1 && (
+              <button
+                type="button"
+                onClick={handleClearMessages}
+                aria-label="Clear conversation history"
+                className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06] transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close AI Assistant"
+              className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/[0.06] transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        {/* ─── MESSAGES CHAT STREAM ────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar bg-gradient-to-b from-[#0b0e17] to-[#07090e]">
+        {/* ─── CHAT MESSAGES STREAM ────────────────────────────────────────── */}
+        <div
+          ref={chatContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar relative"
+        >
           {messages.map((msg) => {
             const isUser = msg.role === "user";
             return (
@@ -297,7 +299,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                 )}
 
                 <div
-                  className={`max-w-[85%] sm:max-w-[78%] rounded-2xl p-4 space-y-2.5 ${
+                  className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-4 space-y-2.5 relative group ${
                     isUser
                       ? "bg-violet-600 text-white rounded-tr-sm shadow-md"
                       : "bg-[#121624] border border-white/[0.08] text-white/90 rounded-tl-sm shadow-md"
@@ -331,8 +333,22 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-end text-[9px] font-mono opacity-40 pt-1">
+                  <div className="flex items-center justify-between text-[9px] font-mono opacity-50 pt-1 border-t border-white/[0.04]">
                     <span>{msg.timestamp}</span>
+
+                    {!isUser && (
+                      <button
+                        type="button"
+                        onClick={() => handleCopyMessage(msg.id, msg.content)}
+                        className="opacity-0 group-hover:opacity-100 hover:text-white transition-opacity flex items-center gap-1"
+                      >
+                        {copiedId === msg.id ? (
+                          <Check className="w-3 h-3 text-emerald-400" />
+                        ) : (
+                          <Copy className="w-3 h-3" />
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -345,7 +361,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
             );
           })}
 
-          {/* Thinking animation state */}
+          {/* Thinking State */}
           {loading && (
             <div className="flex gap-3 text-xs sm:text-sm justify-start">
               <div className="w-7 h-7 rounded-lg bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 shrink-0 mt-0.5">
@@ -362,7 +378,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                   style={{ animationDelay: "300ms" }}
                 />
                 <span className="font-mono text-[10px] text-white/40 ml-1.5">
-                  Retrieving portfolio knowledge...
+                  Retrieving verified portfolio knowledge...
                 </span>
               </div>
             </div>
@@ -385,6 +401,19 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
 
           <div ref={messagesEndRef} />
         </div>
+
+        {/* ─── FLOATING SCROLL-TO-BOTTOM BUTTON ─────────────────────────────── */}
+        {showScrollBottom && (
+          <button
+            type="button"
+            onClick={scrollToBottom}
+            aria-label="Scroll to bottom"
+            className="absolute bottom-24 right-6 p-2 rounded-full bg-violet-600 text-white shadow-xl hover:bg-violet-500 transition-all z-20 flex items-center gap-1.5 text-xs font-mono"
+          >
+            <ArrowDown className="w-3.5 h-3.5" />
+            <span className="text-[10px]">Latest</span>
+          </button>
+        )}
 
         {/* ─── SUGGESTED QUICK PROMPTS ─────────────────────────────────────── */}
         {messages.length <= 2 && (
@@ -423,7 +452,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
               placeholder="Ask about Arefin's projects, RAG systems, tools, or scoping..."
               maxLength={400}
               disabled={loading}
-              className="flex-1 px-4 py-2.5 bg-[#07090e] border border-white/15 rounded-xl text-white text-xs sm:text-sm placeholder:text-white/30 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400 transition-all"
+              className="flex-1 px-4 py-2.5 bg-[#07090e] border border-white/15 rounded-xl text-white text-xs sm:text-sm placeholder:text-white/30 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400 transition-all font-sans"
             />
 
             <button
@@ -439,7 +468,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
           <div className="flex items-center justify-between text-[10px] font-mono text-white/40 px-1">
             <div className="flex items-center gap-1">
               <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              <span>Grounded in verified portfolio records. Zero hallucinations.</span>
+              <span>Grounded in verified portfolio records.</span>
             </div>
             <span>{input.length}/400</span>
           </div>

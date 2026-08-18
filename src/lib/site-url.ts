@@ -6,6 +6,10 @@ export const SITE_URL: string = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://tensorstudio.vercel.app"
 ).replace(/\/+$/, "");
 
+export function getBaseUrl(): string {
+  return SITE_URL;
+}
+
 // Google Search Console "HTML tag" verification — content value of the meta
 // tag Google issued for this property. Can be overridden via the
 // NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION env var if you ever need a new token.

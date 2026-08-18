@@ -12,6 +12,7 @@ interface AdminHeaderProps {
 
 const BREADCRUMB_MAP: Record<string, string> = {
   admin: "Dashboard",
+  ai: "AI Control Center",
   analytics: "Analytics",
   projects: "Projects",
   posts: "Journal",

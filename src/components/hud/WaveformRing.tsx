@@ -25,20 +25,28 @@ export default function WaveformRing({ isHovered = false }: WaveformRingProps) {
 
   return (
     <g
-      className={`hud-waveform-layer pointer-events-none transition-opacity duration-500 ${
-        isHovered ? "opacity-40" : "opacity-25"
+      className={`hud-waveform-layer pointer-events-none transition-all duration-500 ${
+        isHovered ? "opacity-55 scale-[1.02]" : "opacity-30"
       }`}
+      style={{ transformOrigin: "150px 150px" }}
     >
+      <defs>
+        <linearGradient id="waveformGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8" />
+          <stop offset="50%" stopColor="#a78bfa" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#34d399" stopOpacity="0.8" />
+        </linearGradient>
+      </defs>
       <path
         d={waveformPath}
         fill="none"
-        stroke="#a78bfa"
-        strokeWidth="0.9"
-        strokeDasharray="18 8 40 12 8 8 60 14"
+        stroke="url(#waveformGrad)"
+        strokeWidth={isHovered ? "1.2" : "0.9"}
+        strokeDasharray="22 8 45 14 10 10 70 18"
         strokeLinecap="round"
         style={{
           transformOrigin: "150px 150px",
-          animation: `hud-waveform-spin ${isHovered ? "20s" : "28s"} ease-in-out infinite`,
+          animation: `hud-waveform-spin ${isHovered ? "18s" : "26s"} ease-in-out infinite`,
         }}
       />
     </g>

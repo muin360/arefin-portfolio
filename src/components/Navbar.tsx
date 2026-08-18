@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ArrowRight, MessageSquare } from "lucide-react";
 import { whatsappHref, WA_MESSAGES } from "@/lib/cta";
 import ArefinAITrigger from "@/components/ai/ArefinAITrigger";
@@ -22,6 +22,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   // Scroll listener for progress hairline & glass density
   useEffect(() => {
@@ -72,163 +73,193 @@ export default function Navbar() {
   };
 
   return (
-    <header
-      className={`v2-nav ${scrolled ? "is-scrolled" : ""}`}
-      data-scrolled={scrolled ? "1" : "0"}
-    >
-      <div className="v2-nav__inner">
-        {/* Wordmark (Brand) */}
-        <Link
-          href="/"
-          className="v2-nav__brand group shrink-0 flex items-center gap-2 sm:gap-2.5"
-          onClick={() => setOpen(false)}
-          aria-label="Arefin Mueen — Home"
-        >
-          <span className="v2-nav__diamond shrink-0" aria-hidden="true">
-            ◈
-          </span>
-          <span className="v2-nav__wordmark whitespace-nowrap text-xs sm:text-sm font-bold tracking-[0.2em] sm:tracking-[0.28em] text-white">
-            AREFIN MUEEN
-            <span className="v2-nav__wordmark-sub hidden sm:inline-block">automation · DHK</span>
-          </span>
-        </Link>
+    <>
+      {/* ─── ACCESSIBLE SKIP LINK ────────────────────────────────────────── */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-violet-600 focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-mono focus:text-xs focus:outline-none"
+      >
+        Skip to main content
+      </a>
 
-        {/* Center navigation links (Desktop only: lg+) */}
-        <nav className="v2-nav__center hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8" aria-label="Primary">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`v2-nav__link text-[11px] font-mono tracking-wider transition-colors ${
-                isActive(link.href) ? "is-active text-white" : "text-white/60 hover:text-white"
-              }`}
+      <header
+        className={`v2-nav ${scrolled ? "is-scrolled" : ""}`}
+        data-scrolled={scrolled ? "1" : "0"}
+      >
+        {/* Scroll Hairline Progress Indicator */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-violet-500 via-indigo-400 to-sky-400 opacity-80 pointer-events-none transition-all"
+          style={{ width: `${progress * 100}%` }}
+          aria-hidden="true"
+        />
+
+        <div className="v2-nav__inner">
+          {/* Wordmark (Brand) */}
+          <Link
+            href="/"
+            className="v2-nav__brand group shrink-0 flex items-center gap-2 sm:gap-2.5"
+            onClick={() => setOpen(false)}
+            aria-label="Arefin Mueen — Home"
+          >
+            <span
+              className="v2-nav__diamond shrink-0 group-hover:rotate-45 group-hover:text-violet-300 transition-transform duration-300"
+              aria-hidden="true"
             >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Right cluster: Availability + AI + CTA + Mobile Hamburger */}
-        <div className="v2-nav__right flex items-center gap-2.5 sm:gap-3 shrink-0">
-          <span className="v2-nav__pill hidden xl:inline-flex" aria-label="Available for projects">
-            <span className="v2-nav__pill-dot" />
-            <span className="v2-nav__pill-text">available · DHK</span>
-          </span>
-
-          <ArefinAITrigger variant="compact" className="hidden sm:inline-flex" />
-
-          <Link href="/contact" className="v2-nav__cta hidden sm:inline-flex">
-            <span>Contact me</span>
-            <ArrowRight className="w-3 h-3" aria-hidden="true" />
+              ◈
+            </span>
+            <span className="v2-nav__wordmark whitespace-nowrap text-xs sm:text-sm font-bold tracking-[0.2em] sm:tracking-[0.28em] text-white">
+              AREFIN MUEEN
+              <span className="v2-nav__wordmark-sub hidden sm:inline-block">automation · DHK</span>
+            </span>
           </Link>
 
-          {/* Mobile hamburger button */}
-          <button
-            type="button"
-            aria-label={open ? "Close menu" : "Open navigation menu"}
-            aria-expanded={open}
-            className="v2-nav__burger lg:hidden flex items-center justify-center p-2 rounded-lg text-white/80 hover:text-white transition-colors"
-            onClick={() => setOpen((v) => !v)}
+          {/* Center navigation links (Desktop only: lg+) */}
+          <nav
+            className="v2-nav__center hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8"
+            aria-label="Primary"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              {open ? (
-                <path
-                  d="M6 6l12 12M18 6L6 18"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              ) : (
-                <path
-                  d="M4 8h16M4 16h16"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile drawer (Starts directly below navbar, does NOT cover navbar) */}
-      {open && (
-        <div
-          className="v2-nav__drawer lg:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile navigation"
-        >
-          <div className="flex flex-col space-y-1">
             {links.map((link) => {
               const active = isActive(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-base font-bold tracking-tight transition-colors ${
-                    active
-                      ? "bg-violet-600/15 text-violet-300 border border-violet-500/25"
-                      : "text-white/80 hover:text-white hover:bg-white/[0.04]"
+                  aria-current={active ? "page" : undefined}
+                  className={`v2-nav__link text-[11px] font-mono tracking-wider transition-colors relative py-1 ${
+                    active ? "is-active text-white font-bold" : "text-white/60 hover:text-white"
                   }`}
-                  onClick={() => setOpen(false)}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs text-violet-400 font-normal">
-                      {link.num}
-                    </span>
-                    <span>{link.label}</span>
-                  </div>
-                  {active && <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />}
+                  {link.label}
+                  {active && (
+                    <span
+                      className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-violet-400 to-indigo-400 rounded-full"
+                      aria-hidden="true"
+                    />
+                  )}
                 </Link>
               );
             })}
+          </nav>
+
+          {/* Right cluster: Availability + AI + CTA + Mobile Hamburger */}
+          <div className="v2-nav__right flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <span
+              className="v2-nav__pill hidden xl:inline-flex"
+              aria-label="Available for projects"
+            >
+              <span className="v2-nav__pill-dot" />
+              <span className="v2-nav__pill-text">available · DHK</span>
+            </span>
+
+            <ArefinAITrigger variant="compact" className="hidden sm:inline-flex" />
+
+            <Link href="/contact" className="v2-nav__cta hidden sm:inline-flex">
+              <span>Contact me</span>
+              <ArrowRight className="w-3 h-3" aria-hidden="true" />
+            </Link>
+
+            {/* Mobile hamburger button */}
+            <button
+              type="button"
+              aria-label={open ? "Close menu" : "Open navigation menu"}
+              aria-expanded={open}
+              aria-controls="mobile-nav-drawer"
+              className="v2-nav__burger lg:hidden flex items-center justify-center p-2 rounded-lg text-white/80 hover:text-white transition-colors"
+              onClick={() => setOpen((v) => !v)}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                {open ? (
+                  <path
+                    d="M6 6l12 12M18 6L6 18"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                ) : (
+                  <path
+                    d="M4 8h16M4 16h16"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                )}
+              </svg>
+            </button>
           </div>
+        </div>
 
-          {/* Drawer footer with availability, Ask AI button, and quick contact CTA */}
-          <div className="pt-6 border-t border-white/[0.08] space-y-3">
-            <div className="flex items-center justify-between text-xs font-mono text-white/50 px-1">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Available for projects</span>
+        {/* ─── FULL MOBILE NAVIGATION DRAWER (< lg) ──────────────────────── */}
+        {open && (
+          <div
+            id="mobile-nav-drawer"
+            ref={drawerRef}
+            className="fixed inset-x-0 top-[var(--nav-height)] bottom-0 z-40 bg-[#07090e]/98 backdrop-blur-xl border-t border-white/[0.08] flex flex-col justify-between p-6 overflow-y-auto custom-scrollbar animate-fade-in lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation"
+          >
+            <div className="space-y-6">
+              {/* Quick AI Trigger Banner inside Mobile Drawer */}
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-violet-600/20 via-indigo-600/10 to-transparent border border-violet-500/30 flex items-center justify-between">
+                <div>
+                  <span className="font-mono text-[10px] text-violet-300 uppercase tracking-wider block">
+                    Embedded AI
+                  </span>
+                  <span className="text-xs font-semibold text-white">Ask Arefin AI</span>
+                </div>
+                <ArefinAITrigger
+                  variant="pill"
+                  onTrigger={() => setOpen(false)}
+                />
               </div>
-              <span>Dhaka · GMT+6</span>
+
+              {/* Navigation Links Grid */}
+              <nav className="space-y-1.5" aria-label="Mobile Navigation">
+                {links.map((link) => {
+                  const active = isActive(link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center justify-between py-3 px-4 rounded-xl text-sm font-mono tracking-wide transition-all ${
+                        active
+                          ? "bg-violet-600/20 text-white font-bold border border-violet-500/30"
+                          : "text-white/70 hover:text-white hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      <span className="text-xs font-sans font-semibold">{link.label}</span>
+                      <span className="text-[10px] text-white/40 font-mono">{link.num}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
             </div>
 
-            <div className="pt-1">
-              <ArefinAITrigger variant="button" className="w-full justify-center" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-1">
+            {/* Bottom Actions */}
+            <div className="pt-6 border-t border-white/[0.08] space-y-3">
               <Link
                 href="/contact"
-                className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-mono text-xs font-semibold tracking-wider uppercase transition-colors"
                 onClick={() => setOpen(false)}
+                className="w-full py-3 px-4 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-mono font-semibold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-violet-600/30 transition-colors"
               >
-                <span>Contact</span>
+                <span>Start a Project</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
+
               <a
                 href={whatsappHref(WA_MESSAGES.generic)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#121622] border border-white/10 hover:border-emerald-500/30 text-white font-mono text-xs font-semibold tracking-wider uppercase transition-colors"
-                onClick={() => setOpen(false)}
+                className="w-full py-2.5 px-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 text-xs font-mono flex items-center justify-center gap-2 transition-colors"
               >
                 <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-                <span>WhatsApp</span>
+                <span>WhatsApp Direct</span>
               </a>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Scroll indicator hairline at the bottom edge */}
-      <div
-        className="v2-nav__progress"
-        style={{ transform: `scaleX(${progress})` }}
-        aria-hidden="true"
-      />
-    </header>
+        )}
+      </header>
+    </>
   );
 }
