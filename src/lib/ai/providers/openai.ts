@@ -10,7 +10,11 @@ export class OpenAIProviderAdapter implements AIProviderAdapter {
 
   async generate(req: AIProviderRequest): Promise<AIProviderResponse> {
     const startTime = Date.now();
-    const apiKey = req.apiKey || process.env.OPENAI_API_KEY;
+    const apiKey =
+      req.apiKey ||
+      process.env.OPENAI_API_KEY ||
+      process.env.OPENAI_KEY ||
+      process.env.OPENAI_API_TOKEN;
     if (!apiKey) {
       throw new Error("OpenAI API key not configured");
     }
@@ -94,7 +98,11 @@ export class OpenAIProviderAdapter implements AIProviderAdapter {
     organizationId?: string;
   }): Promise<ProviderHealthCheckResult> {
     const startTime = Date.now();
-    const apiKey = credentials?.apiKey || process.env.OPENAI_API_KEY;
+    const apiKey =
+      credentials?.apiKey ||
+      process.env.OPENAI_API_KEY ||
+      process.env.OPENAI_KEY ||
+      process.env.OPENAI_API_TOKEN;
     if (!apiKey) {
       return {
         ok: false,

@@ -10,7 +10,11 @@ export class GoogleGeminiProviderAdapter implements AIProviderAdapter {
 
   async generate(req: AIProviderRequest): Promise<AIProviderResponse> {
     const startTime = Date.now();
-    const apiKey = req.apiKey || process.env.GEMINI_API_KEY;
+    const apiKey =
+      req.apiKey ||
+      process.env.GEMINI_API_KEY ||
+      process.env.GOOGLE_API_KEY ||
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY;
     if (!apiKey) {
       throw new Error("Google Gemini API key not configured");
     }
@@ -90,7 +94,11 @@ export class GoogleGeminiProviderAdapter implements AIProviderAdapter {
     baseUrl?: string;
   }): Promise<ProviderHealthCheckResult> {
     const startTime = Date.now();
-    const apiKey = credentials?.apiKey || process.env.GEMINI_API_KEY;
+    const apiKey =
+      credentials?.apiKey ||
+      process.env.GEMINI_API_KEY ||
+      process.env.GOOGLE_API_KEY ||
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY;
     if (!apiKey) {
       return {
         ok: false,

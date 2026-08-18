@@ -66,10 +66,20 @@ export async function resolveProviderCredentials(
 
   // Fallback to environment variables
   if (provider === "openai") {
-    return { apiKey: process.env.OPENAI_API_KEY };
+    return {
+      apiKey:
+        process.env.OPENAI_API_KEY ||
+        process.env.OPENAI_KEY ||
+        process.env.OPENAI_API_TOKEN,
+    };
   }
   if (provider === "anthropic") {
-    return { apiKey: process.env.ANTHROPIC_API_KEY };
+    return {
+      apiKey:
+        process.env.ANTHROPIC_API_KEY ||
+        process.env.CLAUDE_API_KEY ||
+        process.env.ANTHROPIC_KEY,
+    };
   }
   if (provider === "google") {
     return {

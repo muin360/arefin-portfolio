@@ -10,7 +10,11 @@ export class AnthropicProviderAdapter implements AIProviderAdapter {
 
   async generate(req: AIProviderRequest): Promise<AIProviderResponse> {
     const startTime = Date.now();
-    const apiKey = req.apiKey || process.env.ANTHROPIC_API_KEY;
+    const apiKey =
+      req.apiKey ||
+      process.env.ANTHROPIC_API_KEY ||
+      process.env.CLAUDE_API_KEY ||
+      process.env.ANTHROPIC_KEY;
     if (!apiKey) {
       throw new Error("Anthropic API key not configured");
     }
@@ -90,7 +94,11 @@ export class AnthropicProviderAdapter implements AIProviderAdapter {
     baseUrl?: string;
   }): Promise<ProviderHealthCheckResult> {
     const startTime = Date.now();
-    const apiKey = credentials?.apiKey || process.env.ANTHROPIC_API_KEY;
+    const apiKey =
+      credentials?.apiKey ||
+      process.env.ANTHROPIC_API_KEY ||
+      process.env.CLAUDE_API_KEY ||
+      process.env.ANTHROPIC_KEY;
     if (!apiKey) {
       return {
         ok: false,
