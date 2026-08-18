@@ -23,7 +23,7 @@ interface Props {
 const CATEGORIES = ["Notes", "AI Automation", "AI Agents", "Architecture", "Engineering", "Tutorials"];
 
 export default function PostsManager({ initialPosts }: Props) {
-  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
+  const [posts, setPosts] = useState<BlogPost[]>(initialPosts || []);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [editingPost, setEditingPost] = useState<Partial<BlogPost> | null>(null);
@@ -39,11 +39,11 @@ export default function PostsManager({ initialPosts }: Props) {
   };
 
   const filtered = useMemo(() => {
-    return posts.filter((p) => {
+    return (posts || []).filter((p) => {
       const matchSearch =
-        p.title.toLowerCase().includes(search.toLowerCase()) ||
-        p.category.toLowerCase().includes(search.toLowerCase()) ||
-        p.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
+        (p.title || "").toLowerCase().includes(search.toLowerCase()) ||
+        (p.category || "").toLowerCase().includes(search.toLowerCase()) ||
+        (p.tags || []).some((t) => t.toLowerCase().includes(search.toLowerCase()));
       const matchCat = categoryFilter === "all" || p.category === categoryFilter;
       return matchSearch && matchCat;
     });

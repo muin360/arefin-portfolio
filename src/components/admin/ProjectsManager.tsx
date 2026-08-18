@@ -58,7 +58,7 @@ const CATEGORIES = [
 ];
 
 export default function ProjectsManager({ initialProjects }: Props) {
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<Project[]>(initialProjects || []);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft" | "featured">("all");
@@ -82,12 +82,13 @@ export default function ProjectsManager({ initialProjects }: Props) {
   };
 
   const filtered = useMemo(() => {
-    return projects.filter((p) => {
+    return (projects || []).filter((p) => {
       const matchSearch =
-        p.title.toLowerCase().includes(search.toLowerCase()) ||
-        p.category.toLowerCase().includes(search.toLowerCase()) ||
-        p.slug.toLowerCase().includes(search.toLowerCase()) ||
-        p.stack.some((s) => s.toLowerCase().includes(search.toLowerCase()));
+        (p.title || "").toLowerCase().includes(search.toLowerCase()) ||
+        (p.category || "").toLowerCase().includes(search.toLowerCase()) ||
+        (p.slug || "").toLowerCase().includes(search.toLowerCase()) ||
+        (p.stack || []).some((s) => s.toLowerCase().includes(search.toLowerCase())) ||
+        (p.integrations || []).some((i) => i.toLowerCase().includes(search.toLowerCase()));
 
       const matchCat = categoryFilter === "all" || p.category === categoryFilter;
       const matchStatus =

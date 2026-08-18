@@ -11,7 +11,7 @@ interface Props {
 const ICONS: IconName[] = ["brain", "workflow", "terminal", "chart", "agent", "layers", "zap", "compass"];
 
 export default function SkillsManager({ initialSkills }: Props) {
-  const [skills, setSkills] = useState<SkillCategory[]>(initialSkills);
+  const [skills, setSkills] = useState<SkillCategory[]>(initialSkills || []);
   const [editingSkill, setEditingSkill] = useState<Partial<SkillCategory> | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);

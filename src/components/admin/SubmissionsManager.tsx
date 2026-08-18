@@ -32,9 +32,9 @@ const TAB_LABELS: Record<FilterTab, string> = {
 };
 
 export default function SubmissionsManager({ initialSubmissions }: Props) {
-  const [submissions, setSubmissions] = useState<ContactSubmission[]>(initialSubmissions);
+  const [submissions, setSubmissions] = useState<ContactSubmission[]>(initialSubmissions || []);
   const [activeSub, setActiveSub] = useState<ContactSubmission | null>(
-    initialSubmissions.find((s) => s.status === "unread") ?? initialSubmissions[0] ?? null,
+    (initialSubmissions || []).find((s) => s.status === "unread") ?? (initialSubmissions || [])[0] ?? null,
   );
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
   const [search, setSearch] = useState("");

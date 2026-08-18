@@ -26,7 +26,7 @@ const ICONS: IconName[] = [
 ];
 
 export default function ServicesManager({ initialServices }: Props) {
-  const [services, setServices] = useState<Service[]>(initialServices);
+  const [services, setServices] = useState<Service[]>(initialServices || []);
   const [editingService, setEditingService] = useState<Partial<Service> | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);

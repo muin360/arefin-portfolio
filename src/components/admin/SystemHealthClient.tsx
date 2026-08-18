@@ -11,12 +11,14 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  Bot,
 } from "lucide-react";
 
 interface HealthData {
   mongodb: { status: string; dbName: string; latencyMs?: number; collectionsCount?: number };
   auth: { status: string; githubOAuth: string; googleOAuth: string };
   email: { status: string };
+  ai?: { status: string; activeProvider: string; activeModel: string; configuredProvidersCount: number };
   site: { url: string; status: string };
   checkedAt: string;
 }
@@ -138,39 +140,58 @@ export default function SystemHealthClient() {
 
   if (error || !data) {
     return (
-      <div className="p-12 rounded-3xl bg-[#0f111a] border border-[#1e2433] text-center shadow-lg">
-        <XCircle className="w-10 h-10 text-red-400 mx-auto mb-3" />
-        <p className="text-base text-white font-bold">Diagnostic Check Failed</p>
-        <p className="text-xs text-[#6b7280] mt-1 font-mono">Could not connect to health telemetry endpoint.</p>
+      <div className="p-8 rounded-2xl bg-[#0f111a] border border-red-500/20 text-center space-y-4 max-w-xl mx-auto">
+        <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto text-red-400">
+          <XCircle className="w-6 h-6" />
+        </div>
+        <div>
+          <h2 className="text-base font-bold text-white">Diagnostics Failed</h2>
+          <p className="text-xs text-[#6b7280] mt-1">
+            Could not retrieve backend telemetry from the internal health endpoint.
+          </p>
+        </div>
         <button
+          type="button"
           onClick={load}
-          className="mt-5 px-5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-violet-600/20"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-semibold transition-all"
         >
-          Retry Diagnostics
+          <RefreshCw className="w-3.5 h-3.5" />
+          Retry Connection
         </button>
       </div>
     );
   }
 
+  const allHealthy =
+    data.mongodb.status === "connected" &&
+    data.auth.status === "ready" &&
+    data.site.status === "live";
+
   return (
     <div className="space-y-6 max-w-[1360px] mx-auto">
-      {/* Header */}
+      {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0f111a] p-6 rounded-3xl border border-[#1e2433] shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-              OPERATIONAL STATUS
+            <span
+              className={`text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full border font-bold ${
+                allHealthy
+                  ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+                  : "text-amber-400 bg-amber-500/10 border-amber-500/20"
+              }`}
+            >
+              {allHealthy ? "ALL SYSTEMS OPERATIONAL" : "DEGRADED TELEMETRY DETECTED"}
             </span>
             <span className="text-[#4b5563]">·</span>
             <span className="text-xs text-[#6b7280] font-mono">
-              Last checked {new Date(data.checkedAt).toLocaleTimeString()}
+              Live Probe: {new Date(data.checkedAt).toLocaleTimeString()}
             </span>
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight mt-1">
-            System Health &amp; Runtime Diagnostics
+            System Diagnostics &amp; Health
           </h1>
           <p className="text-xs text-[#9ca3af] mt-0.5">
-            Monitor real-time database connection latency, security secrets, and cloud infrastructure
+            Real-time telemetry probing MongoDB latency, auth sessions, AI engine, and APIs
           </p>
         </div>
 
@@ -218,6 +239,31 @@ export default function SystemHealthClient() {
                 Check MongoDB Atlas network access IP whitelist and connection string.
               </p>
             )
+          }
+        />
+
+        <ServiceCard
+          icon={Bot}
+          name="Arefin AI Provider Engine"
+          status={data.ai?.status || "connected"}
+          details={
+            <div className="text-xs text-[#6b7280] space-y-1 font-mono">
+              <p>
+                Active Engine:{" "}
+                <span className="text-violet-400 uppercase font-bold">
+                  {data.ai?.activeProvider || "local_grounded"}
+                </span>
+              </p>
+              <p>
+                Model ID: <span className="text-[#9ca3af]">{data.ai?.activeModel || "local-grounded-v1"}</span>
+              </p>
+              <p>
+                Encrypted Keys Stored:{" "}
+                <span className="text-emerald-400 font-bold">
+                  {data.ai?.configuredProvidersCount ?? 0} providers
+                </span>
+              </p>
+            </div>
           }
         />
 
@@ -271,6 +317,7 @@ export default function SystemHealthClient() {
           {[
             { key: "MONGODB_URI", label: "MongoDB Atlas Connection String", ok: data.mongodb.status !== "not_configured" },
             { key: "AUTH_SECRET", label: "NextAuth Session Encryption Key", ok: data.auth.status !== "missing_secret" },
+            { key: "AI_SECRETS_ENCRYPTION_KEY", label: "AES-256-GCM Master Key for Stored Provider Secrets", ok: true },
             { key: "NEXT_PUBLIC_SITE_URL", label: "Public Canonical Domain", ok: true },
             { key: "ADMIN_PASSWORD / ADMIN_SECRET", label: "Passcode Authentication Credentials", ok: true },
             { key: "RESEND_API_KEY", label: "Resend Email Dispatch API", ok: data.email.status === "configured" },
@@ -279,25 +326,18 @@ export default function SystemHealthClient() {
               key={env.key}
               className="flex items-center justify-between p-3 rounded-xl bg-[#141a29]/60 border border-[#1e2433] text-xs"
             >
-              <div className="flex items-center gap-3">
-                {env.ok ? (
-                  <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                ) : (
-                  <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                )}
-                <div>
-                  <code className="text-white font-mono font-semibold">{env.key}</code>
-                  <p className="text-[11px] text-[#6b7280]">{env.label}</p>
-                </div>
+              <div>
+                <code className="font-mono text-violet-300 font-semibold">{env.key}</code>
+                <p className="text-[#6b7280] text-[11px] mt-0.5">{env.label}</p>
               </div>
               <span
-                className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                className={`font-mono text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
                   env.ok
-                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                    : "bg-[#1e2433] text-[#6b7280]"
+                    ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+                    : "text-amber-400 bg-amber-500/10 border-amber-500/20"
                 }`}
               >
-                {env.ok ? "Configured" : "Not Set"}
+                {env.ok ? "Ready" : "Optional / Not Set"}
               </span>
             </div>
           ))}
