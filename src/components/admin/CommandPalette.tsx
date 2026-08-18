@@ -19,6 +19,7 @@ import {
   ExternalLink,
   LogOut,
   Command,
+  Bot,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -149,6 +150,21 @@ export default function CommandPalette() {
         category: "System",
         icon: Settings,
         action: () => router.push("/admin/settings"),
+      },
+      {
+        id: "nav-ai",
+        label: "AI Control Center & Provider Engine",
+        category: "System",
+        icon: Bot,
+        shortcut: "A I",
+        action: () => router.push("/admin/ai"),
+      },
+      {
+        id: "act-ai-playground",
+        label: "Open AI Playground & Brain Test",
+        category: "Quick Action",
+        icon: Bot,
+        action: () => router.push("/admin/ai#playground"),
       },
       {
         id: "nav-health",

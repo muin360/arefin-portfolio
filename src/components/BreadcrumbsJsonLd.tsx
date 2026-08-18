@@ -1,10 +1,9 @@
 import Script from "next/script";
 import { SITE_URL } from "@/lib/site-url";
+import { safeJsonLd } from "@/lib/json-ld";
 
 type Crumb = { label: string; href: string };
 
-// Emits BreadcrumbList JSON-LD only — no visible UI. Useful when the design
-// doesn't have room for a visual breadcrumb but you still want the SEO benefit.
 export default function BreadcrumbsJsonLd({
   items,
   id,
@@ -24,8 +23,10 @@ export default function BreadcrumbsJsonLd({
   };
 
   return (
-    <Script id={`bc-${id}`} type="application/ld+json">
-      {JSON.stringify(jsonLd)}
-    </Script>
+    <Script
+      id={`bc-${id}`}
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
+    />
   );
 }
