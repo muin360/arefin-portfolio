@@ -1,6 +1,8 @@
 import { ObjectId, type Filter } from "mongodb";
 import { getCollection, ensureIndexes } from "@/lib/mongodb";
 import { INITIAL_DATABASE } from "./seed-data";
+import { DEFAULT_AI_CONFIG } from "@/lib/ai/defaults";
+import { encryptSecret, computeConfigHash } from "@/lib/ai/secrets";
 import type {
   Project,
   BlogPost,
@@ -9,6 +11,11 @@ import type {
   AboutData,
   SiteSettings,
   ContactSubmission,
+  AIConfig,
+  AIProviderCredential,
+  AIConfigVersion,
+  AIUsageMetric,
+  AIAuditLog,
 } from "./types";
 
 // Helper to normalize MongoDB document to Application entity format
@@ -1050,6 +1057,585 @@ export async function deleteContactSubmission(id: string): Promise<boolean> {
   } catch (err) {
     console.error("MongoDB deleteContactSubmission error:", err);
     throw new Error("Database unavailable. Your changes were not saved.");
+  }
+}
+
+// ─── AI CONTROL CENTER DATABASE OPERATIONS ───────────────────────────────
+
+export async function getAIConfig(status: "active" | "draft" = "active"): Promise<AIConfig> {
+  const cacheKey = `ai_config_${status}`;
+  const cached = getFromCache<AIConfig>(cacheKey);
+  if (cached) return cached;
+
+  const col = await getCollection<AIConfig>("ai_config");
+  if (!col) {
+    const list = memoryFallback.aiConfig || [];
+    const found = list.find((c: AIConfig) => c.status === status);
+    if (found) return found;
+    return { ...DEFAULT_AI_CONFIG, status };
+  }
+
+  try {
+    const doc = await col.findOne({ status } as Filter<AIConfig>);
+    if (!doc) {
+      if (status === "draft") {
+        // Fallback draft to active config
+        const active = await getAIConfig("active");
+        return { ...active, status: "draft" };
+      }
+      // Initialize active config
+      const initial: AIConfig = {
+        ...DEFAULT_AI_CONFIG,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      await col.insertOne(initial as unknown as AIConfig);
+      setInCache(cacheKey, initial);
+      return initial;
+    }
+    const result = normalizeDoc<AIConfig>(doc) as AIConfig;
+    setInCache(cacheKey, result);
+    return result;
+  } catch (err) {
+    console.error("MongoDB getAIConfig error:", err);
+    return { ...DEFAULT_AI_CONFIG, status };
+  }
+}
+
+export async function saveDraftAIConfig(
+  updates: Partial<AIConfig>,
+  updatedBy = "admin",
+): Promise<AIConfig> {
+  invalidateCache("ai_config");
+  const col = await getCollection<AIConfig>("ai_config");
+  const now = new Date().toISOString();
+
+  const currentActive = await getAIConfig("active");
+  const currentDraft = await getAIConfig("draft");
+
+  const baseConfig = currentDraft || currentActive || DEFAULT_AI_CONFIG;
+  const merged: AIConfig = {
+    ...baseConfig,
+    ...updates,
+    brain: { ...baseConfig.brain, ...(updates.brain || {}) },
+    model: { ...baseConfig.model, ...(updates.model || {}) },
+    knowledge: {
+      ...baseConfig.knowledge,
+      ...(updates.knowledge || {}),
+      enabledCollections: {
+        ...baseConfig.knowledge?.enabledCollections,
+        ...(updates.knowledge?.enabledCollections || {}),
+      },
+    },
+    safety: { ...baseConfig.safety, ...(updates.safety || {}) },
+    limits: { ...baseConfig.limits, ...(updates.limits || {}) },
+    status: "draft",
+    updatedAt: now,
+    updatedBy,
+  };
+  merged.promptHash = computeConfigHash(merged.brain);
+
+  if (!col) {
+    if (isTestEnv) {
+      memoryFallback.aiConfig = (memoryFallback.aiConfig || []).filter((c: AIConfig) => c.status !== "draft");
+      memoryFallback.aiConfig.push(merged);
+      return merged;
+    }
+    handleMutationDbUnavailable();
+  }
+
+  try {
+    const { _id, id: _cleanId, ...cleanDoc } = merged as unknown as {
+      _id?: unknown;
+      id?: unknown;
+      [key: string]: unknown;
+    };
+    void _id;
+    void _cleanId;
+
+    await col.updateOne(
+      { status: "draft" } as Filter<AIConfig>,
+      { $set: cleanDoc },
+      { upsert: true },
+    );
+    const updated = await col.findOne({ status: "draft" } as Filter<AIConfig>);
+    return normalizeDoc<AIConfig>(updated) || merged;
+  } catch (err) {
+    console.error("MongoDB saveDraftAIConfig error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
+}
+
+export async function activateAIConfig(
+  updatedBy = "admin",
+  changeSummary = "Configuration activated",
+): Promise<{ activeConfig: AIConfig; version: AIConfigVersion }> {
+  invalidateCache("ai_config");
+  const configCol = await getCollection<AIConfig>("ai_config");
+  const versionCol = await getCollection<AIConfigVersion>("ai_config_versions");
+  const now = new Date().toISOString();
+
+  const draft = await getAIConfig("draft");
+  const active = await getAIConfig("active");
+  const configToActivate = draft || active || DEFAULT_AI_CONFIG;
+
+  // Compute next version number
+  let nextVersion = (active?.versionNumber || 0) + 1;
+  if (versionCol) {
+    try {
+      const latest = await versionCol.findOne({}, { sort: { versionNumber: -1 } });
+      if (latest && latest.versionNumber >= nextVersion) {
+        nextVersion = latest.versionNumber + 1;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  const activeConfig: AIConfig = {
+    ...configToActivate,
+    status: "active",
+    versionNumber: nextVersion,
+    promptHash: computeConfigHash(configToActivate.brain),
+    updatedAt: now,
+    updatedBy,
+  };
+
+  const versionSnapshot: AIConfigVersion = {
+    versionNumber: nextVersion,
+    status: "active",
+    promptHash: activeConfig.promptHash || "hash",
+    config: JSON.parse(JSON.stringify(activeConfig)),
+    changeSummary,
+    createdAt: now,
+    createdBy: updatedBy,
+  };
+
+  if (!configCol || !versionCol) {
+    if (isTestEnv) {
+      memoryFallback.aiConfig = (memoryFallback.aiConfig || []).filter((c: AIConfig) => c.status !== "active");
+      memoryFallback.aiConfig.push(activeConfig);
+      memoryFallback.aiVersions = memoryFallback.aiVersions || [];
+      memoryFallback.aiVersions.unshift(versionSnapshot);
+      return { activeConfig, version: versionSnapshot };
+    }
+    handleMutationDbUnavailable();
+  }
+
+  try {
+    // 1. Upsert active configuration
+    const { _id, id: _cleanId, ...cleanActive } = activeConfig as unknown as {
+      _id?: unknown;
+      id?: unknown;
+      [key: string]: unknown;
+    };
+    void _id;
+    void _cleanId;
+
+    await configCol.updateOne(
+      { status: "active" } as Filter<AIConfig>,
+      { $set: cleanActive },
+      { upsert: true },
+    );
+
+    // 2. Mark previous versions archived
+    await versionCol.updateMany(
+      { status: "active" } as Filter<AIConfigVersion>,
+      { $set: { status: "archived" } },
+    );
+
+    // 3. Insert new version
+    await versionCol.insertOne(versionSnapshot as unknown as AIConfigVersion);
+
+    // 4. Record audit log
+    await logAIAudit({
+      action: "config_activated",
+      actor: updatedBy,
+      target: `v${nextVersion}`,
+      metadata: {
+        provider: activeConfig.model.provider,
+        modelId: activeConfig.model.modelId,
+        changeSummary,
+      },
+    });
+
+    return { activeConfig, version: versionSnapshot };
+  } catch (err) {
+    console.error("MongoDB activateAIConfig error:", err);
+    throw new Error("Database unavailable. Your changes were not saved.");
+  }
+}
+
+export async function getAIVersions(limit = 20): Promise<AIConfigVersion[]> {
+  const col = await getCollection<AIConfigVersion>("ai_config_versions");
+  if (!col) {
+    return (memoryFallback.aiVersions || []).slice(0, limit);
+  }
+
+  try {
+    const docs = await col.find({}).sort({ versionNumber: -1 }).limit(limit).toArray();
+    return normalizeDocs<AIConfigVersion>(docs);
+  } catch (err) {
+    console.error("MongoDB getAIVersions error:", err);
+    return [];
+  }
+}
+
+export async function restoreAIVersion(
+  versionNumber: number,
+  updatedBy = "admin",
+  activateNow = false,
+): Promise<AIConfig> {
+  invalidateCache("ai_config");
+  const versionCol = await getCollection<AIConfigVersion>("ai_config_versions");
+  if (!versionCol) {
+    if (isTestEnv) {
+      const v = (memoryFallback.aiVersions || []).find((x: AIConfigVersion) => x.versionNumber === versionNumber);
+      if (!v) throw new Error("Version not found");
+      if (activateNow) {
+        return (await activateAIConfig(updatedBy, `Restored v${versionNumber}`)).activeConfig;
+      }
+      return saveDraftAIConfig(v.config, updatedBy);
+    }
+    handleMutationDbUnavailable();
+  }
+
+  try {
+    const doc = await versionCol.findOne({ versionNumber });
+    if (!doc) throw new Error(`Version v${versionNumber} not found`);
+
+    const versionDoc = normalizeDoc<AIConfigVersion>(doc)!;
+    if (activateNow) {
+      const { activeConfig } = await activateAIConfig(
+        updatedBy,
+        `Restored from version v${versionNumber}`,
+      );
+      return activeConfig;
+    } else {
+      return saveDraftAIConfig(versionDoc.config, updatedBy);
+    }
+  } catch (err) {
+    console.error("MongoDB restoreAIVersion error:", err);
+    throw new Error("Database unavailable. Could not restore version.");
+  }
+}
+
+// ─── AI PROVIDER CREDENTIALS ──────────────────────────────────────────────
+
+export async function getAIProviderCredentials(): Promise<AIProviderCredential[]> {
+  const col = await getCollection<AIProviderCredential>("ai_provider_credentials");
+  if (!col) {
+    return memoryFallback.aiCredentials || [];
+  }
+
+  try {
+    const docs = await col.find({}).toArray();
+    return normalizeDocs<AIProviderCredential>(docs);
+  } catch (err) {
+    console.error("MongoDB getAIProviderCredentials error:", err);
+    return [];
+  }
+}
+
+export async function getAIProviderCredential(
+  provider: "openai" | "anthropic" | "google",
+): Promise<AIProviderCredential | null> {
+  const col = await getCollection<AIProviderCredential>("ai_provider_credentials");
+  if (!col) {
+    const found = (memoryFallback.aiCredentials || []).find(
+      (c: AIProviderCredential) => c.provider === provider,
+    );
+    return found || null;
+  }
+
+  try {
+    const doc = await col.findOne({ provider });
+    return normalizeDoc<AIProviderCredential>(doc);
+  } catch (err) {
+    console.error("MongoDB getAIProviderCredential error:", err);
+    return null;
+  }
+}
+
+export async function saveAIProviderCredential(input: {
+  provider: "openai" | "anthropic" | "google";
+  secret: string;
+  baseUrl?: string;
+  organizationId?: string;
+  actor?: string;
+}): Promise<AIProviderCredential> {
+  const col = await getCollection<AIProviderCredential>("ai_provider_credentials");
+  const now = new Date().toISOString();
+
+  const encrypted = await encryptSecret(input.secret);
+  const credentialDoc: AIProviderCredential = {
+    provider: input.provider,
+    encryptedSecret: encrypted.encryptedSecret,
+    iv: encrypted.iv,
+    authTag: encrypted.authTag,
+    keyFingerprint: encrypted.keyFingerprint,
+    baseUrl: input.baseUrl?.trim() || undefined,
+    organizationId: input.organizationId?.trim() || undefined,
+    status: "connected",
+    lastRotatedAt: now,
+    updatedAt: now,
+  };
+
+  if (!col) {
+    if (isTestEnv) {
+      memoryFallback.aiCredentials = (memoryFallback.aiCredentials || []).filter(
+        (c: AIProviderCredential) => c.provider !== input.provider,
+      );
+      memoryFallback.aiCredentials.push(credentialDoc);
+      return credentialDoc;
+    }
+    handleMutationDbUnavailable();
+  }
+
+  try {
+    const { _id, id: _cleanId, ...cleanUpdates } = credentialDoc as unknown as {
+      _id?: unknown;
+      id?: unknown;
+      [key: string]: unknown;
+    };
+    void _id;
+    void _cleanId;
+
+    await col.updateOne(
+      { provider: input.provider },
+      { $set: cleanUpdates },
+      { upsert: true },
+    );
+
+    await logAIAudit({
+      action: "secret_rotated",
+      actor: input.actor || "admin",
+      target: input.provider,
+      metadata: {
+        fingerprint: encrypted.keyFingerprint,
+      },
+    });
+
+    const updated = await col.findOne({ provider: input.provider });
+    return normalizeDoc<AIProviderCredential>(updated) || credentialDoc;
+  } catch (err) {
+    console.error("MongoDB saveAIProviderCredential error:", err);
+    throw new Error("Database unavailable. Could not save provider credentials.");
+  }
+}
+
+export async function disableAIProviderCredential(
+  provider: "openai" | "anthropic" | "google",
+  actor = "admin",
+): Promise<boolean> {
+  const col = await getCollection<AIProviderCredential>("ai_provider_credentials");
+  if (!col) {
+    if (isTestEnv) {
+      const idx = (memoryFallback.aiCredentials || []).findIndex(
+        (c: AIProviderCredential) => c.provider === provider,
+      );
+      if (idx !== -1) {
+        memoryFallback.aiCredentials[idx].status = "unavailable";
+        return true;
+      }
+      return false;
+    }
+    handleMutationDbUnavailable();
+  }
+
+  try {
+    const res = await col.updateOne(
+      { provider },
+      { $set: { status: "unavailable", updatedAt: new Date().toISOString() } },
+    );
+
+    await logAIAudit({
+      action: "secret_disabled",
+      actor,
+      target: provider,
+    });
+
+    return res.matchedCount > 0;
+  } catch (err) {
+    console.error("MongoDB disableAIProviderCredential error:", err);
+    return false;
+  }
+}
+
+export async function updateAIProviderStatus(
+  provider: "openai" | "anthropic" | "google",
+  status: "connected" | "invalid" | "unavailable" | "not_configured",
+  lastError?: string,
+): Promise<void> {
+  const col = await getCollection<AIProviderCredential>("ai_provider_credentials");
+  const now = new Date().toISOString();
+  if (!col) return;
+
+  try {
+    await col.updateOne(
+      { provider },
+      {
+        $set: {
+          status,
+          lastError: lastError || undefined,
+          lastTestedAt: now,
+          updatedAt: now,
+        },
+      },
+    );
+  } catch (err) {
+    console.error("MongoDB updateAIProviderStatus error:", err);
+  }
+}
+
+// ─── AI USAGE & LOGS ──────────────────────────────────────────────────────
+
+export async function logAIUsage(metric: Omit<AIUsageMetric, "id" | "timestamp">): Promise<void> {
+  const col = await getCollection<AIUsageMetric>("ai_usage");
+  const doc: AIUsageMetric = {
+    ...metric,
+    timestamp: new Date().toISOString(),
+  };
+
+  if (!col) {
+    if (isTestEnv) {
+      memoryFallback.aiUsage = memoryFallback.aiUsage || [];
+      memoryFallback.aiUsage.push(doc);
+    }
+    return;
+  }
+
+  try {
+    await col.insertOne(doc as unknown as AIUsageMetric);
+  } catch (err) {
+    console.error("MongoDB logAIUsage error:", err);
+  }
+}
+
+export async function getAIUsageStats(days = 7): Promise<{
+  totalRequests: number;
+  successCount: number;
+  errorCount: number;
+  avgLatencyMs: number;
+  providerBreakdown: Record<string, number>;
+  requestsToday: number;
+}> {
+  const col = await getCollection<AIUsageMetric>("ai_usage");
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  const startOfToday = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+
+  if (!col) {
+    const list: AIUsageMetric[] = (memoryFallback.aiUsage || []).filter(
+      (m: AIUsageMetric) => m.timestamp >= since,
+    );
+    const success = list.filter((m) => m.status === "success").length;
+    const error = list.filter((m) => m.status === "error").length;
+    const today = list.filter((m) => m.timestamp >= startOfToday).length;
+    const avgLatency = list.length > 0
+      ? Math.round(list.reduce((acc, m) => acc + (m.latencyMs || 0), 0) / list.length)
+      : 0;
+
+    const breakdown: Record<string, number> = {};
+    for (const m of list) {
+      breakdown[m.provider] = (breakdown[m.provider] || 0) + 1;
+    }
+
+    return {
+      totalRequests: list.length,
+      successCount: success,
+      errorCount: error,
+      avgLatencyMs: avgLatency,
+      providerBreakdown: breakdown,
+      requestsToday: today,
+    };
+  }
+
+  try {
+    const docs = await col.find({ timestamp: { $gte: since } }).toArray();
+    const success = docs.filter((m) => m.status === "success").length;
+    const error = docs.filter((m) => m.status === "error").length;
+    const today = docs.filter((m) => m.timestamp >= startOfToday).length;
+    const avgLatency = docs.length > 0
+      ? Math.round(docs.reduce((acc, m) => acc + (m.latencyMs || 0), 0) / docs.length)
+      : 0;
+
+    const breakdown: Record<string, number> = {};
+    for (const m of docs) {
+      breakdown[m.provider] = (breakdown[m.provider] || 0) + 1;
+    }
+
+    return {
+      totalRequests: docs.length,
+      successCount: success,
+      errorCount: error,
+      avgLatencyMs: avgLatency,
+      providerBreakdown: breakdown,
+      requestsToday: today,
+    };
+  } catch (err) {
+    console.error("MongoDB getAIUsageStats error:", err);
+    return {
+      totalRequests: 0,
+      successCount: 0,
+      errorCount: 0,
+      avgLatencyMs: 0,
+      providerBreakdown: {},
+      requestsToday: 0,
+    };
+  }
+}
+
+export async function getAILogs(limit = 50): Promise<AIUsageMetric[]> {
+  const col = await getCollection<AIUsageMetric>("ai_usage");
+  if (!col) {
+    return (memoryFallback.aiUsage || []).slice(-limit).reverse();
+  }
+
+  try {
+    const docs = await col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
+    return normalizeDocs<AIUsageMetric>(docs);
+  } catch (err) {
+    console.error("MongoDB getAILogs error:", err);
+    return [];
+  }
+}
+
+// ─── AI AUDIT LOGS ────────────────────────────────────────────────────────
+
+export async function logAIAudit(log: Omit<AIAuditLog, "id" | "timestamp">): Promise<void> {
+  const col = await getCollection<AIAuditLog>("ai_audit_logs");
+  const doc: AIAuditLog = {
+    ...log,
+    timestamp: new Date().toISOString(),
+  };
+
+  if (!col) {
+    if (isTestEnv) {
+      memoryFallback.aiAuditLogs = memoryFallback.aiAuditLogs || [];
+      memoryFallback.aiAuditLogs.push(doc);
+    }
+    return;
+  }
+
+  try {
+    await col.insertOne(doc as unknown as AIAuditLog);
+  } catch (err) {
+    console.error("MongoDB logAIAudit error:", err);
+  }
+}
+
+export async function getAIAuditLogs(limit = 50): Promise<AIAuditLog[]> {
+  const col = await getCollection<AIAuditLog>("ai_audit_logs");
+  if (!col) {
+    return (memoryFallback.aiAuditLogs || []).slice(-limit).reverse();
+  }
+
+  try {
+    const docs = await col.find({}).sort({ timestamp: -1 }).limit(limit).toArray();
+    return normalizeDocs<AIAuditLog>(docs);
+  } catch (err) {
+    console.error("MongoDB getAIAuditLogs error:", err);
+    return [];
   }
 }
 

@@ -6,7 +6,13 @@ import {
   getAboutData,
   getSiteSettings,
 } from "@/lib/db";
-import type { Project, Service, BlogPost, SkillCategory } from "@/lib/db/types";
+import type {
+  Project,
+  Service,
+  BlogPost,
+  SkillCategory,
+  AIKnowledgeConfig,
+} from "@/lib/db/types";
 
 export type Citation = {
   title: string;
@@ -42,17 +48,31 @@ function scoreRelevance(queryTokens: string[], targetText: string, boost = 1): n
   return score;
 }
 
-export async function retrievePortfolioContext(query: string): Promise<RetrievalResult> {
+export async function retrievePortfolioContext(
+  query: string,
+  knowledgeConfig?: Partial<AIKnowledgeConfig>,
+): Promise<RetrievalResult> {
   const queryTokens = tokenize(query);
   const qLower = query.toLowerCase();
 
-  // Fetch only published public portfolio data
+  const enabled = {
+    projects: knowledgeConfig?.enabledCollections?.projects !== false,
+    services: knowledgeConfig?.enabledCollections?.services !== false,
+    posts: knowledgeConfig?.enabledCollections?.posts !== false,
+    skills: knowledgeConfig?.enabledCollections?.skills !== false,
+    about: knowledgeConfig?.enabledCollections?.about !== false,
+  };
+
+  const topK = knowledgeConfig?.topK ?? 4;
+  const minScore = knowledgeConfig?.minRelevanceScore ?? 1;
+
+  // Fetch only enabled, published public portfolio data
   const [projects, services, posts, skills, about, settings] = await Promise.all([
-    getProjects({ publishedOnly: true }),
-    getServices({ publishedOnly: true }),
-    getBlogPosts({ publishedOnly: true }),
-    getSkills({ publishedOnly: true }),
-    getAboutData(),
+    enabled.projects ? getProjects({ publishedOnly: true }) : Promise.resolve([]),
+    enabled.services ? getServices({ publishedOnly: true }) : Promise.resolve([]),
+    enabled.posts ? getBlogPosts({ publishedOnly: true }) : Promise.resolve([]),
+    enabled.skills ? getSkills({ publishedOnly: true }) : Promise.resolve([]),
+    enabled.about ? getAboutData() : Promise.resolve(null),
     getSiteSettings(),
   ]);
 
@@ -93,14 +113,16 @@ export async function retrievePortfolioContext(query: string): Promise<Retrieval
     qLower.includes("work");
 
   const topProjects = isGeneralQuery
-    ? scoredProjects.slice(0, 4).map((x) => x.project)
-    : scoredProjects.filter((x) => x.score > 0).slice(0, 3).map((x) => x.project);
+    ? scoredProjects.slice(0, topK).map((x) => x.project)
+    : scoredProjects.filter((x) => x.score >= minScore).slice(0, topK).map((x) => x.project);
 
   const topServices = isGeneralQuery
-    ? scoredServices.slice(0, 3).map((x) => x.service)
-    : scoredServices.filter((x) => x.score > 0).slice(0, 2).map((x) => x.service);
+    ? scoredServices.slice(0, Math.min(topK, 3)).map((x) => x.service)
+    : scoredServices.filter((x) => x.score >= minScore).slice(0, 3).map((x) => x.service);
 
-  const topPosts = scoredPosts.filter((x) => x.score > 0).slice(0, 2).map((x) => x.post);
+  const topPosts = isGeneralQuery
+    ? scoredPosts.slice(0, 2).map((x) => x.post)
+    : scoredPosts.filter((x) => x.score >= minScore).slice(0, 2).map((x) => x.post);
 
   // Build context sections
   const contextParts: string[] = [];
@@ -110,7 +132,7 @@ Name: ${settings.name || "Arefin Mueen"}
 Role: ${settings.role || "AI Automation & AI Agent Developer"}
 Location: Dhaka, Bangladesh (GMT+6) — Available for remote worldwide projects.
 Availability Status: ${settings.availabilityNote || "Available for projects"}
-Short Bio: ${settings.shortBio || about.bio || "Specialist in practical AI workflows, tool-calling autonomous agents, RAG knowledge retrieval, and custom API integrations."}
+Short Bio: ${settings.shortBio || about?.bio || "Specialist in practical AI workflows, tool-calling autonomous agents, RAG knowledge retrieval, and custom API integrations."}
 Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs (Pinecone), Python, TypeScript, REST APIs, Webhooks, MongoDB.`);
 
   if (topProjects.length > 0) {

@@ -262,6 +262,10 @@ export type AdminActivityType =
   | "settings_updated"
   | "seo_updated"
   | "about_updated"
+  | "ai_config_saved"
+  | "ai_config_activated"
+  | "ai_version_restored"
+  | "ai_secret_updated"
   | "submission_read"
   | "submission_archived"
   | "submission_deleted";
@@ -276,6 +280,143 @@ export type AdminActivity = {
   timestamp: string;
 };
 
+// ─── AI CONTROL CENTER TYPES ──────────────────────────────────────────────
+
+export type AIProviderName = "openai" | "anthropic" | "google" | "local_grounded";
+
+export interface AIBrainConfig {
+  name: string;
+  displayDescription: string;
+  role: string;
+  persona: string;
+  systemPrompt: string;
+  behaviorRules: string[];
+  knowledgeRules: string[];
+  safetyRules: string[];
+  responseStyle: string;
+  fallbackResponse: string;
+  greeting: string;
+  suggestedPrompts: string[];
+  tone: "technical_direct" | "collaborative" | "executive" | "analytical";
+  languageBehavior: "auto_detect" | "english_only" | "configurable";
+}
+
+export interface AIModelConfig {
+  provider: AIProviderName;
+  modelId: string;
+  temperature: number;
+  topP: number;
+  maxTokens: number;
+  contextBudget: number;
+  timeoutMs: number;
+  enableFailover: boolean;
+  fallbackProvider?: AIProviderName;
+  fallbackModelId?: string;
+}
+
+export interface AIKnowledgeConfig {
+  enabledCollections: {
+    projects: boolean;
+    services: boolean;
+    posts: boolean;
+    skills: boolean;
+    about: boolean;
+  };
+  topK: number;
+  minRelevanceScore: number;
+  contextBudgetChars: number;
+  maxDocuments: number;
+  includeSourceLinks: boolean;
+}
+
+export interface AISafetyConfig {
+  promptInjectionDefense: boolean;
+  strictGrounding: boolean;
+  blockSecretExtraction: boolean;
+  toolPermissions: "public_read_only" | "admin";
+}
+
+export interface AILimitsConfig {
+  rateLimitPerMin: number;
+  maxPromptLength: number;
+  maxOutputTokens: number;
+  dailyRequestLimit: number;
+  monthlyRequestLimit: number;
+}
+
+export interface AIConfig {
+  id?: string;
+  status: "active" | "draft";
+  brain: AIBrainConfig;
+  model: AIModelConfig;
+  knowledge: AIKnowledgeConfig;
+  safety: AISafetyConfig;
+  limits: AILimitsConfig;
+  versionNumber: number;
+  promptHash?: string;
+  createdAt: string;
+  updatedAt: string;
+  updatedBy?: string;
+}
+
+export interface AIProviderCredential {
+  id?: string;
+  provider: "openai" | "anthropic" | "google";
+  encryptedSecret: string;
+  iv: string;
+  authTag: string;
+  keyFingerprint: string;
+  baseUrl?: string;
+  organizationId?: string;
+  status: "connected" | "invalid" | "unavailable" | "not_configured";
+  lastRotatedAt: string;
+  lastTestedAt?: string;
+  lastError?: string;
+  updatedAt: string;
+}
+
+export interface AIConfigVersion {
+  id?: string;
+  versionNumber: number;
+  status: "archived" | "active";
+  promptHash: string;
+  config: AIConfig;
+  changeSummary?: string;
+  createdAt: string;
+  createdBy: string;
+}
+
+export interface AIUsageMetric {
+  id?: string;
+  timestamp: string;
+  provider: string;
+  model: string;
+  latencyMs: number;
+  status: "success" | "error" | "rate_limited" | "blocked";
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
+  requestType: "chat" | "playground" | "health";
+  errorCategory?: string;
+  clientIpHash?: string;
+}
+
+export interface AIAuditLog {
+  id?: string;
+  action:
+    | "config_saved"
+    | "config_activated"
+    | "version_restored"
+    | "secret_added"
+    | "secret_rotated"
+    | "secret_disabled"
+    | "provider_tested";
+  actor: string;
+  target: string;
+  metadata?: Record<string, unknown>;
+  timestamp: string;
+}
+
 export type DatabaseSchema = {
   siteSettings: SiteSettings;
   about: AboutData;
@@ -284,5 +425,8 @@ export type DatabaseSchema = {
   services: Service[];
   skills: SkillCategory[];
   submissions: ContactSubmission[];
+  aiConfig?: AIConfig[];
+  aiCredentials?: AIProviderCredential[];
+  aiVersions?: AIConfigVersion[];
 };
 

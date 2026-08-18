@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   Server,
   Activity,
+  Bot,
   X,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -86,6 +87,7 @@ export default function AdminSidebar({ user, unreadCount = 0 }: AdminSidebarProp
     {
       title: "SYSTEM",
       items: [
+        { label: "AI Control", href: "/admin/ai", icon: Bot },
         { label: "SEO Control", href: "/admin/seo", icon: Search },
         { label: "Site Settings", href: "/admin/settings", icon: Settings },
         { label: "System Health", href: "/admin/health", icon: Server },

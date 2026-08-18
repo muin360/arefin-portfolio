@@ -1,4 +1,5 @@
 import type { DatabaseSchema } from "./types";
+import { DEFAULT_AI_CONFIG } from "@/lib/ai/defaults";
 
 export const INITIAL_DATABASE: DatabaseSchema = {
   siteSettings: {
@@ -737,4 +738,18 @@ If you're on the same path, [let's connect](/contact).`,
     },
   ],
   submissions: [],
+  aiConfig: [{ ...DEFAULT_AI_CONFIG }],
+  aiCredentials: [],
+  aiVersions: [
+    {
+      id: "v1",
+      versionNumber: 1,
+      status: "active",
+      promptHash: DEFAULT_AI_CONFIG.promptHash || "v1-initial-default",
+      config: { ...DEFAULT_AI_CONFIG },
+      changeSummary: "Initial production configuration",
+      createdAt: DEFAULT_AI_CONFIG.createdAt,
+      createdBy: "system",
+    },
+  ],
 };
