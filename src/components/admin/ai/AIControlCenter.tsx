@@ -196,7 +196,12 @@ export default function AIControlCenter({
     });
   };
 
-  const handleTestConnection = async (provider: string, secret?: string) => {
+  const handleTestConnection = async (
+    provider: string,
+    secret?: string,
+    baseUrl?: string,
+    organizationId?: string,
+  ) => {
     setTestingProvider(provider);
     setTestResult(null);
     try {
@@ -206,6 +211,8 @@ export default function AIControlCenter({
         body: JSON.stringify({
           provider,
           testSecret: secret || undefined,
+          baseUrl: baseUrl || undefined,
+          organizationId: organizationId || undefined,
         }),
       });
       const data = await res.json();
@@ -1076,23 +1083,46 @@ export default function AIControlCenter({
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
+              <div className="flex items-center justify-between gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setSelectedProviderKey(null)}
-                  className="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white"
+                  onClick={() =>
+                    handleTestConnection(
+                      selectedProviderKey,
+                      newSecretInput.trim(),
+                      newBaseUrlInput.trim(),
+                      newOrgIdInput.trim(),
+                    )
+                  }
+                  disabled={!newSecretInput.trim() || testingProvider !== null}
+                  className="px-4 py-2 rounded-xl bg-[#07090e] hover:bg-white/[0.06] border border-white/10 disabled:opacity-50 text-white text-xs font-mono font-semibold transition-colors flex items-center gap-1.5"
                 >
-                  Cancel
+                  {testingProvider === selectedProviderKey ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-violet-400" />
+                  ) : (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  )}
+                  <span>Test Key</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={handleSaveProviderKey}
-                  disabled={!newSecretInput.trim() || isPending}
-                  className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-mono font-semibold transition-colors flex items-center gap-2"
-                >
-                  {isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>Save &amp; Encrypt Key</span>
-                </button>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProviderKey(null)}
+                    className="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveProviderKey}
+                    disabled={!newSecretInput.trim() || isPending}
+                    className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-mono font-semibold transition-colors flex items-center gap-2"
+                  >
+                    {isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                    <span>Save &amp; Encrypt Key</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}

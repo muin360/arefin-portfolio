@@ -24,16 +24,22 @@ export const ALLOWED_MODELS: Record<AIProviderName, ModelOption[]> = {
       contextWindow: 128000,
     },
     {
+      id: "o3-mini",
+      name: "o3-mini",
+      description: "Next-generation fast reasoning model with developer control",
+      contextWindow: 200000,
+    },
+    {
+      id: "o1-mini",
+      name: "o1-mini",
+      description: "Fast reasoning model optimized for code and logic",
+      contextWindow: 128000,
+    },
+    {
       id: "gpt-4-turbo",
       name: "GPT-4 Turbo",
       description: "High-capability reasoning model",
       contextWindow: 128000,
-    },
-    {
-      id: "gpt-3.5-turbo",
-      name: "GPT-3.5 Turbo",
-      description: "Legacy fast completion model",
-      contextWindow: 16000,
     },
   ],
   anthropic: [
@@ -43,6 +49,12 @@ export const ALLOWED_MODELS: Record<AIProviderName, ModelOption[]> = {
       description: "Ultra-fast, concise, and highly nuanced model",
       contextWindow: 200000,
       recommended: true,
+    },
+    {
+      id: "claude-3-7-sonnet-20250219",
+      name: "Claude 3.7 Sonnet",
+      description: "State-of-the-art hybrid reasoning model",
+      contextWindow: 200000,
     },
     {
       id: "claude-3-5-sonnet-20241022",
@@ -59,23 +71,23 @@ export const ALLOWED_MODELS: Record<AIProviderName, ModelOption[]> = {
   ],
   google: [
     {
+      id: "gemini-2.0-flash",
+      name: "Gemini 2.0 Flash",
+      description: "High speed, next-gen multimodal reasoning & tool use",
+      contextWindow: 1000000,
+      recommended: true,
+    },
+    {
       id: "gemini-1.5-flash",
       name: "Gemini 1.5 Flash",
       description: "Fast, versatile model with low latency",
       contextWindow: 1000000,
-      recommended: true,
     },
     {
       id: "gemini-1.5-pro",
       name: "Gemini 1.5 Pro",
       description: "High-performance multimodal model with massive 2M context",
       contextWindow: 2000000,
-    },
-    {
-      id: "gemini-2.0-flash-exp",
-      name: "Gemini 2.0 Flash (Experimental)",
-      description: "Next-generation experimental speed and agent capabilities",
-      contextWindow: 1000000,
     },
   ],
   local_grounded: [
