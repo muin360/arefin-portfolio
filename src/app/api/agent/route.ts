@@ -1,47 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { executeAI } from "@/lib/ai/providers";
 import { getAIConfig } from "@/lib/db";
-import { sanitizeString } from "@/lib/validators";
+import { validateChatPayload } from "@/lib/ai/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { captureSanitizedAIError } from "@/lib/ai/monitoring";
 import crypto from "crypto";
 
 export const runtime = "nodejs";
 
-// In-memory sliding window rate limiter
-interface RateLimitRecord {
-  timestamps: number[];
-}
-const ipRateLimits = new Map<string, RateLimitRecord>();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-
-function isRateLimited(ip: string, maxPerMin: number): boolean {
-  const now = Date.now();
-  const record = ipRateLimits.get(ip) || { timestamps: [] };
-  const validTimestamps = record.timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-
-  if (validTimestamps.length >= maxPerMin) {
-    ipRateLimits.set(ip, { timestamps: validTimestamps });
-    return true;
-  }
-
-  validTimestamps.push(now);
-  ipRateLimits.set(ip, { timestamps: validTimestamps });
-  return false;
-}
-
-// Clean up stale rate limit entries periodically
-if (typeof setInterval !== "undefined") {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [ip, record] of ipRateLimits.entries()) {
-      const valid = record.timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-      if (valid.length === 0) {
-        ipRateLimits.delete(ip);
-      } else {
-        ipRateLimits.set(ip, { timestamps: valid });
-      }
-    }
-  }, 5 * 60 * 1000).unref?.();
-}
+// Max raw request body size: 100 KB
+const MAX_PAYLOAD_BYTES = 100 * 1024;
 
 export async function POST(req: NextRequest) {
   try {
@@ -57,7 +25,15 @@ export async function POST(req: NextRequest) {
 
     const ipHash = crypto.createHash("sha256").update(rawIp).digest("hex").slice(0, 12);
 
-    if (isRateLimited(rawIp, rateLimit)) {
+    // Multi-tier Rate Limiter
+    const rateLimitResult = await checkRateLimit({
+      key: rawIp,
+      limit: rateLimit,
+      windowSeconds: 60,
+      bucket: "public_chat",
+    });
+
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         {
           error: "Rate limit reached.",
@@ -65,54 +41,72 @@ export async function POST(req: NextRequest) {
             "You've sent several queries in a short time. Please wait a minute before asking your next question.",
           citations: [{ title: "Contact Directly", url: "/contact", type: "contact" }],
         },
-        { status: 429 },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimitResult.resetInSeconds),
+            "X-RateLimit-Limit": String(rateLimitResult.totalLimit),
+            "X-RateLimit-Remaining": "0",
+          },
+        },
       );
     }
 
-    // 2. Validate request payload
+    // 2. Check content-length header
+    const contentLength = parseInt(req.headers.get("content-length") || "0", 10);
+    if (contentLength > MAX_PAYLOAD_BYTES) {
+      return NextResponse.json(
+        { error: "Payload Too Large. Max request size is 100KB." },
+        { status: 413 },
+      );
+    }
+
+    // 3. Parse and strictly validate payload with Zod
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
-      return NextResponse.json({ error: "Invalid request payload." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid request payload. Expected JSON object." },
+        { status: 400 },
+      );
     }
 
-    const { messages } = body;
-    if (!Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json({ error: "Please provide a valid messages array." }, { status: 400 });
+    const validation = validateChatPayload(body);
+    if (!validation.success) {
+      const firstIssue = validation.error.issues[0]?.message || "Invalid chat request schema";
+      return NextResponse.json({ error: firstIssue }, { status: 400 });
     }
 
-    // Sanitize messages (max 10 recent messages)
-    const sanitizedMessages = [];
-    const recentMessages = messages.slice(-10);
+    const { messages } = validation.data;
 
-    for (const m of recentMessages) {
-      if (typeof m !== "object" || !m) continue;
-      const role = m.role === "assistant" ? ("assistant" as const) : ("user" as const);
-      const rawContent = typeof m.content === "string" ? m.content : "";
-      const content = sanitizeString(rawContent, maxPromptLen);
-      if (content.trim().length > 0) {
-        sanitizedMessages.push({ role, content });
-      }
-    }
+    // Filter and sanitize messages against active maxPromptLen
+    const sanitizedMessages = messages.map((m) => ({
+      role: m.role,
+      content: m.content.slice(0, maxPromptLen),
+    }));
 
-    if (sanitizedMessages.length === 0) {
-      return NextResponse.json({ error: "No valid message content provided." }, { status: 400 });
-    }
-
-    // 3. Execute AI through Provider Abstraction Engine
+    // 4. Execute AI through Provider Abstraction Engine
     const result = await executeAI({
       messages: sanitizedMessages,
       requestType: "chat",
       clientIpHash: ipHash,
     });
 
-    return NextResponse.json({
-      reply: result.reply,
-      citations: result.citations,
-      provider: result.providerUsed,
-      model: result.modelUsed,
-    });
+    return NextResponse.json(
+      {
+        reply: result.reply,
+        citations: result.citations,
+        provider: result.providerUsed,
+        model: result.modelUsed,
+      },
+      {
+        headers: {
+          "X-RateLimit-Limit": String(rateLimitResult.totalLimit),
+          "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+        },
+      },
+    );
   } catch (err) {
-    console.error("[API/agent] Error processing AI chat:", err);
+    captureSanitizedAIError(err, { errorCategory: "public_chat_error" });
     return NextResponse.json(
       {
         reply:

@@ -5,14 +5,20 @@ import {
   saveAIProviderCredential,
   disableAIProviderCredential,
 } from "@/lib/db";
+import { validateProviderCredentialPayload } from "@/lib/ai/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { captureSanitizedAIError } from "@/lib/ai/monitoring";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.isAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const ip = req.headers.get("x-forwarded-for") || "admin";
+  await checkRateLimit({ key: ip, limit: 60, bucket: "admin_ai" });
 
   try {
     const credentials = await getAIProviderCredentials();
@@ -29,7 +35,7 @@ export async function GET() {
 
     return NextResponse.json({ credentials: sanitized });
   } catch (err) {
-    console.error("[API/admin/ai/providers] Error:", err);
+    captureSanitizedAIError(err, { errorCategory: "admin_get_providers_failure" });
     return NextResponse.json({ error: "Failed to load provider credentials" }, { status: 500 });
   }
 }
@@ -40,23 +46,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Key mutation rate limit: max 10/min
+  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const rl = await checkRateLimit({ key: ip, limit: 10, bucket: "admin_keys" });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many key mutation requests. Please wait." },
+      { status: 429 },
+    );
+  }
+
   try {
     const body = await req.json();
-    const { provider, secret, baseUrl, organizationId } = body;
-
-    if (!provider || !["openai", "anthropic", "google"].includes(provider)) {
-      return NextResponse.json({ error: "Invalid provider specified" }, { status: 400 });
+    const validation = validateProviderCredentialPayload(body);
+    if (!validation.success) {
+      const issue = validation.error.issues[0]?.message || "Invalid provider credential payload";
+      return NextResponse.json({ error: issue }, { status: 400 });
     }
 
-    if (!secret || typeof secret !== "string" || secret.trim().length === 0) {
-      return NextResponse.json({ error: "Valid API secret required" }, { status: 400 });
-    }
+    const { provider, secret, baseUrl, organizationId } = validation.data;
 
     const saved = await saveAIProviderCredential({
       provider,
       secret,
-      baseUrl,
-      organizationId,
+      baseUrl: baseUrl || undefined,
+      organizationId: organizationId || undefined,
       actor: session.user.name || "Admin",
     });
 
@@ -70,8 +84,11 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err) {
-    console.error("[API/admin/ai/providers] Error saving credential:", err);
-    return NextResponse.json({ error: "Failed to save provider credential" }, { status: 500 });
+    captureSanitizedAIError(err, { errorCategory: "admin_save_provider_key_failure" });
+    return NextResponse.json(
+      { error: "Failed to save provider credential. Verify encryption keys are configured." },
+      { status: 500 },
+    );
   }
 }
 
@@ -96,7 +113,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: disabled });
   } catch (err) {
-    console.error("[API/admin/ai/providers] Error disabling provider:", err);
+    captureSanitizedAIError(err, { errorCategory: "admin_disable_provider_failure" });
     return NextResponse.json({ error: "Failed to disable provider" }, { status: 500 });
   }
 }

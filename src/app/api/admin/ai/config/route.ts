@@ -9,13 +9,25 @@ import {
   getAIVersions,
 } from "@/lib/db";
 import { ALLOWED_MODELS } from "@/lib/ai/defaults";
+import { aiConfigSchema } from "@/lib/ai/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { captureSanitizedAIError } from "@/lib/ai/monitoring";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+const MAX_CONFIG_PAYLOAD_BYTES = 100 * 1024; // 100KB
+
+export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.isAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Admin Rate Limit
+  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const rl = await checkRateLimit({ key: ip, limit: 60, bucket: "admin_ai" });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
 
   try {
@@ -23,7 +35,7 @@ export async function GET() {
       getAIConfig("active"),
       getAIConfig("draft"),
       getAIProviderCredentials(),
-      getAIVersions(5),
+      getAIVersions(10),
       getAIUsageStats(7),
     ]);
 
@@ -48,7 +60,7 @@ export async function GET() {
       stats,
     });
   } catch (err) {
-    console.error("[API/admin/ai/config] Error fetching AI config:", err);
+    captureSanitizedAIError(err, { errorCategory: "admin_get_config_failure" });
     return NextResponse.json({ error: "Failed to load AI configuration" }, { status: 500 });
   }
 }
@@ -59,16 +71,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Admin Rate Limit
+  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const rl = await checkRateLimit({ key: ip, limit: 60, bucket: "admin_ai" });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
+  const contentLength = parseInt(req.headers.get("content-length") || "0", 10);
+  if (contentLength > MAX_CONFIG_PAYLOAD_BYTES) {
+    return NextResponse.json({ error: "Payload Too Large" }, { status: 413 });
+  }
+
   try {
     const body = await req.json();
     if (!body || typeof body !== "object") {
       return NextResponse.json({ error: "Invalid configuration payload" }, { status: 400 });
     }
 
-    const updated = await saveDraftAIConfig(body, session.user.name || "Admin");
+    const validation = aiConfigSchema.partial().safeParse(body);
+    if (!validation.success) {
+      const issue = validation.error.issues[0]?.message || "Invalid configuration schema";
+      return NextResponse.json({ error: issue }, { status: 400 });
+    }
+
+    const updated = await saveDraftAIConfig(validation.data, session.user.name || "Admin");
     return NextResponse.json({ success: true, draftConfig: updated });
   } catch (err) {
-    console.error("[API/admin/ai/config] Error saving draft:", err);
+    captureSanitizedAIError(err, { errorCategory: "admin_save_draft_failure" });
     return NextResponse.json({ error: "Failed to save draft configuration" }, { status: 500 });
   }
 }
@@ -79,9 +109,20 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Admin Rate Limit
+  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const rl = await checkRateLimit({ key: ip, limit: 30, bucket: "admin_ai" });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+
   try {
     const body = await req.json().catch(() => ({}));
-    const changeSummary = body.changeSummary || "Configuration activated from Admin Control Center";
+    const changeSummary =
+      typeof body.changeSummary === "string" && body.changeSummary.trim().length > 0
+        ? body.changeSummary.trim().slice(0, 200)
+        : "Configuration activated from Admin Control Center";
+
     const result = await activateAIConfig(session.user.name || "Admin", changeSummary);
 
     return NextResponse.json({
@@ -90,7 +131,7 @@ export async function PUT(req: NextRequest) {
       version: result.version,
     });
   } catch (err) {
-    console.error("[API/admin/ai/config] Error activating config:", err);
+    captureSanitizedAIError(err, { errorCategory: "admin_activate_config_failure" });
     return NextResponse.json({ error: "Failed to activate configuration" }, { status: 500 });
   }
 }

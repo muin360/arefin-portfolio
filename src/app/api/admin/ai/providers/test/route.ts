@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProviderAdapter, resolveProviderCredentials } from "@/lib/ai/providers";
 import { updateAIProviderStatus } from "@/lib/db";
 import type { AIProviderName } from "@/lib/db/types";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { captureSanitizedAIError, sanitizeSensitiveText } from "@/lib/ai/monitoring";
 
 export const runtime = "nodejs";
 
@@ -10,6 +12,12 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.isAdmin) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const rl = await checkRateLimit({ key: ip, limit: 15, bucket: "admin_keys" });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded. Please wait." }, { status: 429 });
   }
 
   try {
@@ -32,31 +40,31 @@ export async function POST(req: NextRequest) {
 
     const result = await adapter.healthCheck({
       apiKey,
-      baseUrl,
-      organizationId,
+      baseUrl: typeof baseUrl === "string" ? baseUrl.trim() : undefined,
+      organizationId: typeof organizationId === "string" ? organizationId.trim() : undefined,
     });
 
     if (provider !== "local_grounded") {
       await updateAIProviderStatus(
         provider as "openai" | "anthropic" | "google",
         result.status,
-        result.ok ? undefined : result.message,
+        result.ok ? undefined : sanitizeSensitiveText(result.message || "Connection failed"),
       );
     }
 
     return NextResponse.json({
       ok: result.ok,
       status: result.status,
-      message: result.message,
+      message: sanitizeSensitiveText(result.message || ""),
       latencyMs: result.latencyMs,
     });
   } catch (err) {
-    console.error("[API/admin/ai/providers/test] Error testing provider:", err);
+    captureSanitizedAIError(err, { errorCategory: "admin_test_provider_failure" });
     return NextResponse.json(
       {
         ok: false,
         status: "unavailable",
-        message: err instanceof Error ? err.message : "Health check error",
+        message: "Provider health check failed. Please verify API key and network connectivity.",
       },
       { status: 200 },
     );

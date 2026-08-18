@@ -8,8 +8,14 @@ function getMasterEncryptionKey(): Buffer {
   const masterSecret =
     process.env.AI_SECRETS_ENCRYPTION_KEY ||
     process.env.AUTH_SECRET ||
-    process.env.NEXTAUTH_SECRET ||
-    "arefin-portfolio-fallback-master-key-seed-2026";
+    process.env.NEXTAUTH_SECRET;
+
+  if (!masterSecret) {
+    if (process.env.NODE_ENV === "test" || process.env.VITEST) {
+      return crypto.createHash("sha256").update("vitest-test-master-key-32bytes-ok").digest();
+    }
+    throw new Error("AI provider secrets require secure configuration.");
+  }
 
   // Compute sha256 to ensure exact 32-byte key length for aes-256-gcm
   return crypto.createHash("sha256").update(masterSecret).digest();

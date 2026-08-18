@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { executeAI } from "@/lib/ai/providers";
 import { getAIConfig } from "@/lib/db";
 import type { AIConfig } from "@/lib/db/types";
+import { validatePlaygroundPayload } from "@/lib/ai/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { captureSanitizedAIError } from "@/lib/ai/monitoring";
 
 export const runtime = "nodejs";
 
@@ -12,18 +15,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Admin Playground Rate Limit: max 30/min
+  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const rl = await checkRateLimit({ key: ip, limit: 30, bucket: "admin_playground" });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Playground rate limit reached. Please wait before testing again." },
+      { status: 429 },
+    );
+  }
+
   try {
     const body = await req.json();
-    const {
-      prompt,
-      systemPromptOverride,
-      configOverride,
-      targetMode = "active", // "active" | "draft" | "custom"
-    } = body;
-
-    if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
-      return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
+    const validation = validatePlaygroundPayload(body);
+    if (!validation.success) {
+      const issue = validation.error.issues[0]?.message || "Invalid playground request schema";
+      return NextResponse.json({ error: issue }, { status: 400 });
     }
+
+    const { prompt, targetMode, systemPromptOverride, configOverride } = validation.data;
 
     let baseConfig: AIConfig;
     if (targetMode === "draft") {
@@ -42,7 +52,7 @@ export async function POST(req: NextRequest) {
     };
 
     const result = await executeAI({
-      messages: [{ role: "user", content: prompt.trim() }],
+      messages: [{ role: "user", content: prompt }],
       systemPromptOverride: systemPromptOverride?.trim() || undefined,
       configOverride: mergedOverride,
       requestType: "playground",
@@ -57,11 +67,11 @@ export async function POST(req: NextRequest) {
       tokens: result.tokens,
     });
   } catch (err) {
-    console.error("[API/admin/ai/playground] Error running playground test:", err);
+    captureSanitizedAIError(err, { errorCategory: "playground_execution_failure" });
     return NextResponse.json(
       {
         error: "Playground execution failed",
-        message: err instanceof Error ? err.message : "Unknown error",
+        message: err instanceof Error ? err.message : "Execution failed",
       },
       { status: 500 },
     );

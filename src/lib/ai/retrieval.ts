@@ -241,8 +241,16 @@ Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs
     }
   }
 
+  const rawContext = contextParts.join("\n");
+  const boundedContext =
+    rawContext.length > (knowledgeConfig?.contextBudgetChars || 5000)
+      ? rawContext.slice(0, knowledgeConfig?.contextBudgetChars || 5000) + "\n...[truncated]"
+      : rawContext;
+
+  const secureContextText = `<context_knowledge>\n${boundedContext}\n</context_knowledge>`;
+
   return {
-    contextText: contextParts.join("\n"),
+    contextText: secureContextText,
     relevantCitations: uniqueCitations.slice(0, 4),
     matchedKeywords,
   };
