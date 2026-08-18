@@ -72,7 +72,12 @@ export async function resolveProviderCredentials(
     return { apiKey: process.env.ANTHROPIC_API_KEY };
   }
   if (provider === "google") {
-    return { apiKey: process.env.GEMINI_API_KEY };
+    return {
+      apiKey:
+        process.env.GEMINI_API_KEY ||
+        process.env.GOOGLE_API_KEY ||
+        process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+    };
   }
 
   return {};

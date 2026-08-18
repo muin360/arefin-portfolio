@@ -39,12 +39,14 @@ export const providerCredentialSchema = z
       .trim()
       .url("Custom Base URL must be a valid HTTP/HTTPS URL")
       .optional()
+      .nullable()
       .or(z.literal("")),
     organizationId: z
       .string()
       .trim()
       .max(100, "Organization ID cannot exceed 100 characters")
       .optional()
+      .nullable()
       .or(z.literal("")),
   })
   .strict();

@@ -115,6 +115,20 @@ describe("AI Configuration & Versioning Lifecycle", () => {
     const all = await getAIProviderCredentials();
     expect(all.some((c) => c.provider === "anthropic")).toBe(true);
   });
+
+  it("handles saving credentials with empty/optional organization and baseUrl", async () => {
+    const cred = await saveAIProviderCredential({
+      provider: "openai",
+      secret: "sk-proj-test-secret-rotated-1234",
+      baseUrl: "",
+      organizationId: undefined,
+      actor: "test-admin",
+    });
+
+    expect(cred.provider).toBe("openai");
+    expect(cred.keyFingerprint).toBe("••••••••1234");
+    expect(cred.status).toBe("connected");
+  });
 });
 
 describe("Knowledge Base Filtering & Prompt Injection Defenses", () => {
