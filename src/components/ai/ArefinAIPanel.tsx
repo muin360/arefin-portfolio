@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import type { Citation } from "@/lib/ai/retrieval";
 import { trackAIOpen, trackAIPrompt, trackAIProjectClick } from "@/lib/track-event";
+import FormattedAIOutput from "./FormattedAIOutput";
 
 interface MessageItem {
   id: string;
@@ -214,164 +215,6 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     onClose();
   };
 
-  // ─── RICH MARKDOWN RENDERER ────────────────────────────────────────────────
-  const formatInline = (text: string, blockKey: string): React.ReactNode[] => {
-    // Matches markdown links [label](url), bold **bold**, inline code `code`
-    const regex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/g;
-    const parts = text.split(regex);
-
-    return parts.map((part, i) => {
-      if (!part) return null;
-
-      const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-      if (linkMatch) {
-        const [, label, href] = linkMatch;
-        return (
-          <Link
-            key={`${blockKey}_link_${i}`}
-            href={href}
-            onClick={onClose}
-            className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300 font-semibold underline decoration-violet-500/50 hover:decoration-violet-300 underline-offset-2 transition-all group/lnk"
-          >
-            <span>{label}</span>
-            <ExternalLink className="w-3 h-3 opacity-60 group-hover/lnk:opacity-100 transition-opacity" />
-          </Link>
-        );
-      }
-
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return (
-          <strong key={`${blockKey}_b_${i}`} className="font-bold text-white tracking-wide">
-            {part.slice(2, -2)}
-          </strong>
-        );
-      }
-
-      if (part.startsWith("`") && part.endsWith("`")) {
-        return (
-          <code
-            key={`${blockKey}_c_${i}`}
-            className="px-1.5 py-0.5 rounded bg-violet-950/60 border border-violet-500/30 text-violet-300 font-mono text-[11px] font-semibold"
-          >
-            {part.slice(1, -1)}
-          </code>
-        );
-      }
-
-      return <span key={`${blockKey}_t_${i}`}>{part}</span>;
-    });
-  };
-
-  const renderMessageContent = (content: string, msgId: string) => {
-    const blocks = content.split("\n\n");
-
-    return (
-      <div className="space-y-3 font-sans text-[13px] leading-relaxed text-slate-200">
-        {blocks.map((block, idx) => {
-          const bKey = `${msgId}_b_${idx}`;
-          const trimmed = block.trim();
-
-          // Code block ```lang ... ```
-          if (trimmed.startsWith("```") && trimmed.endsWith("```")) {
-            const lines = trimmed.slice(3, -3).trim().split("\n");
-            const lang = lines[0].match(/^[a-z0-9_-]+$/i) ? lines[0] : "text";
-            const codeBody = lines[0].match(/^[a-z0-9_-]+$/i) ? lines.slice(1).join("\n") : lines.join("\n");
-            const codeKey = `${bKey}_code`;
-
-            return (
-              <div key={bKey} className="my-2 rounded-xl bg-[#04060b] border border-violet-500/20 overflow-hidden">
-                <div className="flex items-center justify-between px-3 py-1.5 bg-[#0b0f1a] border-b border-white/[0.06] text-[10px] font-mono text-slate-400">
-                  <div className="flex items-center gap-1.5">
-                    <Code2 className="w-3 h-3 text-violet-400" />
-                    <span className="uppercase">{lang}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleCopyCode(codeKey, codeBody)}
-                    className="hover:text-white transition-colors flex items-center gap-1"
-                  >
-                    {copiedCodeIndex === codeKey ? (
-                      <>
-                        <Check className="w-3 h-3 text-emerald-400" />
-                        <span className="text-emerald-400">Copied</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3 h-3" />
-                        <span>Copy</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-                <pre className="p-3 text-[11px] font-mono text-violet-200 overflow-x-auto custom-scrollbar">
-                  <code>{codeBody}</code>
-                </pre>
-              </div>
-            );
-          }
-
-          // Headers (### or ##)
-          if (trimmed.startsWith("### ") || trimmed.startsWith("## ")) {
-            const title = trimmed.replace(/^#{2,3}\s+/, "");
-            return (
-              <h4 key={bKey} className="text-sm font-bold text-white tracking-wide pt-1 flex items-center gap-2">
-                <span className="w-1.5 h-3.5 rounded-full bg-gradient-to-b from-violet-500 to-indigo-500" />
-                <span>{formatInline(title, bKey)}</span>
-              </h4>
-            );
-          }
-
-          // Bullet List (- or *)
-          if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-            const items = trimmed.split("\n").filter((l) => l.trim().length > 0);
-            return (
-              <ul key={bKey} className="space-y-1.5 my-1.5">
-                {items.map((item, itemIdx) => {
-                  const cleaned = item.replace(/^[-*]\s+/, "");
-                  return (
-                    <li key={`${bKey}_i_${itemIdx}`} className="flex items-start gap-2 text-slate-200 leading-snug">
-                      <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0 mt-1.5" />
-                      <div className="flex-1">{formatInline(cleaned, `${bKey}_i_${itemIdx}`)}</div>
-                    </li>
-                  );
-                })}
-              </ul>
-            );
-          }
-
-          // Numbered List (1. 2. 3.)
-          if (/^\d+\.\s+/.test(trimmed)) {
-            const items = trimmed.split("\n").filter((l) => l.trim().length > 0);
-            return (
-              <ol key={bKey} className="space-y-2 my-1.5">
-                {items.map((item, itemIdx) => {
-                  const numMatch = item.match(/^(\d+)\.\s+(.*)$/);
-                  const num = numMatch ? numMatch[1] : String(itemIdx + 1);
-                  const cleaned = numMatch ? numMatch[2] : item;
-                  return (
-                    <li key={`${bKey}_num_${itemIdx}`} className="flex items-start gap-2.5 text-slate-200">
-                      <span className="w-5 h-5 rounded-lg bg-violet-600/20 border border-violet-500/30 text-violet-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                        {num}
-                      </span>
-                      <div className="flex-1 leading-snug">{formatInline(cleaned, `${bKey}_num_${itemIdx}`)}</div>
-                    </li>
-                  );
-                })}
-              </ol>
-            );
-          }
-
-          // Regular paragraph
-          return (
-            <p key={bKey} className="leading-relaxed text-slate-200">
-              {formatInline(trimmed, bKey)}
-            </p>
-          );
-        })}
-      </div>
-    );
-  };
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-end bg-black/70 backdrop-blur-md animate-fade-in"
@@ -498,7 +341,13 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                   }`}
                 >
                   {/* Message Content */}
-                  <div>{isUser ? msg.content : renderMessageContent(msg.content, msg.id)}</div>
+                  <div>
+                    {isUser ? (
+                      <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
+                    ) : (
+                      <FormattedAIOutput content={msg.content} onLinkClick={onClose} />
+                    )}
+                  </div>
 
                   {/* Dynamic Clickable Citation Badges */}
                   {!isUser && msg.citations && msg.citations.length > 0 && (

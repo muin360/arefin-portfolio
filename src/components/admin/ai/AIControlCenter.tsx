@@ -25,6 +25,7 @@ import {
   ArrowRight,
   X,
 } from "lucide-react";
+import FormattedAIOutput from "@/components/ai/FormattedAIOutput";
 import type {
   AIConfig,
   AIProviderCredential,
@@ -1561,8 +1562,8 @@ export default function AIControlCenter({
 
                 {playgroundResponse ? (
                   <div className="space-y-3">
-                    <div className="p-4 rounded-xl bg-[#07090e] border border-white/10 text-xs text-slate-200 whitespace-pre-wrap leading-relaxed max-h-72 overflow-y-auto custom-scrollbar font-sans">
-                      {playgroundResponse.reply}
+                    <div className="p-4 rounded-xl bg-[#07090e] border border-white/10 max-h-72 overflow-y-auto custom-scrollbar">
+                      <FormattedAIOutput content={playgroundResponse.reply} />
                     </div>
 
                     {playgroundResponse.tokens && (
@@ -1687,9 +1688,7 @@ export default function AIControlCenter({
                   <Bot className="w-4 h-4 text-violet-400" />
                   <span>Executive Intelligence Digest:</span>
                 </div>
-                <div className="text-xs sm:text-[13px] text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
-                  {adminMemoryAnswer}
-                </div>
+                <FormattedAIOutput content={adminMemoryAnswer} />
               </div>
             )}
           </div>
@@ -1803,7 +1802,11 @@ export default function AIControlCenter({
                       <div className="text-[10px] font-mono opacity-60 uppercase mb-1">
                         {m.role === "user" ? "Visitor" : "Arefin AI"}
                       </div>
-                      <div className="whitespace-pre-wrap">{m.content}</div>
+                      {m.role === "user" ? (
+                        <div className="whitespace-pre-wrap">{m.content}</div>
+                      ) : (
+                        <FormattedAIOutput content={m.content} />
+                      )}
                     </div>
                   ))}
                 </div>

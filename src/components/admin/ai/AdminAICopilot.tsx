@@ -18,6 +18,7 @@ import {
   Cpu,
   RefreshCw,
 } from "lucide-react";
+import FormattedAIOutput from "@/components/ai/FormattedAIOutput";
 
 interface CopilotMessage {
   id: string;
@@ -271,9 +272,13 @@ export default function AdminAICopilot() {
                           : "bg-[#0b0e1b] border border-white/[0.08] text-slate-200 rounded-tl-sm shadow-xl"
                       }`}
                     >
-                      <div className="text-xs sm:text-[13px] leading-relaxed whitespace-pre-wrap font-sans">
-                        {msg.content}
-                      </div>
+                      {isUser ? (
+                        <div className="text-xs sm:text-[13px] leading-relaxed whitespace-pre-wrap font-sans">
+                          {msg.content}
+                        </div>
+                      ) : (
+                        <FormattedAIOutput content={msg.content} />
+                      )}
 
                       <div className="flex items-center justify-between text-[9px] font-mono text-slate-400/70 pt-1.5 border-t border-white/[0.04]">
                         <div className="flex items-center gap-2">
