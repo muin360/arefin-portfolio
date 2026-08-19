@@ -89,7 +89,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid configuration payload" }, { status: 400 });
     }
 
-    const validation = aiConfigSchema.partial().safeParse(body);
+    const { _id, ...cleanBody } = body as Record<string, unknown>;
+    void _id;
+
+    const validation = aiConfigSchema.partial().safeParse(cleanBody);
     if (!validation.success) {
       const issue = validation.error.issues[0]?.message || "Invalid configuration schema";
       return NextResponse.json({ error: issue }, { status: 400 });

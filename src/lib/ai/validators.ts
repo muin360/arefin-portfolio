@@ -145,6 +145,7 @@ export const aiLimitsConfigSchema = z
 
 export const aiConfigSchema = z
   .object({
+    _id: z.unknown().optional(),
     id: z.string().optional(),
     status: z.enum(["active", "draft"]).optional().default("draft"),
     versionNumber: z.number().int().min(1).optional().default(1),

@@ -995,11 +995,17 @@ export async function checkMongoHealth(): Promise<{
     const start = Date.now();
     await db.command({ ping: 1 });
     const latencyMs = Date.now() - start;
-    const cols = await db.listCollections().toArray();
+    let collectionsCount: number | undefined;
+    try {
+      const cols = await db.listCollections().toArray();
+      collectionsCount = cols.length;
+    } catch {
+      // Non-blocking collection count
+    }
     return {
       connected: true,
       dbName: db.databaseName,
-      collectionsCount: cols.length,
+      collectionsCount,
       latencyMs,
     };
   } catch {

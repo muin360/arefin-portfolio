@@ -165,18 +165,22 @@ export default function AIControlCenter({
       setErrorMessage(null);
       try {
         // Save draft first to be 100% in sync
-        await fetch("/api/admin/ai/config", {
+        const saveRes = await fetch("/api/admin/ai/config", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(draftConfig),
         });
+        const saveData = await saveRes.json();
+        if (!saveRes.ok || !saveData.success) {
+          throw new Error(saveData.error || "Failed to save draft before activating");
+        }
 
         // Activate
         const res = await fetch("/api/admin/ai/config", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            changeSummary: `Activated v${(activeConfig.versionNumber || 1) + 1} from Admin Control Center`,
+            changeSummary: `Activated ${draftConfig.model.provider.toUpperCase()} (${draftConfig.model.modelId})`,
           }),
         });
         const data = await res.json();
@@ -189,7 +193,7 @@ export default function AIControlCenter({
         if (data.version) {
           setVersions((prev) => [data.version, ...prev.filter((v) => v.versionNumber !== data.version.versionNumber)]);
         }
-        setSaveStatus(`v${data.activeConfig.versionNumber} is now LIVE on the portfolio!`);
+        setSaveStatus(`v${data.activeConfig.versionNumber} (${data.activeConfig.model.provider}) is now LIVE on the portfolio!`);
       } catch (err: unknown) {
         setErrorMessage(err instanceof Error ? err.message : "Error activating configuration");
       }

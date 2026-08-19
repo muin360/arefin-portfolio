@@ -12,9 +12,9 @@ declare global {
 
 const MONGO_CLIENT_OPTIONS = {
   maxPoolSize: 10,
-  minPoolSize: 2,
-  maxIdleTimeMS: 30000,
-  serverSelectionTimeoutMS: 5000,
+  minPoolSize: 0,
+  maxIdleTimeMS: 20000,
+  serverSelectionTimeoutMS: 8000,
   connectTimeoutMS: 10000,
   socketTimeoutMS: 45000,
 };
