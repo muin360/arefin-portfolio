@@ -8,6 +8,7 @@ import {
 } from "@/lib/db";
 import { decryptSecret } from "@/lib/ai/secrets";
 import { retrievePortfolioContext, type Citation } from "@/lib/ai/retrieval";
+import { compileAgenticSystemPrompt } from "@/lib/ai/agent-prompts";
 import { validateModelAllowlist } from "@/lib/ai/validators";
 import { captureSanitizedAIError } from "@/lib/ai/monitoring";
 import { OpenAIProviderAdapter } from "./openai";
@@ -177,10 +178,10 @@ export async function executeAI(options: ExecuteAIOptions): Promise<AIProviderRe
     citations = retrieval.relevantCitations;
   }
 
-  // 2. Build system prompt
+  // 2. Build structured agentic system prompt from admin config
   const systemPrompt = options.systemPromptOverride
     ? `${options.systemPromptOverride}\n\nRETRIEVED CONTEXT:\n${contextText}`
-    : buildStructuredSystemPrompt(config.brain, contextText || "");
+    : compileAgenticSystemPrompt(config.brain, contextText || "", lastUserMessage);
 
   // 3. Resolve primary provider & validate model allowlist
   let primaryProviderName = config.model.provider || "local_grounded";

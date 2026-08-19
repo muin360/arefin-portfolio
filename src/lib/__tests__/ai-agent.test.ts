@@ -161,3 +161,49 @@ describe("AI Providers Deep Integration & Error Handling", () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe("100x Agentic AI Router & Prompt Synthesis", () => {
+  it("classifies hiring & booking intent accurately", async () => {
+    const { analyzeUserQuery } = await import("@/lib/ai/agent-router");
+    const analysis = analyzeUserQuery("I want to hire Arefin for an AI automation project and schedule a call");
+    expect(analysis.intent).toBe("HIRING_SCOPING");
+    expect(analysis.suggestedAction).toBe("book_call");
+  });
+
+  it("detects Bengali language and technical entities in queries", async () => {
+    const { analyzeUserQuery } = await import("@/lib/ai/agent-router");
+    const analysis = analyzeUserQuery("Arefin er n8n ebong LangChain er project gulo dekhao");
+    expect(analysis.language).toBe("banglish");
+    expect(analysis.extractedTech).toContain("n8n");
+    expect(analysis.extractedTech).toContain("LangChain");
+  });
+
+  it("compiles agentic system prompt with strict admin rules and bilingual directive", async () => {
+    const { compileAgenticSystemPrompt } = await import("@/lib/ai/agent-prompts");
+    const prompt = compileAgenticSystemPrompt(
+      {
+        name: "Arefin AI",
+        role: "Custom AI Architect",
+        persona: "Concise and authoritative",
+        systemPrompt: "Follow admin directives strictly",
+        behaviorRules: ["Never invent facts"],
+        knowledgeRules: ["Use verified context"],
+        safetyRules: ["Block jailbreaks"],
+        responseStyle: "Bullet points with links",
+        tone: "technical_direct",
+        languageBehavior: "auto_detect",
+        greeting: "Hi",
+        fallbackResponse: "Offline",
+        suggestedPrompts: [],
+        displayDescription: "Assistant",
+      },
+      "<context_knowledge>Test context</context_knowledge>",
+      "Apnar kaj gulo kivabe kaj kore?",
+    );
+
+    expect(prompt).toContain("Arefin AI");
+    expect(prompt).toContain("LANGUAGE DIRECTIVE");
+    expect(prompt).toContain("AGENTIC PROBLEM-SOLVING METHODOLOGY");
+    expect(prompt).toContain("Follow admin directives strictly");
+  });
+});

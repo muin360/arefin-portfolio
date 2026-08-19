@@ -13,6 +13,7 @@ import type {
   SkillCategory,
   AIKnowledgeConfig,
 } from "@/lib/db/types";
+import { analyzeUserQuery } from "./agent-router";
 
 export type Citation = {
   title: string;
@@ -35,14 +36,14 @@ function tokenize(text: string): string[] {
     .filter((w) => w.length > 1);
 }
 
-// Compute keyword overlap score
+// Compute keyword overlap score with entity and length boosting
 function scoreRelevance(queryTokens: string[], targetText: string, boost = 1): number {
   const targetLower = targetText.toLowerCase();
   let score = 0;
   for (const token of queryTokens) {
     if (targetLower.includes(token)) {
       score += 1 * boost;
-      if (token.length > 4) score += 1; // reward longer specific words
+      if (token.length > 4) score += 1.5; // reward specific long technical keywords
     }
   }
   return score;
@@ -54,6 +55,7 @@ export async function retrievePortfolioContext(
 ): Promise<RetrievalResult> {
   const queryTokens = tokenize(query);
   const qLower = query.toLowerCase();
+  const analysis = analyzeUserQuery(query);
 
   const enabled = {
     projects: knowledgeConfig?.enabledCollections?.projects !== false,
@@ -77,12 +79,21 @@ export async function retrievePortfolioContext(
   ]);
 
   const citations: Citation[] = [];
-  const matchedKeywords: string[] = [];
 
-  // Score projects
+  // Score projects with tech entity boosting
   const scoredProjects = projects.map((p: Project) => {
     const text = `${p.title} ${p.category} ${p.summary} ${p.problem} ${p.goal} ${p.aiRole} ${p.automationLogic} ${(p.stack || []).join(" ")} ${(p.integrations || []).join(" ")}`;
-    const score = scoreRelevance(queryTokens, text, 2);
+    let score = scoreRelevance(queryTokens, text, 2);
+
+    // Boost if matching extracted tech entities
+    for (const tech of analysis.extractedTech) {
+      if (text.toLowerCase().includes(tech.toLowerCase())) {
+        score += 3;
+      }
+    }
+    if (analysis.intent === "PROJECT_CASE_STUDY" || analysis.intent === "TECHNICAL_BLUEPRINT") {
+      score += 2;
+    }
     return { project: p, score };
   });
   scoredProjects.sort((a, b) => b.score - a.score);
@@ -90,7 +101,10 @@ export async function retrievePortfolioContext(
   // Score services
   const scoredServices = services.map((s: Service) => {
     const text = `${s.title} ${s.hook} ${s.problem} ${s.solution} ${s.outcome} ${(s.bullets || []).join(" ")}`;
-    const score = scoreRelevance(queryTokens, text, 1.5);
+    let score = scoreRelevance(queryTokens, text, 1.5);
+    if (analysis.intent === "SERVICE_INQUIRY" || analysis.intent === "FEASIBILITY_CHECK") {
+      score += 2.5;
+    }
     return { service: s, score };
   });
   scoredServices.sort((a, b) => b.score - a.score);
@@ -110,7 +124,8 @@ export async function retrievePortfolioContext(
     qLower.includes("build") ||
     qLower.includes("who is") ||
     qLower.includes("overview") ||
-    qLower.includes("work");
+    qLower.includes("work") ||
+    analysis.intent === "GENERAL_INQUIRY";
 
   const topProjects = isGeneralQuery
     ? scoredProjects.slice(0, topK).map((x) => x.project)
@@ -131,24 +146,28 @@ export async function retrievePortfolioContext(
 Name: ${settings.name || "Arefin Mueen"}
 Role: ${settings.role || "AI Automation & AI Agent Developer"}
 Location: Dhaka, Bangladesh (GMT+6) — Available for remote worldwide projects.
-Availability Status: ${settings.availabilityNote || "Available for projects"}
+Availability Status: ${settings.availabilityNote || "Available for high-impact AI agent & workflow projects"}
 Short Bio: ${settings.shortBio || about?.bio || "Specialist in practical AI workflows, tool-calling autonomous agents, RAG knowledge retrieval, and custom API integrations."}
-Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs (Pinecone), Python, TypeScript, REST APIs, Webhooks, MongoDB.`);
+Core Tech Stack: n8n, LangChain, Langflow, LangGraph, OpenAI GPT-4o, Anthropic Claude 3.5 & 3.7, Google Gemini 2.0, Vector DBs (Pinecone), Python, FastAPI, TypeScript, REST APIs, Webhooks, MongoDB Atlas.`);
 
   if (topProjects.length > 0) {
-    contextParts.push(`\nRELEVANT PROJECTS & CASE STUDIES:`);
+    contextParts.push(`\nRELEVANT PROJECTS & CASE STUDIES (AUTHORITATIVE):`);
     for (const p of topProjects) {
       citations.push({
         title: p.title,
         url: `/projects/${p.slug}`,
         type: "project",
       });
-      contextParts.push(`- Project: "${p.title}" (URL: /projects/${p.slug})
+      contextParts.push(`- Project: "${p.title}"
+  URL: /projects/${p.slug}
   Category: ${p.category}
   Summary: ${p.summary}
-  Goal & Solution: ${p.goal || p.problem}
+  Problem Solved: ${p.problem}
+  Goal & Architecture: ${p.goal}
+  Automation Logic: ${p.automationLogic || "Event-driven workflow execution"}
   AI Role: ${p.aiRole || "LLM reasoning and dynamic output extraction"}
-  Key Stack: ${(p.stack || []).slice(0, 5).join(", ")}`);
+  Tech Stack: ${(p.stack || []).join(", ")}
+  Integrations: ${(p.integrations || []).join(", ")}`);
     }
   }
 
@@ -161,8 +180,11 @@ Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs
         type: "service",
       });
       contextParts.push(`- Service: "${s.title}" (URL: /services)
-  Solution: ${s.solution || s.hook}
-  Key Deliverables: ${(s.bullets || []).slice(0, 3).join("; ")}`);
+  Hook: ${s.hook}
+  Problem Addressed: ${s.problem}
+  Solution & Architecture: ${s.solution}
+  Client Outcome: ${s.outcome || "Increased operational efficiency and reduced manual overhead"}
+  Key Deliverables: ${(s.bullets || []).join("; ")}`);
     }
   }
 
@@ -175,6 +197,7 @@ Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs
         type: "journal",
       });
       contextParts.push(`- Note: "${p.title}" (URL: /blog/${p.slug})
+  Category: ${p.category}
   Excerpt: ${p.excerpt}`);
     }
   }
@@ -182,47 +205,47 @@ Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs
   // Skills overview
   const publishedSkills = skills.filter((s: SkillCategory) => s.published !== false);
   if (publishedSkills.length > 0) {
-    contextParts.push(`\nVERIFIED SKILLS & TOOLING:`);
+    contextParts.push(`\nVERIFIED SKILLS & TOOLING MATRIX:`);
     for (const sk of publishedSkills) {
       contextParts.push(`- ${sk.category}: ${(sk.items || []).join(", ")}`);
     }
   }
 
   // Engagement & Contact info
-  contextParts.push(`\nENGAGEMENT & CONTACT:
+  contextParts.push(`\nENGAGEMENT & BOOKING CHANNELS:
 - Direct Contact Form: /contact
 - Booking Discovery Call: /book (30-minute scoping consultation)
 - Direct WhatsApp: ${settings.phoneE164 ? `+${settings.phoneE164}` : "+880 1994-605717"}
 - Email: ${settings.email || "arefinmueen360@gmail.com"}
-- Pricing & Scoping Policy: Projects are custom-scoped based on workflow complexity, node counts, and integration endpoints.`);
+- Pricing & Scoping Policy: Custom-scoped based on workflow complexity, node counts, LLM token requirements, and integration endpoints.`);
 
   // Priority citations based on direct intent
   const priorityCitations: Citation[] = [];
 
-  if (qLower.includes("contact") || qLower.includes("hire") || qLower.includes("reach") || qLower.includes("book")) {
+  if (analysis.intent === "HIRING_SCOPING" || qLower.includes("contact") || qLower.includes("hire") || qLower.includes("book")) {
     priorityCitations.push({
-      title: "Contact & Scoping",
-      url: "/contact",
+      title: "Schedule Discovery Call",
+      url: "/book",
       type: "contact",
     });
     priorityCitations.push({
-      title: "Schedule Scoping Call",
-      url: "/book",
+      title: "Contact Form",
+      url: "/contact",
       type: "contact",
     });
   }
 
-  if (qLower.includes("stack") || qLower.includes("skill") || qLower.includes("tool")) {
+  if (analysis.intent === "TECH_STACK_EXPLORATION" || qLower.includes("stack") || qLower.includes("skill")) {
     priorityCitations.push({
-      title: "Technical Stack",
+      title: "Technical Stack Matrix",
       url: "/skills",
       type: "skill",
     });
   }
 
-  if (qLower.includes("about") || qLower.includes("who is")) {
+  if (analysis.intent === "ABOUT_BACKGROUND" || qLower.includes("about") || qLower.includes("who is")) {
     priorityCitations.push({
-      title: "About Arefin",
+      title: "About Arefin Mueen",
       url: "/about",
       type: "about",
     });
@@ -241,7 +264,7 @@ Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs
     }
   }
 
-  const matchedKeywordSet = new Set<string>();
+  const matchedKeywordSet = new Set<string>(analysis.extractedTech);
   for (const token of queryTokens) {
     if (token.length > 2) {
       const matchInProjects = projects.some(
