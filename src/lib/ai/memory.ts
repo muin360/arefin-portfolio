@@ -18,13 +18,15 @@ export interface DecryptedLeadMemory {
     intent: string;
     extractedTech: string[];
     summarySnippet: string;
+    leadScore: number;
+    leadTier: "HOT" | "WARM" | "EXPLORING";
   };
   lastActiveAt: string;
   createdAt: string;
 }
 
 /**
- * Extracts potential lead info (email, phone, name) safely without leaking.
+ * Extracts and scores lead info safely without leaking.
  */
 function extractLeadMetadata(messages: ChatMessage[]) {
   const fullText = messages
@@ -41,6 +43,31 @@ function extractLeadMetadata(messages: ChatMessage[]) {
 
   const hasContactInfo = Boolean(emailMatch || phoneMatch);
 
+  // Compute Lead Qualification Score (0 - 100)
+  let score = 10;
+  if (hasContactInfo) score += 40;
+  if (
+    fullText.toLowerCase().includes("budget") ||
+    fullText.toLowerCase().includes("pricing") ||
+    fullText.toLowerCase().includes("cost") ||
+    fullText.toLowerCase().includes("hire") ||
+    fullText.toLowerCase().includes("book") ||
+    fullText.toLowerCase().includes("call")
+  ) {
+    score += 30;
+  }
+  if (analysis.extractedTech && analysis.extractedTech.length > 0) {
+    score += Math.min(20, analysis.extractedTech.length * 7);
+  }
+  if (fullText.length > 150) {
+    score += 10;
+  }
+
+  score = Math.min(100, Math.max(0, score));
+
+  const leadTier: "HOT" | "WARM" | "EXPLORING" =
+    score >= 70 ? "HOT" : score >= 40 ? "WARM" : "EXPLORING";
+
   return {
     hasContactInfo,
     email: emailMatch ? emailMatch[0] : undefined,
@@ -49,6 +76,8 @@ function extractLeadMetadata(messages: ChatMessage[]) {
     intent: analysis.intent,
     extractedTech: analysis.extractedTech,
     summarySnippet: lastQuery.slice(0, 120),
+    leadScore: score,
+    leadTier,
   };
 }
 
@@ -92,6 +121,8 @@ export async function saveUserSessionMemory(
             intent: leadMeta.intent,
             extractedTech: leadMeta.extractedTech,
             summarySnippet: leadMeta.summarySnippet,
+            leadScore: leadMeta.leadScore,
+            leadTier: leadMeta.leadTier,
           },
           lastActiveAt: now,
         },
@@ -155,14 +186,19 @@ export async function getDecryptedLeadMemories(limit = 40): Promise<DecryptedLea
  * Builds high-density executive intelligence from decrypted memory for Admin AI querying.
  */
 export async function compileAdminLeadIntelligenceContext(): Promise<string> {
-  const memories = await getDecryptedLeadMemories(25);
+  const memories = await getDecryptedLeadMemories(30);
 
   if (memories.length === 0) {
     return "NO VISITOR SESSIONS RECORDED YET. There are currently no recorded client inquiries or conversation logs in the database.";
   }
 
   const sections: string[] = [];
-  sections.push(`TOTAL RECORDED SESSIONS: ${memories.length}`);
+  const hotLeads = memories.filter((m) => m.extractedLead?.leadTier === "HOT");
+  const warmLeads = memories.filter((m) => m.extractedLead?.leadTier === "WARM");
+
+  sections.push(
+    `EXECUTIVE LEAD SUMMARY: Total Sessions: ${memories.length} | Hot Leads (🔥): ${hotLeads.length} | Warm Leads (⚡): ${warmLeads.length}`,
+  );
 
   memories.forEach((m, idx) => {
     const userMsgs = m.messages.filter((msg) => msg.role === "user");
@@ -173,16 +209,17 @@ export async function compileAdminLeadIntelligenceContext(): Promise<string> {
       ? `[CONTACT CAPTURED] Email: ${lead.email || "N/A"} | Phone: ${lead.phone || "N/A"} | Name: ${lead.name || "N/A"}`
       : `[NO CONTACT INFO]`;
 
+    const tierBadge = lead?.leadTier === "HOT" ? "🔥 HOT LEAD" : lead?.leadTier === "WARM" ? "⚡ WARM" : "EXPLORING";
     const inquirySummary = userMsgs.map((u, i) => `   U${i + 1}: ${u.content}`).join("\n");
 
     sections.push(`
-SESSION #${idx + 1} (${m.lastActiveAt})
+SESSION #${idx + 1} (${m.lastActiveAt}) - ${tierBadge} (Score: ${lead?.leadScore || 10}/100)
 Session ID: ${m.sessionId}
-Status: ${contactStr}
+Contact: ${contactStr}
 Intent: ${lead?.intent || "GENERAL_INQUIRY"}
 Tech Mentioned: ${(lead?.extractedTech || []).join(", ") || "None"}
 Messages Count: ${m.messages.length} (${userMsgs.length} user, ${assistantMsgs.length} bot)
-Conversation Inquiries:
+Conversation History:
 ${inquirySummary}
 ----------------------------------------`);
   });
