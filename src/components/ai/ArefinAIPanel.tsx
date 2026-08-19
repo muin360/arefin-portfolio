@@ -20,6 +20,10 @@ import {
   Mail,
   Zap,
   Code2,
+  Maximize2,
+  Minimize2,
+  Terminal,
+  Activity,
 } from "lucide-react";
 import type { Citation } from "@/lib/ai/retrieval";
 import { trackAIOpen, trackAIPrompt, trackAIProjectClick } from "@/lib/track-event";
@@ -42,17 +46,17 @@ interface ArefinAIPanelProps {
 
 const SUGGESTED_PROMPTS = [
   { label: "🚀 What can Arefin build?", text: "What AI automations and agentic workflows can Arefin build?" },
-  { label: "🧠 Show RAG & Vector Work", text: "Show me Arefin's RAG systems, Pinecone vector search, and knowledge architectures." },
-  { label: "⚡ Multi-Agent Workflows", text: "How does Arefin design multi-agent decision loops and tool-calling systems?" },
-  { label: "🛠️ Tech Stack & Skills", text: "What is Arefin's production tech stack (n8n, LangChain, Claude, Python, etc.)?" },
-  { label: "📅 Schedule Scoping Call", text: "How can I hire Arefin or schedule a 30-minute discovery call?" },
+  { label: "🧠 Show RAG & Vector Systems", text: "Show me Arefin's RAG systems, Pinecone vector search, and knowledge architectures." },
+  { label: "⚡ Multi-Agent Workflows", text: "How does Arefin design multi-agent decision loops and tool-calling systems in n8n/Python?" },
+  { label: "🛠️ Production Tech Stack", text: "What is Arefin's production tech stack (n8n, LangChain, Claude, Python, Next.js, etc.)?" },
+  { label: "📅 Schedule Scoping Call", text: "How can I hire Arefin or schedule a 30-minute discovery call for my business?" },
 ];
 
 const INITIAL_MESSAGE: MessageItem = {
   id: "welcome",
   role: "assistant",
   content:
-    "### 👋 Welcome to Arefin AI\n\nI am the autonomous **Portfolio Intelligence Agent** for **Arefin Mueen** (AI Automation & AI Agent Developer).\n\nAsk me about:\n- **Multi-Agent Orchestration & Decision Loops** (n8n, LangChain, Python)\n- **Enterprise RAG Knowledge Engines** (Pinecone, Dense Vector Retrieval)\n- **Production Case Studies & Blueprints**\n- **Project Scoping, Pricing & Booking Consultations**",
+    "### 👋 Welcome to Arefin AI\n\nI am the autonomous **Portfolio Intelligence Agent** for **Arefin Mueen** (AI Automation & AI Agent Developer).\n\n**Core Capabilities:**\n- 🤖 **Multi-Agent Orchestration & Tool Calling** (n8n, LangChain, Python)\n- 📚 **Enterprise RAG Knowledge Engines** (Pinecone, Dense Vector Retrieval)\n- ⚡ **Production Case Studies & Blueprints**\n- 💼 **Project Scoping, Pricing & Discovery Calls**\n\n> [!NOTE]\n> All responses are strictly grounded in Arefin's verified project architecture, live services, and real-world client builds.\n\nHow can I help you today?",
   timestamp: "Live",
 };
 
@@ -62,9 +66,9 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [copiedCodeIndex, setCopiedCodeIndex] = useState<string | null>(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -106,17 +110,18 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
   const handleScroll = useCallback(() => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-    const isUp = scrollHeight - scrollTop - clientHeight > 100;
-    setShowScrollBottom(isUp);
+    const isFarFromBottom = scrollHeight - scrollTop - clientHeight > 180;
+    setShowScrollBottom(isFarFromBottom);
   }, []);
 
+  // Auto-scroll on new messages or loading
   useEffect(() => {
-    if (!showScrollBottom) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isOpen) {
+      scrollToBottom();
     }
-  }, [messages, loading, showScrollBottom]);
+  }, [messages, loading, isOpen, scrollToBottom]);
 
-  // Handle escape key
+  // Keyboard shortcut Esc to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -133,42 +138,29 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleCopyCode = (codeKey: string, code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCodeIndex(codeKey);
-    setTimeout(() => setCopiedCodeIndex(null), 2000);
-  };
-
   const handleClearMessages = () => {
-    setMessages([
-      {
-        ...INITIAL_MESSAGE,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      },
-    ]);
+    setMessages([INITIAL_MESSAGE]);
+    setError(null);
   };
-
-  if (!isOpen) return null;
 
   const handleSendMessage = async (textToSend?: string) => {
-    const query = (textToSend ?? input).trim();
-    if (!query || loading) return;
+    const content = (textToSend ?? input).trim();
+    if (!content || loading) return;
 
-    setInput("");
     setError(null);
+    setInput("");
 
-    const userMessageId = `user_${Date.now()}`;
     const userMsg: MessageItem = {
-      id: userMessageId,
+      id: `user_${Date.now()}`,
       role: "user",
-      content: query,
+      content,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
     const nextMessages = [...messages, userMsg];
     setMessages(nextMessages);
     setLoading(true);
-    trackAIPrompt(query);
+    trackAIPrompt(content);
 
     try {
       const payload = {
@@ -217,7 +209,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-end bg-black/70 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-end bg-black/75 backdrop-blur-md animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="ai-drawer-title"
@@ -225,41 +217,53 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
       {/* Background click backdrop */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Drawer Container */}
+      {/* Drawer Container with dynamic expansion */}
       <div
-        className="w-full max-w-lg h-full bg-[#06080f]/95 border-l border-violet-500/20 shadow-[0_0_80px_rgba(139,92,246,0.15)] flex flex-col justify-between overflow-hidden relative z-10 animate-slide-left backdrop-blur-2xl"
+        className={`h-full bg-[#060811]/95 border-l border-violet-500/30 shadow-[0_0_90px_rgba(139,92,246,0.25)] flex flex-col justify-between overflow-hidden relative z-10 animate-slide-left backdrop-blur-2xl transition-all duration-300 ${
+          isExpanded ? "w-full max-w-4xl" : "w-full max-w-xl"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Ambient Top Glow */}
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-violet-600/10 via-indigo-600/5 to-transparent pointer-events-none" />
+        {/* Ambient Radial Top Glow */}
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-violet-600/15 via-indigo-600/5 to-transparent pointer-events-none" />
 
         {/* ─── DRAWER HEADER ───────────────────────────────────────────────── */}
-        <div className="p-4 sm:p-5 border-b border-white/[0.08] bg-[#090d18]/90 flex items-center justify-between shrink-0 relative z-20">
+        <div className="p-4 sm:p-5 border-b border-white/[0.08] bg-[#080c1a]/95 flex items-center justify-between shrink-0 relative z-20">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-600/30">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 flex items-center justify-center text-white shadow-lg shadow-violet-600/40 border border-violet-400/30">
                 <Bot className="w-5 h-5" />
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#090d18] animate-pulse" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#080c1a] animate-pulse" />
             </div>
 
             <div>
               <div className="flex items-center gap-2">
-                <h3 id="ai-drawer-title" className="font-bold text-white text-sm sm:text-base tracking-tight">
+                <h3 id="ai-drawer-title" className="font-bold text-white text-base tracking-tight">
                   Arefin AI Agent
                 </h3>
-                <span className="px-2 py-0.5 rounded-full bg-violet-500/15 border border-violet-500/30 text-[9px] font-mono text-violet-300 font-bold tracking-wider">
-                  100X ENGINE
+                <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-violet-600/30 to-indigo-600/30 border border-violet-500/40 text-[9px] font-mono text-violet-300 font-bold tracking-wider">
+                  1000X ENGINE
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                <span>Verified Architecture Grounding</span>
+              <p className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 mt-0.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Verified Architecture &bull; RAG Grounded</span>
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5">
+            {/* Expand / Minimize Drawer Width */}
+            <button
+              type="button"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all hidden sm:flex items-center justify-center"
+              title={isExpanded ? "Collapse width" : "Expand to wide workstation"}
+            >
+              {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
+
             {messages.length > 1 && (
               <button
                 type="button"
@@ -285,30 +289,30 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
         </div>
 
         {/* ─── QUICK SHORTCUT TOOLBAR ──────────────────────────────────────── */}
-        <div className="px-4 py-2 bg-[#080b14] border-b border-white/[0.04] flex items-center gap-2 overflow-x-auto scrollbar-none text-[11px] font-mono shrink-0">
+        <div className="px-4 py-2.5 bg-[#080a14] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto custom-scrollbar text-[11px] font-mono shrink-0">
           <Link
             href="/book"
             onClick={onClose}
-            className="px-2.5 py-1 rounded-lg bg-violet-600/20 hover:bg-violet-600/30 text-violet-300 border border-violet-500/30 flex items-center gap-1.5 transition-colors whitespace-nowrap"
+            className="px-3 py-1.5 rounded-xl bg-violet-600/20 hover:bg-violet-600/35 text-violet-300 hover:text-white border border-violet-500/30 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 shadow-sm"
           >
-            <Calendar className="w-3 h-3" />
-            <span>Book 30-Min Call</span>
+            <Calendar className="w-3.5 h-3.5 text-violet-400" />
+            <span>Book 30-Min Discovery Call</span>
           </Link>
           <Link
             href="/projects"
             onClick={onClose}
-            className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/10 flex items-center gap-1.5 transition-colors whitespace-nowrap"
+            className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 shadow-sm"
           >
-            <Layers className="w-3 h-3 text-indigo-400" />
-            <span>View 10 Projects</span>
+            <Layers className="w-3.5 h-3.5 text-indigo-400" />
+            <span>View 10+ Production Projects</span>
           </Link>
           <Link
             href="/contact"
             onClick={onClose}
-            className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/10 flex items-center gap-1.5 transition-colors whitespace-nowrap"
+            className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 shadow-sm"
           >
-            <Mail className="w-3 h-3 text-emerald-400" />
-            <span>Contact Form</span>
+            <Mail className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Direct Inquiry Form</span>
           </Link>
         </div>
 
@@ -328,16 +332,16 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                 } animate-fade-in`}
               >
                 {!isUser && (
-                  <div className="w-7 h-7 rounded-lg bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600/30 to-indigo-600/30 border border-violet-500/40 flex items-center justify-center text-violet-300 shrink-0 mt-1 shadow-md">
                     <Bot className="w-4 h-4" />
                   </div>
                 )}
 
                 <div
-                  className={`max-w-[90%] sm:max-w-[85%] rounded-2xl p-4 sm:p-5 space-y-3 relative group transition-all ${
+                  className={`max-w-[92%] sm:max-w-[88%] rounded-2xl p-4 sm:p-5 space-y-3 relative group transition-all ${
                     isUser
-                      ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-tr-sm shadow-lg shadow-violet-600/20 font-medium text-sm"
-                      : "bg-[#0b0e1a]/95 border border-white/[0.08] text-slate-200 rounded-tl-sm shadow-xl hover:border-violet-500/20"
+                      ? "bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 text-white rounded-tr-sm shadow-xl shadow-violet-950/40 font-medium text-xs sm:text-sm border-t border-white/20"
+                      : "bg-[#0b0e1d]/95 border border-white/[0.08] text-slate-200 rounded-tl-sm shadow-2xl hover:border-violet-500/30"
                   }`}
                 >
                   {/* Message Content */}
@@ -351,32 +355,37 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
 
                   {/* Dynamic Clickable Citation Badges */}
                   {!isUser && msg.citations && msg.citations.length > 0 && (
-                    <div className="pt-3 border-t border-white/[0.06] flex flex-wrap gap-1.5">
-                      <span className="text-[10px] font-mono text-slate-400 w-full mb-0.5">
-                        Verified References:
+                    <div className="pt-3 border-t border-white/[0.06] flex flex-wrap gap-2">
+                      <span className="text-[10px] font-mono text-slate-400 w-full mb-0.5 font-bold uppercase tracking-wider">
+                        Verified Portfolio References:
                       </span>
                       {msg.citations.map((c, i) => (
                         <Link
                           key={i}
                           href={c.url}
                           onClick={() => handleCitationClick(c)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-950/40 hover:bg-violet-900/50 border border-violet-500/30 hover:border-violet-400 text-violet-300 hover:text-white font-mono text-[11px] font-semibold transition-all group/cit"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-950/50 hover:bg-violet-900/60 border border-violet-500/40 hover:border-violet-300 text-violet-300 hover:text-white font-mono text-[11px] font-semibold transition-all group/cit shadow-sm"
                         >
-                          <Zap className="w-3 h-3 text-amber-400 group-hover/cit:scale-110 transition-transform" />
+                          <Zap className="w-3.5 h-3.5 text-amber-400 group-hover/cit:scale-110 transition-transform" />
                           <span>{c.title}</span>
-                          <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                          <ExternalLink className="w-3 h-3 opacity-60" />
                         </Link>
                       ))}
                     </div>
                   )}
 
                   {/* Metadata Footer */}
-                  <div className="flex items-center justify-between text-[10px] font-mono text-slate-400/70 pt-1.5 border-t border-white/[0.04]">
+                  <div className="flex items-center justify-between text-[9.5px] font-mono text-slate-400/80 pt-2 border-t border-white/[0.06]">
                     <div className="flex items-center gap-2">
                       <span>{msg.timestamp}</span>
                       {msg.provider && (
-                        <span className="px-1.5 py-0.2 rounded bg-white/[0.04] text-violet-300 uppercase text-[9px]">
+                        <span className="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 uppercase font-bold text-[9px] border border-violet-500/30">
                           {msg.provider}
+                        </span>
+                      )}
+                      {msg.model && (
+                        <span className="px-1.5 py-0.5 rounded bg-white/[0.05] text-slate-300 text-[9px]">
+                          {msg.model}
                         </span>
                       )}
                     </div>
@@ -385,18 +394,18 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                       <button
                         type="button"
                         onClick={() => handleCopyMessage(msg.id, msg.content)}
-                        className="opacity-60 group-hover:opacity-100 hover:text-white transition-opacity flex items-center gap-1 p-1 hover:bg-white/[0.06] rounded-md"
+                        className="opacity-70 group-hover:opacity-100 hover:text-white transition-opacity flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-white/[0.06]"
                         title="Copy full answer"
                       >
                         {copiedId === msg.id ? (
                           <>
                             <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            <span className="text-emerald-400 text-[10px]">Copied</span>
+                            <span className="text-emerald-400 font-semibold">Copied</span>
                           </>
                         ) : (
                           <>
                             <Copy className="w-3.5 h-3.5" />
-                            <span className="text-[10px]">Copy</span>
+                            <span>Copy Answer</span>
                           </>
                         )}
                       </button>
@@ -405,7 +414,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                 </div>
 
                 {isUser && (
-                  <div className="w-7 h-7 rounded-lg bg-violet-950 border border-violet-500/30 flex items-center justify-center text-violet-300 shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-xl bg-violet-950 border border-violet-500/40 flex items-center justify-center text-violet-300 shrink-0 mt-1 shadow-md">
                     <User className="w-4 h-4" />
                   </div>
                 )}
@@ -416,26 +425,26 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
           {/* Thinking / Agent Processing State */}
           {loading && (
             <div className="flex gap-3 justify-start animate-fade-in">
-              <div className="w-7 h-7 rounded-lg bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 shrink-0 mt-1">
+              <div className="w-8 h-8 rounded-xl bg-violet-600/30 border border-violet-500/40 flex items-center justify-center text-violet-300 shrink-0 mt-1">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="bg-[#0b0e1a] border border-violet-500/30 rounded-2xl rounded-tl-sm p-4 space-y-2 max-w-[80%] shadow-lg">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" />
+              <div className="bg-[#0b0e1d]/95 border border-violet-500/40 rounded-2xl rounded-tl-sm p-4 space-y-2 max-w-[85%] shadow-2xl">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-violet-400 animate-bounce" />
                   <span
-                    className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce"
+                    className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-bounce"
                     style={{ animationDelay: "150ms" }}
                   />
                   <span
-                    className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"
+                    className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-bounce"
                     style={{ animationDelay: "300ms" }}
                   />
-                  <span className="font-mono text-xs text-violet-300 font-semibold ml-1">
+                  <span className="font-mono text-xs text-violet-300 font-bold ml-1">
                     Agent Synthesizing Knowledge...
                   </span>
                 </div>
-                <p className="text-[11px] font-mono text-slate-400">
-                  Retrieving architecture blueprints, tools, and live portfolio ground truth.
+                <p className="text-[11px] font-mono text-slate-400 pl-6">
+                  Querying verified blueprints, multi-agent frameworks, and live portfolio context.
                 </p>
               </div>
             </div>
@@ -448,7 +457,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
               <button
                 type="button"
                 onClick={() => handleSendMessage()}
-                className="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-mono text-[11px] font-semibold transition-colors shrink-0 shadow-md"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-mono text-[11px] font-semibold transition-colors shrink-0 shadow-md"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Retry</span>
@@ -484,7 +493,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                 type="button"
                 onClick={() => handleSendMessage(item.text)}
                 disabled={loading}
-                className="px-3 py-1.5 rounded-xl bg-[#0e1322] hover:bg-violet-600/20 hover:text-white border border-white/10 hover:border-violet-500/40 text-slate-300 text-xs whitespace-nowrap transition-all flex items-center gap-1.5 shadow-sm active:scale-95 font-medium"
+                className="px-3 py-1.5 rounded-xl bg-[#0e1322] hover:bg-violet-600/30 hover:text-white border border-white/10 hover:border-violet-500/40 text-slate-300 text-xs whitespace-nowrap transition-all flex items-center gap-1.5 shadow-sm active:scale-95 font-medium"
               >
                 <span>{item.label}</span>
               </button>
@@ -493,7 +502,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
         )}
 
         {/* ─── INPUT COMPOSER ──────────────────────────────────────────────── */}
-        <div className="p-3 sm:p-4 border-t border-white/[0.08] bg-[#090d18] shrink-0 space-y-2">
+        <div className="p-3.5 sm:p-4 border-t border-white/[0.08] bg-[#090d1a] shrink-0 space-y-2.5">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -510,7 +519,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                 placeholder="Ask about Arefin's agent workflows, RAG, n8n, or hire..."
                 maxLength={400}
                 disabled={loading}
-                className="w-full px-4 py-3 bg-[#05070e] border border-white/15 focus:border-violet-500 rounded-xl text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all font-sans"
+                className="w-full px-4 py-3 bg-[#04060d] border border-white/15 focus:border-violet-500 rounded-xl text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all font-sans"
               />
             </div>
 
@@ -518,7 +527,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
               type="submit"
               disabled={!input.trim() || loading}
               aria-label="Send query"
-              className="p-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white rounded-xl transition-all shrink-0 shadow-lg shadow-violet-600/30 active:scale-95"
+              className="p-3 bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white rounded-xl transition-all shrink-0 shadow-lg shadow-violet-600/40 active:scale-95 border-t border-white/20"
             >
               <Send className="w-4 h-4" />
             </button>
