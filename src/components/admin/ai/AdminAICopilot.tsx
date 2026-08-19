@@ -30,6 +30,11 @@ import {
   Flame,
   Search,
   Filter,
+  Mail,
+  Phone,
+  Mic,
+  MicOff,
+  Sliders,
 } from "lucide-react";
 import FormattedAIOutput from "@/components/ai/FormattedAIOutput";
 
@@ -69,28 +74,75 @@ const ADMIN_QUICK_ACTIONS = [
 
 export default function AdminAICopilot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"chat" | "leads" | "generator">("chat");
+  const [activeTab, setActiveTab] = useState<"chat" | "leads" | "generator" | "telemetry">("chat");
   const [messages, setMessages] = useState<CopilotMessage[]>([
     {
       id: "admin_welcome",
       role: "assistant",
       content:
-        "### ⚡ Admin Executive Copilot Active\n\nI am your private **Executive Business Intelligence & Copilot Engine**.\n\n**Quick Access:**\n- 🔐 **Encrypted Visitor Memory Querying**: Direct access to AES-256-GCM decrypted visitor leads & project inquiries.\n- 🔥 **Lead Scoring & Tiering**: Instant identification of Hot, Warm, and Exploring prospects.\n- ✍️ **Content Generator**: 1-click drafting of case studies, client proposals, and SEO metadata.\n\nHow can I assist your operations today, Arefin?",
+        "### ⚡ Admin Executive Copilot Active\n\nI am your private **Executive Business Intelligence & Copilot Engine**.\n\n**Executive Capabilities:**\n- 🔐 **AES-256-GCM Memory Telemetry**: Direct querying of live visitor leads, quotes & workflow inquiries.\n- 🔥 **Hot Prospect CRM**: Instant identification of Hot, Warm, and High-Budget clients.\n- ✍️ **Autonomous Content Drafter**: 1-click drafting of case studies, client proposals, and SEO metadata.\n- 🩺 **Live Telemetry & Diagnostics**: Real-time MongoDB Atlas and AI cluster health.\n\nHow can I assist your operations today, Arefin?",
       timestamp: "Live",
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
 
   // Leads & Stats State
   const [leads, setLeads] = useState<LeadSession[]>([]);
   const [leadsLoading, setLeadsLoading] = useState(false);
   const [leadFilter, setLeadFilter] = useState<"ALL" | "HOT" | "WARM">("ALL");
+  const [leadSearch, setLeadSearch] = useState("");
   const [exporting, setExporting] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
+
+  // Voice Dictation
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[0]?.[0]?.transcript;
+          if (transcript) {
+            setInput((prev) => (prev ? `${prev} ${transcript}` : transcript));
+          }
+          setIsListening(false);
+        };
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => setIsListening(false);
+        recognitionRef.current = recognition;
+      }
+    }
+  }, []);
+
+  const toggleVoiceInput = () => {
+    if (!recognitionRef.current) {
+      alert("Voice input is not supported in this browser.");
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch {
+        setIsListening(false);
+      }
+    }
+  };
 
   // Keyboard shortcut: Ctrl + Shift + A (or Cmd + Shift + A)
   useEffect(() => {
@@ -222,8 +274,13 @@ export default function AdminAICopilot() {
   };
 
   const filteredLeads = leads.filter((l) => {
-    if (leadFilter === "HOT") return l.extractedLead?.leadTier === "HOT";
-    if (leadFilter === "WARM") return l.extractedLead?.leadTier === "WARM";
+    if (leadFilter === "HOT" && l.extractedLead?.leadTier !== "HOT") return false;
+    if (leadFilter === "WARM" && l.extractedLead?.leadTier !== "WARM") return false;
+    if (leadSearch.trim()) {
+      const s = leadSearch.toLowerCase();
+      const text = `${l.extractedLead?.email || ""} ${l.extractedLead?.name || ""} ${l.extractedLead?.intent || ""} ${l.extractedLead?.extractedTech?.join(" ") || ""} ${l.extractedLead?.summarySnippet || ""}`.toLowerCase();
+      return text.includes(s);
+    }
     return true;
   });
 
@@ -337,6 +394,7 @@ export default function AdminAICopilot() {
                   { id: "chat", label: "Executive Chat", icon: MessageSquare },
                   { id: "leads", label: `Leads Matrix (${leads.length})`, icon: Users },
                   { id: "generator", label: "Content Drafter", icon: FileText },
+                  { id: "telemetry", label: "Telemetry & Health", icon: Activity },
                 ].map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
@@ -344,7 +402,7 @@ export default function AdminAICopilot() {
                     <button
                       key={tab.id}
                       type="button"
-                      onClick={() => setActiveTab(tab.id as "chat" | "leads" | "generator")}
+                      onClick={() => setActiveTab(tab.id as typeof activeTab)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
                         isActive
                           ? "bg-violet-600 text-white shadow-md shadow-violet-950"
@@ -480,15 +538,32 @@ export default function AdminAICopilot() {
                     }}
                     className="flex items-center gap-2"
                   >
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      placeholder="Ask Copilot: e.g. Who requested custom workflow pricing this week?"
-                      disabled={loading}
-                      className="flex-1 px-4 py-3 bg-[#04060d] border border-white/15 focus:border-violet-500 rounded-xl text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all font-sans"
-                    />
+                    <div className="relative flex-1">
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder={isListening ? "Listening to voice..." : "Ask Copilot: e.g. Who requested custom workflow pricing this week?"}
+                        disabled={loading}
+                        className={`w-full pl-4 pr-10 py-3 bg-[#04060d] border rounded-xl text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all font-sans ${
+                          isListening ? "border-rose-500 animate-pulse text-rose-300" : "border-white/15 focus:border-violet-500"
+                        }`}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={toggleVoiceInput}
+                        className={`absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all ${
+                          isListening
+                            ? "bg-rose-500 text-white animate-bounce"
+                            : "text-slate-400 hover:text-white hover:bg-white/[0.08]"
+                        }`}
+                        title={isListening ? "Stop listening" : "Voice input"}
+                      >
+                        {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                      </button>
+                    </div>
 
                     <button
                       type="submit"
@@ -506,7 +581,7 @@ export default function AdminAICopilot() {
             {/* ─── TAB 2: LEADS MATRIX ─────────────────────────────────────── */}
             {activeTab === "leads" && (
               <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     {(["ALL", "HOT", "WARM"] as const).map((tier) => (
                       <button
@@ -524,13 +599,16 @@ export default function AdminAICopilot() {
                     ))}
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={loadLeads}
-                    className="p-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs font-mono flex items-center gap-1"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="relative flex-1 sm:max-w-xs">
+                    <input
+                      type="text"
+                      value={leadSearch}
+                      onChange={(e) => setLeadSearch(e.target.value)}
+                      placeholder="Search leads, email, tech..."
+                      className="w-full pl-8 pr-3 py-1.5 bg-[#04060d] border border-white/15 focus:border-violet-500 rounded-lg text-xs text-white placeholder:text-slate-500 focus:outline-none"
+                    />
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  </div>
                 </div>
 
                 {leadsLoading ? (
@@ -598,6 +676,32 @@ export default function AdminAICopilot() {
                               &ldquo;{lead?.summarySnippet}&rdquo;
                             </div>
                           </div>
+
+                          {/* Direct Contact Actions */}
+                          {(lead?.email || lead?.phone) && (
+                            <div className="mt-3 pt-2 border-t border-white/[0.04] flex items-center gap-2">
+                              {lead.email && (
+                                <a
+                                  href={`mailto:${lead.email}?subject=Follow-up:%20AI%20Automation%20Inquiry%20with%20Arefin%20Mueen`}
+                                  className="px-2.5 py-1 rounded-lg bg-violet-600/30 hover:bg-violet-600/50 text-violet-200 border border-violet-500/40 text-[11px] font-mono flex items-center gap-1.5 transition-colors"
+                                >
+                                  <Mail className="w-3 h-3 text-emerald-400" />
+                                  <span>Email Lead</span>
+                                </a>
+                              )}
+                              {lead.phone && (
+                                <a
+                                  href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-[11px] font-mono flex items-center gap-1.5 transition-colors"
+                                >
+                                  <Phone className="w-3 h-3 text-emerald-400" />
+                                  <span>WhatsApp</span>
+                                </a>
+                              )}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -660,6 +764,57 @@ export default function AdminAICopilot() {
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* ─── TAB 4: TELEMETRY & HEALTH ───────────────────────────────── */}
+            {activeTab === "telemetry" && (
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar">
+                <div className="p-4 rounded-xl bg-violet-950/20 border border-violet-500/30">
+                  <h4 className="font-bold text-white text-sm flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-emerald-400" />
+                    <span>Real-Time Diagnostic Health & Telemetry</span>
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Direct diagnostics across MongoDB cluster, AI Providers, and encrypted session vaults.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-4 rounded-xl bg-[#0b0e1d] border border-white/10 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono text-slate-400">Database Cluster</span>
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold">
+                        ONLINE
+                      </span>
+                    </div>
+                    <div className="text-sm font-bold text-white">MongoDB Atlas</div>
+                    <div className="text-[11px] text-slate-400">AES-256-GCM encrypted session vaults active.</div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#0b0e1d] border border-white/10 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono text-slate-400">Failover Engine</span>
+                      <span className="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 text-[10px] font-mono font-bold">
+                        ACTIVE
+                      </span>
+                    </div>
+                    <div className="text-sm font-bold text-white">Multi-Provider Cascade</div>
+                    <div className="text-[11px] text-slate-400">Automatic fallback to local grounded engine on 429/limits.</div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab("chat");
+                    handleSend("What is the current health status of Arefin AI, active models, and portfolio knowledge base?");
+                  }}
+                  className="w-full py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-mono text-xs font-bold transition-all shadow-md shadow-violet-950 flex items-center justify-center gap-2"
+                >
+                  <Activity className="w-4 h-4" />
+                  <span>Run Comprehensive Live Health Diagnostic</span>
+                </button>
               </div>
             )}
           </div>

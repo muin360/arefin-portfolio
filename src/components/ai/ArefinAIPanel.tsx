@@ -24,6 +24,12 @@ import {
   Minimize2,
   Terminal,
   Activity,
+  Download,
+  Mic,
+  MicOff,
+  Calculator,
+  ChevronRight,
+  Sliders,
 } from "lucide-react";
 import type { Citation } from "@/lib/ai/retrieval";
 import { trackAIOpen, trackAIPrompt, trackAIProjectClick } from "@/lib/track-event";
@@ -69,10 +75,18 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [showEstimator, setShowEstimator] = useState(false);
+
+  // Estimator Form State
+  const [estWorkflow, setEstWorkflow] = useState<"n8n" | "rag" | "multi_agent" | "custom">("multi_agent");
+  const [estComplexity, setEstComplexity] = useState<"standard" | "advanced" | "enterprise">("advanced");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
 
   // Initialize unique session ID
   useEffect(() => {
@@ -87,6 +101,49 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
       setSessionId(`session_${Date.now()}`);
     }
   }, []);
+
+  // Web Speech API Voice Dictation
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[0]?.[0]?.transcript;
+          if (transcript) {
+            setInput((prev) => (prev ? `${prev} ${transcript}` : transcript));
+          }
+          setIsListening(false);
+        };
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => setIsListening(false);
+        recognitionRef.current = recognition;
+      }
+    }
+  }, []);
+
+  const toggleVoiceInput = () => {
+    if (!recognitionRef.current) {
+      alert("Voice input is not supported in this browser. Please use Google Chrome or Microsoft Edge.");
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch {
+        setIsListening(false);
+      }
+    }
+  };
 
   // Focus input and lock background scroll
   useEffect(() => {
@@ -104,33 +161,19 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    setShowScrollBottom(false);
   }, []);
 
-  const handleScroll = useCallback(() => {
-    if (!chatContainerRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-    const isFarFromBottom = scrollHeight - scrollTop - clientHeight > 180;
-    setShowScrollBottom(isFarFromBottom);
-  }, []);
-
-  // Auto-scroll on new messages or loading
   useEffect(() => {
     if (isOpen) {
       scrollToBottom();
     }
   }, [messages, loading, isOpen, scrollToBottom]);
 
-  // Keyboard shortcut Esc to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  const handleScroll = () => {
+    if (!chatContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+    setShowScrollBottom(scrollHeight - scrollTop - clientHeight > 100);
+  };
 
   const handleCopyMessage = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
@@ -138,128 +181,198 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleClearMessages = () => {
+  const handleExportTranscript = () => {
+    const transcript = messages
+      .map((m) => `[${m.role.toUpperCase()} - ${m.timestamp}]\n${m.content}\n`)
+      .join("\n----------------------------------------\n\n");
+    const blob = new Blob([transcript], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `arefin-ai-consultation-${new Date().toISOString().slice(0, 10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleClearSession = () => {
+    const newSession = `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    setSessionId(newSession);
+    try {
+      sessionStorage.setItem("arefin_ai_session_id", newSession);
+    } catch {}
     setMessages([INITIAL_MESSAGE]);
-    setError(null);
+  };
+
+  const handleCitationClick = (citation: Citation) => {
+    trackAIProjectClick(citation.title);
+    onClose();
   };
 
   const handleSendMessage = async (textToSend?: string) => {
-    const content = (textToSend ?? input).trim();
-    if (!content || loading) return;
+    const query = (textToSend ?? input).trim();
+    if (!query || loading) return;
 
-    setError(null);
+    trackAIPrompt(query);
     setInput("");
+    setError(null);
 
-    const userMsg: MessageItem = {
+    const userMessage: MessageItem = {
       id: `user_${Date.now()}`,
       role: "user",
-      content,
+      content: query,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
-    const nextMessages = [...messages, userMsg];
-    setMessages(nextMessages);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     setLoading(true);
-    trackAIPrompt(content);
 
     try {
-      const payload = {
-        sessionId: sessionId || `session_${Date.now()}`,
-        messages: nextMessages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        })),
-      };
+      const history = newMessages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
 
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          messages: history,
+          sessionId: sessionId || undefined,
+        }),
       });
 
       const data = await res.json();
 
-      if (!res.ok && res.status !== 200) {
-        throw new Error(data.error || "Failed to retrieve response");
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to reach Arefin AI");
       }
 
-      const assistantMsg: MessageItem = {
-        id: `assistant_${Date.now()}`,
+      const botMessage: MessageItem = {
+        id: `bot_${Date.now()}`,
         role: "assistant",
-        content: data.reply || "I am here to assist with Arefin's technical case studies and workflows.",
+        content: data.reply || "I apologize, but I could not generate a response. Please try again.",
         citations: data.citations || [],
         provider: data.provider,
         model: data.model,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
 
-      setMessages((prev) => [...prev, assistantMsg]);
+      setMessages((prev) => [...prev, botMessage]);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Network connection issue. Please retry.";
-      setError(msg);
+      const errorText = err instanceof Error ? err.message : "Error connecting to AI service";
+      setError(errorText);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `error_${Date.now()}`,
+          role: "assistant",
+          content: `> [!WARNING]\n> **Connection Notice:** ${errorText}\n\nYou can reach Arefin directly at [Schedule 30-Min Discovery Call](/book) or send an inquiry via the [Contact Form](/contact).`,
+          citations: [
+            { title: "Schedule Discovery Call", url: "/book", type: "service" },
+            { title: "Contact Form", url: "/contact", type: "contact" },
+          ],
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCitationClick = (c: Citation) => {
-    trackAIProjectClick(c.url);
-    onClose();
+  const handleApplyEstimatorSpecs = () => {
+    setShowEstimator(false);
+    const workflowNames = {
+      n8n: "Event-Driven n8n & Webhook Automation",
+      rag: "Enterprise Pinecone RAG Knowledge Engine",
+      multi_agent: "Autonomous Multi-Agent Decision Swarm",
+      custom: "End-to-End Custom AI Application & Assistant",
+    };
+    const complexityNames = {
+      standard: "Standard (1-2 Weeks Delivery)",
+      advanced: "Advanced Multi-System (2-4 Weeks Delivery)",
+      enterprise: "Enterprise Distributed Architecture (4+ Weeks)",
+    };
+
+    const promptText = `I would like to scope a project: ${workflowNames[estWorkflow]} with ${complexityNames[estComplexity]} complexity. What are the recommended architecture milestones and how soon can we begin?`;
+    handleSendMessage(promptText);
   };
+
+  if (!isOpen) return null;
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-end bg-black/75 backdrop-blur-md animate-fade-in"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="ai-drawer-title"
+      aria-labelledby="arefin-ai-title"
     >
-      {/* Background click backdrop */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Drawer Container with dynamic expansion */}
       <div
-        className={`h-full bg-[#060811]/95 border-l border-violet-500/30 shadow-[0_0_90px_rgba(139,92,246,0.25)] flex flex-col justify-between overflow-hidden relative z-10 animate-slide-left backdrop-blur-2xl transition-all duration-300 ${
-          isExpanded ? "w-full max-w-4xl" : "w-full max-w-xl"
+        className={`h-full bg-[#070912]/95 border-l border-violet-500/30 shadow-[0_0_90px_rgba(139,92,246,0.25)] flex flex-col justify-between overflow-hidden relative z-10 backdrop-blur-2xl transition-all duration-300 animate-slide-left ${
+          isExpanded ? "w-full max-w-5xl" : "w-full max-w-xl"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Ambient Radial Top Glow */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-violet-600/15 via-indigo-600/5 to-transparent pointer-events-none" />
+        {/* Ambient Top Glow */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-violet-600/20 via-indigo-600/5 to-transparent pointer-events-none" />
 
         {/* ─── DRAWER HEADER ───────────────────────────────────────────────── */}
-        <div className="p-4 sm:p-5 border-b border-white/[0.08] bg-[#080c1a]/95 flex items-center justify-between shrink-0 relative z-20">
+        <div className="p-4 sm:p-5 border-b border-white/[0.08] bg-[#090d1a]/95 flex items-center justify-between shrink-0 relative z-20">
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 flex items-center justify-center text-white shadow-lg shadow-violet-600/40 border border-violet-400/30">
                 <Bot className="w-5 h-5" />
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#080c1a] animate-pulse" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#070912]" />
             </div>
 
             <div>
               <div className="flex items-center gap-2">
-                <h3 id="ai-drawer-title" className="font-bold text-white text-base tracking-tight">
-                  Arefin AI Agent
+                <h3 id="arefin-ai-title" className="font-bold text-white text-base tracking-tight">
+                  Arefin AI
                 </h3>
-                <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-violet-600/30 to-indigo-600/30 border border-violet-500/40 text-[9px] font-mono text-violet-300 font-bold tracking-wider">
-                  1000X ENGINE
+                <span className="px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30 text-[9px] font-mono font-bold tracking-wider">
+                  AUTONOMOUS AGENT
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 mt-0.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Verified Architecture &bull; RAG Grounded</span>
+                <span>Deterministic Grounding &bull; Zero Hallucination</span>
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5">
-            {/* Expand / Minimize Drawer Width */}
             <button
               type="button"
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={() => setShowEstimator((prev) => !prev)}
+              className={`p-2 rounded-xl border transition-all flex items-center gap-1 text-xs font-mono font-semibold ${
+                showEstimator
+                  ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                  : "bg-white/[0.04] text-slate-300 hover:text-white border-white/10 hover:border-violet-500/40"
+              }`}
+              title="Project Scope & Cost Estimator"
+            >
+              <Calculator className="w-4 h-4 text-amber-400" />
+              <span className="hidden sm:inline">Scope Estimator</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleExportTranscript}
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all"
+              title="Download Consultation Transcript (.txt)"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsExpanded((prev) => !prev)}
               className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all hidden sm:flex items-center justify-center"
-              title={isExpanded ? "Collapse width" : "Expand to wide workstation"}
+              title={isExpanded ? "Collapse View" : "Expand Workstation"}
             >
               {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
@@ -267,10 +380,9 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
             {messages.length > 1 && (
               <button
                 type="button"
-                onClick={handleClearMessages}
-                title="Clear conversation"
-                aria-label="Clear conversation history"
+                onClick={handleClearSession}
                 className="p-2 rounded-xl text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
+                title="Reset session & new conversation"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -279,8 +391,6 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
             <button
               type="button"
               onClick={onClose}
-              title="Close drawer (Esc)"
-              aria-label="Close AI Assistant"
               className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all"
             >
               <X className="w-5 h-5" />
@@ -288,14 +398,80 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
           </div>
         </div>
 
-        {/* ─── QUICK SHORTCUT TOOLBAR ──────────────────────────────────────── */}
-        <div className="px-4 py-2.5 bg-[#080a14] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto custom-scrollbar text-[11px] font-mono shrink-0">
+        {/* ─── SCOPING CALCULATOR DRAWER ───────────────────────────────────── */}
+        {showEstimator && (
+          <div className="p-4 sm:p-5 bg-[#0a0e1c] border-b border-violet-500/30 text-white animate-fade-in space-y-3 shrink-0">
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold text-xs sm:text-sm font-mono flex items-center gap-2 text-violet-300">
+                <Sliders className="w-4 h-4 text-amber-400" />
+                <span>Instant Project Scope & Architecture Estimator</span>
+              </h4>
+              <button
+                type="button"
+                onClick={() => setShowEstimator(false)}
+                className="text-slate-400 hover:text-white text-xs"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] font-mono text-slate-400 block mb-1">
+                  1. Workflow Architecture:
+                </label>
+                <select
+                  value={estWorkflow}
+                  onChange={(e) => setEstWorkflow(e.target.value as typeof estWorkflow)}
+                  className="w-full px-3 py-2 bg-[#04060d] border border-white/15 rounded-xl text-xs text-white focus:outline-none focus:border-violet-500 font-sans"
+                >
+                  <option value="multi_agent">Autonomous Multi-Agent Swarm (n8n / Python)</option>
+                  <option value="rag">Enterprise Pinecone RAG Knowledge Engine</option>
+                  <option value="n8n">Event-Driven n8n & Webhook CRM Sync</option>
+                  <option value="custom">Custom AI Assistant & Web Application</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-mono text-slate-400 block mb-1">
+                  2. Project Complexity & Scope:
+                </label>
+                <select
+                  value={estComplexity}
+                  onChange={(e) => setEstComplexity(e.target.value as typeof estComplexity)}
+                  className="w-full px-3 py-2 bg-[#04060d] border border-white/15 rounded-xl text-xs text-white focus:outline-none focus:border-violet-500 font-sans"
+                >
+                  <option value="standard">Standard Architecture (1-2 Weeks)</option>
+                  <option value="advanced">Advanced Multi-System (2-4 Weeks)</option>
+                  <option value="enterprise">Enterprise Distributed (4+ Weeks)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-[11px] font-mono text-slate-400">
+                ⚡ Tailored delivery timeline & milestone estimates.
+              </span>
+              <button
+                type="button"
+                onClick={handleApplyEstimatorSpecs}
+                className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl font-mono text-xs font-bold transition-all shadow-md shadow-violet-950 flex items-center gap-1.5 active:scale-95"
+              >
+                <span>Calculate & Ask AI</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ─── QUICK DISCOVERY SHORTCUTS ───────────────────────────────────── */}
+        <div className="px-4 py-2.5 bg-[#080b15] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto custom-scrollbar shrink-0 text-xs font-mono">
           <Link
             href="/book"
             onClick={onClose}
-            className="px-3 py-1.5 rounded-xl bg-violet-600/20 hover:bg-violet-600/35 text-violet-300 hover:text-white border border-violet-500/30 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 shadow-sm"
+            className="px-3 py-1.5 rounded-xl bg-violet-600/30 hover:bg-violet-600/50 text-violet-200 border border-violet-500/40 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 shadow-sm font-semibold"
           >
-            <Calendar className="w-3.5 h-3.5 text-violet-400" />
+            <Calendar className="w-3.5 h-3.5 text-amber-400" />
             <span>Book 30-Min Discovery Call</span>
           </Link>
           <Link
@@ -516,11 +692,26 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about Arefin's agent workflows, RAG, n8n, or hire..."
+                placeholder={isListening ? "Listening to your voice..." : "Ask about Arefin's agent workflows, RAG, n8n, or hire..."}
                 maxLength={400}
                 disabled={loading}
-                className="w-full px-4 py-3 bg-[#04060d] border border-white/15 focus:border-violet-500 rounded-xl text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all font-sans"
+                className={`w-full pl-4 pr-10 py-3 bg-[#04060d] border rounded-xl text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all font-sans ${
+                  isListening ? "border-rose-500 animate-pulse text-rose-300" : "border-white/15 focus:border-violet-500"
+                }`}
               />
+
+              <button
+                type="button"
+                onClick={toggleVoiceInput}
+                className={`absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all ${
+                  isListening
+                    ? "bg-rose-500 text-white animate-bounce"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.08]"
+                }`}
+                title={isListening ? "Stop listening" : "Voice dictation"}
+              >
+                {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              </button>
             </div>
 
             <button
