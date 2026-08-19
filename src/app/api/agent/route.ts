@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { executeAI } from "@/lib/ai/providers";
 import { getAIConfig } from "@/lib/db";
 import { validateChatPayload } from "@/lib/ai/validators";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, extractClientIp } from "@/lib/rate-limit";
 import { captureSanitizedAIError } from "@/lib/ai/monitoring";
 import { saveUserSessionMemory } from "@/lib/ai/memory";
 import crypto from "crypto";
@@ -19,11 +19,7 @@ export async function POST(req: NextRequest) {
     const maxPromptLen = activeConfig.limits?.maxPromptLength || 1000;
 
     // 1. Extract IP for rate limiting & anonymous hashing
-    const rawIp =
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      req.headers.get("x-real-ip") ||
-      "127.0.0.1";
-
+    const rawIp = extractClientIp(req);
     const ipHash = crypto.createHash("sha256").update(rawIp).digest("hex").slice(0, 12);
 
     // Multi-tier Rate Limiter
@@ -79,10 +75,13 @@ export async function POST(req: NextRequest) {
 
     const { messages, sessionId } = validation.data;
 
-    // Filter and sanitize messages against active maxPromptLen
+    // Filter, clean control characters, and sanitize messages against active maxPromptLen
     const sanitizedMessages = messages.map((m) => ({
       role: m.role,
-      content: m.content.slice(0, maxPromptLen),
+      content: m.content
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "")
+        .trim()
+        .slice(0, maxPromptLen),
     }));
 
     // 4. Execute AI through Provider Abstraction Engine
@@ -92,21 +91,33 @@ export async function POST(req: NextRequest) {
       clientIpHash: ipHash,
     });
 
-    // 5. Asynchronously persist encrypted user memory for Admin Intelligence (0 latency impact)
-    const resolvedSessionId = sessionId || `session_${ipHash}`;
+    // 5. Deduplicate citations by URL
+    const seenUrls = new Set<string>();
+    const deduplicatedCitations = (result.citations || []).filter((c) => {
+      if (!c.url || seenUrls.has(c.url)) return false;
+      seenUrls.add(c.url);
+      return true;
+    });
+
+    // 6. Asynchronously persist encrypted user memory for Admin Intelligence (0 latency impact)
+    const rawSession = sessionId || `session_${ipHash}`;
+    const cleanSessionId = rawSession.replace(/[^a-zA-Z0-9_\-]/g, "").slice(0, 64);
+
     const allSessionMessages = [
       ...sanitizedMessages,
       { role: "assistant" as const, content: result.reply },
     ];
-    saveUserSessionMemory(resolvedSessionId, allSessionMessages).catch(() => {});
+    saveUserSessionMemory(cleanSessionId, allSessionMessages).catch((err) => {
+      console.warn("[AI Agent Memory] Async session encryption notice:", err);
+    });
 
     return NextResponse.json(
       {
         reply: result.reply,
-        citations: result.citations,
+        citations: deduplicatedCitations,
         provider: result.providerUsed,
         model: result.modelUsed,
-        sessionId: resolvedSessionId,
+        sessionId: cleanSessionId,
       },
       {
         headers: {

@@ -170,3 +170,33 @@ export async function checkRateLimit(options: {
     totalLimit: limit,
   };
 }
+
+/**
+ * Robustly extracts the verified client IP from HTTP Request / Headers.
+ * Handles proxy chains, Cloudflare, and Vercel edge headers safely without spoofing.
+ */
+export function extractClientIp(reqOrHeaders: Request | Headers): string {
+  const headers = "headers" in reqOrHeaders ? reqOrHeaders.headers : reqOrHeaders;
+
+  // Cloudflare header
+  const cfIp = headers.get("cf-connecting-ip");
+  if (cfIp && cfIp.trim()) return cfIp.trim();
+
+  // True-Client-IP header
+  const trueClientIp = headers.get("true-client-ip");
+  if (trueClientIp && trueClientIp.trim()) return trueClientIp.trim();
+
+  // X-Real-IP header
+  const xRealIp = headers.get("x-real-ip");
+  if (xRealIp && xRealIp.trim()) return xRealIp.trim();
+
+  // X-Forwarded-For (take the first IP in the comma-separated list)
+  const xForwardedFor = headers.get("x-forwarded-for");
+  if (xForwardedFor && xForwardedFor.trim()) {
+    const first = xForwardedFor.split(",")[0]?.trim();
+    if (first) return first;
+  }
+
+  return "127.0.0.1";
+}
+

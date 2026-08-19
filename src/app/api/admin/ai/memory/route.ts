@@ -12,17 +12,22 @@ export const runtime = "nodejs";
  * GET /api/admin/ai/memory
  * Returns decrypted conversation memories and captured client leads (Admin only).
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.isAdmin && !isAdmin(session?.user?.email, (session?.user as { login?: string })?.login)) {
       return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
     }
 
-    const memories = await getDecryptedLeadMemories(50);
+    const { searchParams } = new URL(req.url);
+    const limitParam = parseInt(searchParams.get("limit") || "50", 10);
+    const safeLimit = Math.min(Math.max(isNaN(limitParam) ? 50 : limitParam, 1), 100);
+
+    const memories = await getDecryptedLeadMemories(safeLimit);
     return NextResponse.json({
       success: true,
       totalCount: memories.length,
+      limit: safeLimit,
       memories,
     });
   } catch (err) {
@@ -43,10 +48,14 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const query = typeof body.query === "string" ? body.query.trim() : "";
+    const rawQuery = typeof body.query === "string" ? body.query : "";
+    const cleanQuery = rawQuery
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "")
+      .trim()
+      .slice(0, 2000);
 
-    if (!query) {
-      return NextResponse.json({ error: "Query is required" }, { status: 400 });
+    if (!cleanQuery) {
+      return NextResponse.json({ error: "Query is required (max 2000 chars)" }, { status: 400 });
     }
 
     // 1. Build private intelligence context from decrypted memories
@@ -68,7 +77,7 @@ ${memoryContext}
 
     // 2. Execute AI with memory context
     const aiResponse = await executeAI({
-      messages: [{ role: "user", content: query }],
+      messages: [{ role: "user", content: cleanQuery }],
       systemPromptOverride: adminSystemPrompt,
       contextOverride: memoryContext,
       requestType: "playground",

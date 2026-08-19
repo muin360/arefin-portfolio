@@ -119,6 +119,23 @@ export async function ensureIndexes(): Promise<void> {
     const adminActivities = db.collection("admin_activities");
     await adminActivities.createIndex({ timestamp: -1 });
 
+    const userMemories = db.collection("ai_user_memories");
+    await userMemories.createIndex({ sessionId: 1 }, { unique: true });
+    await userMemories.createIndex({ lastActiveAt: -1 });
+    await userMemories.createIndex({ createdAt: -1 });
+
+    const aiConfigs = db.collection("ai_configs");
+    await aiConfigs.createIndex({ type: 1 }, { unique: true });
+
+    const aiVersions = db.collection("ai_config_versions");
+    await aiVersions.createIndex({ version: -1 });
+    await aiVersions.createIndex({ createdAt: -1 });
+
+    const aiUsageLogs = db.collection("ai_usage_logs");
+    await aiUsageLogs.createIndex({ timestamp: -1 });
+    await aiUsageLogs.createIndex({ provider: 1, timestamp: -1 });
+    await aiUsageLogs.createIndex({ sessionId: 1 });
+
     indexesEnsured = true;
   } catch {
     // Non-blocking index creation failure

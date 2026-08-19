@@ -7,18 +7,23 @@ export function sanitizeSensitiveText(text: string): string {
   if (!text || typeof text !== "string") return "";
 
   return text
-    // Replace API keys (sk-..., AIzaSy..., ant-...)
+    // Replace API keys (sk-..., AIzaSy..., ant-..., gsk-..., hf-...)
     .replace(/(?:sk-[a-zA-Z0-9_\-]{20,})/gi, "[REDACTED_API_KEY]")
     .replace(/(?:AIzaSy[a-zA-Z0-9_\-]{30,})/gi, "[REDACTED_GOOGLE_KEY]")
     .replace(/(?:sk-ant-[a-zA-Z0-9_\-]{20,})/gi, "[REDACTED_ANTHROPIC_KEY]")
-    // Replace Bearer tokens
+    .replace(/(?:gsk_[a-zA-Z0-9_\-]{20,})/gi, "[REDACTED_GROQ_KEY]")
+    .replace(/(?:hf_[a-zA-Z0-9_\-]{20,})/gi, "[REDACTED_HF_KEY]")
+    .replace(/(?:ghp_[a-zA-Z0-9]{30,}|github_pat_[a-zA-Z0-9_]{50,})/gi, "[REDACTED_GITHUB_TOKEN]")
+    .replace(/(?:AKIA[0-9A-Z]{16})/g, "[REDACTED_AWS_KEY]")
+    // Replace Bearer tokens and JWTs
     .replace(/Bearer\s+[a-zA-Z0-9_\-\.]{20,}/gi, "Bearer [REDACTED_TOKEN]")
+    .replace(/(?:eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,})/g, "[REDACTED_JWT]")
     // Replace MongoDB URIs
     .replace(/mongodb(\+srv)?:\/\/[^\s]+/gi, "mongodb://[REDACTED_DB_URI]")
     // Replace Authorization headers
     .replace(/authorization:\s*[^\r\n]+/gi, "authorization: [REDACTED]")
-    // Replace passwords
-    .replace(/password[:=]\s*[^\s,]+/gi, "password=[REDACTED]");
+    // Replace passwords & secret tokens
+    .replace(/(?:password|secret|key|token)[:=]\s*['"]?[^\s,'"]+['"]?/gi, "$1=[REDACTED]");
 }
 
 /**
