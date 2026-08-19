@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Bell, ChevronRight, Command, ExternalLink, Menu } from "lucide-react";
 import Link from "next/link";
 import type { Session } from "next-auth";
+import AdminAICopilot from "./ai/AdminAICopilot";
 
 interface AdminHeaderProps {
   user?: Session["user"];
@@ -96,6 +97,9 @@ export default function AdminHeader({ user, unreadCount = 0 }: AdminHeaderProps)
 
         {/* Center / Right controls */}
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          {/* Admin AI Executive Copilot */}
+          <AdminAICopilot />
+
           {/* Quick Search / Command Palette Button */}
           <button
             type="button"
