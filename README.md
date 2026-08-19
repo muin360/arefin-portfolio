@@ -123,7 +123,6 @@ The application includes multiple production-focused security controls, includin
 ├── components/
 ├── lib/
 ├── public/
-├── docs/
 ├── instrumentation.ts
 ├── next.config.ts
 ├── package.json
