@@ -13,7 +13,7 @@ In your Vercel Dashboard, go to **Project → Settings → Environment Variables
 | Variable | Required | Description | Example / Value |
 |---|---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | Yes | Canonical site URL | `https://tensorstudio.vercel.app` |
-| `MONGODB_URI` | Yes | MongoDB Atlas connection string | `mongodb+srv://<USER>:<PASS>@cluster0.7b4yelt.mongodb.net` |
+| `MONGODB_URI` | Yes | MongoDB Atlas connection string | `mongodb+srv://<USER>:<PASS>@<CLUSTER>.mongodb.net/<DB>?retryWrites=true&w=majority` |
 | `MONGODB_DB_NAME` | Yes | Database name in Atlas | `arefin_portfolio` |
 | `AUTH_SECRET` | Yes | NextAuth secret for session encryption | Generate: `openssl rand -base64 32` |
 | `NEXTAUTH_SECRET` | Yes | NextAuth secret (same as `AUTH_SECRET`) | Generate: `openssl rand -base64 32` |

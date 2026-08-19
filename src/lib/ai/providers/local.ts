@@ -110,6 +110,15 @@ Read his complete engineering philosophy at **/about**.`;
 Browse his case studies at **/projects**, services at **/services**, or schedule a scoping call at **/book**.`;
     }
 
+    if (req.citations && req.citations.length > 0) {
+      const topProjects = req.citations.filter((c) => c.type === "project").slice(0, 2);
+      if (topProjects.length > 0 && !reply.includes(topProjects[0].url)) {
+        reply += `\n\n**Featured Projects:**\n${topProjects
+          .map((p) => `- [${p.title}](${p.url})`)
+          .join("\n")}`;
+      }
+    }
+
     const latencyMs = Date.now() - startTime;
     return {
       reply,

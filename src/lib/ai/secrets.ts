@@ -18,8 +18,9 @@ function getMasterEncryptionKey(): Buffer {
     if (process.env.NODE_ENV === "test" || process.env.VITEST) {
       return crypto.createHash("sha256").update("vitest-test-master-key-32bytes-ok").digest();
     }
-    // Safe deterministic key derivation so key encryption never fails
-    return crypto.createHash("sha256").update("arefin-portfolio-secure-encryption-key-seed").digest();
+    throw new Error(
+      "Encryption key unconfigured. Please set AI_SECRETS_ENCRYPTION_KEY or AUTH_SECRET in your environment.",
+    );
   }
 
   // Compute sha256 to ensure exact 32-byte key length for aes-256-gcm

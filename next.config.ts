@@ -27,8 +27,8 @@ const ContentSecurityPolicy = [
   "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
   // Workers — self + blob.
   "worker-src 'self' blob:",
-  // Network — Vercel insights + self + Anthropic API.
-  "connect-src 'self' https://vitals.vercel-insights.com https://api.anthropic.com",
+  // Network — Vercel insights + self.
+  "connect-src 'self' https://vitals.vercel-insights.com",
   // Iframes — Cal.com booking widget.
   "frame-src 'self' https://cal.com https://*.cal.com",
   // Manifest.

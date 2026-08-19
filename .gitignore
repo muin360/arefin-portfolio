@@ -24,13 +24,10 @@
 
 # env — NEVER commit these. Use .env.example as a template.
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
 .env*.local
-.env.production
-.env.development
+!.env.example
+!.env.local.example
 
 # misc
 .DS_Store

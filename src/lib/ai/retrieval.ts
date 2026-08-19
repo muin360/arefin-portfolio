@@ -241,6 +241,31 @@ Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs
     }
   }
 
+  const matchedKeywordSet = new Set<string>();
+  for (const token of queryTokens) {
+    if (token.length > 2) {
+      const matchInProjects = projects.some(
+        (p) =>
+          p.title.toLowerCase().includes(token) ||
+          (p.stack || []).some((s) => s.toLowerCase().includes(token)) ||
+          p.category.toLowerCase().includes(token),
+      );
+      const matchInServices = services.some(
+        (s) => s.title.toLowerCase().includes(token) || (s.bullets || []).some((b) => b.toLowerCase().includes(token)),
+      );
+      const matchInPosts = posts.some(
+        (p) => p.title.toLowerCase().includes(token) || (p.tags || []).some((t) => t.toLowerCase().includes(token)),
+      );
+      const matchInSkills = skills.some(
+        (sk) => sk.category.toLowerCase().includes(token) || (sk.items || []).some((i) => i.toLowerCase().includes(token)),
+      );
+
+      if (matchInProjects || matchInServices || matchInPosts || matchInSkills) {
+        matchedKeywordSet.add(token);
+      }
+    }
+  }
+
   const rawContext = contextParts.join("\n");
   const boundedContext =
     rawContext.length > (knowledgeConfig?.contextBudgetChars || 5000)
@@ -252,6 +277,6 @@ Core Stack: n8n, LangChain, Langflow, OpenAI & Anthropic Claude APIs, Vector DBs
   return {
     contextText: secureContextText,
     relevantCitations: uniqueCitations.slice(0, 4),
-    matchedKeywords,
+    matchedKeywords: Array.from(matchedKeywordSet),
   };
 }
