@@ -1,0 +1,37 @@
+# Dependency Review
+# Blocks PRs that introduce known-vulnerable packages.
+# Docs: https://github.com/actions/dependency-review-action
+#
+# This workflow runs on every pull request targeting main.
+# It compares the dependency manifest before and after the PR
+# and fails if any introduced package has known CVEs.
+
+name: Dependency Review
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  # Required to post inline PR comments with vulnerability details
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          # Fail on high severity or above; warn on moderate
+          fail-on-severity: high
+          # Comment on the PR with a summary of changes
+          comment-summary-in-pr: always
+          # Deny GPL licenses that conflict with portfolio use
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0
