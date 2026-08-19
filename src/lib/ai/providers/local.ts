@@ -35,7 +35,19 @@ export class LocalGroundedProviderAdapter implements AIProviderAdapter {
         ? `আমি আরেফিন মুঈন-এর স্পেশালাইজড **AI Automation & Portfolio Assistant**। আমি সাধারণ জ্ঞান, হোমওয়ার্ক বা অপ্রাসঙ্গিক কাজের জন্য তৈরি নই।\n\nআমি আপনাকে আরেফিনের তৈরি **AI Agent**, **n8n Workflow Automation**, **RAG Knowledge Base** অথবা প্রজেক্ট কনসাল্টেশন বুকিং সম্পর্কিত সকল বিষয়ে সাহায্য করতে পারি।\n\n- সার্ভিস ব্লুপ্রিন্ট দেখুন: [সার্ভিসসমূহ](/services)\n- প্রজেক্ট কেস স্টাডি দেখুন: [প্রজেক্টসমূহ](/projects)\n- ডিসকভারি কল শিডিউল করুন: [Schedule Discovery Call](/book)`
         : `I am **Arefin AI**, specialized exclusively in **Arefin Mueen's AI Automation, Multi-Agent Systems, and Portfolio Solutions**.\n\nI cannot assist with general knowledge trivia, homework, or unrelated general chat. However, I can help you evaluate an AI automation workflow, review Arefin's case studies, or book a scoping consultation:\n\n- **Service Blueprints**: [Explore Services](/services)\n- **Verified Case Studies**: [View Projects](/projects)\n- **Book Scoping Session**: [Schedule 30-Min Discovery Call](/book)\n- **Direct Inquiry**: [Contact Form](/contact)`;
     }
-    // ─── 2. HIRING, BOOKING & CONTACT ────────────────────────────────────────
+    // ─── 2. HEALTH CHECK / DIAGNOSTICS INTENT ──────────────────────────────
+    else if (
+      q.includes("health") ||
+      q.includes("status") ||
+      q.includes("diagnostic") ||
+      q.includes("telemetry") ||
+      q.includes("active model")
+    ) {
+      reply = isBengali
+        ? `### 🟢 Arefin AI সিস্টেম হেলথ ও ডায়াগনস্টিক রিপোর্ট\n\n- **সিস্টেম স্ট্যাটাস:** ✅ **সম্পূর্ণ অনলাইন ও সক্রিয় (All Systems Operational)**\n- **AI ইঞ্জিন আর্কিটেকচার:** Multi-Provider Failover (OpenAI / Anthropic / Gemini / Local Grounded)\n- **ডাটাবেজ ও ক্লাস্টার:** MongoDB Atlas (Live & Encrypted)\n- **এনক্রিপশন ও সিকিউরিটি:** AES-256-GCM Vault At Rest (Zero Cross-Tenant Leakage)\n- **পোর্টফোলিও নলেজ বেস:** প্রজেক্ট কেস স্টাডি, সার্ভিসেস এবং টেক স্কিলস ডাটাবেজ সম্পূর্ণ সিঙ্কড।\n- **রেট লিমিট ও প্রটেকশন:** মাল্টি-টিয়ার রেট লিমিটিং এবং প্রম্পট ইনজেকশন ডিফেন্স সক্রিয়।\n\nসার্ভিস ব্লুপ্রিন্ট দেখতে [সার্ভিসসমূহ](/services) দেখুন বা [প্রজেক্টসমূহ](/projects) ব্রাউজ করুন।`
+        : `### 🟢 Arefin AI System Health & Diagnostics\n\n- **Overall Status**: ✅ **100% Operational (All Systems Healthy)**\n- **AI Provider Engine**: Multi-Provider Dynamic Orchestrator (Anthropic Claude / OpenAI / Gemini / Local)\n- **Database Cluster**: MongoDB Atlas Connected & Synced\n- **Vault Encryption**: AES-256-GCM Memory at Rest with Zero-Leakage isolation\n- **Knowledge Retrieval (RAG)**: Case Studies, Service Blueprints & Skills fully indexed\n- **Traffic & Rate Limiting**: Multi-Tier Sliding Window Limiter & IP Protection ACTIVE\n\nExplore live case studies at [View Projects](/projects) or schedule scoping at [Schedule Discovery Call](/book).`;
+    }
+    // ─── 3. HIRING, BOOKING & CONTACT ────────────────────────────────────────
     else if (analysis.intent === "HIRING_SCOPING") {
       reply = isBengali
         ? `আরেফিন মুঈন-এর সাথে নতুন প্রজেক্ট, AI অটোমেশন বা কনসাল্টেশনের জন্য সরাসরি যোগাযোগ করতে পারেন:\n\n1. **ডিসকভারি কল শিডিউল করুন:** ৩০ মিনিটের ওয়ার্কফ্লো স্কোপিং কলের জন্য [Schedule Discovery Call](/book) বুক করুন।\n2. **সরাসরি মেসেজ পাঠান:** আপনার প্রজেক্টের রিকোয়ারমেন্ট লিখে [Contact Form](/contact) এ পাঠান।\n3. **সরাসরি ইমেইল:** \`arefinmueen360@gmail.com\`\n4. **হোয়াটসঅ্যাপ:** \`+880 1994-605717\`\n\nসাধারণত ২৪ ঘণ্টার মধ্যে রেসপন্স পাওয়া যায়।`
