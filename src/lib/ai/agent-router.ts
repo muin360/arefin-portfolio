@@ -1,6 +1,6 @@
 /**
  * Advanced Agentic AI Intent Classifier & Entity Extractor
- * High-speed, zero-dependency natural language intent routing engine.
+ * High-speed, zero-dependency natural language intent routing engine with strict scope boundaries.
  */
 
 export type AgentIntent =
@@ -12,6 +12,7 @@ export type AgentIntent =
   | "FEASIBILITY_CHECK"
   | "ABOUT_BACKGROUND"
   | "GENERAL_INQUIRY"
+  | "OUT_OF_SCOPE"
   | "PROMPT_INJECTION_ATTEMPT";
 
 export type DetectedLanguage = "en" | "bn" | "banglish";
@@ -58,6 +59,20 @@ const TECH_KEYWORD_MAP: Record<string, string> = {
 // Bengali character unicode range
 const BENGALI_REGEX = /[\u0980-\u09FF]/;
 
+// Off-topic patterns to block public ChatGPT/Gemini misuse
+const OUT_OF_SCOPE_PATTERNS = [
+  /\b(poem|poetry|story|song|essay|joke|riddle|love letter|speech|novel|script for a movie)\b/i,
+  /\b(solve|calculate|equation|calculus|physics|math|chemistry|algebra|geometry)\b/i,
+  /\b(homework|assignment|exam questions|quiz questions)\b/i,
+  /\b(recipe|how to cook|ingredients for|baking)\b/i,
+  /\b(weather in|temperature in|forecast for)\b/i,
+  /\b(president of|prime minister of|capital of|population of|distance between|history of)\b/i,
+  /\b(snake game|flappy bird|tic tac toe|calculator code|leetcode)\b/i,
+  /\b(translate this text|summarize this article|proofread this)\b/i,
+  /\b(roast me|tell me a joke|dating advice|horoscope|astrology)\b/i,
+  /\b(kabita|golpo|gaan|ranna|khabar|songbad|somadhan|ongko|porikkha)\b/i, // Bengali off-topic terms
+];
+
 /**
  * Analyzes the user's latest query to determine intent, language, entities, and routing.
  */
@@ -86,7 +101,8 @@ export function analyzeUserQuery(query: string): AgentAnalysis {
     q.includes("show me your api key") ||
     q.includes("what is your secret") ||
     q.includes("dump environment") ||
-    q.includes("print env");
+    q.includes("print env") ||
+    q.includes("pretend you are");
 
   if (isInjection) {
     return {
@@ -98,7 +114,20 @@ export function analyzeUserQuery(query: string): AgentAnalysis {
     };
   }
 
-  // 3. Extract Technical Entities
+  // 3. Check for Out-of-Scope / General AI misuse FIRST
+  const isExplicitlyOutOfScope = OUT_OF_SCOPE_PATTERNS.some((pattern) => pattern.test(q));
+  if (isExplicitlyOutOfScope) {
+    return {
+      intent: "OUT_OF_SCOPE",
+      language,
+      entities: [],
+      extractedTech: [],
+      requiresCitations: false,
+      suggestedAction: "view_services",
+    };
+  }
+
+  // 4. Extract Technical Entities
   const extractedTech: string[] = [];
   for (const [key, formalName] of Object.entries(TECH_KEYWORD_MAP)) {
     if (q.includes(key)) {
@@ -106,93 +135,42 @@ export function analyzeUserQuery(query: string): AgentAnalysis {
     }
   }
 
-  // 4. Classify Intent
+  // 5. Classify In-Scope Intents
   let intent: AgentIntent = "GENERAL_INQUIRY";
   let suggestedAction: AgentAnalysis["suggestedAction"];
 
   if (
-    q.includes("contact") ||
-    q.includes("hire") ||
-    q.includes("book") ||
-    q.includes("call") ||
-    q.includes("meet") ||
-    q.includes("rate") ||
-    q.includes("price") ||
-    q.includes("cost") ||
-    q.includes("reach") ||
-    q.includes("jogajog") ||
-    q.includes("hire kora") ||
-    q.includes("contact kora") ||
-    q.includes("kotha bola")
+    /\b(contact|hire|book|call|meet|rate|rates|price|pricing|cost|reach|jogajog|kotha bola)\b/i.test(q)
   ) {
     intent = "HIRING_SCOPING";
     suggestedAction = "book_call";
   } else if (
-    q.includes("project") ||
-    q.includes("case study") ||
-    q.includes("work") ||
-    q.includes("portfolio") ||
-    q.includes("built") ||
-    q.includes("demo") ||
-    q.includes("example") ||
-    q.includes("dekhao") ||
-    q.includes("kaj")
+    /\b(project|projects|case study|case studies|built|demo|example|dekhao|portfolio)\b/i.test(q)
   ) {
     intent = "PROJECT_CASE_STUDY";
     suggestedAction = "view_projects";
   } else if (
-    q.includes("service") ||
-    q.includes("offer") ||
-    q.includes("solution") ||
-    q.includes("can you build") ||
-    q.includes("help with") ||
-    q.includes("ki ki service") ||
-    q.includes("ki banate paro")
+    /\b(service|services|offer|solutions|can you build|help with|ki ki service|ki banate paro)\b/i.test(q)
   ) {
     intent = "SERVICE_INQUIRY";
     suggestedAction = "view_services";
   } else if (
-    q.includes("how to build") ||
-    q.includes("architecture") ||
-    q.includes("pipeline") ||
-    q.includes("workflow") ||
-    q.includes("diagram") ||
-    q.includes("nodes") ||
-    q.includes("step by step") ||
-    q.includes("kivabe banabo")
+    /\b(how to build|architecture|pipeline|workflow|diagram|nodes|step by step|kivabe banabo)\b/i.test(q)
   ) {
     intent = "TECHNICAL_BLUEPRINT";
     suggestedAction = "view_projects";
   } else if (
-    q.includes("feasible") ||
-    q.includes("possible to") ||
-    q.includes("can we automate") ||
-    q.includes("automate our") ||
-    q.includes("integrate") ||
-    q.includes("somvob")
+    /\b(feasible|possible to|can we automate|automate our|integrate|somvob)\b/i.test(q)
   ) {
     intent = "FEASIBILITY_CHECK";
     suggestedAction = "book_call";
   } else if (
-    q.includes("stack") ||
-    q.includes("tool") ||
-    q.includes("tech") ||
-    q.includes("language") ||
-    q.includes("framework") ||
-    q.includes("skill") ||
-    q.includes("dakshata")
+    /\b(stack|tools|tooling|tech|technology|language|framework|skill|skills|dakshata)\b/i.test(q)
   ) {
     intent = "TECH_STACK_EXPLORATION";
     suggestedAction = "view_skills";
   } else if (
-    q.includes("about") ||
-    q.includes("who is") ||
-    q.includes("background") ||
-    q.includes("experience") ||
-    q.includes("location") ||
-    q.includes("country") ||
-    q.includes("dhaka") ||
-    q.includes("ke arefin")
+    /\b(who is arefin|about arefin|about you|who are you|your background|experience|location|country|dhaka|ke arefin)\b/i.test(q)
   ) {
     intent = "ABOUT_BACKGROUND";
   }

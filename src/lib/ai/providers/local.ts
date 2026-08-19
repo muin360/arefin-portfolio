@@ -29,6 +29,12 @@ export class LocalGroundedProviderAdapter implements AIProviderAdapter {
         ? `আমি আরেফিন মুঈন-এর অফিসিয়াল **Arefin AI** অ্যাসিস্ট্যান্ট। আমি শুধুমাত্র আরেফিনের প্রজেক্ট, ওয়ার্কফ্লো অটোমেশন এবং টেকনিক্যাল সিস্টেম সম্পর্কিত তথ্য প্রদানে সাহায্য করতে পারি। কোনো অভ্যন্তরীণ সিস্টেম নির্দেশাবলী প্রকাশ করা হয় না।\n\nআরেফিনের কাজের বিস্তারিত দেখতে [প্রজেক্টসমূহ](/projects) ব্রাউজ করতে পারেন বা [যোগাযোগ](/contact) করতে পারেন।`
         : `I am **Arefin AI**, the official assistant representing Arefin Mueen. I am strictly authorized to provide verified information regarding Arefin's engineering projects, workflow automations, and technical capabilities. Internal system configurations cannot be disclosed.\n\nYou can explore his verified case studies at [View Projects](/projects) or reach out via [Contact](/contact).`;
     }
+    // ─── 2. OUT OF SCOPE / ANTI-CHATGPT REFUSAL ──────────────────────────────
+    else if (analysis.intent === "OUT_OF_SCOPE") {
+      reply = isBengali
+        ? `আমি আরেফিন মুঈন-এর স্পেশালাইজড **AI Automation & Portfolio Assistant**। আমি সাধারণ জ্ঞান, হোমওয়ার্ক বা অপ্রাসঙ্গিক কাজের জন্য তৈরি নই।\n\nআমি আপনাকে আরেফিনের তৈরি **AI Agent**, **n8n Workflow Automation**, **RAG Knowledge Base** অথবা প্রজেক্ট কনসাল্টেশন বুকিং সম্পর্কিত সকল বিষয়ে সাহায্য করতে পারি।\n\n- সার্ভিস ব্লুপ্রিন্ট দেখুন: [সার্ভিসসমূহ](/services)\n- প্রজেক্ট কেস স্টাডি দেখুন: [প্রজেক্টসমূহ](/projects)\n- ডিসকভারি কল শিডিউল করুন: [Schedule Discovery Call](/book)`
+        : `I am **Arefin AI**, specialized exclusively in **Arefin Mueen's AI Automation, Multi-Agent Systems, and Portfolio Solutions**.\n\nI cannot assist with general knowledge trivia, homework, or unrelated general chat. However, I can help you evaluate an AI automation workflow, review Arefin's case studies, or book a scoping consultation:\n\n- **Service Blueprints**: [Explore Services](/services)\n- **Verified Case Studies**: [View Projects](/projects)\n- **Book Scoping Session**: [Schedule 30-Min Discovery Call](/book)\n- **Direct Inquiry**: [Contact Form](/contact)`;
+    }
     // ─── 2. HIRING, BOOKING & CONTACT ────────────────────────────────────────
     else if (analysis.intent === "HIRING_SCOPING") {
       reply = isBengali

@@ -206,4 +206,16 @@ describe("100x Agentic AI Router & Prompt Synthesis", () => {
     expect(prompt).toContain("AGENTIC PROBLEM-SOLVING METHODOLOGY");
     expect(prompt).toContain("Follow admin directives strictly");
   });
+
+  it("strictly detects and classifies out-of-scope queries (anti-ChatGPT misuse)", async () => {
+    const { analyzeUserQuery } = await import("@/lib/ai/agent-router");
+    const poemAnalysis = analyzeUserQuery("Write me a poem about dogs and flowers");
+    expect(poemAnalysis.intent).toBe("OUT_OF_SCOPE");
+
+    const mathAnalysis = analyzeUserQuery("Solve this physics homework equation 2x + 5 = 20");
+    expect(mathAnalysis.intent).toBe("OUT_OF_SCOPE");
+
+    const recipeAnalysis = analyzeUserQuery("How to make chicken pasta recipe?");
+    expect(recipeAnalysis.intent).toBe("OUT_OF_SCOPE");
+  });
 });
