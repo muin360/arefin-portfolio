@@ -4,6 +4,7 @@ import { getAIConfig } from "@/lib/db";
 import { validateChatPayload } from "@/lib/ai/validators";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { captureSanitizedAIError } from "@/lib/ai/monitoring";
+import { saveUserSessionMemory } from "@/lib/ai/memory";
 import crypto from "crypto";
 
 export const runtime = "nodejs";
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: firstIssue }, { status: 400 });
     }
 
-    const { messages } = validation.data;
+    const { messages, sessionId } = validation.data;
 
     // Filter and sanitize messages against active maxPromptLen
     const sanitizedMessages = messages.map((m) => ({
@@ -91,12 +92,21 @@ export async function POST(req: NextRequest) {
       clientIpHash: ipHash,
     });
 
+    // 5. Asynchronously persist encrypted user memory for Admin Intelligence (0 latency impact)
+    const resolvedSessionId = sessionId || `session_${ipHash}`;
+    const allSessionMessages = [
+      ...sanitizedMessages,
+      { role: "assistant" as const, content: result.reply },
+    ];
+    saveUserSessionMemory(resolvedSessionId, allSessionMessages).catch(() => {});
+
     return NextResponse.json(
       {
         reply: result.reply,
         citations: result.citations,
         provider: result.providerUsed,
         model: result.modelUsed,
+        sessionId: resolvedSessionId,
       },
       {
         headers: {

@@ -417,6 +417,23 @@ export interface AIAuditLog {
   timestamp: string;
 }
 
+export interface AIUserMemory {
+  id?: string;
+  sessionId: string;
+  encryptedData: string; // AES-256-GCM encrypted JSON payload
+  iv: string;
+  authTag: string;
+  extractedLead?: {
+    hasContactInfo: boolean;
+    name?: string;
+    intent: string;
+    extractedTech: string[];
+    summarySnippet: string;
+  };
+  lastActiveAt: string;
+  createdAt: string;
+}
+
 export type DatabaseSchema = {
   siteSettings: SiteSettings;
   about: AboutData;
@@ -428,5 +445,6 @@ export type DatabaseSchema = {
   aiConfig?: AIConfig[];
   aiCredentials?: AIProviderCredential[];
   aiVersions?: AIConfigVersion[];
+  aiUserMemories?: AIUserMemory[];
 };
 

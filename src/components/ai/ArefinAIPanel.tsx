@@ -63,10 +63,25 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState<string | null>(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [sessionId, setSessionId] = useState<string>("");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize unique session ID
+  useEffect(() => {
+    try {
+      let currentSession = sessionStorage.getItem("arefin_ai_session_id");
+      if (!currentSession) {
+        currentSession = `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+        sessionStorage.setItem("arefin_ai_session_id", currentSession);
+      }
+      setSessionId(currentSession);
+    } catch {
+      setSessionId(`session_${Date.now()}`);
+    }
+  }, []);
 
   // Focus input and lock background scroll
   useEffect(() => {
@@ -156,6 +171,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
 
     try {
       const payload = {
+        sessionId: sessionId || `session_${Date.now()}`,
         messages: nextMessages.map((m) => ({
           role: m.role,
           content: m.content,

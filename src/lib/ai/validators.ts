@@ -21,6 +21,7 @@ export const chatRequestSchema = z
       .array(chatMessageSchema)
       .min(1, "At least one message is required")
       .max(20, "Conversation history cannot exceed 20 messages"),
+    sessionId: z.string().trim().max(100).optional(),
   })
   .strict();
 

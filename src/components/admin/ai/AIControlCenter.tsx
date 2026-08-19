@@ -23,6 +23,7 @@ import {
   Lock,
   Flame,
   ArrowRight,
+  X,
 } from "lucide-react";
 import type {
   AIConfig,
@@ -66,6 +67,7 @@ type TabType =
   | "knowledge"
   | "safety"
   | "playground"
+  | "memory"
   | "usage"
   | "versions";
 
@@ -117,6 +119,74 @@ export default function AIControlCenter({
   // Version rollback confirmation
   const [selectedVersionToRestore, setSelectedVersionToRestore] = useState<AIConfigVersion | null>(null);
   const [snapshotViewVersion, setSnapshotViewVersion] = useState<AIConfigVersion | null>(null);
+
+  // Client Leads & Memory State
+  const [memories, setMemories] = useState<Array<{
+    id: string;
+    sessionId: string;
+    messages: Array<{ role: string; content: string }>;
+    extractedLead?: {
+      hasContactInfo: boolean;
+      name?: string;
+      email?: string;
+      phone?: string;
+      intent: string;
+      extractedTech: string[];
+      summarySnippet: string;
+    };
+    lastActiveAt: string;
+    createdAt: string;
+  }>>([]);
+  const [memoryLoading, setMemoryLoading] = useState(false);
+  const [adminMemoryQuery, setAdminMemoryQuery] = useState("Summarize recent visitor inquiries and client leads.");
+  const [adminMemoryQueryLoading, setAdminMemoryQueryLoading] = useState(false);
+  const [adminMemoryAnswer, setAdminMemoryAnswer] = useState<string | null>(null);
+  const [selectedSessionView, setSelectedSessionView] = useState<{
+    sessionId: string;
+    messages: Array<{ role: string; content: string }>;
+    lastActiveAt: string;
+  } | null>(null);
+
+  const loadMemories = async () => {
+    setMemoryLoading(true);
+    try {
+      const res = await fetch("/api/admin/ai/memory");
+      const data = await res.json();
+      if (res.ok) {
+        setMemories(data.memories || []);
+      }
+    } catch {
+      // Non-blocking
+    } finally {
+      setMemoryLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "memory") {
+      loadMemories();
+    }
+  }, [activeTab]);
+
+  const handleQueryMemoryIntelligence = async () => {
+    if (!adminMemoryQuery.trim() || adminMemoryQueryLoading) return;
+    setAdminMemoryQueryLoading(true);
+    setAdminMemoryAnswer(null);
+    try {
+      const res = await fetch("/api/admin/ai/memory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: adminMemoryQuery }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to query intelligence");
+      setAdminMemoryAnswer(data.reply);
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : "Error querying memory");
+    } finally {
+      setAdminMemoryQueryLoading(false);
+    }
+  };
 
   // Reset status messages after 4s
   useEffect(() => {
@@ -432,6 +502,7 @@ export default function AIControlCenter({
           { id: "knowledge", label: "Knowledge Base", icon: Database },
           { id: "safety", label: "Safety & Limits", icon: ShieldAlert },
           { id: "playground", label: "Playground", icon: Play },
+          { id: "memory", label: "Client Leads & Memory", icon: Lock },
           { id: "usage", label: "Usage & Logs", icon: Flame },
           { id: "versions", label: "Versions & Rollback", icon: History },
         ].map((tab) => {
@@ -1501,6 +1572,218 @@ export default function AIControlCenter({
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ─── TAB: CLIENT LEADS & ENCRYPTED MEMORY ────────────────────────── */}
+      {activeTab === "memory" && (
+        <div className="space-y-6 animate-fade-in">
+          {/* Security & Zero-Leakage Architecture Card */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-[#0c101d] border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                <Lock className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-white text-sm sm:text-base">
+                    Encrypted Visitor Memory &amp; Lead Isolation
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold">
+                    AES-256-GCM SECURED
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Visitor sessions and contact inputs are strictly encrypted at rest. Public users cannot access or query another visitor&apos;s data under any circumstances.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={loadMemories}
+              disabled={memoryLoading}
+              className="px-3.5 py-2 bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white rounded-xl text-xs font-mono font-medium transition-colors shrink-0 flex items-center gap-1.5"
+            >
+              {memoryLoading ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <RotateCcw className="w-3.5 h-3.5" />
+              )}
+              <span>Refresh Leads</span>
+            </button>
+          </div>
+
+          {/* AI Memory Intelligence Query Bar */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-[#0c101d] border border-violet-500/30 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <h3 className="font-semibold text-white text-sm">Admin AI Lead &amp; Inquiry Intelligence</h3>
+              </div>
+              <span className="text-[10px] font-mono text-violet-300 bg-violet-500/10 px-2 py-0.5 rounded-md">
+                Admin-Only Query Access
+              </span>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={adminMemoryQuery}
+                onChange={(e) => setAdminMemoryQuery(e.target.value)}
+                placeholder="Ask AI: e.g. Who requested custom workflow pricing? Summarize this week's inquiries..."
+                className="flex-1 px-4 py-2.5 bg-[#07090e] border border-white/15 focus:border-violet-500 rounded-xl text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleQueryMemoryIntelligence}
+                disabled={adminMemoryQueryLoading || !adminMemoryQuery.trim()}
+                className="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white rounded-xl text-xs font-mono font-bold transition-all shrink-0 flex items-center justify-center gap-2"
+              >
+                {adminMemoryQueryLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Analyzing Memory...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Ask AI</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* AI Answer Output */}
+            {adminMemoryAnswer && (
+              <div className="p-4 rounded-xl bg-[#07090e] border border-violet-500/40 space-y-2 animate-fade-in">
+                <div className="flex items-center gap-2 text-xs font-mono text-violet-300 font-semibold border-b border-white/10 pb-2">
+                  <Bot className="w-4 h-4 text-violet-400" />
+                  <span>Executive Intelligence Digest:</span>
+                </div>
+                <div className="text-xs sm:text-[13px] text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
+                  {adminMemoryAnswer}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Decrypted Visitor Sessions Table */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-[#0c101d] border border-white/[0.08] space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-white text-sm flex items-center gap-2">
+                <Activity className="w-4 h-4 text-emerald-400" />
+                <span>Encrypted Visitor Sessions ({memories.length})</span>
+              </h3>
+            </div>
+
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left font-mono text-xs">
+                <thead>
+                  <tr className="border-b border-white/10 text-slate-400 text-[10px] uppercase">
+                    <th className="py-2.5 px-3">Last Active</th>
+                    <th className="py-2.5 px-3">Session ID</th>
+                    <th className="py-2.5 px-3">Captured Contact</th>
+                    <th className="py-2.5 px-3">Detected Intent</th>
+                    <th className="py-2.5 px-3">Tech Stacks Mentioned</th>
+                    <th className="py-2.5 px-3">Messages</th>
+                    <th className="py-2.5 px-3">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {memories.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-slate-500">
+                        {memoryLoading ? "Loading decrypted sessions..." : "No visitor sessions recorded yet."}
+                      </td>
+                    </tr>
+                  ) : (
+                    memories.map((mem, i) => {
+                      const hasContact = mem.extractedLead?.hasContactInfo;
+                      return (
+                        <tr key={i} className="hover:bg-white/[0.02] transition-colors">
+                          <td className="py-3 px-3 text-slate-300 text-[11px]">
+                            {new Date(mem.lastActiveAt).toLocaleString()}
+                          </td>
+                          <td className="py-3 px-3 text-violet-300 font-mono text-[11px]">
+                            {mem.sessionId.slice(0, 16)}...
+                          </td>
+                          <td className="py-3 px-3">
+                            {hasContact ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
+                                {mem.extractedLead?.email || mem.extractedLead?.phone || "Captured"}
+                              </span>
+                            ) : (
+                              <span className="text-slate-500 text-[10px]">None</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-3 text-slate-300 text-[10px]">
+                            {mem.extractedLead?.intent || "GENERAL_INQUIRY"}
+                          </td>
+                          <td className="py-3 px-3 text-slate-400 text-[10px]">
+                            {(mem.extractedLead?.extractedTech || []).join(", ") || "—"}
+                          </td>
+                          <td className="py-3 px-3 text-slate-300 text-[11px]">
+                            {mem.messages.length} msgs
+                          </td>
+                          <td className="py-3 px-3">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedSessionView(mem)}
+                              className="px-2.5 py-1 bg-violet-600/20 hover:bg-violet-600/40 text-violet-300 rounded-lg text-[10px] font-mono border border-violet-500/30 transition-colors"
+                            >
+                              Inspect
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Session Inspect Modal */}
+          {selectedSessionView && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+              <div className="w-full max-w-2xl max-h-[85vh] bg-[#0c101d] border border-violet-500/30 rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+                <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#080c16]">
+                  <div className="flex items-center gap-2">
+                    <Bot className="w-4 h-4 text-violet-400" />
+                    <h4 className="font-bold text-white text-sm">
+                      Session Conversation ({selectedSessionView.sessionId})
+                    </h4>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSessionView(null)}
+                    className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="p-4 overflow-y-auto space-y-3 flex-1 custom-scrollbar text-xs">
+                  {selectedSessionView.messages.map((m, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-3 rounded-xl ${
+                        m.role === "user"
+                          ? "bg-violet-950/60 border border-violet-500/30 ml-6 text-violet-100"
+                          : "bg-white/[0.04] border border-white/10 mr-6 text-slate-200"
+                      }`}
+                    >
+                      <div className="text-[10px] font-mono opacity-60 uppercase mb-1">
+                        {m.role === "user" ? "Visitor" : "Arefin AI"}
+                      </div>
+                      <div className="whitespace-pre-wrap">{m.content}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
