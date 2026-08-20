@@ -24,7 +24,9 @@ function normalizeDoc<T>(doc: unknown): T | null {
   if (!doc) return null;
   const copy = { ...(doc as Record<string, unknown>) };
   if (copy._id) {
-    copy.id = String(copy._id);
+    const strId = String(copy._id);
+    copy.id = strId;
+    copy._id = strId;
   }
   return copy as T;
 }

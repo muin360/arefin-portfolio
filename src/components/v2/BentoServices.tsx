@@ -139,7 +139,7 @@ export default function BentoServices({
     <div className="w-full space-y-6">
       {/* ─── 02 / CAPABILITIES FUNCTIONAL CONTROLLER PLATE ─────────────────── */}
       <SectionPlate
-        index="02"
+        index="03"
         title="CAPABILITIES"
         sectionId="services"
         tabs={tabs}

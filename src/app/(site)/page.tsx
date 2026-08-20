@@ -12,8 +12,8 @@ import Reveal from "@/components/Reveal";
 import Button from "@/components/Button";
 
 import HeroSectionV2 from "@/components/v2/HeroSectionV2";
+import FlagshipShowcase from "@/components/v2/FlagshipShowcase";
 import BentoServices from "@/components/v2/BentoServices";
-import ProjectsGridV2 from "@/components/v2/ProjectsGridV2";
 import JournalGridV2 from "@/components/v2/JournalGridV2";
 import FinalCtaV2 from "@/components/v2/FinalCtaV2";
 import { Code } from "lucide-react";
@@ -47,7 +47,16 @@ export default async function HomePage() {
         labLink={settings.labLink}
       />
 
-      {/* 02 CAPABILITIES — Functional Capability Selector Plate */}
+      {/* 02 FLAGSHIP WORK & INTERACTIVE SYSTEM BLUEPRINT — Top 3 Production Architectures */}
+      <section id="work" className="v2-section py-16 sm:py-20" aria-label="Flagship work and system blueprints">
+        <div className="v2-container">
+          <Reveal delay={100} y={16}>
+            <FlagshipShowcase projects={projects} />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 03 CAPABILITIES — Functional Capability Selector Plate */}
       <section
         id="services"
         className="v2-section py-16 sm:py-20"
@@ -56,15 +65,6 @@ export default async function HomePage() {
         <div className="v2-container">
           <Reveal delay={100}>
             <BentoServices services={services} projects={projects} />
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 03 SELECTED WORK — Dynamic MongoDB Projects & Filter Controller */}
-      <section id="work" className="v2-section py-16 sm:py-20" aria-label="Selected work">
-        <div className="v2-container">
-          <Reveal delay={100} y={16}>
-            <ProjectsGridV2 projects={projects} limit={6} />
           </Reveal>
         </div>
       </section>
