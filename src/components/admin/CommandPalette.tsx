@@ -27,7 +27,7 @@ interface CommandItem {
   id: string;
   label: string;
   category: "Navigation" | "Quick Action" | "System";
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   shortcut?: string;
   action: () => void;
 }

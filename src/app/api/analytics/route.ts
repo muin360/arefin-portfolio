@@ -15,6 +15,14 @@ const ALLOWED_EVENTS: AnalyticsEventType[] = [
   "blog_view",
   "scroll_50",
   "scroll_90",
+  "ai_open",
+  "ai_prompt",
+  "ai_project_click",
+  "build_explorer_open",
+  "build_step_click",
+  "build_explorer_3d_open",
+  "build_explorer_node_click",
+  "build_explorer_reset",
 ];
 
 // Simple in-memory rate limiter (per session within the same serverless instance)

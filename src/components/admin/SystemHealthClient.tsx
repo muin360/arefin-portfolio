@@ -63,7 +63,7 @@ function StatusIndicator({ status }: { status: string }) {
 }
 
 interface ServiceCardProps {
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   name: string;
   status: string;
   details?: React.ReactNode;

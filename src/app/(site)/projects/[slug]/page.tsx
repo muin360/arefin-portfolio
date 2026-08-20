@@ -202,7 +202,16 @@ export default async function ProjectDetailPage({
               ))}
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              {workflow.length > 0 && (
+                <a
+                  href="#execution-pipeline"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] text-white border border-white/10 transition-colors"
+                >
+                  <Workflow className="w-3.5 h-3.5 text-violet-400" />
+                  <span>Explore Architecture</span>
+                </a>
+              )}
               {project.repoUrl && (
                 <a
                   href={project.repoUrl}
@@ -278,7 +287,11 @@ export default async function ProjectDetailPage({
       </section>
 
       {/* ─── 03 WORKFLOW SYSTEM ARCHITECTURE / BUILD EXPLORER ───────────── */}
-      <section className="py-16 sm:py-20 border-b border-white/[0.08]" aria-label="Workflow Architecture">
+      <section
+        id="execution-pipeline"
+        className="py-16 sm:py-20 border-b border-white/[0.08]"
+        aria-label="Workflow Architecture"
+      >
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <SectionPlate
             index="02"

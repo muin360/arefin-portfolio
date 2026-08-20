@@ -50,7 +50,7 @@ interface MetricCardProps {
   trendUp: boolean;
   previous?: number;
   hasData: boolean;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   href: string;
   accent: "violet" | "emerald" | "amber" | "sky" | "rose" | "indigo";
 }

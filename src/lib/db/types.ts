@@ -228,7 +228,10 @@ export type AnalyticsEventType =
   | "ai_prompt"
   | "ai_project_click"
   | "build_explorer_open"
-  | "build_step_click";
+  | "build_step_click"
+  | "build_explorer_3d_open"
+  | "build_explorer_node_click"
+  | "build_explorer_reset";
 
 export type AnalyticsEvent = {
   id: string;

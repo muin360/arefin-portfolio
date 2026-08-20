@@ -29,7 +29,7 @@ import type { Session } from "next-auth";
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   badge?: number;
 }
 

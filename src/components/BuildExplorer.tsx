@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   Zap,
   FileInput,
@@ -13,18 +14,33 @@ import {
   CheckCircle2,
   ArrowRight,
   Layers,
+  Box,
   ExternalLink,
   Copy,
   Check,
 } from "lucide-react";
 import type { WorkflowStep, WorkflowStepType } from "@/lib/db/types";
-import { trackBuildExplorerOpen, trackBuildStepClick } from "@/lib/track-event";
+import {
+  trackBuildExplorerOpen,
+  trackBuildStepClick,
+  trackBuildExplorer3DOpen,
+} from "@/lib/track-event";
+import BuildExplorer3DSkeleton from "./build-explorer/BuildExplorer3DSkeleton";
+
+const BuildExplorer3D = dynamic(
+  () => import("./build-explorer/BuildExplorer3D"),
+  {
+    ssr: false,
+    loading: () => <BuildExplorer3DSkeleton />,
+  },
+);
 
 interface BuildExplorerProps {
   workflowSteps?: WorkflowStep[];
   projectTitle?: string;
   projectSlug?: string;
   className?: string;
+  initialMode?: "2d" | "3d";
 }
 
 const STEP_TYPE_CONFIG: Record<
@@ -143,15 +159,36 @@ const DEFAULT_WORKFLOW_STEPS: WorkflowStep[] = [
   },
 ];
 
-function detectStepType(step: WorkflowStep, idx: number, total: number): WorkflowStepType | "default" {
+function detectStepType(
+  step: WorkflowStep,
+  idx: number,
+  total: number,
+): WorkflowStepType | "default" {
   if (step.type) return step.type;
   const nameLower = (step.name || step.title || "").toLowerCase();
   const toolLower = (step.tool || "").toLowerCase();
 
-  if (nameLower.includes("trigger") || nameLower.includes("webhook") || idx === 0) return "trigger";
-  if (nameLower.includes("vector") || nameLower.includes("database") || toolLower.includes("mongo") || toolLower.includes("pinecone")) return "database";
-  if (nameLower.includes("reason") || nameLower.includes("agent") || toolLower.includes("langchain")) return "agent";
-  if (nameLower.includes("output") || nameLower.includes("dispatch") || idx === total - 1) return "output";
+  if (nameLower.includes("trigger") || nameLower.includes("webhook") || idx === 0)
+    return "trigger";
+  if (
+    nameLower.includes("vector") ||
+    nameLower.includes("database") ||
+    toolLower.includes("mongo") ||
+    toolLower.includes("pinecone")
+  )
+    return "database";
+  if (
+    nameLower.includes("reason") ||
+    nameLower.includes("agent") ||
+    toolLower.includes("langchain")
+  )
+    return "agent";
+  if (
+    nameLower.includes("output") ||
+    nameLower.includes("dispatch") ||
+    idx === total - 1
+  )
+    return "output";
   return "default";
 }
 
@@ -160,12 +197,32 @@ export default function BuildExplorer({
   projectTitle = "Production Architecture Blueprint",
   projectSlug = "general",
   className = "",
+  initialMode = "2d",
 }: BuildExplorerProps) {
+  const [mode, setMode] = useState<"2d" | "3d">(initialMode);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     trackBuildExplorerOpen(projectSlug);
+
+    // Defer client preference check to post-mount to guarantee zero hydration mismatch
+    const timer = setTimeout(() => {
+      try {
+        const savedMode = localStorage.getItem("arefin_build_explorer_mode");
+        if (savedMode === "2d" || savedMode === "3d") {
+          setMode(savedMode);
+        } else if (window.innerWidth >= 1024) {
+          const canvas = document.createElement("canvas");
+          const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+          if (gl) setMode("3d");
+        }
+      } catch {
+        // In SSR or incognito mode keep initialMode
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [projectSlug]);
 
   const activeStep = workflowSteps[selectedIdx] || workflowSteps[0];
@@ -173,12 +230,27 @@ export default function BuildExplorer({
   const activeConfig = STEP_TYPE_CONFIG[activeType] || STEP_TYPE_CONFIG.default;
 
   const handleSelectNode = useCallback(
-    (idx: number, stepType: string) => {
+    (idx: number, stepType?: string) => {
       setSelectedIdx(idx);
-      trackBuildStepClick(stepType, projectSlug);
+      const sType =
+        stepType ||
+        detectStepType(workflowSteps[idx], idx, workflowSteps.length);
+      trackBuildStepClick(sType, projectSlug);
     },
-    [projectSlug],
+    [projectSlug, workflowSteps],
   );
+
+  const handleModeChange = (newMode: "2d" | "3d") => {
+    setMode(newMode);
+    try {
+      localStorage.setItem("arefin_build_explorer_mode", newMode);
+    } catch {
+      // Ignore quota/private mode errors
+    }
+    if (newMode === "3d") {
+      trackBuildExplorer3DOpen(projectSlug);
+    }
+  };
 
   // Keyboard navigation for tablist
   const handleKeyDown = useCallback(
@@ -186,14 +258,14 @@ export default function BuildExplorer({
       if (e.key === "ArrowRight") {
         e.preventDefault();
         const next = (selectedIdx + 1) % workflowSteps.length;
-        handleSelectNode(next, detectStepType(workflowSteps[next], next, workflowSteps.length));
+        handleSelectNode(next);
       } else if (e.key === "ArrowLeft") {
         e.preventDefault();
         const prev = (selectedIdx - 1 + workflowSteps.length) % workflowSteps.length;
-        handleSelectNode(prev, detectStepType(workflowSteps[prev], prev, workflowSteps.length));
+        handleSelectNode(prev);
       }
     },
-    [selectedIdx, workflowSteps, handleSelectNode],
+    [selectedIdx, workflowSteps.length, handleSelectNode],
   );
 
   const handleCopyBlueprint = () => {
@@ -239,13 +311,48 @@ export default function BuildExplorer({
           </h3>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Copy Blueprint Action */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* 2D / 3D Mode Toggle Switch */}
+          <div
+            role="group"
+            aria-label="View mode toggle"
+            className="inline-flex p-1 rounded-xl bg-black/40 border border-white/10"
+          >
+            <button
+              type="button"
+              onClick={() => handleModeChange("2d")}
+              aria-pressed={mode === "2d"}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all duration-200 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
+                mode === "2d"
+                  ? "bg-violet-600/30 text-white border border-violet-400/40 shadow-sm"
+                  : "text-white/60 hover:text-white/90 hover:bg-white/[0.04]"
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>2D Specs</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleModeChange("3d")}
+              aria-pressed={mode === "3d"}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all duration-200 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
+                mode === "3d"
+                  ? "bg-violet-600/30 text-white border border-violet-400/40 shadow-sm"
+                  : "text-white/60 hover:text-white/90 hover:bg-white/[0.04]"
+              }`}
+            >
+              <Box className="w-3.5 h-3.5 text-violet-400" />
+              <span>3D Spatial</span>
+            </button>
+          </div>
+
+          {/* Copy Blueprint Specs */}
           <button
             type="button"
             onClick={handleCopyBlueprint}
             aria-label="Copy blueprint architecture"
-            className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 hover:text-white text-xs font-mono transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/80 hover:text-white text-xs font-mono transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
           >
             {copied ? (
               <>
@@ -260,148 +367,165 @@ export default function BuildExplorer({
             )}
           </button>
 
-          <span className="font-mono text-xs px-2.5 py-1 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 font-semibold">
+          <span className="font-mono text-xs px-2.5 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 font-semibold">
             {workflowSteps.length} Stages
           </span>
         </div>
       </div>
 
-      {/* ─── STAGE COMPLETION PROGRESS BAR ───────────────────────────────── */}
-      <div className="w-full bg-white/[0.05] h-1.5 rounded-full my-4 overflow-hidden relative">
-        <div
-          className="h-full bg-gradient-to-r from-violet-500 via-indigo-400 to-sky-400 transition-all duration-300 rounded-full"
-          style={{ width: `${progressPct}%` }}
-          aria-hidden="true"
-        />
-      </div>
-
-      {/* ─── PIPELINE WORKFLOW NODES LIST (DESKTOP + MOBILE) ─────────────── */}
-      <div
-        role="tablist"
-        aria-label="Pipeline execution stages"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 my-5"
-      >
-        {workflowSteps.map((step, idx) => {
-          const stepType = detectStepType(step, idx, workflowSteps.length);
-          const conf = STEP_TYPE_CONFIG[stepType] || STEP_TYPE_CONFIG.default;
-          const Icon = conf.icon;
-          const isSelected = selectedIdx === idx;
-          const stepNumber = step.step || `0${idx + 1}`;
-          const stepTitle = step.name || step.title || `Stage ${idx + 1}`;
-
-          return (
-            <button
-              key={idx}
-              type="button"
-              role="tab"
-              id={`stage-tab-${idx}`}
-              aria-selected={isSelected}
-              aria-controls={`stage-panel-${idx}`}
-              onClick={() => handleSelectNode(idx, stepType)}
-              className={`p-4 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between space-y-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/80 ${
-                isSelected
-                  ? `${conf.bgColor} ${conf.borderColor} shadow-lg shadow-black/40 scale-[1.02]`
-                  : "bg-[#07090e]/80 border-white/[0.08] hover:bg-[#0e121d] hover:border-white/20"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
-                    isSelected
-                      ? `${conf.bgColor} ${conf.borderColor} ${conf.color}`
-                      : "bg-[#121622] border-white/10 text-white/50"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                </div>
-                <span
-                  className={`font-mono text-[10px] font-bold ${
-                    isSelected ? conf.color : "text-white/40"
-                  }`}
-                >
-                  {stepNumber}
-                </span>
-              </div>
-
-              <div>
-                <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest block">
-                  {conf.label}
-                </span>
-                <span
-                  className={`text-xs font-semibold block truncate mt-0.5 ${
-                    isSelected ? "text-white" : "text-white/70"
-                  }`}
-                >
-                  {stepTitle}
-                </span>
-              </div>
-
-              {step.tool && (
-                <span className="font-mono text-[9px] px-2 py-0.5 rounded bg-white/[0.04] text-white/60 border border-white/5 truncate block">
-                  {step.tool}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ─── SELECTED STAGE DETAILS PANEL ─────────────────────────────────── */}
-      <div
-        role="tabpanel"
-        id={`stage-panel-${selectedIdx}`}
-        aria-labelledby={`stage-tab-${selectedIdx}`}
-        className={`p-5 sm:p-6 rounded-xl border transition-all duration-300 ${activeConfig.bgColor} ${activeConfig.borderColor}`}
-      >
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div className="space-y-2 flex-1">
-            <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-              <span
-                className={`px-2 py-0.5 rounded-md font-bold uppercase text-[10px] border ${activeConfig.bgColor} ${activeConfig.borderColor} ${activeConfig.color}`}
-              >
-                Stage {activeStep.step || `0${selectedIdx + 1}`} · {activeConfig.label}
-              </span>
-
-              {activeStep.tool && (
-                <span className="px-2 py-0.5 rounded-md bg-black/40 border border-white/10 text-white/80 text-[10px]">
-                  Engine / Tool: <strong className="text-white">{activeStep.tool}</strong>
-                </span>
-              )}
-            </div>
-
-            <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
-              {activeStep.name || activeStep.title || "Architecture Execution Step"}
-            </h4>
-
-            <p className="text-xs sm:text-sm text-white/75 leading-relaxed font-sans max-w-3xl">
-              {activeStep.desc ||
-                activeStep.description ||
-                "Deterministic execution node processing input payloads, triggering downstream events, or persisting vector embeddings."}
-            </p>
-          </div>
-
-          {/* Action Links */}
-          <div className="flex flex-wrap sm:flex-col items-start sm:items-end gap-2 shrink-0 pt-2 sm:pt-0">
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-xs font-mono font-semibold transition-colors shadow-md shadow-violet-600/30"
-            >
-              <span>Build this Flow</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
-
-            {activeStep.postSlug && (
-              <Link
-                href={`/blog/${activeStep.postSlug}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/40 hover:bg-black/60 border border-white/10 text-white/70 hover:text-white text-xs font-mono transition-colors"
-              >
-                <span>Read Build Note</span>
-                <ExternalLink className="w-3 h-3" />
-              </Link>
-            )}
-          </div>
+      {/* ─── 3D SPATIAL MODE VIEW ────────────────────────────────────────── */}
+      {mode === "3d" ? (
+        <div className="pt-4">
+          <BuildExplorer3D
+            workflowSteps={workflowSteps}
+            projectTitle={projectTitle}
+            projectSlug={projectSlug}
+            selectedIndex={selectedIdx}
+            onSelectIndex={handleSelectNode}
+            onFallbackTo2D={() => handleModeChange("2d")}
+          />
         </div>
-      </div>
+      ) : (
+        /* ─── 2D CANONICAL SPECIFICATION BLUEPRINT ───────────────────────── */
+        <>
+          {/* Stage Completion Progress Bar */}
+          <div className="w-full bg-white/[0.05] h-1.5 rounded-full my-4 overflow-hidden relative">
+            <div
+              className="h-full bg-gradient-to-r from-violet-500 via-indigo-400 to-sky-400 transition-all duration-300 rounded-full"
+              style={{ width: `${progressPct}%` }}
+              aria-hidden="true"
+            />
+          </div>
+
+          {/* Pipeline Workflow Nodes Tablist */}
+          <div
+            role="tablist"
+            aria-label="Pipeline execution stages"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 my-5"
+          >
+            {workflowSteps.map((step, idx) => {
+              const stepType = detectStepType(step, idx, workflowSteps.length);
+              const conf = STEP_TYPE_CONFIG[stepType] || STEP_TYPE_CONFIG.default;
+              const Icon = conf.icon;
+              const isSelected = selectedIdx === idx;
+              const stepNumber = step.step || `0${idx + 1}`;
+              const stepTitle = step.name || step.title || `Stage ${idx + 1}`;
+
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  role="tab"
+                  id={`stage-tab-${idx}`}
+                  aria-selected={isSelected}
+                  aria-controls={`stage-panel-${idx}`}
+                  onClick={() => handleSelectNode(idx, stepType)}
+                  className={`p-4 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between space-y-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/80 ${
+                    isSelected
+                      ? `${conf.bgColor} ${conf.borderColor} shadow-lg shadow-black/40 scale-[1.02]`
+                      : "bg-[#07090e]/80 border-white/[0.08] hover:bg-[#0e121d] hover:border-white/20"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
+                        isSelected
+                          ? `${conf.bgColor} ${conf.borderColor} ${conf.color}`
+                          : "bg-[#121622] border-white/10 text-white/50"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span
+                      className={`font-mono text-[10px] font-bold ${
+                        isSelected ? conf.color : "text-white/40"
+                      }`}
+                    >
+                      {stepNumber}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest block">
+                      {conf.label}
+                    </span>
+                    <span
+                      className={`text-xs font-semibold block truncate mt-0.5 ${
+                        isSelected ? "text-white" : "text-white/70"
+                      }`}
+                    >
+                      {stepTitle}
+                    </span>
+                  </div>
+
+                  {step.tool && (
+                    <span className="font-mono text-[9px] px-2 py-0.5 rounded bg-white/[0.04] text-white/60 border border-white/5 truncate block">
+                      {step.tool}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Selected Stage Details Panel */}
+          <div
+            role="tabpanel"
+            id={`stage-panel-${selectedIdx}`}
+            aria-labelledby={`stage-tab-${selectedIdx}`}
+            className={`p-5 sm:p-6 rounded-xl border transition-all duration-300 ${activeConfig.bgColor} ${activeConfig.borderColor}`}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              <div className="space-y-2 flex-1">
+                <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+                  <span
+                    className={`px-2 py-0.5 rounded-md font-bold uppercase text-[10px] border ${activeConfig.bgColor} ${activeConfig.borderColor} ${activeConfig.color}`}
+                  >
+                    Stage {activeStep.step || `0${selectedIdx + 1}`} · {activeConfig.label}
+                  </span>
+
+                  {activeStep.tool && (
+                    <span className="px-2 py-0.5 rounded-md bg-black/40 border border-white/10 text-white/80 text-[10px]">
+                      Engine / Tool: <strong className="text-white">{activeStep.tool}</strong>
+                    </span>
+                  )}
+                </div>
+
+                <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                  {activeStep.name || activeStep.title || "Architecture Execution Step"}
+                </h4>
+
+                <p className="text-xs sm:text-sm text-white/75 leading-relaxed font-sans max-w-3xl">
+                  {activeStep.desc ||
+                    activeStep.description ||
+                    "Deterministic execution node processing input payloads, triggering downstream events, or persisting vector embeddings."}
+                </p>
+              </div>
+
+              {/* Action Links */}
+              <div className="flex flex-wrap sm:flex-col items-start sm:items-end gap-2 shrink-0 pt-2 sm:pt-0">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-xs font-mono font-semibold transition-colors shadow-md shadow-violet-600/30"
+                >
+                  <span>Build this Flow</span>
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+
+                {activeStep.postSlug && (
+                  <Link
+                    href={`/blog/${activeStep.postSlug}`}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-black/40 hover:bg-black/60 border border-white/10 text-white/70 hover:text-white text-xs font-mono transition-colors"
+                  >
+                    <span>Read Build Note</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
