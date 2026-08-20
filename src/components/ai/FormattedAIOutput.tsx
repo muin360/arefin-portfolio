@@ -15,6 +15,8 @@ import {
   ChevronRight,
   Lightbulb,
   Terminal,
+  Cpu,
+  Bookmark,
 } from "lucide-react";
 
 interface FormattedAIOutputProps {
@@ -41,7 +43,7 @@ export default function FormattedAIOutput({
   // Helper to format inline elements: **bold**, `code`, [link](url), *italic*
   const formatInlineElements = (text: string, parentKey: string): React.ReactNode[] => {
     // Regex matches: markdown links [label](url), bold **bold**, inline code `code`, highlight tags
-    const tokenRegex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/g;
+    const tokenRegex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g;
     const parts = text.split(tokenRegex);
 
     return parts.map((part, i) => {
@@ -57,7 +59,7 @@ export default function FormattedAIOutput({
             key={partKey}
             href={href}
             onClick={onLinkClick}
-            className="inline-flex items-center gap-1 font-semibold text-violet-300 hover:text-white px-1.5 py-0.5 rounded-md bg-violet-950/40 hover:bg-violet-900/60 border border-violet-500/30 hover:border-violet-400 transition-all group/link mx-0.5 shadow-sm text-xs"
+            className="inline-flex items-center gap-1 font-semibold text-violet-300 hover:text-white px-2 py-0.5 rounded-md bg-violet-950/40 hover:bg-violet-900/60 border border-violet-500/30 hover:border-violet-400 transition-all duration-150 group/link mx-0.5 shadow-sm text-xs"
           >
             <span>{label}</span>
             <ExternalLink className="w-2.5 h-2.5 opacity-70 group-hover/link:opacity-100 transition-opacity" />
@@ -78,13 +80,23 @@ export default function FormattedAIOutput({
         );
       }
 
+      // Italic Text *text*
+      if (part.startsWith("*") && part.endsWith("*") && !part.startsWith("**")) {
+        const inner = part.slice(1, -1);
+        return (
+          <em key={partKey} className="italic text-slate-300">
+            {inner}
+          </em>
+        );
+      }
+
       // Inline Code `code`
       if (part.startsWith("`") && part.endsWith("`")) {
         const inner = part.slice(1, -1);
         return (
           <code
             key={partKey}
-            className="px-1.5 py-0.5 mx-0.5 rounded-md bg-[#101424] border border-violet-500/30 text-violet-300 font-mono text-[11px] font-semibold tracking-tight shadow-inner"
+            className="px-1.5 py-0.5 mx-0.5 rounded-md bg-[#0a0d1a] border border-violet-500/30 text-violet-300 font-mono text-[11px] font-semibold tracking-tight shadow-inner"
           >
             {inner}
           </code>
@@ -115,6 +127,11 @@ export default function FormattedAIOutput({
     content.toLowerCase().includes("contact form") ||
     content.toLowerCase().includes("direct email");
 
+  const hasSkillsLink =
+    content.includes("/skills") ||
+    content.toLowerCase().includes("production tech stack") ||
+    content.toLowerCase().includes("competency matrix");
+
   return (
     <div className={`space-y-3.5 font-sans leading-relaxed text-[13.5px] text-slate-200 ${className}`}>
       {blocks.map((block, idx) => {
@@ -127,7 +144,7 @@ export default function FormattedAIOutput({
           return (
             <div key={blockKey} className="my-4 relative flex items-center justify-center">
               <div className="w-full h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
-              <span className="absolute px-2 bg-[#090d19] text-violet-400/60 text-[10px] font-mono">✦ ✦ ✦</span>
+              <span className="absolute px-2.5 bg-[#070a14] text-violet-400/60 text-[10px] font-mono">✦ ✦ ✦</span>
             </div>
           );
         }
@@ -143,7 +160,7 @@ export default function FormattedAIOutput({
           return (
             <div
               key={blockKey}
-              className="my-3.5 rounded-xl bg-[#05070f] border border-violet-500/30 shadow-2xl shadow-black/60 overflow-hidden group/code transition-all hover:border-violet-500/50"
+              className="my-3.5 rounded-xl bg-[#04060d] border border-violet-500/30 shadow-2xl shadow-black/70 overflow-hidden group/code transition-all hover:border-violet-500/50"
             >
               <div className="flex items-center justify-between px-3.5 py-2 bg-[#090e1c] border-b border-white/[0.08] text-[10px] font-mono text-slate-400">
                 <div className="flex items-center gap-2">
@@ -174,7 +191,7 @@ export default function FormattedAIOutput({
                   )}
                 </button>
               </div>
-              <pre className="p-4 text-[11.5px] font-mono text-violet-200 overflow-x-auto custom-scrollbar leading-relaxed bg-[#05070f]">
+              <pre className="p-4 text-[11.5px] font-mono text-violet-200 overflow-x-auto custom-scrollbar leading-relaxed bg-[#04060d]">
                 <code>{codeBody}</code>
               </pre>
             </div>
@@ -187,6 +204,7 @@ export default function FormattedAIOutput({
           const isWarning = rawQuote.includes("[!WARNING]") || rawQuote.toLowerCase().includes("warning:");
           const isTip = rawQuote.includes("[!TIP]") || rawQuote.toLowerCase().includes("tip:");
           const isSecurity = rawQuote.includes("[!SECURITY]") || rawQuote.toLowerCase().includes("security:");
+          const isImportant = rawQuote.includes("[!IMPORTANT]") || rawQuote.toLowerCase().includes("important:");
 
           const cleanQuote = rawQuote.replace(/\[!(NOTE|TIP|WARNING|IMPORTANT|SECURITY|CAUTION)\]\s*/i, "");
 
@@ -200,6 +218,8 @@ export default function FormattedAIOutput({
                   ? "bg-amber-950/30 border-amber-500/40 text-amber-200"
                   : isSecurity
                   ? "bg-emerald-950/30 border-emerald-500/40 text-emerald-200"
+                  : isImportant
+                  ? "bg-indigo-950/30 border-indigo-500/40 text-indigo-200"
                   : "bg-violet-950/30 border-violet-500/40 text-violet-200"
               }`}
             >
@@ -209,6 +229,8 @@ export default function FormattedAIOutput({
                 <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               ) : isSecurity ? (
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              ) : isImportant ? (
+                <Bookmark className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
               ) : (
                 <Info className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
               )}
@@ -223,9 +245,9 @@ export default function FormattedAIOutput({
         if (trimmed.startsWith("### ") || trimmed.startsWith("## ") || trimmed.startsWith("# ")) {
           const headingText = trimmed.replace(/^#{1,3}\s+/, "");
           return (
-            <div key={blockKey} className="pt-2 pb-1 flex items-center gap-2.5 border-b border-white/[0.04] pb-2">
+            <div key={blockKey} className="pt-2 pb-1 flex items-center gap-2.5 border-b border-white/[0.04]">
               <span className="w-1.5 h-4 rounded-full bg-gradient-to-b from-violet-400 via-indigo-500 to-cyan-400 shrink-0 shadow-[0_0_10px_rgba(139,92,246,0.8)]" />
-              <h4 className="text-sm sm:text-[14.5px] font-bold text-white tracking-wide flex-1">
+              <h4 className="text-sm sm:text-[14.5px] font-bold text-white tracking-tight flex-1">
                 {formatInlineElements(headingText, blockKey)}
               </h4>
             </div>
@@ -241,7 +263,7 @@ export default function FormattedAIOutput({
           return (
             <div
               key={blockKey}
-              className="my-3.5 overflow-x-auto rounded-xl border border-white/10 bg-[#060810] shadow-xl custom-scrollbar"
+              className="my-3.5 overflow-x-auto rounded-xl border border-white/10 bg-[#05070e] shadow-xl custom-scrollbar"
             >
               <table className="w-full text-left text-xs font-mono">
                 <thead>
@@ -327,7 +349,7 @@ export default function FormattedAIOutput({
       })}
 
       {/* ─── SMART ACTION LAUNCHER CARDS ─────────────────────────────────── */}
-      {enableActionCards && (hasBookLink || hasProjectsLink || hasContactLink) && (
+      {enableActionCards && (hasBookLink || hasProjectsLink || hasContactLink || hasSkillsLink) && (
         <div className="pt-3.5 border-t border-white/[0.08] flex flex-wrap gap-2.5 animate-fade-in">
           {hasBookLink && (
             <Link
@@ -349,6 +371,18 @@ export default function FormattedAIOutput({
             >
               <Layers className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform" />
               <span>Explore 10+ Production Projects</span>
+              <ChevronRight className="w-3.5 h-3.5 opacity-60 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          )}
+
+          {hasSkillsLink && (
+            <Link
+              href="/skills"
+              onClick={onLinkClick}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#0f1424] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-500/40 text-slate-200 hover:text-white font-mono text-xs font-semibold transition-all shadow-sm group active:scale-95"
+            >
+              <Cpu className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+              <span>Review Tech Matrix</span>
               <ChevronRight className="w-3.5 h-3.5 opacity-60 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           )}

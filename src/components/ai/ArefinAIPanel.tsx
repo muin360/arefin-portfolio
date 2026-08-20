@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   X,
   Send,
@@ -14,10 +15,6 @@ import {
   Trash2,
   ArrowDown,
   Sparkles,
-  ExternalLink,
-  Calendar,
-  Layers,
-  Mail,
   Zap,
   Maximize2,
   Minimize2,
@@ -25,8 +22,11 @@ import {
   Mic,
   MicOff,
   Calculator,
-  ChevronRight,
   Sliders,
+  ChevronRight,
+  Clock,
+  DollarSign,
+  Globe,
 } from "lucide-react";
 import type { Citation } from "@/lib/ai/retrieval";
 import { trackAIOpen, trackAIPrompt, trackAIProjectClick } from "@/lib/track-event";
@@ -47,11 +47,12 @@ interface ArefinAIPanelProps {
   onClose: () => void;
 }
 
-const SUGGESTED_PROMPTS = [
+const DEFAULT_SUGGESTED_PROMPTS = [
   { label: "🚀 What can Arefin build?", text: "What AI automations and agentic workflows can Arefin build?" },
   { label: "🧠 Show RAG & Vector Systems", text: "Show me Arefin's RAG systems, Pinecone vector search, and knowledge architectures." },
   { label: "⚡ Multi-Agent Workflows", text: "How does Arefin design multi-agent decision loops and tool-calling systems in n8n/Python?" },
   { label: "🛠️ Production Tech Stack", text: "What is Arefin's production tech stack (n8n, LangChain, Claude, Python, Next.js, etc.)?" },
+  { label: "📊 Workflow ROI & Pricing", text: "What are typical investment ranges and delivery timelines for AI automation workflows?" },
   { label: "📅 Schedule Scoping Call", text: "How can I hire Arefin or schedule a 30-minute discovery call for my business?" },
 ];
 
@@ -63,13 +64,44 @@ const INITIAL_MESSAGE: MessageItem = {
   timestamp: "Live",
 };
 
+const ESTIMATOR_DATA = {
+  n8n: {
+    name: "Event-Driven n8n & Webhook Automation",
+    standard: { range: "$500 – $900", time: "1 Week", desc: "Webhook trigger, CRM sync (HubSpot/Airtable), email notifications, error alerts" },
+    advanced: { range: "$900 – $1,500", time: "1–2 Weeks", desc: "Multi-branch logic, automated data cleaning, API retries, database write-back" },
+    enterprise: { range: "$1,500 – $2,500", time: "2–3 Weeks", desc: "High-throughput failover queues, multi-tenant schemas, custom node integrations" },
+  },
+  rag: {
+    name: "Enterprise Pinecone RAG Knowledge Engine",
+    standard: { range: "$1,200 – $1,800", time: "1–2 Weeks", desc: "Document ingestion, chunking pipeline, Pinecone vector embeddings, citation grounding" },
+    advanced: { range: "$1,800 – $2,800", time: "2–3 Weeks", desc: "Hybrid dense/lexical search, metadata filtering, reranking models, live data sync" },
+    enterprise: { range: "$2,800 – $4,500", time: "3–4 Weeks", desc: "Multi-index sharding, role-based access filtering, continuous re-indexing workers" },
+  },
+  multi_agent: {
+    name: "Autonomous Multi-Agent Decision Swarm",
+    standard: { range: "$1,500 – $2,200", time: "2 Weeks", desc: "2-3 specialized agents (Researcher, Writer, Reviewer) with deterministic routing" },
+    advanced: { range: "$2,200 – $3,500", time: "2–4 Weeks", desc: "Multi-agent LangGraph / CrewAI swarms with tool-calling loops and human approval gate" },
+    enterprise: { range: "$3,500 – $6,000", time: "4–6 Weeks", desc: "Distributed autonomous agents with long-term memory, state persistence, and self-healing" },
+  },
+  custom: {
+    name: "End-to-End Custom AI Application & Assistant",
+    standard: { range: "$2,000 – $3,000", time: "2–3 Weeks", desc: "Embedded chatbot widget, custom LLM routing, admin telemetry dashboard" },
+    advanced: { range: "$3,000 – $4,500", time: "3–4 Weeks", desc: "Full-stack AI web application (Next.js 16 + FastAPI + MongoDB Atlas), auth & rate limits" },
+    enterprise: { range: "$4,500 – $8,000+", time: "4–8 Weeks", desc: "Enterprise SaaS architecture, multi-tenant billing, streaming copilot, custom fine-tuning" },
+  },
+};
+
+let userMsgSeq = 0;
+
 export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
+  const pathname = usePathname() || "/";
   const [messages, setMessages] = useState<MessageItem[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [resetToast, setResetToast] = useState(false);
   const [sessionId, setSessionId] = useState<string>(() => {
     if (typeof window !== "undefined") {
       try {
@@ -99,6 +131,35 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
+  // Dynamic Route-Aware Contextual Prompts
+  const getContextualPrompts = useCallback(() => {
+    if (pathname.startsWith("/projects")) {
+      return [
+        { label: "🚀 Case Study Breakdown", text: "Explain the architecture, pipeline stages, and tradeoffs of this project." },
+        { label: "⚡ Tool-Calling & Webhooks", text: "What tool-calling loops, webhooks, and APIs were integrated into this build?" },
+        { label: "📊 Estimate Similar Build", text: "How much would a similar automation system cost and how long would it take?" },
+        { label: "📅 Schedule Discovery Call", text: "How can I book a 30-minute scoping call with Arefin?" },
+      ];
+    }
+    if (pathname.startsWith("/services")) {
+      return [
+        { label: "🛠️ Compare Services", text: "Compare n8n workflow automations vs custom multi-agent swarms." },
+        { label: "📚 RAG Architecture", text: "How does Arefin build enterprise RAG knowledge bases with Pinecone?" },
+        { label: "📊 Investment Guidelines", text: "What are typical project investment ranges and milestone timelines?" },
+        { label: "📅 Book Discovery Call", text: "How can I schedule a 30-minute consultation for my business?" },
+      ];
+    }
+    if (pathname.startsWith("/skills")) {
+      return [
+        { label: "🧠 Tech Stack Matrix", text: "What is Arefin's production tech stack across AI models, n8n, and backend?" },
+        { label: "🤖 Model Selection Strategy", text: "When does Arefin recommend Claude 3.7 Sonnet vs GPT-4o vs Gemini 2.0?" },
+        { label: "💾 Pinecone vs MongoDB", text: "How does Arefin choose between Pinecone Vector DB and MongoDB Atlas?" },
+        { label: "📅 Schedule Scoping Call", text: "How can I hire Arefin for an AI engineering project?" },
+      ];
+    }
+    return DEFAULT_SUGGESTED_PROMPTS;
+  }, [pathname]);
+
   // Web Speech API Voice Dictation
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -126,7 +187,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
 
   const toggleVoiceInput = () => {
     if (!recognitionRef.current) {
-      alert("Voice input is not supported in this browser. Please use Google Chrome or Microsoft Edge.");
+      alert("Voice input is not supported in this browser.");
       return;
     }
     if (isListening) {
@@ -142,11 +203,22 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     }
   };
 
-  // Focus input and lock background scroll
+  // Keyboard shortcut: Escape to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  // Lock body scroll and track open event
   useEffect(() => {
     if (isOpen) {
       trackAIOpen();
-      setTimeout(() => inputRef.current?.focus(), 200);
+      setTimeout(() => inputRef.current?.focus(), 150);
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -156,15 +228,14 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     };
   }, [isOpen]);
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
+  // Auto-scroll on new messages
   useEffect(() => {
-    if (isOpen) {
-      scrollToBottom();
-    }
-  }, [messages, loading, isOpen, scrollToBottom]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleScroll = () => {
     if (!chatContainerRef.current) return;
@@ -180,9 +251,18 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
 
   const handleExportTranscript = () => {
     const transcript = messages
-      .map((m) => `[${m.role.toUpperCase()} - ${m.timestamp}]\n${m.content}\n`)
-      .join("\n----------------------------------------\n\n");
-    const blob = new Blob([transcript], { type: "text/plain" });
+      .map(
+        (m) =>
+          `[${m.role === "user" ? "VISITOR" : "AREFIN AI"} - ${m.timestamp}]\n${m.content}\n${
+            m.citations && m.citations.length > 0
+              ? "CITATIONS: " + m.citations.map((c) => c.title + " (" + c.url + ")").join(", ") + "\n"
+              : ""
+          }`,
+      )
+      .join("\n" + "-".repeat(60) + "\n\n");
+
+    const header = `# AREFIN AI - PORTFOLIO & WORKFLOW CONSULTATION TRANSCRIPT\nDate: ${new Date().toLocaleString()}\nSession: ${sessionId}\nRoute: ${pathname}\n\n${"=".repeat(70)}\n\n`;
+    const blob = new Blob([header + transcript], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -198,6 +278,8 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
       sessionStorage.setItem("arefin_ai_session_id", newSession);
     } catch {}
     setMessages([INITIAL_MESSAGE]);
+    setResetToast(true);
+    setTimeout(() => setResetToast(false), 2500);
   };
 
   const handleCitationClick = (citation: Citation) => {
@@ -213,19 +295,19 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     setInput("");
     setError(null);
 
+    userMsgSeq += 1;
     const userMessage: MessageItem = {
-      id: `user_${Date.now()}`,
+      id: `u_${userMsgSeq}`,
       role: "user",
       content: query,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
     try {
-      const history = newMessages.map((m) => ({
+      const chatHistory = [...messages, userMessage].map((m) => ({
         role: m.role,
         content: m.content,
       }));
@@ -234,19 +316,20 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: history,
-          sessionId: sessionId || undefined,
+          messages: chatHistory,
+          sessionId,
         }),
       });
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to reach Arefin AI");
+      if (!res.ok && res.status !== 200) {
+        throw new Error(data.error || "Failed to process query.");
       }
 
+      userMsgSeq += 1;
       const botMessage: MessageItem = {
-        id: `bot_${Date.now()}`,
+        id: `bot_${userMsgSeq}`,
         role: "assistant",
         content: data.reply || "I apologize, but I could not generate a response. Please try again.",
         citations: data.citations || [],
@@ -259,10 +342,11 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
     } catch (err: unknown) {
       const errorText = err instanceof Error ? err.message : "Error connecting to AI service";
       setError(errorText);
+      userMsgSeq += 1;
       setMessages((prev) => [
         ...prev,
         {
-          id: `error_${Date.now()}`,
+          id: `err_${userMsgSeq}`,
           role: "assistant",
           content: `> [!WARNING]\n> **Connection Notice:** ${errorText}\n\nYou can reach Arefin directly at [Schedule 30-Min Discovery Call](/book) or send an inquiry via the [Contact Form](/contact).`,
           citations: [
@@ -279,27 +363,20 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
 
   const handleApplyEstimatorSpecs = () => {
     setShowEstimator(false);
-    const workflowNames = {
-      n8n: "Event-Driven n8n & Webhook Automation",
-      rag: "Enterprise Pinecone RAG Knowledge Engine",
-      multi_agent: "Autonomous Multi-Agent Decision Swarm",
-      custom: "End-to-End Custom AI Application & Assistant",
-    };
-    const complexityNames = {
-      standard: "Standard (1-2 Weeks Delivery)",
-      advanced: "Advanced Multi-System (2-4 Weeks Delivery)",
-      enterprise: "Enterprise Distributed Architecture (4+ Weeks)",
-    };
+    const selectedWorkflow = ESTIMATOR_DATA[estWorkflow];
+    const selectedTier = selectedWorkflow[estComplexity];
 
-    const promptText = `I would like to scope a project: ${workflowNames[estWorkflow]} with ${complexityNames[estComplexity]} complexity. What are the recommended architecture milestones and how soon can we begin?`;
+    const promptText = `I would like to scope a project: ${selectedWorkflow.name} with ${estComplexity.toUpperCase()} complexity (Estimated Investment: ${selectedTier.range}, Timeline: ${selectedTier.time}). What are the recommended architecture milestones and how soon can we begin?`;
     handleSendMessage(promptText);
   };
+
+  const currentEstTier = ESTIMATOR_DATA[estWorkflow][estComplexity];
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-end bg-black/75 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-end bg-black/80 backdrop-blur-md animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="arefin-ai-title"
@@ -345,7 +422,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
             <button
               type="button"
               onClick={() => setShowEstimator((prev) => !prev)}
-              className={`p-2 rounded-xl border transition-all flex items-center gap-1 text-xs font-mono font-semibold ${
+              className={`p-2 rounded-xl border transition-all flex items-center gap-1 text-xs font-mono font-semibold focus:ring-2 focus:ring-amber-500/40 focus:outline-none ${
                 showEstimator
                   ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
                   : "bg-white/[0.04] text-slate-300 hover:text-white border-white/10 hover:border-violet-500/40"
@@ -359,7 +436,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
             <button
               type="button"
               onClick={handleExportTranscript}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
               title="Download Consultation Transcript (.txt)"
             >
               <Download className="w-4 h-4" />
@@ -368,7 +445,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
             <button
               type="button"
               onClick={() => setIsExpanded((prev) => !prev)}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all hidden sm:flex items-center justify-center"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all hidden sm:flex items-center justify-center focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
               title={isExpanded ? "Collapse View" : "Expand Workstation"}
             >
               {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -378,7 +455,7 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
               <button
                 type="button"
                 onClick={handleClearSession}
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
+                className="p-2 rounded-xl text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all focus:ring-2 focus:ring-rose-500/40 focus:outline-none"
                 title="Reset session & new conversation"
               >
                 <Trash2 className="w-4 h-4" />
@@ -388,20 +465,41 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
+        {/* ─── RESET CONFIRMATION TOAST ────────────────────────────────────── */}
+        {resetToast && (
+          <div className="px-4 py-2 bg-emerald-950/40 border-b border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center gap-2 animate-fade-in">
+            <Check className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Session reset successfully. Started fresh consultation thread.</span>
+          </div>
+        )}
+
+        {/* ─── ROUTE CONTEXT INDICATOR BAR ─────────────────────────────────── */}
+        <div className="px-4 py-1.5 bg-[#060812] border-b border-white/[0.04] flex items-center justify-between text-[10px] font-mono text-slate-400 shrink-0">
+          <div className="flex items-center gap-1.5">
+            <Globe className="w-3 h-3 text-violet-400" />
+            <span>Active Context:</span>
+            <span className="text-violet-300 font-bold">{pathname}</span>
+          </div>
+          <div className="flex items-center gap-1 text-emerald-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Live Grounding Active</span>
+          </div>
+        </div>
+
         {/* ─── SCOPING CALCULATOR DRAWER ───────────────────────────────────── */}
         {showEstimator && (
-          <div className="p-4 sm:p-5 bg-[#0a0e1c] border-b border-violet-500/30 text-white animate-fade-in space-y-3 shrink-0">
+          <div className="p-4 sm:p-5 bg-[#0a0e1c] border-b border-violet-500/30 text-white animate-fade-in space-y-3.5 shrink-0">
             <div className="flex items-center justify-between">
               <h4 className="font-bold text-xs sm:text-sm font-mono flex items-center gap-2 text-violet-300">
                 <Sliders className="w-4 h-4 text-amber-400" />
-                <span>Instant Project Scope & Architecture Estimator</span>
+                <span>Instant AI Architecture & ROI Estimator</span>
               </h4>
               <button
                 type="button"
@@ -445,105 +543,93 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[11px] font-mono text-slate-400">
-                ⚡ Tailored delivery timeline & milestone estimates.
-              </span>
+            {/* Calculated Pricing & Milestone Preview Card */}
+            <div className="p-3 rounded-xl bg-[#04060e] border border-violet-500/30 flex flex-col sm:flex-row gap-3 sm:items-center justify-between text-xs font-mono">
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center gap-1 text-amber-300 font-bold">
+                    <DollarSign className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Investment: {currentEstTier.range}</span>
+                  </span>
+                  <span className="flex items-center gap-1 text-cyan-300">
+                    <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Timeline: {currentEstTier.time}</span>
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 font-sans">
+                  {currentEstTier.desc}
+                </p>
+              </div>
+
               <button
                 type="button"
                 onClick={handleApplyEstimatorSpecs}
-                className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl font-mono text-xs font-bold transition-all shadow-md shadow-violet-950 flex items-center gap-1.5 active:scale-95"
+                className="px-4 py-2 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold rounded-xl text-xs font-mono transition-all shadow-md shadow-amber-950 active:scale-95 flex items-center justify-center gap-1.5 shrink-0"
               >
-                <span>Calculate & Ask AI</span>
+                <span>Ask AI to Scope</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         )}
 
-        {/* ─── QUICK DISCOVERY SHORTCUTS ───────────────────────────────────── */}
-        <div className="px-4 py-2.5 bg-[#080b15] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto custom-scrollbar shrink-0 text-xs font-mono">
-          <Link
-            href="/book"
-            onClick={onClose}
-            className="px-3 py-1.5 rounded-xl bg-violet-600/30 hover:bg-violet-600/50 text-violet-200 border border-violet-500/40 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 shadow-sm font-semibold"
-          >
-            <Calendar className="w-3.5 h-3.5 text-amber-400" />
-            <span>Book 30-Min Discovery Call</span>
-          </Link>
-          <Link
-            href="/projects"
-            onClick={onClose}
-            className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 shadow-sm"
-          >
-            <Layers className="w-3.5 h-3.5 text-indigo-400" />
-            <span>View 10+ Production Projects</span>
-          </Link>
-          <Link
-            href="/contact"
-            onClick={onClose}
-            className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5 transition-all whitespace-nowrap active:scale-95 shadow-sm"
-          >
-            <Mail className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Direct Inquiry Form</span>
-          </Link>
-        </div>
-
-        {/* ─── CHAT MESSAGES STREAM ────────────────────────────────────────── */}
+        {/* ─── CONVERSATION STREAM ─────────────────────────────────────────── */}
         <div
           ref={chatContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 custom-scrollbar relative"
+          className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar relative z-10"
         >
           {messages.map((msg) => {
             const isUser = msg.role === "user";
             return (
               <div
                 key={msg.id}
-                className={`flex gap-3 ${
+                className={`flex gap-3 animate-fade-in group ${
                   isUser ? "justify-end" : "justify-start"
-                } animate-fade-in`}
+                }`}
               >
                 {!isUser && (
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600/30 to-indigo-600/30 border border-violet-500/40 flex items-center justify-center text-violet-300 shrink-0 mt-1 shadow-md">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-violet-950">
                     <Bot className="w-4 h-4" />
                   </div>
                 )}
 
                 <div
-                  className={`max-w-[92%] sm:max-w-[88%] rounded-2xl p-4 sm:p-5 space-y-3 relative group transition-all ${
+                  className={`relative max-w-[88%] sm:max-w-[82%] rounded-2xl p-4 space-y-3 shadow-xl transition-all ${
                     isUser
-                      ? "bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 text-white rounded-tr-sm shadow-xl shadow-violet-950/40 font-medium text-xs sm:text-sm border-t border-white/20"
-                      : "bg-[#0b0e1d]/95 border border-white/[0.08] text-slate-200 rounded-tl-sm shadow-2xl hover:border-violet-500/30"
+                      ? "bg-gradient-to-br from-violet-600 to-indigo-700 text-white rounded-tr-sm shadow-violet-950/40"
+                      : "bg-[#0b0f1e]/90 border border-white/[0.08] hover:border-violet-500/30 text-slate-200 rounded-tl-sm shadow-black/40 backdrop-blur-xl"
                   }`}
                 >
                   {/* Message Content */}
-                  <div>
+                  <div className="text-xs sm:text-[13.5px] leading-relaxed">
                     {isUser ? (
-                      <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
+                      <p className="whitespace-pre-wrap">{msg.content}</p>
                     ) : (
                       <FormattedAIOutput content={msg.content} onLinkClick={onClose} />
                     )}
                   </div>
 
-                  {/* Dynamic Clickable Citation Badges */}
+                  {/* Citations Badges */}
                   {!isUser && msg.citations && msg.citations.length > 0 && (
-                    <div className="pt-3 border-t border-white/[0.06] flex flex-wrap gap-2">
-                      <span className="text-[10px] font-mono text-slate-400 w-full mb-0.5 font-bold uppercase tracking-wider">
-                        Verified Portfolio References:
+                    <div className="pt-2 border-t border-white/[0.08] space-y-1.5">
+                      <span className="text-[10px] font-mono text-violet-300 font-bold uppercase tracking-wider block">
+                        Verified Sources & Blueprints:
                       </span>
-                      {msg.citations.map((c, i) => (
-                        <Link
-                          key={i}
-                          href={c.url}
-                          onClick={() => handleCitationClick(c)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-950/50 hover:bg-violet-900/60 border border-violet-500/40 hover:border-violet-300 text-violet-300 hover:text-white font-mono text-[11px] font-semibold transition-all group/cit shadow-sm"
-                        >
-                          <Zap className="w-3.5 h-3.5 text-amber-400 group-hover/cit:scale-110 transition-transform" />
-                          <span>{c.title}</span>
-                          <ExternalLink className="w-3 h-3 opacity-60" />
-                        </Link>
-                      ))}
+                      <div className="flex flex-wrap gap-1.5">
+                        {msg.citations.map((c, cIdx) => (
+                          <Link
+                            key={cIdx}
+                            href={c.url}
+                            onClick={() => handleCitationClick(c)}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#05070e] hover:bg-violet-900/40 border border-violet-500/20 hover:border-violet-400/50 text-slate-300 hover:text-white text-[11px] font-mono transition-all group/cit shadow-sm"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 group-hover/cit:bg-cyan-400 transition-colors" />
+                            <span className="font-medium">{c.title}</span>
+                            <ChevronRight className="w-3 h-3 opacity-60 group-hover/cit:translate-x-0.5 transition-transform" />
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
 
@@ -654,13 +740,14 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
           </button>
         )}
 
-        {/* ─── INTERACTIVE QUICK PROMPTS ───────────────────────────────────── */}
+        {/* ─── INTERACTIVE QUICK PROMPTS (ROUTE AWARE) ─────────────────────── */}
         {messages.length <= 2 && (
           <div className="px-4 py-2.5 border-t border-white/[0.06] bg-[#070a12] flex items-center gap-2 overflow-x-auto custom-scrollbar shrink-0">
-            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider shrink-0 mr-1">
+            <span className="text-[10px] font-mono text-violet-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+              <Zap className="w-3 h-3 text-amber-400" />
               Suggested:
             </span>
-            {SUGGESTED_PROMPTS.map((item, idx) => (
+            {getContextualPrompts().map((item, idx) => (
               <button
                 key={idx}
                 type="button"
@@ -689,11 +776,19 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={isListening ? "Listening to your voice..." : "Ask about Arefin's agent workflows, RAG, n8n, or hire..."}
+                placeholder={
+                  isListening
+                    ? "Listening to your voice..."
+                    : pathname.startsWith("/projects")
+                    ? "Ask about this project's architecture, tools, or hire Arefin..."
+                    : "Ask about Arefin's agent workflows, RAG, n8n, or hire..."
+                }
                 maxLength={400}
                 disabled={loading}
                 className={`w-full pl-4 pr-10 py-3 bg-[#04060d] border rounded-xl text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all font-sans ${
-                  isListening ? "border-rose-500 animate-pulse text-rose-300" : "border-white/15 focus:border-violet-500"
+                  isListening
+                    ? "border-rose-500 animate-pulse text-rose-300"
+                    : "border-white/15 focus:border-violet-500"
                 }`}
               />
 

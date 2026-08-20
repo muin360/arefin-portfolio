@@ -120,6 +120,17 @@ Include:
 === TECHNICAL SEO & METADATA ARCHITECT ===
 Generate high-ranking meta titles, meta descriptions, OpenGraph tags, and JSON-LD schema for Arefin's portfolio.
 `.trim();
+    } else if (action === "health_audit") {
+      adminSystemPrompt = `
+=== SYSTEM HEALTH & AI OBSERVABILITY AUDITOR ===
+You are Arefin Mueen's Principal AI Infrastructure Engineer & Security Auditor.
+Analyze system reliability, API provider failovers, token efficiency, memory security, and rate limiting status.
+Provide:
+1. Provider Health & Latency Benchmarks
+2. Token Usage & Cost Efficiency Breakdown
+3. Security, AES-256-GCM Vault & Isolation Verification
+4. Architectural Recommendations for Next Steps
+`.trim();
     }
 
     // 3. Execute AI with memory context

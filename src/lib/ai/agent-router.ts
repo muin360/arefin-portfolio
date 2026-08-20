@@ -9,6 +9,7 @@ export type AgentIntent =
   | "TECHNICAL_BLUEPRINT"
   | "TECH_STACK_EXPLORATION"
   | "HIRING_SCOPING"
+  | "ROI_ESTIMATION"
   | "FEASIBILITY_CHECK"
   | "ABOUT_BACKGROUND"
   | "GENERAL_INQUIRY"
@@ -23,7 +24,13 @@ export interface AgentAnalysis {
   entities: string[];
   extractedTech: string[];
   requiresCitations: boolean;
-  suggestedAction?: "view_projects" | "view_services" | "book_call" | "contact_form" | "view_skills";
+  suggestedAction?:
+    | "view_projects"
+    | "view_services"
+    | "book_call"
+    | "contact_form"
+    | "view_skills"
+    | "estimate_workflow";
 }
 
 const TECH_KEYWORD_MAP: Record<string, string> = {
@@ -65,6 +72,8 @@ const TECH_KEYWORD_MAP: Record<string, string> = {
   celery: "Celery Distributed Task Queue",
   redis: "Redis Cache & Pub/Sub",
   docker: "Docker Containerization",
+  langsmith: "LangSmith AI Tracing",
+  helicone: "Helicone AI Observability",
 };
 
 // Bengali character unicode range
@@ -95,7 +104,7 @@ export function analyzeUserQuery(query: string): AgentAnalysis {
   if (BENGALI_REGEX.test(query)) {
     language = "bn";
   } else if (
-    /\b(koro|korba|kivabe|bhalo|kichu|apnar|tumi|amake|dekhao|bolo|achen|ache|lagbe|hobe|jani|parba)\b/i.test(
+    /\b(koro|korba|kivabe|bhalo|kichu|apnar|tumi|amake|dekhao|bolo|achen|ache|lagbe|hobe|jani|parba|dorkar|khoroch)\b/i.test(
       query,
     )
   ) {
@@ -151,7 +160,16 @@ export function analyzeUserQuery(query: string): AgentAnalysis {
   let suggestedAction: AgentAnalysis["suggestedAction"];
 
   if (
-    /\b(contact|hire|book|call|meet|rate|rates|price|pricing|cost|reach|jogajog|kotha bola)\b/i.test(q)
+    /\b(estimate|roi|calculator|cost calculation|pricing breakdown|how much does|how much will|koto khoroch)\b/i.test(
+      q,
+    )
+  ) {
+    intent = "ROI_ESTIMATION";
+    suggestedAction = "estimate_workflow";
+  } else if (
+    /\b(contact|hire|book|call|meet|rate|rates|price|pricing|cost|reach|jogajog|kotha bola|schedule a call|schedule call)\b/i.test(
+      q,
+    )
   ) {
     intent = "HIRING_SCOPING";
     suggestedAction = "book_call";
@@ -161,12 +179,16 @@ export function analyzeUserQuery(query: string): AgentAnalysis {
     intent = "PROJECT_CASE_STUDY";
     suggestedAction = "view_projects";
   } else if (
-    /\b(service|services|offer|solutions|can you build|help with|ki ki service|ki banate paro)\b/i.test(q)
+    /\b(service|services|offer|solutions|can you build|help with|ki ki service|ki banate paro)\b/i.test(
+      q,
+    )
   ) {
     intent = "SERVICE_INQUIRY";
     suggestedAction = "view_services";
   } else if (
-    /\b(how to build|architecture|pipeline|workflow|diagram|nodes|step by step|kivabe banabo)\b/i.test(q)
+    /\b(how to build|architecture|pipeline|workflow|diagram|nodes|step by step|kivabe banabo)\b/i.test(
+      q,
+    )
   ) {
     intent = "TECHNICAL_BLUEPRINT";
     suggestedAction = "view_projects";
@@ -181,7 +203,9 @@ export function analyzeUserQuery(query: string): AgentAnalysis {
     intent = "TECH_STACK_EXPLORATION";
     suggestedAction = "view_skills";
   } else if (
-    /\b(who is arefin|about arefin|about you|who are you|your background|experience|location|country|dhaka|ke arefin)\b/i.test(q)
+    /\b(who is arefin|about arefin|about you|who are you|your background|experience|location|country|dhaka|ke arefin)\b/i.test(
+      q,
+    )
   ) {
     intent = "ABOUT_BACKGROUND";
   }

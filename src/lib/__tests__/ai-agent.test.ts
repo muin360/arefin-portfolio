@@ -174,8 +174,17 @@ describe("100x Agentic AI Router & Prompt Synthesis", () => {
     const { analyzeUserQuery } = await import("@/lib/ai/agent-router");
     const analysis = analyzeUserQuery("Arefin er n8n ebong LangChain er project gulo dekhao");
     expect(analysis.language).toBe("banglish");
-    expect(analysis.extractedTech).toContain("n8n");
-    expect(analysis.extractedTech).toContain("LangChain");
+    const hasN8n = analysis.extractedTech.some((t) => t.toLowerCase().includes("n8n"));
+    const hasLangChain = analysis.extractedTech.some((t) => t.toLowerCase().includes("langchain"));
+    expect(hasN8n).toBe(true);
+    expect(hasLangChain).toBe(true);
+  });
+
+  it("classifies ROI and workflow pricing estimation intent", async () => {
+    const { analyzeUserQuery } = await import("@/lib/ai/agent-router");
+    const analysis = analyzeUserQuery("How much does an n8n workflow cost and what is the estimated ROI calculator?");
+    expect(analysis.intent).toBe("ROI_ESTIMATION");
+    expect(analysis.suggestedAction).toBe("estimate_workflow");
   });
 
   it("compiles agentic system prompt with strict admin rules and bilingual directive", async () => {

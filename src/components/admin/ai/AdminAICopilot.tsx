@@ -22,6 +22,10 @@ import {
   Phone,
   Mic,
   MicOff,
+  Database,
+  Cpu,
+  Flame,
+  ArrowRight,
 } from "lucide-react";
 import FormattedAIOutput from "@/components/ai/FormattedAIOutput";
 
@@ -62,7 +66,7 @@ const ADMIN_QUICK_ACTIONS = [
   { label: "🔥 Hot Leads & Quotes", query: "Who are the highest-intent visitors requesting quotes or custom automation builds?" },
   { label: "📊 Inquiries Summary", query: "Summarize recent visitor inquiries, contact details, and client leads." },
   { label: "🛠️ Stacks in Demand", query: "What tools and technologies (e.g. n8n, LangChain, RAG, Python) are visitors asking about?" },
-  { label: "🔍 Diagnostic Health Check", query: "What is the current health status of Arefin AI, active models, and portfolio knowledge base?" },
+  { label: "🔍 Diagnostic Health Check", query: "Provide a comprehensive health audit of AI providers, failover status, memory vaults, and telemetry benchmarks." },
 ];
 
 export default function AdminAICopilot() {
@@ -274,13 +278,16 @@ export default function AdminAICopilot() {
     return true;
   });
 
+  const hotCount = leads.filter((l) => l.extractedLead?.leadTier === "HOT").length;
+  const warmCount = leads.filter((l) => l.extractedLead?.leadTier === "WARM").length;
+
   return (
     <>
       {/* ─── HEADER TRIGGER BUTTON ───────────────────────────────────────── */}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-violet-600/30 via-indigo-600/30 to-purple-600/30 hover:from-violet-600/50 hover:to-indigo-600/50 border border-violet-500/40 text-white text-xs font-mono font-semibold transition-all shadow-md shadow-violet-950/50 group active:scale-95"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-violet-600/30 via-indigo-600/30 to-purple-600/30 hover:from-violet-600/50 hover:to-indigo-600/50 border border-violet-500/40 text-white text-xs font-mono font-semibold transition-all shadow-md shadow-violet-950/50 group active:scale-95 focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
         title="Open Admin AI Copilot (Ctrl+Shift+A)"
       >
         <span className="relative flex h-2 w-2">
@@ -297,7 +304,7 @@ export default function AdminAICopilot() {
       {/* ─── COPILOT FLOATING DRAWER ─────────────────────────────────────── */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-end bg-black/75 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-end bg-black/80 backdrop-blur-md animate-fade-in"
           role="dialog"
           aria-modal="true"
         >
@@ -341,7 +348,7 @@ export default function AdminAICopilot() {
                   type="button"
                   onClick={handleExportMarkdown}
                   disabled={exporting}
-                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all flex items-center gap-1 text-xs font-mono"
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all flex items-center gap-1 text-xs font-mono focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
                   title="Export Intelligence Report (.md)"
                 >
                   <Download className="w-4 h-4" />
@@ -360,7 +367,7 @@ export default function AdminAICopilot() {
                         },
                       ])
                     }
-                    className="p-2 rounded-xl text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
+                    className="p-2 rounded-xl text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all focus:ring-2 focus:ring-rose-500/40 focus:outline-none"
                     title="Clear Copilot chat"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -370,7 +377,7 @@ export default function AdminAICopilot() {
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all"
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/10 transition-all focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -378,7 +385,7 @@ export default function AdminAICopilot() {
             </div>
 
             {/* ─── WORKSTATION NAVIGATION TABS ─────────────────────────────── */}
-            <div className="px-4 py-2 bg-[#080b15] border-b border-white/[0.06] flex items-center justify-between gap-2 shrink-0">
+            <div className="px-4 py-2 bg-[#080b15] border-b border-white/[0.06] flex items-center justify-between gap-2 shrink-0 overflow-x-auto custom-scrollbar">
               <div className="flex items-center gap-1.5">
                 {[
                   { id: "chat", label: "Executive Chat", icon: MessageSquare },
@@ -393,7 +400,7 @@ export default function AdminAICopilot() {
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap focus:ring-2 focus:ring-violet-500/40 focus:outline-none ${
                         isActive
                           ? "bg-violet-600 text-white shadow-md shadow-violet-950"
                           : "bg-white/[0.03] text-slate-400 hover:text-slate-200 hover:bg-white/[0.06]"
@@ -418,7 +425,7 @@ export default function AdminAICopilot() {
                       type="button"
                       onClick={() => handleSend(action.query)}
                       disabled={loading}
-                      className="px-3 py-1.5 rounded-xl bg-[#0e1324] hover:bg-violet-600/30 border border-white/10 hover:border-violet-500/40 text-slate-300 hover:text-white text-[11px] font-mono whitespace-nowrap transition-all flex items-center gap-1.5 active:scale-95 shadow-sm"
+                      className="px-3 py-1.5 rounded-xl bg-[#0e1324] hover:bg-violet-600/30 border border-white/10 hover:border-violet-500/40 text-slate-300 hover:text-white text-[11px] font-mono whitespace-nowrap transition-all flex items-center gap-1.5 active:scale-95 shadow-sm focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
                     >
                       <span>{action.label}</span>
                     </button>
@@ -559,7 +566,7 @@ export default function AdminAICopilot() {
                       type="submit"
                       disabled={!input.trim() || loading}
                       aria-label="Send query"
-                      className="p-3 bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white rounded-xl transition-all shrink-0 shadow-lg shadow-violet-600/40 active:scale-95 border-t border-white/20"
+                      className="p-3 bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white rounded-xl transition-all shrink-0 shadow-lg shadow-violet-600/40 active:scale-95 border-t border-white/20 focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
                     >
                       <Send className="w-4 h-4" />
                     </button>
@@ -571,6 +578,22 @@ export default function AdminAICopilot() {
             {/* ─── TAB 2: LEADS MATRIX ─────────────────────────────────────── */}
             {activeTab === "leads" && (
               <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 custom-scrollbar">
+                {/* Stats Header Pill */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs font-mono">
+                  <div className="p-3 rounded-xl bg-violet-950/20 border border-violet-500/30 flex items-center justify-between">
+                    <span className="text-slate-400">Total Leads</span>
+                    <span className="font-bold text-white text-sm">{leads.length}</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-rose-950/20 border border-rose-500/30 flex items-center justify-between">
+                    <span className="text-rose-300">🔥 Hot Tier</span>
+                    <span className="font-bold text-rose-300 text-sm">{hotCount}</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-amber-950/20 border border-amber-500/30 flex items-center justify-between col-span-2 sm:col-span-1">
+                    <span className="text-amber-300">⚡ Warm Tier</span>
+                    <span className="font-bold text-amber-300 text-sm">{warmCount}</span>
+                  </div>
+                </div>
+
                 <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     {(["ALL", "HOT", "WARM"] as const).map((tier) => (
@@ -578,7 +601,7 @@ export default function AdminAICopilot() {
                         key={tier}
                         type="button"
                         onClick={() => setLeadFilter(tier)}
-                        className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all focus:ring-2 focus:ring-violet-500/40 focus:outline-none ${
                           leadFilter === tier
                             ? "bg-violet-600 text-white"
                             : "bg-white/[0.04] text-slate-400 hover:text-white"
@@ -615,6 +638,7 @@ export default function AdminAICopilot() {
                     {filteredLeads.map((item, idx) => {
                       const lead = item.extractedLead;
                       const isHot = lead?.leadTier === "HOT";
+                      const leadId = `lead_${idx}`;
                       return (
                         <div
                           key={idx}
@@ -667,10 +691,10 @@ export default function AdminAICopilot() {
                             </div>
                           </div>
 
-                          {/* Direct Contact Actions */}
-                          {(lead?.email || lead?.phone) && (
-                            <div className="mt-3 pt-2 border-t border-white/[0.04] flex items-center gap-2">
-                              {lead.email && (
+                          {/* Direct Contact & Action Bar */}
+                          <div className="mt-3 pt-2 border-t border-white/[0.04] flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              {lead?.email && (
                                 <a
                                   href={`mailto:${lead.email}?subject=Follow-up:%20AI%20Automation%20Inquiry%20with%20Arefin%20Mueen`}
                                   className="px-2.5 py-1 rounded-lg bg-violet-600/30 hover:bg-violet-600/50 text-violet-200 border border-violet-500/40 text-[11px] font-mono flex items-center gap-1.5 transition-colors"
@@ -679,7 +703,7 @@ export default function AdminAICopilot() {
                                   <span>Email Lead</span>
                                 </a>
                               )}
-                              {lead.phone && (
+                              {lead?.phone && (
                                 <a
                                   href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, "")}`}
                                   target="_blank"
@@ -691,7 +715,34 @@ export default function AdminAICopilot() {
                                 </a>
                               )}
                             </div>
-                          )}
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleCopy(
+                                  leadId,
+                                  `LEAD: ${lead?.name || "Visitor"} | Email: ${lead?.email || "N/A"} | Phone: ${
+                                    lead?.phone || "N/A"
+                                  } | Intent: ${lead?.intent || "General"} | Tech: ${
+                                    lead?.extractedTech?.join(", ") || "N/A"
+                                  }\nSnippet: ${lead?.summarySnippet || ""}`,
+                                )
+                              }
+                              className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-[10px] font-mono flex items-center gap-1 transition-colors"
+                            >
+                              {copiedId === leadId ? (
+                                <>
+                                  <Check className="w-3 h-3 text-emerald-400" />
+                                  <span className="text-emerald-400">Copied</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-3 h-3" />
+                                  <span>Copy Lead Data</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
@@ -743,10 +794,11 @@ export default function AdminAICopilot() {
                         setActiveTab("chat");
                         handleSend(tpl.prompt, tpl.action);
                       }}
-                      className="p-4 rounded-xl bg-[#0b0e1d] hover:bg-violet-950/40 border border-white/10 hover:border-violet-500/40 text-left transition-all group"
+                      className="p-4 rounded-xl bg-[#0b0e1d] hover:bg-violet-950/40 border border-white/10 hover:border-violet-500/40 text-left transition-all group focus:ring-2 focus:ring-violet-500/40 focus:outline-none"
                     >
-                      <div className="font-bold text-white text-xs group-hover:text-violet-300 transition-colors">
-                        {tpl.title}
+                      <div className="font-bold text-white text-xs group-hover:text-violet-300 transition-colors flex items-center justify-between">
+                        <span>{tpl.title}</span>
+                        <ArrowRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                       </div>
                       <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">
                         {tpl.prompt}
@@ -773,7 +825,10 @@ export default function AdminAICopilot() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="p-4 rounded-xl bg-[#0b0e1d] border border-white/10 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono text-slate-400">Database Cluster</span>
+                      <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                        <Database className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Database Cluster</span>
+                      </span>
                       <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold">
                         ONLINE
                       </span>
@@ -784,7 +839,10 @@ export default function AdminAICopilot() {
 
                   <div className="p-4 rounded-xl bg-[#0b0e1d] border border-white/10 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono text-slate-400">Failover Engine</span>
+                      <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                        <Cpu className="w-3.5 h-3.5 text-violet-400" />
+                        <span>Failover Engine</span>
+                      </span>
                       <span className="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 text-[10px] font-mono font-bold">
                         ACTIVE
                       </span>
@@ -792,15 +850,43 @@ export default function AdminAICopilot() {
                     <div className="text-sm font-bold text-white">Multi-Provider Cascade</div>
                     <div className="text-[11px] text-slate-400">Automatic fallback to local grounded engine on 429/limits.</div>
                   </div>
+
+                  <div className="p-4 rounded-xl bg-[#0b0e1d] border border-white/10 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                        <Lock className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Vault Security</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold">
+                        AES-256-GCM
+                      </span>
+                    </div>
+                    <div className="text-sm font-bold text-white">Zero Leakage Isolation</div>
+                    <div className="text-[11px] text-slate-400">Session memories encrypted at rest with atomic validation.</div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#0b0e1d] border border-white/10 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                        <Flame className="w-3.5 h-3.5 text-rose-400" />
+                        <span>Lead Velocity</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-mono font-bold">
+                        {hotCount} HOT LEADS
+                      </span>
+                    </div>
+                    <div className="text-sm font-bold text-white">{leads.length} Captured Inquiries</div>
+                    <div className="text-[11px] text-slate-400">Structured lead scoring & automated triage active.</div>
+                  </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => {
                     setActiveTab("chat");
-                    handleSend("What is the current health status of Arefin AI, active models, and portfolio knowledge base?");
+                    handleSend("Provide a comprehensive health audit of AI providers, failover status, memory vaults, and telemetry benchmarks.", "health_audit");
                   }}
-                  className="w-full py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-mono text-xs font-bold transition-all shadow-md shadow-violet-950 flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-mono text-xs font-bold transition-all shadow-md shadow-violet-950 flex items-center justify-center gap-2 focus:ring-2 focus:ring-violet-500/40 focus:outline-none active:scale-[0.99]"
                 >
                   <Activity className="w-4 h-4" />
                   <span>Run Comprehensive Live Health Diagnostic</span>
