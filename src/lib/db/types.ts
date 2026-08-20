@@ -38,6 +38,8 @@ export type IconName =
   | "rocket"
   | "globe";
 
+export type ProjectTier = "flagship" | "advanced" | "showcase";
+
 export type Project = {
   id: string;
   title: string;
@@ -71,6 +73,8 @@ export type Project = {
   repoUrl?: string | null;
   featured: boolean;
   published: boolean;
+  tier?: ProjectTier;
+  featuredOrder?: number;
   order: number;
   createdAt: string;
   updatedAt: string;

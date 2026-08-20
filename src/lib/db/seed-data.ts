@@ -133,6 +133,119 @@ export const INITIAL_DATABASE: DatabaseSchema = {
   },
   projects: [
     {
+      id: "project-woocommerce-ai",
+      title: "WooCommerce AI Store Automation",
+      slug: "woocommerce-ai-store-automation",
+      projectType: "Multi-System Automation Project",
+      category: "AI Automation",
+      summary:
+        "End-to-end multi-system store automation connecting a Telegram AI agent, WooCommerce inventory & order workflows, automated PDF invoice generation, Google Drive archiving, customer email notifications, Google Sheets sales logs, and automated daily AI sales analytics.",
+      problem:
+        "Managing e-commerce operations manually requires constant context-switching across Telegram chats, WooCommerce admin, invoicing tools, cloud storage, and spreadsheets, causing order fulfillment delays and fragmented sales data.",
+      goal:
+        "Unify store administration and customer interactions into a single automated pipeline orchestrated via Telegram AI agent commands and event-driven webhook triggers.",
+      workflowSteps: [
+        { step: "01", type: "trigger", name: "Telegram Bot & Webhook Ingestion", desc: "Receives natural language store commands from Telegram or webhook triggers on new customer orders with signature validation." },
+        { step: "02", type: "agent", name: "AI Agent Intent & Function Calling", desc: "Interprets intent (add product, update inventory, check order status, request daily brief) with structured JSON schemas." },
+        { step: "03", type: "tool", name: "WooCommerce REST API Execution", desc: "Executes authenticated product additions, inventory updates, price adjustments, or fetches live order records." },
+        { step: "04", type: "tool", name: "Automated Invoice PDF Generation", desc: "Dynamically compiles order line items, tax breakdowns, and customer billing details into a formatted PDF invoice." },
+        { step: "05", type: "output", name: "Multi-Channel Dispatch & Sync", desc: "Archives invoice to Google Drive, emails PDF to customer via Gmail, appends sales row in Google Sheets, and notifies Telegram." },
+        { step: "06", type: "ai", name: "Daily AI Sales Intelligence", desc: "Aggregates revenue, identifies top-selling SKUs, computes inventory restock alerts, and sends executive summaries." },
+      ],
+      aiRole:
+        "Acts as conversational store operator via Telegram, parsing natural language inventory commands, extracting product metadata, and synthesizing daily financial metrics.",
+      automationLogic:
+        "n8n workflow orchestrates Telegram bot webhooks, OpenAI function calling, WooCommerce REST API mutations, PDF generation modules, and multi-service dispatches (Drive, Gmail, Sheets).",
+      integrations: ["n8n", "WooCommerce REST API", "OpenAI", "Telegram Bot API", "Google Drive", "Gmail API", "Google Sheets"],
+      stack: ["n8n", "WooCommerce", "OpenAI", "Telegram", "Google Sheets", "Gmail API"],
+      learningOutcome:
+        "Engineered multi-system error handling, idempotent e-commerce webhooks, automated document rendering, and conversational admin tool-calling.",
+      outcome: "Multi-system automation unifying store operations, instant invoice delivery, and automated daily sales analytics.",
+      iconName: "workflow",
+      featured: true,
+      tier: "flagship",
+      published: true,
+      order: 1,
+      featuredOrder: 1,
+      createdAt: "2025-03-10T10:00:00Z",
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "project-4",
+      title: "Market Research Multi-Agent System",
+      slug: "market-research-multi-agent",
+      projectType: "Multi-Agent Project",
+      category: "Multi-Agent",
+      summary:
+        "Orchestrated crew of 4 specialized agents (Researcher, Data Analyst, Writer, Critic) that collaborate to generate structured market research briefs from keyword inputs.",
+      problem:
+        "Market research involves distinct cognitive phases — discovering data, validating numbers, drafting summaries, and quality checking — that a single prompt cannot reliably execute.",
+      goal:
+        "Build a multi-agent pipeline where specialized agents review and refine each other's outputs to produce coherent, cited market briefs.",
+      workflowSteps: [
+        { step: "01", type: "trigger", name: "Topic & Scope Ingestion", desc: "User submits research topic and target parameters via intake form." },
+        { step: "02", type: "agent", name: "Researcher Agent", desc: "Queries search APIs, gathers articles, and extracts key facts." },
+        { step: "03", type: "agent", name: "Analyst Agent", desc: "Identifies trends, categorizes competitor data, and spots gaps." },
+        { step: "04", type: "agent", name: "Writer Agent", desc: "Drafts structured executive summary with clear headings." },
+        { step: "05", type: "decision", name: "Critic Agent & Verification", desc: "Reviews report against facts; requests revisions if citations are missing." },
+        { step: "06", type: "output", name: "Output & Notion Dispatch", desc: "Generates final Markdown report and saves to Notion workspace." },
+      ],
+      aiRole:
+        "Each agent operates with a specialized system prompt, distinct role boundaries, and dedicated tool access (search, analysis, synthesis, review).",
+      automationLogic:
+        "Python and LangChain orchestrate sequential and iterative agent loops with intermediate state passing and validation gates.",
+      integrations: ["LangChain", "Python", "Tavily Search API", "Claude API", "Notion API"],
+      stack: ["n8n", "LangChain", "Python", "Claude API"],
+      learningOutcome:
+        "Mastered multi-agent state passing, role-based system prompting, supervisor loops, and avoiding infinite agent debate cycles.",
+      outcome: "Structured multi-agent research synthesis with automated fact checking and report generation.",
+      iconName: "brain",
+      featured: true,
+      tier: "flagship",
+      published: true,
+      order: 2,
+      featuredOrder: 2,
+      createdAt: "2025-02-01T10:00:00Z",
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "project-3",
+      title: "Customer Support Q&A Bot",
+      slug: "customer-support-qa-bot",
+      projectType: "AI Agent Project",
+      category: "AI Chatbot",
+      summary:
+        "Conversational support assistant built in Langflow that parses customer questions against product knowledge data with structured human escalation.",
+      problem:
+        "Customers ask repetitive product and policy questions that tie up support resources while waiting for basic answers.",
+      goal:
+        "Provide instantaneous, accurate answers from a structured FAQ knowledge base while gracefully routing unknown questions to human agents.",
+      workflowSteps: [
+        { step: "01", type: "trigger", name: "User Query Ingestion", desc: "User submits query via web chat interface." },
+        { step: "02", type: "database", name: "Vector Index Retrieval", desc: "Normalize query and retrieve relevant FAQ chunks from vector index." },
+        { step: "03", type: "ai", name: "Grounded LLM Reasoning", desc: "LLM evaluates retrieved context to formulate accurate citation-backed answer." },
+        { step: "04", type: "decision", name: "Confidence & Safety Evaluation", desc: "Check confidence score: if confident → send reply; if low → trigger escalation." },
+        { step: "05", type: "output", name: "Output & Human Handoff", desc: "Display answer with source reference or create support ticket for human follow-up." },
+      ],
+      aiRole:
+        "Synthesizes retrieved FAQ chunks into natural, helpful answers while strictly adhering to provided reference material to avoid hallucinations.",
+      automationLogic:
+        "Langflow visual graph connects vector similarity search, system prompt guardrails, threshold evaluation, and webhook routing for ticket generation.",
+      integrations: ["Langflow", "OpenAI Embeddings", "Pinecone", "Webhooks", "JSON"],
+      stack: ["Langflow", "OpenAI", "Webhooks", "JSON"],
+      learningOutcome:
+        "Gained deep understanding of vector similarity thresholds, prompt guardrails against hallucinations, and graceful human-in-the-loop fallback mechanisms.",
+      outcome: "Accurate citation-backed answers retrieved from indexed product docs with fallback escalation.",
+      iconName: "bookmark",
+      featured: true,
+      tier: "flagship",
+      published: true,
+      order: 3,
+      featuredOrder: 3,
+      createdAt: "2025-01-20T10:00:00Z",
+      updatedAt: new Date().toISOString(),
+    },
+    {
       id: "project-1",
       title: "Email Automation & Smart Triage",
       slug: "email-automation-triage",
@@ -145,12 +258,12 @@ export const INITIAL_DATABASE: DatabaseSchema = {
       goal:
         "Automatically classify incoming messages by urgency and topic, draft context-aware replies, and notify team channels for high-priority items.",
       workflowSteps: [
-        { step: "01", name: "Trigger", desc: "Gmail webhook detects new incoming email payload" },
-        { step: "02", name: "Data Input", desc: "Extract subject, sender, and clean email body text" },
-        { step: "03", name: "AI Processing", desc: "LLM analyzes intent, sentiment, urgency, and category" },
-        { step: "04", name: "Agent Decision", desc: "If urgent → alert Slack; if standard → generate draft reply" },
-        { step: "05", name: "Tool / API", desc: "Save drafted response in Gmail drafts folder and update Notion log" },
-        { step: "06", name: "Human Review", desc: "Human reviews draft with one click before sending" },
+        { step: "01", type: "trigger", name: "Trigger", desc: "Gmail webhook detects new incoming email payload" },
+        { step: "02", type: "input", name: "Data Input", desc: "Extract subject, sender, and clean email body text" },
+        { step: "03", type: "ai", name: "AI Processing", desc: "LLM analyzes intent, sentiment, urgency, and category" },
+        { step: "04", type: "decision", name: "Agent Decision", desc: "If urgent → alert Slack; if standard → generate draft reply" },
+        { step: "05", type: "tool", name: "Tool / API", desc: "Save drafted response in Gmail drafts folder and update Notion log" },
+        { step: "06", type: "output", name: "Human Review", desc: "Human reviews draft with one click before sending" },
       ],
       aiRole:
         "Classifies unstructured email text into structured categories (Sales, Support, Urgent, Spam) and drafts contextual responses matching defined brand guidelines.",
@@ -162,9 +275,10 @@ export const INITIAL_DATABASE: DatabaseSchema = {
         "Learned structured output enforcement with LLMs, robust email MIME parsing, and webhook rate limiting in n8n.",
       outcome: "Classified incoming emails with structured metadata and created review-ready drafts.",
       iconName: "workflow",
-      featured: true,
+      featured: false,
+      tier: "advanced",
       published: true,
-      order: 1,
+      order: 4,
       createdAt: "2025-01-10T10:00:00Z",
       updatedAt: new Date().toISOString(),
     },
@@ -181,11 +295,11 @@ export const INITIAL_DATABASE: DatabaseSchema = {
       goal:
         "Create a multi-format pipeline that transforms a single topic into platform-specific drafts (LinkedIn, X/Twitter, Newsletter summary) and logs them into a content calendar.",
       workflowSteps: [
-        { step: "01", name: "Trigger", desc: "New row or article URL entered into Airtable/Google Sheets" },
-        { step: "02", name: "Data Input", desc: "Fetch article text or parse topic bullet points" },
-        { step: "03", name: "AI Processing", desc: "Prompt chain generates LinkedIn post, Twitter thread, and summary" },
-        { step: "04", name: "Agent Decision", desc: "Review character limits and hashtag formatting rules" },
-        { step: "05", name: "Output", desc: "Push formatted copy into scheduled calendar columns with status 'Ready for Review'" },
+        { step: "01", type: "trigger", name: "Trigger", desc: "New row or article URL entered into Airtable/Google Sheets" },
+        { step: "02", type: "input", name: "Data Input", desc: "Fetch article text or parse topic bullet points" },
+        { step: "03", type: "ai", name: "AI Processing", desc: "Prompt chain generates LinkedIn post, Twitter thread, and summary" },
+        { step: "04", type: "decision", name: "Agent Decision", desc: "Review character limits and hashtag formatting rules" },
+        { step: "05", type: "output", name: "Output", desc: "Push formatted copy into scheduled calendar columns with status 'Ready for Review'" },
       ],
       aiRole:
         "Transforms raw article concepts into tailored hooks, body points, and calls-to-action specific to each social media format.",
@@ -197,81 +311,11 @@ export const INITIAL_DATABASE: DatabaseSchema = {
         "Explored prompt chaining techniques, managing token context windows, and structuring multi-platform content templates.",
       outcome: "Generates multi-platform post drafts from single topic briefs ready for human editing.",
       iconName: "layers",
-      featured: true,
+      featured: false,
+      tier: "showcase",
       published: true,
-      order: 2,
+      order: 5,
       createdAt: "2025-01-15T10:00:00Z",
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "project-3",
-      title: "Customer Support Q&A Bot",
-      slug: "customer-support-qa-bot",
-      projectType: "AI Agent Project",
-      category: "AI Chatbot",
-      summary:
-        "Conversational support assistant built in Langflow that parses customer questions against product knowledge data with structured human escalation.",
-      problem:
-        "Customers ask repetitive product and policy questions that tie up support resources while waiting for basic answers.",
-      goal:
-        "Provide instantaneous, accurate answers from a structured FAQ knowledge base while gracefully routing unknown questions to human agents.",
-      workflowSteps: [
-        { step: "01", name: "Trigger", desc: "User submits query via web chat interface" },
-        { step: "02", name: "Data Input", desc: "Normalize query and retrieve relevant FAQ chunks from vector index" },
-        { step: "03", name: "AI Processing", desc: "LLM evaluates retrieved context to formulate accurate answer" },
-        { step: "04", name: "Agent Decision", desc: "Check confidence score: if confident → send reply; if low → trigger escalation" },
-        { step: "05", name: "Output & Handoff", desc: "Display answer with source reference or create support ticket for human follow-up" },
-      ],
-      aiRole:
-        "Synthesizes retrieved FAQ chunks into natural, helpful answers while strictly adhering to provided reference material to avoid hallucinations.",
-      automationLogic:
-        "Langflow visual graph connects vector similarity search, system prompt guardrails, threshold evaluation, and webhook routing for ticket generation.",
-      integrations: ["Langflow", "OpenAI Embeddings", "Pinecone", "Webhooks", "JSON"],
-      stack: ["Langflow", "OpenAI", "Webhooks", "JSON"],
-      learningOutcome:
-        "Gained deep understanding of vector similarity thresholds, prompt guardrails against hallucinations, and graceful human-in-the-loop fallback mechanisms.",
-      outcome: "Accurate citation-backed answers retrieved from indexed product docs with fallback escalation.",
-      iconName: "bookmark",
-      featured: true,
-      published: true,
-      order: 3,
-      createdAt: "2025-01-20T10:00:00Z",
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "project-4",
-      title: "Market Research Multi-Agent System",
-      slug: "market-research-multi-agent",
-      projectType: "Multi-Agent Project",
-      category: "Multi-Agent",
-      summary:
-        "Orchestrated crew of 4 specialized agents (Researcher, Data Analyst, Writer, Critic) that collaborate to generate structured market research briefs from keyword inputs.",
-      problem:
-        "Market research involves distinct cognitive phases — discovering data, validating numbers, drafting summaries, and quality checking — that a single prompt cannot reliably execute.",
-      goal:
-        "Build a multi-agent pipeline where specialized agents review and refine each other's outputs to produce coherent, cited market briefs.",
-      workflowSteps: [
-        { step: "01", name: "Trigger", desc: "User submits research topic and target parameters" },
-        { step: "02", name: "Researcher Agent", desc: "Queries search APIs, gathers articles, and extracts key facts" },
-        { step: "03", name: "Analyst Agent", desc: "Identifies trends, categorizes competitor data, and spots gaps" },
-        { step: "04", name: "Writer Agent", desc: "Drafts structured executive summary with clear headings" },
-        { step: "05", name: "Critic Agent", desc: "Reviews report against facts; requests revisions if citations are missing" },
-        { step: "06", name: "Output", desc: "Generates final Markdown report and saves to Notion workspace" },
-      ],
-      aiRole:
-        "Each agent operates with a specialized system prompt, distinct role boundaries, and dedicated tool access (search, analysis, synthesis, review).",
-      automationLogic:
-        "Python and LangChain orchestrate sequential and iterative agent loops with intermediate state passing and validation gates.",
-      integrations: ["LangChain", "Python", "Tavily Search API", "Claude API", "Notion API"],
-      stack: ["n8n", "LangChain", "Python", "Claude API"],
-      learningOutcome:
-        "Mastered multi-agent state passing, role-based system prompting, supervisor loops, and avoiding infinite agent debate cycles.",
-      outcome: "Structured multi-agent research synthesis with automated fact checking and report generation.",
-      iconName: "brain",
-      featured: true,
-      published: true,
-      order: 4,
-      createdAt: "2025-02-01T10:00:00Z",
       updatedAt: new Date().toISOString(),
     },
     {

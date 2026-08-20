@@ -1275,39 +1275,82 @@ export default function ProjectsManager({ initialProjects }: Props) {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-6">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={editingProject.published ?? true}
-                          onChange={(e) => setEditingProject({ ...editingProject, published: e.target.checked })}
-                          className="w-4 h-4 accent-violet-600 rounded"
-                        />
-                        <span className="text-xs text-white font-medium">Published Live</span>
-                      </label>
+                  <div className="p-4 bg-[#141a29] rounded-2xl border border-[#1e2433] space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                          Project Architecture Tier
+                        </label>
+                        <select
+                          value={editingProject.tier || "advanced"}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              tier: e.target.value as "flagship" | "advanced" | "showcase",
+                            })
+                          }
+                          className="w-full px-3.5 py-2.5 bg-[#0f1422] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500 cursor-pointer"
+                        >
+                          <option value="flagship">Flagship System (Homepage Tier 1)</option>
+                          <option value="advanced">Advanced Architecture (Work Archive)</option>
+                          <option value="showcase">Showcase Build (Work Archive)</option>
+                        </select>
+                      </div>
 
-                      <label className="flex items-center gap-2 cursor-pointer">
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                          Featured Order Rank (1 = Top Flagship)
+                        </label>
                         <input
-                          type="checkbox"
-                          checked={editingProject.featured ?? false}
-                          onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
-                          className="w-4 h-4 accent-violet-600 rounded"
+                          type="number"
+                          min="1"
+                          max="99"
+                          value={editingProject.featuredOrder ?? editingProject.order ?? 1}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              featuredOrder: parseInt(e.target.value) || 1,
+                            })
+                          }
+                          className="w-full px-3.5 py-2.5 bg-[#0f1422] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
                         />
-                        <span className="text-xs text-white font-medium">Featured Flagship</span>
-                      </label>
+                      </div>
                     </div>
 
-                    {editingProject.slug && (
-                      <Link
-                        href={`/projects/${editingProject.slug}?preview=true`}
-                        target="_blank"
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600/20 hover:bg-violet-600/40 text-xs font-mono text-violet-300 hover:text-white border border-violet-500/30 transition-colors"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span>Preview Live Design</span>
-                      </Link>
-                    )}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-white/[0.06]">
+                      <div className="flex items-center gap-6">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={editingProject.published ?? true}
+                            onChange={(e) => setEditingProject({ ...editingProject, published: e.target.checked })}
+                            className="w-4 h-4 accent-violet-600 rounded"
+                          />
+                          <span className="text-xs text-white font-medium">Published Live</span>
+                        </label>
+
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={editingProject.featured ?? false}
+                            onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
+                            className="w-4 h-4 accent-violet-600 rounded"
+                          />
+                          <span className="text-xs text-white font-medium">Featured Status</span>
+                        </label>
+                      </div>
+
+                      {editingProject.slug && (
+                        <Link
+                          href={`/projects/${editingProject.slug}?preview=true`}
+                          target="_blank"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-violet-600/20 hover:bg-violet-600/40 text-xs font-mono text-violet-300 hover:text-white border border-violet-500/30 transition-colors"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          <span>Preview Live Design</span>
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
