@@ -18,7 +18,6 @@ export class LocalGroundedProviderAdapter implements AIProviderAdapter {
 
     // Extract project names and URLs from citations or context
     const projectCitations = (req.citations || []).filter((c) => c.type === "project");
-    const serviceCitations = (req.citations || []).filter((c) => c.type === "service");
     const isBengali = analysis.language === "bn" || analysis.language === "banglish";
 
     let reply = "";

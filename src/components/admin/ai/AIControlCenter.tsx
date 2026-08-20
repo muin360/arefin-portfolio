@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useTransition, useCallback } from "react";
 import {
   Bot,
   Brain,
@@ -148,7 +148,7 @@ export default function AIControlCenter({
     lastActiveAt: string;
   } | null>(null);
 
-  const loadMemories = async () => {
+  const loadMemories = useCallback(async () => {
     setMemoryLoading(true);
     try {
       const res = await fetch("/api/admin/ai/memory");
@@ -161,12 +161,26 @@ export default function AIControlCenter({
     } finally {
       setMemoryLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    let ignore = false;
     if (activeTab === "memory") {
-      loadMemories();
+      fetch("/api/admin/ai/memory")
+        .then((res) => res.json())
+        .then((data) => {
+          if (!ignore && data?.memories) {
+            setMemories(data.memories);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (!ignore) setMemoryLoading(false);
+        });
     }
+    return () => {
+      ignore = true;
+    };
   }, [activeTab]);
 
   const handleQueryMemoryIntelligence = async () => {

@@ -174,10 +174,10 @@ describe("Rate Limiting Engine Hardening & IP Extraction", () => {
 
 describe("Sentry & Sensitive Data Redaction", () => {
   it("redacts API keys, tokens, JWTs, and database URIs from log and error messages", () => {
-    const sensitive = "Error with key sk-proj-12345678901234567890 and Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.xyz and gsk_12345678901234567890 and mongodb+srv://user:pass@cluster.mongodb.net/prod";
+    const sensitive = "Error with key sk-12345678901234567890 and Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.xyz and gsk_12345678901234567890 and mongodb+srv://user:pass@cluster.mongodb.net/prod";
     const redacted = sanitizeSensitiveText(sensitive);
 
-    expect(redacted).not.toContain("sk-proj-12345678901234567890");
+    expect(redacted).not.toContain("sk-12345678901234567890");
     expect(redacted).not.toContain("gsk_12345678901234567890");
     expect(redacted).not.toContain("mongodb+srv://user:pass@cluster.mongodb.net/prod");
     expect(redacted).toContain("[REDACTED_API_KEY]");

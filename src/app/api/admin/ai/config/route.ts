@@ -10,8 +10,8 @@ import {
 } from "@/lib/db";
 import { ALLOWED_MODELS } from "@/lib/ai/defaults";
 import { aiConfigSchema } from "@/lib/ai/validators";
-import { checkRateLimit } from "@/lib/rate-limit";
-import { captureSanitizedAIError } from "@/lib/ai/monitoring";
+import { checkRateLimit, extractClientIp } from "@/lib/rate-limit";
+import { captureSanitizedAIError, sanitizeSensitiveText } from "@/lib/ai/monitoring";
 
 export const runtime = "nodejs";
 
@@ -24,10 +24,20 @@ export async function GET(req: NextRequest) {
   }
 
   // Admin Rate Limit
-  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const ip = extractClientIp(req);
   const rl = await checkRateLimit({ key: ip, limit: 60, bucket: "admin_ai" });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rl.resetInSeconds),
+          "X-RateLimit-Limit": String(rl.totalLimit),
+          "X-RateLimit-Remaining": "0",
+        },
+      },
+    );
   }
 
   try {
@@ -48,7 +58,7 @@ export async function GET(req: NextRequest) {
       status: c.status,
       lastRotatedAt: c.lastRotatedAt,
       lastTestedAt: c.lastTestedAt,
-      lastError: c.lastError,
+      lastError: c.lastError ? sanitizeSensitiveText(c.lastError) : undefined,
     }));
 
     return NextResponse.json({
@@ -72,10 +82,20 @@ export async function POST(req: NextRequest) {
   }
 
   // Admin Rate Limit
-  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const ip = extractClientIp(req);
   const rl = await checkRateLimit({ key: ip, limit: 60, bucket: "admin_ai" });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rl.resetInSeconds),
+          "X-RateLimit-Limit": String(rl.totalLimit),
+          "X-RateLimit-Remaining": "0",
+        },
+      },
+    );
   }
 
   const contentLength = parseInt(req.headers.get("content-length") || "0", 10);
@@ -84,7 +104,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
       return NextResponse.json({ error: "Invalid configuration payload" }, { status: 400 });
     }
@@ -113,10 +133,20 @@ export async function PUT(req: NextRequest) {
   }
 
   // Admin Rate Limit
-  const ip = req.headers.get("x-forwarded-for") || "admin";
+  const ip = extractClientIp(req);
   const rl = await checkRateLimit({ key: ip, limit: 30, bucket: "admin_ai" });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rl.resetInSeconds),
+          "X-RateLimit-Limit": String(rl.totalLimit),
+          "X-RateLimit-Remaining": "0",
+        },
+      },
+    );
   }
 
   try {
@@ -135,6 +165,11 @@ export async function PUT(req: NextRequest) {
     });
   } catch (err) {
     captureSanitizedAIError(err, { errorCategory: "admin_activate_config_failure" });
-    return NextResponse.json({ error: "Failed to activate configuration" }, { status: 500 });
+    const rawError = err instanceof Error ? err.message : "Failed to activate configuration";
+    const isValidation = rawError.includes("validation failed") || rawError.includes("allowlisted");
+    return NextResponse.json(
+      { error: sanitizeSensitiveText(rawError) },
+      { status: isValidation ? 400 : 500 },
+    );
   }
 }

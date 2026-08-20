@@ -2,42 +2,66 @@
  * Multi-Tier Production Rate Limiting Engine
  * Supports:
  * 1. Upstash Redis REST API (zero dependencies, distributed multi-region)
- * 2. MongoDB Sliding Window fallback (distributed across instances)
- * 3. In-Memory Sliding Window fallback (zero latency, auto-pruned)
+ * 2. MongoDB Genuinely Atomic Window Counters (distributed across serverless instances)
+ * 3. In-Memory Window Counter fallback (with strict degraded mode for public endpoints)
  */
 
 import { getCollection } from "./mongodb";
 
-interface RateLimitResult {
+export interface RateLimitResult {
   allowed: boolean;
   remaining: number;
   resetInSeconds: number;
   totalLimit: number;
 }
 
-// In-Memory Storage & Cleaner
-interface MemoryRecord {
-  timestamps: number[];
+// In-Memory Storage & Bounded Window Counters
+interface MemoryWindowRecord {
+  windowStart: number;
+  count: number;
 }
-const memoryRateLimits = new Map<string, MemoryRecord>();
+const memoryRateLimits = new Map<string, MemoryWindowRecord>();
 
-// Clean up stale memory records every 5 minutes
+// Clean up stale memory records every 2 minutes
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const now = Date.now();
     for (const [key, record] of memoryRateLimits.entries()) {
-      const valid = record.timestamps.filter((t) => now - t < 120 * 1000);
-      if (valid.length === 0) {
+      if (now - record.windowStart > 120 * 1000) {
         memoryRateLimits.delete(key);
-      } else {
-        memoryRateLimits.set(key, { timestamps: valid });
       }
     }
-  }, 5 * 60 * 1000).unref?.();
+  }, 2 * 60 * 1000).unref?.();
 }
 
 /**
- * Checks rate limit for a given key within a sliding time window.
+ * MongoDB Rate Limit Document Schema (Atomic Fixed-Window Counter)
+ */
+interface MongoRateLimitDoc {
+  _id: string; // `rl:${bucket}:${key}:${windowIndex}`
+  count: number;
+  windowStart: number;
+  expiresAt: Date;
+}
+
+let hasEnsuredTtlIndex = false;
+async function ensureRateLimitIndexes() {
+  if (hasEnsuredTtlIndex) return;
+  try {
+    const col = await getCollection<MongoRateLimitDoc>("ai_rate_limits");
+    if (col) {
+      // TTL index on expiresAt (deletes documents after expiresAt timestamp)
+      await col.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+      hasEnsuredTtlIndex = true;
+    }
+  } catch {
+    // Ignore index creation errors on connection fail
+  }
+}
+
+/**
+ * Checks rate limit for a given key within a time window.
+ * Priority: 1. Upstash Redis -> 2. MongoDB Atomic Window -> 3. In-Memory Fallback
  */
 export async function checkRateLimit(options: {
   key: string;
@@ -46,26 +70,25 @@ export async function checkRateLimit(options: {
   bucket?: "public_chat" | "admin_ai" | "admin_playground" | "admin_keys";
 }): Promise<RateLimitResult> {
   const { key, limit, windowSeconds = 60, bucket = "public_chat" } = options;
-  const compositeKey = `rl:${bucket}:${key}`;
   const now = Date.now();
   const windowMs = windowSeconds * 1000;
+  const windowIndex = Math.floor(now / windowMs);
+  const windowStart = windowIndex * windowMs;
+  const windowElapsed = (now - windowStart) / 1000;
+  const resetInSeconds = Math.max(1, Math.ceil(windowSeconds - windowElapsed));
 
-  // 1. Try Upstash Redis REST if configured
+  const compositeKey = `rl:${bucket}:${key}:${windowIndex}`;
+
+  // ── 1. TRY UPSTASH REDIS REST API (DISTRIBUTED) ──────────────────────────
   const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (redisUrl && redisToken) {
     try {
-      // Use atomic Redis pipeline: ZREMRANGEBYSCORE, ZADD, ZCARD, EXPIRE
       const pipelineUrl = `${redisUrl.replace(/\/$/, "")}/pipeline`;
-      const minScore = 0;
-      const maxScore = now - windowMs;
-
       const pipelineCommands = [
-        ["ZREMRANGEBYSCORE", compositeKey, minScore, maxScore],
-        ["ZADD", compositeKey, now, `${now}-${Math.random().toString(36).slice(2, 7)}`],
-        ["ZCARD", compositeKey],
-        ["EXPIRE", compositeKey, windowSeconds + 5],
+        ["INCR", compositeKey],
+        ["EXPIRE", compositeKey, windowSeconds + 10],
       ];
 
       const res = await fetch(pipelineUrl, {
@@ -75,128 +98,142 @@ export async function checkRateLimit(options: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(pipelineCommands),
-        signal: AbortSignal.timeout(2000), // 2s timeout
+        signal: AbortSignal.timeout(1500),
       });
 
       if (res.ok) {
         const results = await res.json();
-        // ZCARD response is index 2
-        const currentCount = results[2]?.result ?? 1;
+        const currentCount = Number(results[0]?.result ?? 1);
         const allowed = currentCount <= limit;
         return {
           allowed,
           remaining: Math.max(0, limit - currentCount),
-          resetInSeconds: windowSeconds,
+          resetInSeconds,
           totalLimit: limit,
         };
       }
     } catch {
-      // Fallback to MongoDB / In-memory on Redis network error
+      // Fallback to Tier 2 on Redis timeout/error
     }
   }
 
-  // 2. Try MongoDB Sliding Window if connected
+  // ── 2. TRY MONGODB ATOMIC WINDOW COUNTER (DISTRIBUTED TIER 2) ────────────
   try {
-    const col = await getCollection<{
-      _id: string;
-      timestamps: number[];
-      expiresAt: Date;
-    }>("ai_rate_limits");
-
+    const col = await getCollection<MongoRateLimitDoc>("ai_rate_limits");
     if (col) {
-      const windowStart = now - windowMs;
-      // Atomic find and update
+      await ensureRateLimitIndexes();
+
+      const expiresAt = new Date(windowStart + windowMs * 2);
+
+      // Single atomic findOneAndUpdate with $inc and $setOnInsert
       const doc = await col.findOneAndUpdate(
         { _id: compositeKey },
         {
-          $pull: { timestamps: { $lt: windowStart } },
+          $inc: { count: 1 },
+          $setOnInsert: {
+            windowStart,
+            expiresAt,
+          },
         } as unknown as Record<string, unknown>,
-        { returnDocument: "after" },
-      );
-
-      const timestamps = doc?.timestamps || [];
-      if (timestamps.length >= limit) {
-        return {
-          allowed: false,
-          remaining: 0,
-          resetInSeconds: Math.ceil((timestamps[0] + windowMs - now) / 1000) || windowSeconds,
-          totalLimit: limit,
-        };
-      }
-
-      // Add current timestamp
-      await col.updateOne(
-        { _id: compositeKey },
         {
-          $push: { timestamps: now },
-          $set: { expiresAt: new Date(now + windowMs + 10000) },
-        } as unknown as Record<string, unknown>,
-        { upsert: true },
+          upsert: true,
+          returnDocument: "after",
+        },
       );
+
+      const currentCount = doc?.count ?? 1;
+      const allowed = currentCount <= limit;
 
       return {
-        allowed: true,
-        remaining: Math.max(0, limit - timestamps.length - 1),
-        resetInSeconds: windowSeconds,
+        allowed,
+        remaining: Math.max(0, limit - currentCount),
+        resetInSeconds,
         totalLimit: limit,
       };
     }
   } catch {
-    // Fallback to in-memory limiter
+    // Fallback to Tier 3 on MongoDB unavailability
   }
 
-  // 3. In-Memory Sliding Window Limiter (local fallback)
-  const record = memoryRateLimits.get(compositeKey) || { timestamps: [] };
-  const validTimestamps = record.timestamps.filter((t) => now - t < windowMs);
+  // ── 3. IN-MEMORY FALLBACK & FAIL-SAFE DEGRADED POLICY ────────────────────
+  // When both Redis and MongoDB are down:
+  // Public AI enforces a strict degraded limit to prevent unmetered infrastructure cost.
+  const effectiveLimit = bucket === "public_chat" ? Math.min(limit, 5) : limit;
 
-  if (validTimestamps.length >= limit) {
-    memoryRateLimits.set(compositeKey, { timestamps: validTimestamps });
-    const oldest = validTimestamps[0];
-    return {
-      allowed: false,
-      remaining: 0,
-      resetInSeconds: Math.ceil((oldest + windowMs - now) / 1000) || windowSeconds,
-      totalLimit: limit,
-    };
-  }
+  const currentRecord = memoryRateLimits.get(compositeKey);
+  const currentCount = (currentRecord?.count || 0) + 1;
 
-  validTimestamps.push(now);
-  memoryRateLimits.set(compositeKey, { timestamps: validTimestamps });
+  memoryRateLimits.set(compositeKey, {
+    windowStart,
+    count: currentCount,
+  });
+
+  const allowed = currentCount <= effectiveLimit;
 
   return {
-    allowed: true,
-    remaining: Math.max(0, limit - validTimestamps.length),
-    resetInSeconds: windowSeconds,
-    totalLimit: limit,
+    allowed,
+    remaining: Math.max(0, effectiveLimit - currentCount),
+    resetInSeconds,
+    totalLimit: effectiveLimit,
   };
 }
 
 /**
+ * Validates whether a string is a well-formed IPv4 or IPv6 address.
+ */
+function isValidIp(ip: string): boolean {
+  if (!ip || ip.length > 64) return false;
+  // IPv4 regex
+  const ipv4Regex =
+    /^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/;
+  if (ipv4Regex.test(ip)) return true;
+
+  // IPv6 regex
+  const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::1$|^([0-9a-fA-F]{1,4}:){1,7}:$/;
+  if (ipv6Regex.test(ip)) return true;
+
+  // Simplified IPv6 structure check
+  if (ip.includes(":") && !ip.includes(" ") && ip.length <= 45) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Robustly extracts the verified client IP from HTTP Request / Headers.
- * Handles proxy chains, Cloudflare, and Vercel edge headers safely without spoofing.
+ * Enforces strict Vercel deployment precedence and validates IP formatting.
  */
 export function extractClientIp(reqOrHeaders: Request | Headers): string {
   const headers = "headers" in reqOrHeaders ? reqOrHeaders.headers : reqOrHeaders;
 
-  // Cloudflare header
-  const cfIp = headers.get("cf-connecting-ip");
-  if (cfIp && cfIp.trim()) return cfIp.trim();
+  // 1. Vercel trusted edge forwarded header
+  const vercelIp = headers.get("x-vercel-forwarded-for");
+  if (vercelIp && vercelIp.trim()) {
+    const first = vercelIp.split(",")[0]?.trim();
+    if (first && isValidIp(first)) return first;
+  }
 
-  // True-Client-IP header
-  const trueClientIp = headers.get("true-client-ip");
-  if (trueClientIp && trueClientIp.trim()) return trueClientIp.trim();
-
-  // X-Real-IP header
+  // 2. X-Real-IP
   const xRealIp = headers.get("x-real-ip");
-  if (xRealIp && xRealIp.trim()) return xRealIp.trim();
+  if (xRealIp && xRealIp.trim()) {
+    const clean = xRealIp.trim();
+    if (isValidIp(clean)) return clean;
+  }
 
-  // X-Forwarded-For (take the first IP in the comma-separated list)
+  // 3. Cloudflare edge header (if behind CF proxy)
+  const cfIp = headers.get("cf-connecting-ip");
+  if (cfIp && cfIp.trim()) {
+    const clean = cfIp.trim();
+    if (isValidIp(clean)) return clean;
+  }
+
+  // 4. Standard X-Forwarded-For (take the outermost proxy client IP)
   const xForwardedFor = headers.get("x-forwarded-for");
   if (xForwardedFor && xForwardedFor.trim()) {
     const first = xForwardedFor.split(",")[0]?.trim();
-    if (first) return first;
+    if (first && isValidIp(first)) return first;
   }
 
   return "127.0.0.1";
 }
-

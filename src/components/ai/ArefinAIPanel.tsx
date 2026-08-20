@@ -19,11 +19,8 @@ import {
   Layers,
   Mail,
   Zap,
-  Code2,
   Maximize2,
   Minimize2,
-  Terminal,
-  Activity,
   Download,
   Mic,
   MicOff,
@@ -73,7 +70,21 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
-  const [sessionId, setSessionId] = useState<string>("");
+  const [sessionId, setSessionId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        let currentSession = sessionStorage.getItem("arefin_ai_session_id");
+        if (!currentSession) {
+          currentSession = `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+          sessionStorage.setItem("arefin_ai_session_id", currentSession);
+        }
+        return currentSession;
+      } catch {
+        return `session_${Date.now()}`;
+      }
+    }
+    return "";
+  });
   const [isExpanded, setIsExpanded] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [showEstimator, setShowEstimator] = useState(false);
@@ -87,20 +98,6 @@ export default function ArefinAIPanel({ isOpen, onClose }: ArefinAIPanelProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
-
-  // Initialize unique session ID
-  useEffect(() => {
-    try {
-      let currentSession = sessionStorage.getItem("arefin_ai_session_id");
-      if (!currentSession) {
-        currentSession = `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-        sessionStorage.setItem("arefin_ai_session_id", currentSession);
-      }
-      setSessionId(currentSession);
-    } catch {
-      setSessionId(`session_${Date.now()}`);
-    }
-  }, []);
 
   // Web Speech API Voice Dictation
   useEffect(() => {

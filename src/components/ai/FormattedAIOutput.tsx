@@ -3,12 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  Code2,
   Copy,
   Check,
   ExternalLink,
-  Sparkles,
-  Zap,
   Info,
   AlertTriangle,
   ShieldCheck,
@@ -17,8 +14,6 @@ import {
   Mail,
   ChevronRight,
   Lightbulb,
-  CheckCircle2,
-  Cpu,
   Terminal,
 } from "lucide-react";
 

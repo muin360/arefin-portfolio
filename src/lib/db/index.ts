@@ -3,6 +3,7 @@ import { getCollection, ensureIndexes } from "@/lib/mongodb";
 import { INITIAL_DATABASE } from "./seed-data";
 import { DEFAULT_AI_CONFIG } from "@/lib/ai/defaults";
 import { encryptSecret, computeConfigHash } from "@/lib/ai/secrets";
+import { validateAIConfigPayload, validateModelAllowlist } from "@/lib/ai/validators";
 import type {
   Project,
   BlogPost,
@@ -270,7 +271,10 @@ export async function getProjects(options?: {
     return normalizeDocs<Project>(docs);
   } catch (err) {
     console.error("MongoDB getProjects error:", err);
-    return memoryFallback.projects;
+    let list = [...memoryFallback.projects];
+    if (options?.publishedOnly) list = list.filter((p: Project) => p.published !== false);
+    if (options?.featuredOnly) list = list.filter((p: Project) => p.featured === true);
+    return list;
   }
 }
 
@@ -460,7 +464,10 @@ export async function getBlogPosts(options?: {
     return normalizeDocs<BlogPost>(docs);
   } catch (err) {
     console.error("MongoDB getBlogPosts error:", err);
-    return memoryFallback.posts;
+    let list = [...memoryFallback.posts];
+    if (options?.publishedOnly) list = list.filter((p: BlogPost) => p.published !== false);
+    if (options?.tag) list = list.filter((p: BlogPost) => p.tags.includes(options.tag!));
+    return list.sort((a: BlogPost, b: BlogPost) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
 }
 
@@ -645,7 +652,9 @@ export async function getServices(options?: {
     return result;
   } catch (err) {
     console.error("MongoDB getServices error:", err);
-    return memoryFallback.services;
+    let list = [...memoryFallback.services];
+    if (options?.publishedOnly) list = list.filter((s: Service) => s.published !== false);
+    return list.sort((a: Service, b: Service) => a.order - b.order);
   }
 }
 
@@ -809,7 +818,9 @@ export async function getSkills(options?: {
     return result;
   } catch (err) {
     console.error("MongoDB getSkills error:", err);
-    return memoryFallback.skills;
+    let list = [...memoryFallback.skills];
+    if (options?.publishedOnly) list = list.filter((s: SkillCategory) => s.published !== false);
+    return list.sort((a: SkillCategory, b: SkillCategory) => a.order - b.order);
   }
 }
 
@@ -1179,6 +1190,38 @@ export async function activateAIConfig(
   const active = await getAIConfig("active");
   const configToActivate = draft || active || DEFAULT_AI_CONFIG;
 
+  // 1. REVALIDATE ENTIRE CONFIG SERVER-SIDE BEFORE ACTIVATION
+  const validation = validateAIConfigPayload(configToActivate);
+  if (!validation.success) {
+    const errorMsg = validation.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
+    throw new Error(`AI Configuration validation failed: ${errorMsg}`);
+  }
+
+  // 2. Validate model allowlist
+  if (configToActivate.model.provider !== "local_grounded") {
+    if (!validateModelAllowlist(configToActivate.model.provider, configToActivate.model.modelId)) {
+      throw new Error(
+        `Model '${configToActivate.model.modelId}' is not allowlisted for provider '${configToActivate.model.provider}'.`,
+      );
+    }
+  }
+
+  // 3. Validate failover model allowlist if enabled
+  if (
+    configToActivate.model.enableFailover &&
+    configToActivate.model.fallbackProvider &&
+    configToActivate.model.fallbackProvider !== "local_grounded"
+  ) {
+    if (
+      configToActivate.model.fallbackModelId &&
+      !validateModelAllowlist(configToActivate.model.fallbackProvider, configToActivate.model.fallbackModelId)
+    ) {
+      throw new Error(
+        `Fallback model '${configToActivate.model.fallbackModelId}' is not allowlisted for fallback provider '${configToActivate.model.fallbackProvider}'.`,
+      );
+    }
+  }
+
   // Compute next version number
   let nextVersion = (active?.versionNumber || 0) + 1;
   if (versionCol) {
@@ -1223,7 +1266,13 @@ export async function activateAIConfig(
   }
 
   try {
-    // 1. Upsert active configuration
+    // 1. Ensure exactly ONE active config: archive or replace all existing active configs
+    await configCol.updateMany(
+      { status: "active" } as Filter<AIConfig>,
+      { $set: { status: "archived" } as Partial<AIConfig> },
+    );
+
+    // 2. Insert or upsert the new active configuration
     const { _id, id: _cleanId, ...cleanActive } = activeConfig as unknown as {
       _id?: unknown;
       id?: unknown;
@@ -1238,16 +1287,16 @@ export async function activateAIConfig(
       { upsert: true },
     );
 
-    // 2. Mark previous versions archived
+    // 3. Mark previous versions archived
     await versionCol.updateMany(
       { status: "active" } as Filter<AIConfigVersion>,
       { $set: { status: "archived" } },
     );
 
-    // 3. Insert new version
+    // 4. Insert new version
     await versionCol.insertOne(versionSnapshot as unknown as AIConfigVersion);
 
-    // 4. Record audit log
+    // 5. Record audit log
     await logAIAudit({
       action: "config_activated",
       actor: updatedBy,
@@ -1288,35 +1337,72 @@ export async function restoreAIVersion(
 ): Promise<AIConfig> {
   invalidateCache("ai_config");
   const versionCol = await getCollection<AIConfigVersion>("ai_config_versions");
+  let versionDoc: AIConfigVersion | null = null;
+
   if (!versionCol) {
     if (isTestEnv) {
       const v = (memoryFallback.aiVersions || []).find((x: AIConfigVersion) => x.versionNumber === versionNumber);
-      if (!v) throw new Error("Version not found");
-      if (activateNow) {
-        return (await activateAIConfig(updatedBy, `Restored v${versionNumber}`)).activeConfig;
-      }
-      return saveDraftAIConfig(v.config, updatedBy);
+      if (!v) throw new Error(`Version v${versionNumber} not found`);
+      versionDoc = v;
+    } else {
+      handleMutationDbUnavailable();
     }
-    handleMutationDbUnavailable();
+  } else {
+    try {
+      const doc = await versionCol.findOne({ versionNumber });
+      if (!doc) throw new Error(`Version v${versionNumber} not found`);
+      versionDoc = normalizeDoc<AIConfigVersion>(doc)!;
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("not found")) throw err;
+      console.error("MongoDB restoreAIVersion error:", err);
+      throw new Error("Database unavailable. Could not restore version.");
+    }
   }
 
-  try {
-    const doc = await versionCol.findOne({ versionNumber });
-    if (!doc) throw new Error(`Version v${versionNumber} not found`);
+  if (!versionDoc) {
+    throw new Error(`Version v${versionNumber} not found`);
+  }
 
-    const versionDoc = normalizeDoc<AIConfigVersion>(doc)!;
-    if (activateNow) {
-      const { activeConfig } = await activateAIConfig(
-        updatedBy,
-        `Restored from version v${versionNumber}`,
+  // REVALIDATE HISTORICAL CONFIG AGAINST CURRENT SCHEMA AND ALLOWLISTS
+  const targetConfig = versionDoc.config;
+  const validation = validateAIConfigPayload(targetConfig);
+  if (!validation.success) {
+    const errorMsg = validation.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
+    throw new Error(`Target version v${versionNumber} fails current schema validation: ${errorMsg}`);
+  }
+
+  if (targetConfig.model.provider !== "local_grounded") {
+    if (!validateModelAllowlist(targetConfig.model.provider, targetConfig.model.modelId)) {
+      throw new Error(
+        `Target version v${versionNumber} uses model '${targetConfig.model.modelId}' which is no longer allowlisted for provider '${targetConfig.model.provider}'.`,
       );
-      return activeConfig;
-    } else {
-      return saveDraftAIConfig(versionDoc.config, updatedBy);
     }
-  } catch (err) {
-    console.error("MongoDB restoreAIVersion error:", err);
-    throw new Error("Database unavailable. Could not restore version.");
+  }
+
+  if (
+    targetConfig.model.enableFailover &&
+    targetConfig.model.fallbackProvider &&
+    targetConfig.model.fallbackProvider !== "local_grounded"
+  ) {
+    if (
+      targetConfig.model.fallbackModelId &&
+      !validateModelAllowlist(targetConfig.model.fallbackProvider, targetConfig.model.fallbackModelId)
+    ) {
+      throw new Error(
+        `Target version v${versionNumber} fallback model '${targetConfig.model.fallbackModelId}' is not allowlisted for provider '${targetConfig.model.fallbackProvider}'.`,
+      );
+    }
+  }
+
+  if (activateNow) {
+    await saveDraftAIConfig(targetConfig, updatedBy);
+    const { activeConfig } = await activateAIConfig(
+      updatedBy,
+      `Rolled back to snapshot version v${versionNumber}`,
+    );
+    return activeConfig;
+  } else {
+    return saveDraftAIConfig(targetConfig, updatedBy);
   }
 }
 

@@ -346,7 +346,7 @@ export interface AILimitsConfig {
 
 export interface AIConfig {
   id?: string;
-  status: "active" | "draft";
+  status: "active" | "draft" | "archived";
   brain: AIBrainConfig;
   model: AIModelConfig;
   knowledge: AIKnowledgeConfig;

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
+import type { Session } from "next-auth";
 
 // Mock @/lib/auth completely without calling next-auth
 vi.mock("@/lib/auth", () => ({
@@ -31,7 +32,7 @@ describe("POST /api/revalidate", () => {
   });
 
   it("rejects unauthorized request when no session and no header provided", async () => {
-    vi.mocked(auth).mockResolvedValue(null as any);
+    vi.mocked(auth).mockResolvedValue(null as unknown as Session);
 
     const req = new NextRequest("http://localhost:3000/api/revalidate", {
       method: "POST",
@@ -46,7 +47,7 @@ describe("POST /api/revalidate", () => {
 
   it("rejects request when incorrect secret header is provided", async () => {
     process.env.ADMIN_SECRET = "super-secret-key-12345";
-    vi.mocked(auth).mockResolvedValue(null as any);
+    vi.mocked(auth).mockResolvedValue(null as unknown as Session);
 
     const req = new NextRequest("http://localhost:3000/api/revalidate", {
       method: "POST",
@@ -62,7 +63,7 @@ describe("POST /api/revalidate", () => {
 
   it("allows request when valid secret header is provided", async () => {
     process.env.ADMIN_SECRET = "super-secret-key-12345";
-    vi.mocked(auth).mockResolvedValue(null as any);
+    vi.mocked(auth).mockResolvedValue(null as unknown as Session);
 
     const req = new NextRequest("http://localhost:3000/api/revalidate", {
       method: "POST",
@@ -83,7 +84,7 @@ describe("POST /api/revalidate", () => {
     vi.mocked(auth).mockResolvedValue({
       user: { isAdmin: true, name: "Admin" },
       expires: "9999",
-    } as any);
+    } as unknown as Session);
 
     const req = new NextRequest("http://localhost:3000/api/revalidate", {
       method: "POST",

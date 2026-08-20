@@ -1,7 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   saveUserSessionMemory,
-  getDecryptedLeadMemories,
   compileAdminLeadIntelligenceContext,
 } from "@/lib/ai/memory";
 import { encryptSecret, decryptSecret } from "@/lib/ai/secrets";

@@ -63,3 +63,9 @@ next-env.d.ts
 # local fs caches
 .cache
 .tmp
+
+# agents / skills local system
+.agent/
+.agents/
+.agent
+.agents

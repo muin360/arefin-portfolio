@@ -3,7 +3,7 @@ import { executeAI } from "@/lib/ai/providers";
 import { getAIConfig } from "@/lib/db";
 import { validateChatPayload } from "@/lib/ai/validators";
 import { checkRateLimit, extractClientIp } from "@/lib/rate-limit";
-import { captureSanitizedAIError } from "@/lib/ai/monitoring";
+import { captureSanitizedAIError, sanitizeSensitiveText } from "@/lib/ai/monitoring";
 import { saveUserSessionMemory } from "@/lib/ai/memory";
 import crypto from "crypto";
 
@@ -13,16 +13,42 @@ export const runtime = "nodejs";
 const MAX_PAYLOAD_BYTES = 100 * 1024;
 
 export async function POST(req: NextRequest) {
+  // 1. Content-Length Header Guard
+  const contentLength = parseInt(req.headers.get("content-length") || "0", 10);
+  if (contentLength > MAX_PAYLOAD_BYTES) {
+    return NextResponse.json(
+      { error: "Payload Too Large. Max request size is 100KB." },
+      { status: 413 },
+    );
+  }
+
   try {
+    // 2. Read and enforce parsed payload size
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Invalid request payload. Expected JSON object." },
+        { status: 400 },
+      );
+    }
+
+    // 3. Strict Zod Schema Validation
+    const validation = validateChatPayload(body);
+    if (!validation.success) {
+      const firstIssue = validation.error.issues[0]?.message || "Invalid chat request schema";
+      return NextResponse.json({ error: firstIssue }, { status: 400 });
+    }
+
+    const { messages, sessionId } = validation.data;
+
+    // 4. Rate Limiting & Client IP Trust Model
     const activeConfig = await getAIConfig("active");
     const rateLimit = activeConfig.limits?.rateLimitPerMin || 15;
     const maxPromptLen = activeConfig.limits?.maxPromptLength || 1000;
 
-    // 1. Extract IP for rate limiting & anonymous hashing
     const rawIp = extractClientIp(req);
     const ipHash = crypto.createHash("sha256").update(rawIp).digest("hex").slice(0, 12);
 
-    // Multi-tier Rate Limiter
     const rateLimitResult = await checkRateLimit({
       key: rawIp,
       limit: rateLimit,
@@ -49,33 +75,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Check content-length header
-    const contentLength = parseInt(req.headers.get("content-length") || "0", 10);
-    if (contentLength > MAX_PAYLOAD_BYTES) {
-      return NextResponse.json(
-        { error: "Payload Too Large. Max request size is 100KB." },
-        { status: 413 },
-      );
-    }
-
-    // 3. Parse and strictly validate payload with Zod
-    const body = await req.json().catch(() => null);
-    if (!body || typeof body !== "object") {
-      return NextResponse.json(
-        { error: "Invalid request payload. Expected JSON object." },
-        { status: 400 },
-      );
-    }
-
-    const validation = validateChatPayload(body);
-    if (!validation.success) {
-      const firstIssue = validation.error.issues[0]?.message || "Invalid chat request schema";
-      return NextResponse.json({ error: firstIssue }, { status: 400 });
-    }
-
-    const { messages, sessionId } = validation.data;
-
-    // Filter, clean control characters, and sanitize messages against active maxPromptLen
+    // 5. Message Sanitization & Prompt Budget Bounding
     const sanitizedMessages = messages.map((m) => ({
       role: m.role,
       content: m.content
@@ -84,14 +84,14 @@ export async function POST(req: NextRequest) {
         .slice(0, maxPromptLen),
     }));
 
-    // 4. Execute AI through Provider Abstraction Engine
+    // 6. Execute AI through Provider Abstraction Engine
     const result = await executeAI({
       messages: sanitizedMessages,
       requestType: "chat",
       clientIpHash: ipHash,
     });
 
-    // 5. Deduplicate citations by URL
+    // 7. Deduplicate citations by URL
     const seenUrls = new Set<string>();
     const deduplicatedCitations = (result.citations || []).filter((c) => {
       if (!c.url || seenUrls.has(c.url)) return false;
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
       return true;
     });
 
-    // 6. Asynchronously persist encrypted user memory for Admin Intelligence (0 latency impact)
+    // 8. Asynchronously persist encrypted user memory (non-blocking)
     const rawSession = sessionId || `session_${ipHash}`;
     const cleanSessionId = rawSession.replace(/[^a-zA-Z0-9_\-]/g, "").slice(0, 64);
 
@@ -128,6 +128,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (err) {
     captureSanitizedAIError(err, { errorCategory: "public_chat_error" });
+    const rawError = err instanceof Error ? err.message : "Internal error occurred";
     return NextResponse.json(
       {
         reply:
@@ -136,7 +137,7 @@ export async function POST(req: NextRequest) {
           { title: "View Projects", url: "/projects", type: "project" },
           { title: "Contact", url: "/contact", type: "contact" },
         ],
-        error: "Internal error occurred",
+        error: sanitizeSensitiveText(rawError) || "Internal error occurred",
       },
       { status: 200 },
     );

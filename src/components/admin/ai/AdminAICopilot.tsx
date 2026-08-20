@@ -9,34 +9,27 @@ import {
   Loader2,
   Trash2,
   Lock,
-  Layers,
-  Database,
   Check,
   Copy,
   Terminal,
   Activity,
-  Cpu,
-  RefreshCw,
-  Zap,
-  ShieldCheck,
   Users,
   MessageSquare,
-  BarChart3,
-  Calendar,
-  AlertCircle,
-  ExternalLink,
   Download,
   FileText,
-  Flame,
   Search,
-  Filter,
   Mail,
   Phone,
   Mic,
   MicOff,
-  Sliders,
 } from "lucide-react";
 import FormattedAIOutput from "@/components/ai/FormattedAIOutput";
+
+let messageSeq = 0;
+function createMessageId(prefix: string): string {
+  messageSeq += 1;
+  return `${prefix}_${messageSeq}`;
+}
 
 interface CopilotMessage {
   id: string;
@@ -160,14 +153,26 @@ export default function AdminAICopilot() {
   }, [isOpen]);
 
   useEffect(() => {
+    let ignore = false;
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 150);
       document.body.style.overflow = "hidden";
-      loadLeads();
+      fetch("/api/admin/ai/memory?limit=50")
+        .then((res) => res.json())
+        .then((data) => {
+          if (!ignore && data?.success && Array.isArray(data.memories)) {
+            setLeads(data.memories);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (!ignore) setLeadsLoading(false);
+        });
     } else {
       document.body.style.overflow = "";
     }
     return () => {
+      ignore = true;
       document.body.style.overflow = "";
     };
   }, [isOpen]);
@@ -175,21 +180,6 @@ export default function AdminAICopilot() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
-
-  const loadLeads = async () => {
-    setLeadsLoading(true);
-    try {
-      const res = await fetch("/api/admin/ai/memory?limit=50");
-      const data = await res.json();
-      if (data.success && Array.isArray(data.memories)) {
-        setLeads(data.memories);
-      }
-    } catch {
-      // Non-blocking
-    } finally {
-      setLeadsLoading(false);
-    }
-  };
 
   const handleCopy = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
@@ -228,7 +218,7 @@ export default function AdminAICopilot() {
 
     setInput("");
     const userMsg: CopilotMessage = {
-      id: `u_${Date.now()}`,
+      id: createMessageId("u"),
       role: "user",
       content: query,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
@@ -248,7 +238,7 @@ export default function AdminAICopilot() {
       if (!res.ok) throw new Error(data.error || "Failed to process query");
 
       const botMsg: CopilotMessage = {
-        id: `bot_${Date.now()}`,
+        id: createMessageId("bot"),
         role: "assistant",
         content: data.reply || "No intelligence report generated.",
         provider: data.providerUsed,
@@ -262,7 +252,7 @@ export default function AdminAICopilot() {
       setMessages((prev) => [
         ...prev,
         {
-          id: `err_${Date.now()}`,
+          id: createMessageId("err"),
           role: "assistant",
           content: `> [!WARNING]\n> **Admin Copilot Connection Error:** ${errMsg}`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
