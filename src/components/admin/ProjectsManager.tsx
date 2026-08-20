@@ -15,9 +15,23 @@ import {
   ChevronDown,
   ChevronUp,
   Workflow,
+  ShieldCheck,
+  Brain,
+  FileText,
+  Sparkles,
+  Link2,
 } from "lucide-react";
 import Link from "next/link";
-import type { Project, WorkflowStep, WorkflowStepType } from "@/lib/db/types";
+import type {
+  Project,
+  WorkflowStep,
+  WorkflowStepType,
+  ProofItemType,
+  CaseStudyProofItem,
+  CaseStudyIntegration,
+  CaseStudyMetric,
+  CaseStudyLink,
+} from "@/lib/db/types";
 
 interface Props {
   initialProjects: Project[];
@@ -32,6 +46,18 @@ const STEP_TYPES: Array<{ value: WorkflowStepType; label: string }> = [
   { value: "database", label: "Database / Vector (Persistence)" },
   { value: "decision", label: "Decision Logic (Condition / Guard)" },
   { value: "output", label: "Output / Handoff (Notification / Delivery)" },
+];
+
+const PROOF_TYPES: Array<{ value: ProofItemType; label: string }> = [
+  { value: "workflow", label: "Workflow DAG Canvas" },
+  { value: "output", label: "Rendered Output / Document" },
+  { value: "screenshot", label: "Production Screenshot" },
+  { value: "ui", label: "Interface / Chat UI" },
+  { value: "document", label: "PDF / Spec Document" },
+  { value: "diagram", label: "Architecture Diagram" },
+  { value: "code", label: "Code / Schema Snippet" },
+  { value: "demo", label: "Interactive Demo" },
+  { value: "external", label: "External Verification Link" },
 ];
 
 const PROJECT_TYPES = [
@@ -65,7 +91,7 @@ export default function ProjectsManager({ initialProjects }: Props) {
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    "overview" | "story" | "workflow" | "media" | "stack" | "relations" | "seo" | "publishing"
+    "overview" | "casestudy" | "story" | "workflow" | "media" | "stack" | "relations" | "seo" | "publishing"
   >("overview");
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -75,6 +101,27 @@ export default function ProjectsManager({ initialProjects }: Props) {
   const [newIntegration, setNewIntegration] = useState("");
   const [newStackTag, setNewStackTag] = useState("");
   const [newGalleryUrl, setNewGalleryUrl] = useState("");
+
+  // Case Study Sub-Item States
+  const [newProofTitle, setNewProofTitle] = useState("");
+  const [newProofType, setNewProofType] = useState<ProofItemType>("workflow");
+  const [newProofUrl, setNewProofUrl] = useState("");
+  const [newProofCaption, setNewProofCaption] = useState("");
+  const [newProofFeatured, setNewProofFeatured] = useState(false);
+
+  const [newIntegrationName, setNewIntegrationName] = useState("");
+  const [newIntegrationCategory, setNewIntegrationCategory] = useState("Orchestration");
+  const [newIntegrationPurpose, setNewIntegrationPurpose] = useState("");
+  const [newIntegrationLink, setNewIntegrationLink] = useState("");
+
+  const [newMetricLabel, setNewMetricLabel] = useState("");
+  const [newMetricValue, setNewMetricValue] = useState("");
+  const [newMetricContext, setNewMetricContext] = useState("");
+  const [newMetricVerified, setNewMetricVerified] = useState(true);
+
+  const [newLinkName, setNewLinkName] = useState("");
+  const [newLinkUrl, setNewLinkUrl] = useState("");
+  const [newLinkType, setNewLinkType] = useState<"github" | "demo" | "workflow" | "doc" | "video" | "external">("github");
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -342,6 +389,167 @@ export default function ProjectsManager({ initialProjects }: Props) {
     });
   };
 
+  // Case Study Proof Items
+  const handleAddProofItem = () => {
+    if (!newProofTitle.trim() || !newProofUrl.trim() || !editingProject) return;
+    const currentCaseStudy = editingProject.caseStudy || { enabled: true };
+    const currentProofs = currentCaseStudy.proofItems || [];
+    const newProof: CaseStudyProofItem = {
+      id: `proof-${Date.now()}`,
+      type: newProofType,
+      title: newProofTitle.trim(),
+      mediaUrl: newProofUrl.trim(),
+      caption: newProofCaption.trim() || undefined,
+      order: currentProofs.length + 1,
+      featured: newProofFeatured,
+    };
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...currentCaseStudy,
+        enabled: true,
+        proofItems: [...currentProofs, newProof],
+        featuredProof: newProofFeatured ? newProof.mediaUrl : currentCaseStudy.featuredProof,
+      },
+    });
+    setNewProofTitle("");
+    setNewProofUrl("");
+    setNewProofCaption("");
+    setNewProofFeatured(false);
+  };
+
+  const handleRemoveProofItem = (id: string) => {
+    if (!editingProject?.caseStudy?.proofItems) return;
+    const updated = editingProject.caseStudy.proofItems.filter((p) => p.id !== id);
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...editingProject.caseStudy,
+        proofItems: updated,
+      },
+    });
+  };
+
+  const handleToggleProofFeatured = (id: string) => {
+    if (!editingProject?.caseStudy?.proofItems) return;
+    const target = editingProject.caseStudy.proofItems.find((p) => p.id === id);
+    const updated = editingProject.caseStudy.proofItems.map((p) => ({
+      ...p,
+      featured: p.id === id ? !p.featured : false,
+    }));
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...editingProject.caseStudy,
+        proofItems: updated,
+        featuredProof: target && !target.featured ? target.mediaUrl : undefined,
+      },
+    });
+  };
+
+  // Case Study Integrations
+  const handleAddCaseStudyIntegration = () => {
+    if (!newIntegrationName.trim() || !editingProject) return;
+    const currentCaseStudy = editingProject.caseStudy || { enabled: true };
+    const currentIntegrations = currentCaseStudy.integrations || [];
+    const newInteg: CaseStudyIntegration = {
+      name: newIntegrationName.trim(),
+      category: newIntegrationCategory.trim() || undefined,
+      purpose: newIntegrationPurpose.trim() || "Core system connector",
+      link: newIntegrationLink.trim() || undefined,
+    };
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...currentCaseStudy,
+        integrations: [...currentIntegrations, newInteg],
+      },
+    });
+    setNewIntegrationName("");
+    setNewIntegrationPurpose("");
+    setNewIntegrationLink("");
+  };
+
+  const handleRemoveCaseStudyIntegration = (idx: number) => {
+    if (!editingProject?.caseStudy?.integrations) return;
+    const updated = editingProject.caseStudy.integrations.filter((_, i) => i !== idx);
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...editingProject.caseStudy,
+        integrations: updated,
+      },
+    });
+  };
+
+  // Case Study Metrics
+  const handleAddCaseStudyMetric = () => {
+    if (!newMetricLabel.trim() || !newMetricValue.trim() || !editingProject) return;
+    const currentCaseStudy = editingProject.caseStudy || { enabled: true };
+    const currentMetrics = currentCaseStudy.metrics || [];
+    const newMetric: CaseStudyMetric = {
+      label: newMetricLabel.trim(),
+      value: newMetricValue.trim(),
+      context: newMetricContext.trim() || undefined,
+      isVerified: newMetricVerified,
+    };
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...currentCaseStudy,
+        metrics: [...currentMetrics, newMetric],
+      },
+    });
+    setNewMetricLabel("");
+    setNewMetricValue("");
+    setNewMetricContext("");
+  };
+
+  const handleRemoveCaseStudyMetric = (idx: number) => {
+    if (!editingProject?.caseStudy?.metrics) return;
+    const updated = editingProject.caseStudy.metrics.filter((_, i) => i !== idx);
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...editingProject.caseStudy,
+        metrics: updated,
+      },
+    });
+  };
+
+  // Case Study Links
+  const handleAddCaseStudyLink = () => {
+    if (!newLinkName.trim() || !newLinkUrl.trim() || !editingProject) return;
+    const currentCaseStudy = editingProject.caseStudy || { enabled: true };
+    const currentLinks = currentCaseStudy.links || [];
+    const newLnk: CaseStudyLink = {
+      label: newLinkName.trim(),
+      url: newLinkUrl.trim(),
+      type: newLinkType,
+    };
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...currentCaseStudy,
+        links: [...currentLinks, newLnk],
+      },
+    });
+    setNewLinkName("");
+    setNewLinkUrl("");
+  };
+
+  const handleRemoveCaseStudyLink = (idx: number) => {
+    if (!editingProject?.caseStudy?.links) return;
+    const updated = editingProject.caseStudy.links.filter((_, i) => i !== idx);
+    setEditingProject({
+      ...editingProject,
+      caseStudy: {
+        ...editingProject.caseStudy,
+        links: updated,
+      },
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Toast notification */}
@@ -591,17 +799,18 @@ export default function ProjectsManager({ initialProjects }: Props) {
               </button>
             </div>
 
-            {/* 8-Tab Navigation Bar */}
+            {/* 9-Tab Navigation Bar */}
             <div className="flex items-center gap-1 px-5 pt-3 border-b border-[#1a202c] bg-[#0b0e17] overflow-x-auto scrollbar-none">
               {[
                 { id: "overview", label: "1. Overview" },
-                { id: "story", label: "2. Story & Logic" },
-                { id: "workflow", label: "3. Workflow" },
-                { id: "media", label: "4. Media & Diagrams" },
-                { id: "stack", label: "5. Tech Stack" },
-                { id: "relations", label: "6. Relations" },
-                { id: "seo", label: "7. SEO Preview" },
-                { id: "publishing", label: "8. Publishing" },
+                { id: "casestudy", label: "2. Case Study & Proof" },
+                { id: "story", label: "3. Story & Logic" },
+                { id: "workflow", label: "4. Workflow DAG" },
+                { id: "media", label: "5. Media & Diagrams" },
+                { id: "stack", label: "6. Tech Stack" },
+                { id: "relations", label: "7. Relations" },
+                { id: "seo", label: "8. SEO Preview" },
+                { id: "publishing", label: "9. Publishing" },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -707,7 +916,688 @@ export default function ProjectsManager({ initialProjects }: Props) {
                 </div>
               )}
 
-              {/* TAB 2: STORY & LOGIC */}
+              {/* TAB 2: CASE STUDY & PROOF */}
+              {activeTab === "casestudy" && (
+                <div className="space-y-6 animate-in fade-in duration-100">
+                  {/* Case Study Status Header */}
+                  <div className="p-4 rounded-2xl bg-[#141a29] border border-violet-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editingProject.caseStudy?.enabled ?? false}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || {}),
+                                enabled: e.target.checked,
+                              },
+                            })
+                          }
+                          className="w-4 h-4 accent-violet-600 rounded"
+                        />
+                        <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+                          Enable Deep Engineering Case Study
+                        </span>
+                      </label>
+
+                      {editingProject.caseStudy?.enabled && (
+                        <select
+                          value={editingProject.caseStudy?.status || "published"}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                status: e.target.value as "draft" | "published",
+                              },
+                            })
+                          }
+                          className="px-2.5 py-1 bg-[#0b0e17] border border-[#1e2433] rounded-lg text-xs font-mono text-white focus:outline-none focus:border-violet-500"
+                        >
+                          <option value="published">Published Live</option>
+                          <option value="draft">Draft Only (Hidden from Public)</option>
+                        </select>
+                      )}
+                    </div>
+
+                    {editingProject.slug && (
+                      <Link
+                        href={`/projects/${editingProject.slug}?preview=true`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-600/20 hover:bg-violet-600/40 text-violet-300 hover:text-white border border-violet-500/30 text-xs font-mono transition-colors"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Preview Case Study</span>
+                      </Link>
+                    )}
+                  </div>
+
+                  {/* Eyebrow & Short Summary */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                        Case Study Eyebrow Tag
+                      </label>
+                      <input
+                        type="text"
+                        value={editingProject.caseStudy?.eyebrow || ""}
+                        onChange={(e) =>
+                          setEditingProject({
+                            ...editingProject,
+                            caseStudy: {
+                              ...(editingProject.caseStudy || { enabled: true }),
+                              eyebrow: e.target.value,
+                            },
+                          })
+                        }
+                        placeholder="PRODUCTION ARCHITECTURE · MULTI-SYSTEM AUTOMATION"
+                        className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                        Hero Featured Proof URL
+                      </label>
+                      <input
+                        type="url"
+                        value={editingProject.caseStudy?.featuredProof || ""}
+                        onChange={(e) =>
+                          setEditingProject({
+                            ...editingProject,
+                            caseStudy: {
+                              ...(editingProject.caseStudy || { enabled: true }),
+                              featuredProof: e.target.value,
+                            },
+                          })
+                        }
+                        placeholder="https://images.unsplash.com/..."
+                        className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                      Case Study Executive Summary
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={editingProject.caseStudy?.shortSummary || ""}
+                      onChange={(e) =>
+                        setEditingProject({
+                          ...editingProject,
+                          caseStudy: {
+                            ...(editingProject.caseStudy || { enabled: true }),
+                            shortSummary: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="High-level engineering summary explaining system purpose and outcomes..."
+                      className="w-full px-3.5 py-2.5 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                    />
+                  </div>
+
+                  {/* Deep Narrative Fields */}
+                  <div className="space-y-4 pt-2 border-t border-white/[0.06]">
+                    <h4 className="text-xs font-mono uppercase text-violet-400 font-bold tracking-widest">
+                      Detailed Technical Narrative
+                    </h4>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                          Problem &amp; Friction
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={editingProject.caseStudy?.problem || ""}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                problem: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Explain what operational bottleneck or failure mode needed to be solved..."
+                          className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                          Operational Context
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={editingProject.caseStudy?.context || ""}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                context: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Business environment, constraints, and target user workflow..."
+                          className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                          Solution Architecture Strategy
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={editingProject.caseStudy?.solution || ""}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                solution: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Detail the technical approach and system design..."
+                          className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-[#9ca3af] mb-1.5 font-semibold">
+                          Implementation &amp; Security Notes
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={editingProject.caseStudy?.implementationNotes || ""}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                implementationNotes: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Authentication, idempotency, rate limiting, and webhook validation..."
+                          className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-violet-300 mb-1.5 font-semibold flex items-center gap-1.5">
+                          <Brain className="w-3.5 h-3.5" />
+                          <span>AI Role (Cognitive Reasoning &amp; Tools)</span>
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={editingProject.caseStudy?.aiRole || ""}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                aiRole: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Intent detection, parameter schemas, summarization, guardrails..."
+                          className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-sky-300 mb-1.5 font-semibold flex items-center gap-1.5">
+                          <Workflow className="w-3.5 h-3.5" />
+                          <span>Automation Role (Deterministic Pipelines)</span>
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={editingProject.caseStudy?.automationRole || ""}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                automationRole: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Webhook listeners, document rendering, cloud storage sync, notifications..."
+                          className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-emerald-400 mb-1.5 font-semibold">
+                          Learnings &amp; Insights
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={editingProject.caseStudy?.learnings || ""}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                learnings: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Engineering takeaways, edge cases solved, architectural realizations..."
+                          className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono uppercase text-amber-400 mb-1.5 font-semibold">
+                          Architectural Limitations &amp; Boundaries
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={editingProject.caseStudy?.limitations || ""}
+                          onChange={(e) =>
+                            setEditingProject({
+                              ...editingProject,
+                              caseStudy: {
+                                ...(editingProject.caseStudy || { enabled: true }),
+                                limitations: e.target.value,
+                              },
+                            })
+                          }
+                          placeholder="Constraints, deployment environment limits, retry queue boundaries..."
+                          className="w-full px-3.5 py-2 bg-[#141a29] border border-[#1e2433] rounded-xl text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Proof Items Editor */}
+                  <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                        <h4 className="text-xs font-mono uppercase text-white font-bold tracking-widest">
+                          Engineering Proof &amp; Evidence Items ({(editingProject.caseStudy?.proofItems || []).length})
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Add Proof Form */}
+                    <div className="p-4 rounded-xl bg-[#0c101d] border border-white/10 space-y-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Proof Type</label>
+                          <select
+                            value={newProofType}
+                            onChange={(e) => setNewProofType(e.target.value as ProofItemType)}
+                            className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                          >
+                            {PROOF_TYPES.map((t) => (
+                              <option key={t.value} value={t.value}>
+                                {t.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Proof Title *</label>
+                          <input
+                            type="text"
+                            value={newProofTitle}
+                            onChange={(e) => setNewProofTitle(e.target.value)}
+                            placeholder="e.g. n8n Multi-System Orchestration Pipeline"
+                            className="w-full px-3 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs focus:outline-none focus:border-violet-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Media URL (Image / Screenshot) *</label>
+                          <input
+                            type="url"
+                            value={newProofUrl}
+                            onChange={(e) => setNewProofUrl(e.target.value)}
+                            placeholder="https://..."
+                            className="w-full px-3 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Caption / Description</label>
+                          <input
+                            type="text"
+                            value={newProofCaption}
+                            onChange={(e) => setNewProofCaption(e.target.value)}
+                            placeholder="Active n8n workflow canvas showing 6-stage DAG..."
+                            className="w-full px-3 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs focus:outline-none focus:border-violet-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={newProofFeatured}
+                            onChange={(e) => setNewProofFeatured(e.target.checked)}
+                            className="w-3.5 h-3.5 accent-violet-600 rounded"
+                          />
+                          <span className="text-xs text-white/80 font-mono">Set as Hero Featured Proof</span>
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={handleAddProofItem}
+                          className="px-3.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white font-mono text-xs font-bold transition-colors flex items-center gap-1.5"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Proof Item</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Proof Items List */}
+                    <div className="space-y-2">
+                      {(editingProject.caseStudy?.proofItems || []).map((proof) => (
+                        <div
+                          key={proof.id}
+                          className="p-3 rounded-xl bg-[#0e1322] border border-white/[0.08] flex items-center justify-between gap-4"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className="px-2 py-0.5 rounded bg-black/60 border border-white/10 text-[9px] font-mono uppercase text-violet-300 font-bold">
+                              {proof.type}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-white truncate">{proof.title}</p>
+                              <p className="text-[10px] text-white/50 font-mono truncate">{proof.mediaUrl}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleProofFeatured(proof.id)}
+                              className={`px-2 py-1 rounded-md text-[10px] font-mono border transition-colors ${
+                                proof.featured
+                                  ? "bg-violet-600/30 text-violet-300 border-violet-500/50"
+                                  : "bg-white/[0.04] text-white/50 border-white/10 hover:text-white"
+                              }`}
+                            >
+                              {proof.featured ? "★ Hero Featured" : "Make Featured"}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveProofItem(proof.id)}
+                              className="p-1.5 text-[#6b7280] hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Integrations Matrix Editor */}
+                  <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+                    <h4 className="text-xs font-mono uppercase text-white font-bold tracking-widest flex items-center gap-2">
+                      <Workflow className="w-4 h-4 text-violet-400" />
+                      <span>Connected Integrations Matrix ({(editingProject.caseStudy?.integrations || []).length})</span>
+                    </h4>
+
+                    {/* Add Integration Form */}
+                    <div className="p-3.5 rounded-xl bg-[#0c101d] border border-white/10 grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-end">
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Name *</label>
+                        <input
+                          type="text"
+                          value={newIntegrationName}
+                          onChange={(e) => setNewIntegrationName(e.target.value)}
+                          placeholder="e.g. WooCommerce REST API"
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Category</label>
+                        <input
+                          type="text"
+                          value={newIntegrationCategory}
+                          onChange={(e) => setNewIntegrationCategory(e.target.value)}
+                          placeholder="E-Commerce / AI / Storage"
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Purpose *</label>
+                        <input
+                          type="text"
+                          value={newIntegrationPurpose}
+                          onChange={(e) => setNewIntegrationPurpose(e.target.value)}
+                          placeholder="Authenticated catalog mutations"
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleAddCaseStudyIntegration}
+                        className="w-full py-1.5 bg-violet-600 hover:bg-violet-700 text-white font-mono text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add</span>
+                      </button>
+                    </div>
+
+                    {/* Integrations List */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {(editingProject.caseStudy?.integrations || []).map((item, idx) => (
+                        <div
+                          key={item.name + idx}
+                          className="p-2.5 rounded-xl bg-[#0e1322] border border-white/[0.08] flex items-center justify-between gap-2"
+                        >
+                          <div className="min-w-0">
+                            <span className="text-xs font-bold text-white block truncate">{item.name}</span>
+                            <span className="text-[10px] text-white/50 font-sans truncate block">{item.purpose}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCaseStudyIntegration(idx)}
+                            className="p-1 text-[#6b7280] hover:text-rose-400 rounded transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Metrics Editor */}
+                  <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+                    <h4 className="text-xs font-mono uppercase text-white font-bold tracking-widest flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-emerald-400" />
+                      <span>Verified Metrics &amp; Benchmarks ({(editingProject.caseStudy?.metrics || []).length})</span>
+                    </h4>
+
+                    {/* Add Metric Form */}
+                    <div className="p-3.5 rounded-xl bg-[#0c101d] border border-white/10 grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-end">
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Label *</label>
+                        <input
+                          type="text"
+                          value={newMetricLabel}
+                          onChange={(e) => setNewMetricLabel(e.target.value)}
+                          placeholder="e.g. Invoice Dispatch"
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Value *</label>
+                        <input
+                          type="text"
+                          value={newMetricValue}
+                          onChange={(e) => setNewMetricValue(e.target.value)}
+                          placeholder="< 2.5s / 6 Systems"
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Context</label>
+                        <input
+                          type="text"
+                          value={newMetricContext}
+                          onChange={(e) => setNewMetricContext(e.target.value)}
+                          placeholder="From order webhook to inbox"
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <label className="flex items-center gap-1 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={newMetricVerified}
+                            onChange={(e) => setNewMetricVerified(e.target.checked)}
+                            className="w-3.5 h-3.5 accent-emerald-600 rounded"
+                          />
+                          <span className="text-[10px] font-mono text-emerald-400">Verified</span>
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleAddCaseStudyMetric}
+                          className="flex-1 py-1.5 bg-violet-600 hover:bg-violet-700 text-white font-mono text-xs font-bold rounded-lg transition-colors"
+                        >
+                          Add
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Metrics List */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {(editingProject.caseStudy?.metrics || []).map((metric, idx) => (
+                        <div
+                          key={metric.label + idx}
+                          className="p-2.5 rounded-xl bg-[#0e1322] border border-white/[0.08] flex items-center justify-between gap-2"
+                        >
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-mono font-bold text-white">{metric.label}:</span>
+                              <span className="text-xs font-mono text-emerald-400">{metric.value}</span>
+                              <span className="text-[9px] font-mono text-white/40">({metric.isVerified ? "Verified" : "Observed"})</span>
+                            </div>
+                            {metric.context && (
+                              <p className="text-[10px] text-white/50 font-sans">{metric.context}</p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCaseStudyMetric(idx)}
+                            className="p-1 text-[#6b7280] hover:text-rose-400 rounded transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* External Links */}
+                  <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+                    <h4 className="text-xs font-mono uppercase text-white font-bold tracking-widest flex items-center gap-2">
+                      <Link2 className="w-4 h-4 text-violet-400" />
+                      <span>Case Study External Links ({(editingProject.caseStudy?.links || []).length})</span>
+                    </h4>
+
+                    {/* Add Link Form */}
+                    <div className="p-3.5 rounded-xl bg-[#0c101d] border border-white/10 grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-end">
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Label *</label>
+                        <input
+                          type="text"
+                          value={newLinkName}
+                          onChange={(e) => setNewLinkName(e.target.value)}
+                          placeholder="e.g. Architecture Spec & JSON"
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">URL *</label>
+                        <input
+                          type="url"
+                          value={newLinkUrl}
+                          onChange={(e) => setNewLinkUrl(e.target.value)}
+                          placeholder="https://..."
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-mono uppercase text-[#9ca3af] mb-1">Link Type</label>
+                        <select
+                          value={newLinkType}
+                          onChange={(e) =>
+                            setNewLinkType(
+                              e.target.value as "github" | "demo" | "workflow" | "doc" | "video" | "external"
+                            )
+                          }
+                          className="w-full px-2.5 py-1.5 bg-[#141a29] border border-[#1e2433] rounded-lg text-white text-xs font-mono focus:outline-none focus:border-violet-500"
+                        >
+                          <option value="github">GitHub Repo</option>
+                          <option value="demo">Live Demo</option>
+                          <option value="workflow">Workflow Export</option>
+                          <option value="doc">Documentation</option>
+                          <option value="video">Video Walkthrough</option>
+                          <option value="external">External Link</option>
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleAddCaseStudyLink}
+                        className="w-full py-1.5 bg-violet-600 hover:bg-violet-700 text-white font-mono text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Link</span>
+                      </button>
+                    </div>
+
+                    {/* Links List */}
+                    <div className="space-y-1.5">
+                      {(editingProject.caseStudy?.links || []).map((link, idx) => (
+                        <div
+                          key={link.label + idx}
+                          className="p-2 rounded-xl bg-[#0e1322] border border-white/[0.08] flex items-center justify-between gap-2"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FileText className="w-3.5 h-3.5 text-violet-400" />
+                            <span className="text-xs font-bold text-white truncate">{link.label}</span>
+                            <span className="text-[10px] text-white/50 font-mono truncate">({link.url})</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCaseStudyLink(idx)}
+                            className="p-1 text-[#6b7280] hover:text-rose-400 rounded transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: STORY & LOGIC */}
               {activeTab === "story" && (
                 <div className="space-y-4 animate-in fade-in duration-100">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

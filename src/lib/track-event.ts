@@ -115,3 +115,28 @@ export function trackBuildStepClick(stepType: string, projectSlug?: string) {
 export function trackBlueprintCopySpecs(projectSlug?: string) {
   void trackEvent("blueprint_copy_specs", { projectSlug, label: "Copy Architecture Blueprint" });
 }
+
+/** Helper for tracking case study page view */
+export function trackCaseStudyView(projectSlug: string) {
+  void trackEvent("case_study_view", { projectSlug, label: `Case Study: ${projectSlug}` });
+}
+
+/** Helper for tracking proof item view or hover */
+export function trackProofView(proofTitle: string, projectSlug?: string) {
+  void trackEvent("proof_view", { projectSlug, label: `Proof: ${proofTitle}` });
+}
+
+/** Helper for opening proof lightbox */
+export function trackProofOpen(proofTitle: string, projectSlug?: string) {
+  void trackEvent("proof_open", { projectSlug, label: `Lightbox: ${proofTitle}` });
+}
+
+/** Helper for case study CTA clicks */
+export function trackCaseStudyCta(ctaLabel: string, projectSlug?: string) {
+  void trackEvent("case_study_cta", { projectSlug, label: `CTA: ${ctaLabel}` });
+}
+
+/** Helper for external project links */
+export function trackExternalProjectLink(linkLabel: string, projectSlug?: string) {
+  void trackEvent("external_project_link", { projectSlug, label: `Link: ${linkLabel}` });
+}

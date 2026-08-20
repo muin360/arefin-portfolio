@@ -17,6 +17,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import ProjectCaseStudy from "@/components/case-study/ProjectCaseStudy";
+
 export async function generateStaticParams() {
   const projects = await getProjects({ publishedOnly: true });
   return projects.map((p) => ({ slug: p.slug }));
@@ -36,14 +38,16 @@ export async function generateMetadata({
   const project = await getProjectBySlug(slug, { publishedOnly: !isPreview });
   if (!project) return { title: "Project not found" };
 
+  const description = project.caseStudy?.shortSummary || project.summary;
+
   return {
     title: `${project.title}${isPreview ? " (Draft Preview)" : ""}`,
-    description: project.summary,
+    description,
     robots: isPreview ? { index: false, follow: false } : undefined,
     alternates: { canonical: `/projects/${project.slug}` },
     openGraph: {
       title: `${project.title} — Arefin Mueen`,
-      description: project.summary,
+      description,
       url: `/projects/${project.slug}`,
       type: "article",
       images: project.coverImage ? [{ url: project.coverImage }] : undefined,
@@ -102,7 +106,7 @@ export default async function ProjectDetailPage({
     "@context": "https://schema.org",
     "@type": "TechArticle",
     headline: project.title,
-    description: project.summary,
+    description: project.caseStudy?.shortSummary || project.summary,
     author: {
       "@type": "Person",
       name: "Arefin Mueen",
@@ -118,6 +122,27 @@ export default async function ProjectDetailPage({
       applicationCategory: project.category,
     },
   };
+
+  // ─── PREMIUM CASE STUDY LAYOUT (WHEN ENABLED) ─────────────────────────
+  if (
+    project.caseStudy?.enabled &&
+    (project.caseStudy?.status === "published" || isPreview)
+  ) {
+    return (
+      <article className="min-h-screen pb-24 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <ProjectCaseStudy
+          project={project}
+          relatedProjects={relatedProjects}
+          relatedService={relatedService}
+          isPreview={isPreview}
+        />
+      </article>
+    );
+  }
 
   return (
     <article className="min-h-screen pb-24">

@@ -21,6 +21,11 @@ const ALLOWED_EVENTS: AnalyticsEventType[] = [
   "build_explorer_open",
   "build_step_click",
   "blueprint_copy_specs",
+  "case_study_view",
+  "proof_view",
+  "proof_open",
+  "case_study_cta",
+  "external_project_link",
 ];
 
 // Simple in-memory rate limiter (per session within the same serverless instance)

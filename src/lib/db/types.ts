@@ -40,6 +40,74 @@ export type IconName =
 
 export type ProjectTier = "flagship" | "advanced" | "showcase";
 
+export type ProofItemType =
+  | "screenshot"
+  | "workflow"
+  | "output"
+  | "ui"
+  | "document"
+  | "diagram"
+  | "code"
+  | "demo"
+  | "external";
+
+export type CaseStudyProofItem = {
+  id: string;
+  type: ProofItemType;
+  title: string;
+  description?: string;
+  mediaUrl: string;
+  caption?: string;
+  linkUrl?: string;
+  order: number;
+  featured?: boolean;
+};
+
+export type CaseStudyMetric = {
+  label: string;
+  value: string;
+  context?: string;
+  isVerified: boolean; // if false, displayed as "Observed", "Test result", "Prototype"
+};
+
+export type CaseStudyIntegration = {
+  name: string;
+  category?: string;
+  purpose: string;
+  link?: string;
+};
+
+export type CaseStudyLink = {
+  label: string;
+  url: string;
+  type?: "github" | "demo" | "workflow" | "doc" | "video" | "external";
+};
+
+export type ProjectCaseStudy = {
+  enabled: boolean;
+  status?: "draft" | "published";
+  eyebrow?: string;
+  shortSummary?: string;
+  problem?: string;
+  context?: string;
+  solution?: string;
+  aiRole?: string;
+  automationRole?: string;
+  architectureSummary?: string;
+  implementationNotes?: string;
+  outcome?: string;
+  learnings?: string;
+  limitations?: string;
+  proofItems?: CaseStudyProofItem[];
+  architectureSteps?: WorkflowStep[];
+  integrations?: CaseStudyIntegration[];
+  metrics?: CaseStudyMetric[];
+  links?: CaseStudyLink[];
+  gallery?: string[];
+  featuredProof?: string;
+  publishedAt?: string;
+};
+
 export type Project = {
   id: string;
   title: string;
@@ -75,6 +143,7 @@ export type Project = {
   published: boolean;
   tier?: ProjectTier;
   featuredOrder?: number;
+  caseStudy?: ProjectCaseStudy;
   order: number;
   createdAt: string;
   updatedAt: string;
@@ -233,7 +302,12 @@ export type AnalyticsEventType =
   | "ai_project_click"
   | "build_explorer_open"
   | "build_step_click"
-  | "blueprint_copy_specs";
+  | "blueprint_copy_specs"
+  | "case_study_view"
+  | "proof_view"
+  | "proof_open"
+  | "case_study_cta"
+  | "external_project_link";
 
 export type AnalyticsEvent = {
   id: string;
