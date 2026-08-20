@@ -1,47 +1,44 @@
 import { describe, it, expect } from "vitest";
 import type { WorkflowStep } from "@/lib/db/types";
 import {
-  detectStepType,
-  calculateNodePositions,
-  calculateConnections,
-  STEP_3D_CONFIG,
-} from "@/components/build-explorer/types";
+  detectBlueprintStepType,
+  formatBlueprintNodes,
+  BLUEPRINT_NODE_CONFIG,
+} from "@/components/blueprint/types";
 import {
   trackBuildExplorerOpen,
-  trackBuildExplorer3DOpen,
   trackBuildStepClick,
-  trackBuildExplorerNodeClick,
-  trackBuildExplorerReset,
+  trackBlueprintCopySpecs,
 } from "@/lib/track-event";
 
-describe("BuildExplorer Schema & Workflow Steps", () => {
+describe("Interactive System Blueprint Schema & Workflow Steps", () => {
   const steps: WorkflowStep[] = [
     {
       step: "01",
       type: "trigger",
       name: "Webhook Ingestion",
-      desc: "Receives raw customer payload via HTTP POST webhook",
+      desc: "Receives raw customer payload via HTTP POST webhook with header validation.",
       tool: "n8n Webhook",
     },
     {
       step: "02",
       type: "ai",
       name: "LLM Intent Reasoning",
-      desc: "Extracts key intent and entities with structured JSON output",
+      desc: "Extracts key intent and entities with structured JSON output and safety guardrails.",
       tool: "OpenAI GPT-4o",
     },
     {
       step: "03",
       type: "database",
       name: "Vector Retrieval",
-      desc: "Queries Pinecone vector database for relevant documentation",
+      desc: "Queries Pinecone vector database for relevant enterprise documentation.",
       tool: "Pinecone",
     },
     {
       step: "04",
       type: "output",
       name: "Notification & Response",
-      desc: "Dispatches validated response back to user channel",
+      desc: "Dispatches validated response back to user channel and updates Notion logs.",
       tool: "Resend API",
     },
   ];
@@ -54,68 +51,49 @@ describe("BuildExplorer Schema & Workflow Steps", () => {
     expect(steps[3].type).toBe("output");
   });
 
-  it("detects step types from step names when type is not explicitly provided", () => {
-    expect(detectStepType({ name: "Webhook Trigger", desc: "" }, 0, 4)).toBe("trigger");
-    expect(detectStepType({ name: "Vector Search Context", desc: "" }, 1, 4)).toBe("database");
-    expect(detectStepType({ name: "Autonomous Agent Routing", desc: "" }, 2, 4)).toBe("agent");
-    expect(detectStepType({ name: "Final Output Dispatch", desc: "" }, 3, 4)).toBe("output");
+  it("detects blueprint step types from names and descriptions when type is missing", () => {
+    expect(detectBlueprintStepType({ name: "Webhook Trigger", desc: "" }, 0, 4)).toBe("trigger");
+    expect(detectBlueprintStepType({ name: "Context Vector Search", desc: "" }, 1, 4)).toBe("database");
+    expect(detectBlueprintStepType({ name: "Autonomous Agent Routing", desc: "" }, 2, 4)).toBe("agent");
+    expect(detectBlueprintStepType({ name: "Slack Dispatch Output", desc: "" }, 3, 4)).toBe("output");
   });
 
-  it("maps step visual configurations to valid Three.js geometry presets", () => {
-    expect(STEP_3D_CONFIG.trigger.geometry).toBe("torus");
-    expect(STEP_3D_CONFIG.input.geometry).toBe("box");
-    expect(STEP_3D_CONFIG.ai.geometry).toBe("sphere");
-    expect(STEP_3D_CONFIG.agent.geometry).toBe("octahedron");
-    expect(STEP_3D_CONFIG.tool.geometry).toBe("box");
-    expect(STEP_3D_CONFIG.database.geometry).toBe("cylinder");
-    expect(STEP_3D_CONFIG.decision.geometry).toBe("diamond");
-    expect(STEP_3D_CONFIG.output.geometry).toBe("dodecahedron");
-  });
-
-  it("calculates 3D node positions along an ergonomic spatial pipeline", () => {
-    const nodes = calculateNodePositions(steps);
+  it("formats blueprint nodes with custom architectural shapes and summaries", () => {
+    const nodes = formatBlueprintNodes(steps);
     expect(nodes.length).toBe(4);
 
-    // X coordinates must increase monotonically
-    for (let i = 0; i < nodes.length - 1; i++) {
-      expect(nodes[i].position[0]).toBeLessThan(nodes[i + 1].position[0]);
-    }
+    expect(nodes[0].config.shape).toBe("bracket");
+    expect(nodes[1].config.shape).toBe("capsule");
+    expect(nodes[2].config.shape).toBe("datastack");
+    expect(nodes[3].config.shape).toBe("terminal");
 
-    // Coordinates must be finite valid 3D numbers
+    // Must have non-empty functionSummary and whyItExists
     nodes.forEach((node) => {
-      expect(node.position.length).toBe(3);
-      expect(Number.isFinite(node.position[0])).toBe(true);
-      expect(Number.isFinite(node.position[1])).toBe(true);
-      expect(Number.isFinite(node.position[2])).toBe(true);
+      expect(node.functionSummary.length).toBeGreaterThan(0);
+      expect(node.config.whyItExists.length).toBeGreaterThan(0);
+      expect(node.stepNumber).toBeDefined();
     });
   });
 
-  it("generates N-1 smooth connections with midpoints for N nodes", () => {
-    const nodes = calculateNodePositions(steps);
-    const connections = calculateConnections(nodes);
-
-    expect(connections.length).toBe(3);
-    connections.forEach((conn, i) => {
-      expect(conn.fromIndex).toBe(i);
-      expect(conn.toIndex).toBe(i + 1);
-      expect(conn.start).toEqual(nodes[i].position);
-      expect(conn.end).toEqual(nodes[i + 1].position);
-      expect(conn.midPoint.length).toBe(3);
-    });
+  it("maps all blueprint node types to valid shape configurations", () => {
+    expect(BLUEPRINT_NODE_CONFIG.trigger.shape).toBe("bracket");
+    expect(BLUEPRINT_NODE_CONFIG.input.shape).toBe("module");
+    expect(BLUEPRINT_NODE_CONFIG.ai.shape).toBe("capsule");
+    expect(BLUEPRINT_NODE_CONFIG.agent.shape).toBe("diamond");
+    expect(BLUEPRINT_NODE_CONFIG.tool.shape).toBe("module");
+    expect(BLUEPRINT_NODE_CONFIG.database.shape).toBe("datastack");
+    expect(BLUEPRINT_NODE_CONFIG.decision.shape).toBe("diamond");
+    expect(BLUEPRINT_NODE_CONFIG.output.shape).toBe("terminal");
   });
 
   it("handles empty workflow step arrays safely", () => {
-    const emptyNodes = calculateNodePositions([]);
+    const emptyNodes = formatBlueprintNodes([]);
     expect(emptyNodes).toEqual([]);
-    const emptyConnections = calculateConnections(emptyNodes);
-    expect(emptyConnections).toEqual([]);
   });
 
   it("fires analytics helper functions without throwing exceptions in SSR/browser contexts", () => {
     expect(() => trackBuildExplorerOpen("email-automation-triage")).not.toThrow();
-    expect(() => trackBuildExplorer3DOpen("email-automation-triage")).not.toThrow();
     expect(() => trackBuildStepClick("ai", "email-automation-triage")).not.toThrow();
-    expect(() => trackBuildExplorerNodeClick("ai", "email-automation-triage")).not.toThrow();
-    expect(() => trackBuildExplorerReset("email-automation-triage")).not.toThrow();
+    expect(() => trackBlueprintCopySpecs("email-automation-triage")).not.toThrow();
   });
 });

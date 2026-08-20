@@ -101,27 +101,17 @@ export function trackAIProjectClick(projectSlug: string) {
   void trackEvent("ai_project_click", { projectSlug, label: `Citation: ${projectSlug}` });
 }
 
-/** Helper for tracking interactive Build Explorer interaction */
+/** Helper for tracking interactive System Blueprint / Build Explorer interaction */
 export function trackBuildExplorerOpen(projectSlug: string) {
-  void trackEvent("build_explorer_open", { projectSlug, label: `Build Explorer: ${projectSlug}` });
+  void trackEvent("build_explorer_open", { projectSlug, label: `Blueprint: ${projectSlug}` });
 }
 
-/** Helper for tracking 3D mode open in Build Explorer */
-export function trackBuildExplorer3DOpen(projectSlug: string) {
-  void trackEvent("build_explorer_3d_open", { projectSlug, label: `Build Explorer 3D: ${projectSlug}` });
-}
-
-/** Helper for tracking node/step click in Build Explorer */
+/** Helper for tracking node/step click in System Blueprint */
 export function trackBuildStepClick(stepType: string, projectSlug?: string) {
   void trackEvent("build_step_click", { projectSlug, label: `Step: ${stepType}` });
 }
 
-/** Helper for tracking 3D node click in Build Explorer */
-export function trackBuildExplorerNodeClick(stepType: string, projectSlug?: string) {
-  void trackEvent("build_explorer_node_click", { projectSlug, label: `Node: ${stepType}` });
-}
-
-/** Helper for resetting camera/view in 3D Build Explorer */
-export function trackBuildExplorerReset(projectSlug: string) {
-  void trackEvent("build_explorer_reset", { projectSlug, label: `Reset View: ${projectSlug}` });
+/** Helper for copying blueprint specifications */
+export function trackBlueprintCopySpecs(projectSlug?: string) {
+  void trackEvent("blueprint_copy_specs", { projectSlug, label: "Copy Architecture Blueprint" });
 }
